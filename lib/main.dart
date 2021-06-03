@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_template/pages/home.dart';
+import 'package:vocabhub/pages/home.dart';
 import 'constants/constants.dart' show APP_TITLE;
 
 void main() {

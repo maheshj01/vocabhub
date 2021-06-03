@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter_template/services/api/exception.dart';
+import 'package:vocabhub/services/api/exception.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_template/constants/constants.dart' show BASE_URL;
+import 'package:vocabhub/constants/constants.dart' show BASE_URL;
 
 enum HttpMethod { GET, POST, PUT, DELETE, PATCH }
 

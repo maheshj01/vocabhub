@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vocabhub/services/supastore.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -10,14 +11,21 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  late String _counter = '';
 
-  void _incrementCounter() {
+  void _incrementCounter() async {
+    SupaStore supaStore = SupaStore();
     setState(() {
-      _counter++;
+      _counter = 'loading...';
     });
+    final data = await supaStore.findByWord("Placate");
+    setState(() {
+      _counter = '';
+    });
+    print(data.count);
   }
 
+  late SupaStore supaStore;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
