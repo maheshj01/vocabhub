@@ -1,6 +1,7 @@
 import 'package:supabase/supabase.dart';
 import 'package:logger/logger.dart' as log;
 import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/secrets.dart';
 import 'package:postgrest/postgrest.dart';
 
@@ -26,9 +27,14 @@ class SupaStore {
   }
 
   /// ```Select * from words;```
-  Future<PostgrestResponse> findAll() async {
+  Future<List<Word>> findAll() async {
     final response = await _supabase.from(tableName).select("*").execute();
-    return response;
+    List<Word> words = [];
+    print('fetching');
+    if (response.status == 200) {
+      words = (response.data as List).map((e) => Word.fromJson(e)).toList();
+    }
+    return words;
   }
 
   Future<PostgrestResponse> insert(Map<String, dynamic> json) async {
