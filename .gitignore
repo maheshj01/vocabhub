@@ -104,3 +104,4 @@ macos/**/xcuserdata/
 
 ios/Flutter/Debug.xcconfig
 ios/Flutter/Release.xcconfig
+secrets.json

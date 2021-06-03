@@ -7,10 +7,10 @@ part 'user_model.g.dart';
 ///
 /// define a schema for your class and annotate
 /// and then run
-/// ```flutter pub run build_runner build ```
+/// ```flutter pub run build_runner build```
 /// to watch the file changes and generate the outpur
-/// ```flutter pub run build_runner watch ```
-@JsonSerializable(nullable: false)
+/// ```flutter pub run build_runner watch```
+@JsonSerializable()
 class UserModel {
   final String name;
   final String email;
@@ -24,7 +24,7 @@ class UserModel {
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
 }
 
-@JsonSerializable(nullable: false)
+@JsonSerializable()
 class Education {
   final String major;
   final String university;
