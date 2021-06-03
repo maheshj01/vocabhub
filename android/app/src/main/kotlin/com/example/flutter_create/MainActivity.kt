@@ -1,4 +1,4 @@
-package com.example.flutter_create
+package com.vocabhub.app
 
 import io.flutter.embedding.android.FlutterActivity
 

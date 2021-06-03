@@ -1,4 +1,4 @@
-name: flutter_template
+name: vocabhub
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -26,8 +26,8 @@ dependencies:
   cupertino_icons: ^1.0.3
   http: ^0.13.3
   json_annotation: ^4.0.1
-  supabase: ^0.0.1-dev.16
   realtime_client: ^0.0.8
+  supabase: ^0.0.1-dev.16
 
 dev_dependencies:
   flutter_test:

@@ -29,7 +29,7 @@ Feel free to fork this repo and modify this template as you like. If this templa
 
     Still stuck [look here](https://stackoverflow.com/questions/49353199/how-can-i-change-the-app-display-name-build-with-flutter)
 
-2.  Change the package name, The default package name is (`com.example.flutter_create`)
+2.  Change the package name, The default package name is (`com.vocabhub.app`)
     Use search and replace feature of your IDE to get this done.
 
 3.  If your app does not need localization delete `lib/locales` directory and also delete the corresponding packages
