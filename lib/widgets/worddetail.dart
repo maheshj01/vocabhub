@@ -26,13 +26,14 @@ class _WordDetailState extends State<WordDetail>
     _tween = IntTween(begin: 0, end: length);
     _animation = _tween.animate(_animationController);
     _animationController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        // _animationController.reset();
-      }
+      // if (status == AnimationStatus.completed) {
+      // _animationController.reset();
+      // }
     });
   }
 
   int length = 0;
+  int synLength = 0;
   @override
   void dispose() {
     // TODO: implement dispose
@@ -78,6 +79,32 @@ class _WordDetailState extends State<WordDetail>
                   widget.word!.word,
                   style: TextStyle(fontSize: size.height * 0.06),
                 ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Wrap(
+                    // alignment: WrapAlignment.center,
+                    direction: Axis.horizontal,
+                    runSpacing: 5,
+                    spacing: 10,
+                    children:
+                        List.generate(widget.word!.synonyms!.length, (index) {
+                      String synonym = widget.word!.synonyms![index];
+                      return Container(
+                          alignment: Alignment.center,
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                              color: Colors.lightBlue.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Text(synonym));
+                    }),
+                  ),
+                ],
               ),
               SizedBox(
                 height: 50,
