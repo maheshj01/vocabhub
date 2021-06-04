@@ -3,6 +3,7 @@ import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/widgets/search.dart';
+import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
 import 'package:vocabhub/widgets/wordtile.dart';
 
@@ -56,38 +57,75 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class ListBuilder extends StatelessWidget {
+class ListBuilder extends StatefulWidget {
   ListBuilder({Key? key, this.onSelect}) : super(key: key);
-  SupaStore supaStore = SupaStore();
   final Function(Word)? onSelect;
+
+  @override
+  _ListBuilderState createState() => _ListBuilderState();
+}
+
+class _ListBuilderState extends State<ListBuilder> {
+  SupaStore supaStore = SupaStore();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getWords();
+  }
+
+  Future<void> getWords() async {
+    await Future.delayed(Duration.zero);
+    showCircularIndicator(context);
+    supaStoreWords = await supaStore.findByWord("");
+    stopCircularIndicator(context);
+    listNotifier.value = supaStoreWords;
+  }
+
+  List<Word> supaStoreWords = [];
+  final ValueNotifier<List<Word>?> listNotifier = ValueNotifier<List<Word>>([]);
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Column(
-      children: [
-        SearchBuilder(),
-        Expanded(
-          child: FutureBuilder<List<Word>>(
-              future: supaStore.findByWord(""),
-              builder:
-                  (BuildContext context, AsyncSnapshot<List<Word>> snapshot) {
-                if (snapshot.data == null) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                return ListView.builder(
-                    itemCount: snapshot.data!.length,
+    return ValueListenableBuilder<List<Word>?>(
+        valueListenable: listNotifier,
+        builder: (BuildContext context, List<Word>? value, Widget? child) {
+          if (value == null) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return Column(
+            children: [
+              SearchBuilder(
+                onChanged: (x) {
+                  if (x.isEmpty) {
+                    listNotifier.value = supaStoreWords;
+                    return;
+                  }
+                  List<Word> result = [];
+                  supaStoreWords.forEach((element) {
+                    if (element.word.toLowerCase().contains(x.toLowerCase())) {
+                      result.add(element);
+                    }
+                  });
+                  listNotifier.value = result;
+                },
+              ),
+              Expanded(
+                child: ListView.builder(
+                    itemCount: value.length,
                     itemBuilder: (_, x) {
                       return WordTile(
-                          word: snapshot.data![x],
+                          word: value[x],
                           isMobile: size.width < MOBILE_WIDTH,
-                          onSelect: (word) => onSelect!(word));
-                    });
-              }),
-        ),
-      ],
-    );
+                          onSelect: (word) => widget.onSelect!(word));
+                    }),
+              ),
+            ],
+          );
+        });
   }
 }
 

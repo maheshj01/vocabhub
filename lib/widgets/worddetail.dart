@@ -64,6 +64,20 @@ class _WordDetailState extends State<WordDetail>
     _animationController.forward();
   }
 
+  Future<void> updateMeaning() async {
+    meaning = edited;
+    textEditingController.text = edited;
+    String id = widget.word!.id;
+    Word word = widget.word!;
+    word.meaning = edited;
+    final response = await supaStore.updateMeaning(id: id, word: word);
+    if (response.status == 200) {
+      print("updated");
+    } else {
+      print('failed to update ${response.error!.message}');
+    }
+  }
+
   void unfocus() => FocusScope.of(context).unfocus();
 
   late String edited;
@@ -81,111 +95,97 @@ class _WordDetailState extends State<WordDetail>
             onTap: () async {
               editModeNotifier.value = false;
               unfocus();
-              if (edited != meaning) {
+              if (edited != meaning &&
+                  _animationController.status == AnimationStatus.completed) {
                 /// TODO: Update meaning
-                print("updating meaning");
-                meaning = edited;
-                textEditingController.text = edited;
-                String id = widget.word!.id;
-                final response = await supaStore.updateMeaning(id: id, json: {
-                  "meaning": "$edited",
-                });
-                if (response.status == 200) {
-                  print("updated");
-                } else {
-                  print('failed to update ${response.error!.message}');
-                }
+                length = edited.length;
+                _tween.end = length;
+                updateMeaning();
               }
             },
-            child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: size.height / 5,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: size.height / 5,
+                ),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Text(
+                    widget.word!.word,
+                    style: TextStyle(fontSize: size.height * 0.06),
                   ),
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Text(
-                      widget.word!.word,
-                      style: TextStyle(fontSize: size.height * 0.06),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Wrap(
+                      direction: Axis.horizontal,
+                      runSpacing: 5,
+                      spacing: 10,
+                      children:
+                          List.generate(widget.word!.synonyms!.length, (index) {
+                        String synonym = widget.word!.synonyms![index];
+                        return Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                                color: Colors.lightBlue.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(20)),
+                            child: Text(synonym));
+                      }),
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Wrap(
-                        direction: Axis.horizontal,
-                        runSpacing: 5,
-                        spacing: 10,
-                        children: List.generate(widget.word!.synonyms!.length,
-                            (index) {
-                          String synonym = widget.word!.synonyms![index];
-                          return Container(
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                  color: Colors.lightBlue.withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(20)),
-                              child: Text(synonym));
-                        }),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  // length > 0
-                  //     ?
-                  ValueListenableBuilder<bool>(
-                      valueListenable: editModeNotifier,
-                      builder:
-                          (BuildContext context, bool editMode, Widget? child) {
-                        return GestureDetector(
-                          onTap: () {
-                            editModeNotifier.value = true;
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: AnimatedBuilder(
-                              animation: _animation,
-                              builder: (BuildContext _, Widget? child) {
-                                meaning = widget.word!.meaning
-                                    .substring(0, _animation.value);
-                                textEditingController.text = meaning;
-                                return Column(
-                                  children: [
-                                    TextField(
-                                        controller: textEditingController,
-                                        readOnly: !editMode,
-                                        maxLines: 5,
-                                        autofocus: false,
-                                        onChanged: (x) {
-                                          edited = x;
-                                        },
-                                        onTap: () {
-                                          editModeNotifier.value = true;
-                                        },
-                                        decoration: InputDecoration(
-                                            hintText: "Add a meaning",
-                                            focusedBorder: InputBorder.none,
-                                            border: InputBorder.none),
-                                        style: TextStyle(fontSize: 20)),
-                                  ],
-                                );
-                              },
-                            ),
+                  ],
+                ),
+                SizedBox(
+                  height: 50,
+                ),
+                ValueListenableBuilder<bool>(
+                    valueListenable: editModeNotifier,
+                    builder:
+                        (BuildContext context, bool editMode, Widget? child) {
+                      return GestureDetector(
+                        onTap: () {
+                          editModeNotifier.value = true;
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: AnimatedBuilder(
+                            animation: _animation,
+                            builder: (BuildContext _, Widget? child) {
+                              meaning = widget.word!.meaning
+                                  .substring(0, _animation.value);
+                              textEditingController.text = meaning;
+                              return Column(
+                                children: [
+                                  TextField(
+                                      controller: textEditingController,
+                                      readOnly: !editMode,
+                                      maxLines: 5,
+                                      autofocus: false,
+                                      onChanged: (x) {
+                                        edited = x;
+                                      },
+                                      onTap: () {
+                                        editModeNotifier.value = true;
+                                      },
+                                      decoration: InputDecoration(
+                                          hintText: "Add a meaning",
+                                          focusedBorder: InputBorder.none,
+                                          border: InputBorder.none),
+                                      style: TextStyle(fontSize: 20)),
+                                ],
+                              );
+                            },
                           ),
-                        );
-                      })
-                  // : Container(),
-                  // Text(widget.word!.meaning)
-                ],
-              ),
+                        ),
+                      );
+                    })
+              ],
             ),
           );
   }

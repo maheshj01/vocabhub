@@ -28,9 +28,9 @@ part 'word_model.g.dart';
 class Word {
   final String id;
   final String word;
-  final String meaning;
-  final List<String>? synonyms;
-  final List<String>? antonyms;
+  String meaning;
+  List<String>? synonyms;
+  List<String>? antonyms;
   final String? note;
 
   Word(this.id, this.word, this.meaning,

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class SearchBuilder extends StatefulWidget {
-  const SearchBuilder({Key? key}) : super(key: key);
+  final Function(String) onChanged;
+  
+  const SearchBuilder({Key? key, required this.onChanged}) : super(key: key);
 
   @override
   _SearchBuilderState createState() => _SearchBuilderState();
@@ -13,9 +15,7 @@ class _SearchBuilderState extends State<SearchBuilder> {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: TextField(
-          onChanged: (x) {
-            setState(() {});
-          },
+          onChanged: (x)=>widget.onChanged(x),
           decoration: InputDecoration(hintText: "Search Word"),
         ));
   }
