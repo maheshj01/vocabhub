@@ -28,8 +28,13 @@ part 'word_model.g.dart';
 class Word {
   final String id;
   final String word;
+  final String meaning;
+  final List<String>? synonyms;
+  final List<String>? antonyms;
+  final String? note;
 
-  Word(this.id, this.word);
+  Word(this.id, this.word, this.meaning,
+      {this.synonyms, this.antonyms, this.note});
   factory Word.fromJson(Map<String, dynamic> json) => _$WordFromJson(json);
   Map<String, dynamic> toJson() => _$WordToJson(this);
 }

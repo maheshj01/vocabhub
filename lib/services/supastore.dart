@@ -6,7 +6,7 @@ import 'package:vocabhub/secrets.dart';
 import 'package:postgrest/postgrest.dart';
 
 class SupaStore {
-  static String tableName = 'vocabhub';
+  static String tableName = 'vocabsheet';
   final _logger = log.Logger();
   final SupabaseClient _supabase = SupabaseClient("$CONFIG_URL", "$APIkey");
 

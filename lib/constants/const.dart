@@ -2,3 +2,4 @@
 
 const BASE_URL = '';
 const CONFIG_URL = 'https://bisasplfdnyiiggonpcx.supabase.co';
+const MOBILE_WIDTH = 600.0;
