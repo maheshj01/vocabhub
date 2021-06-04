@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/services/supastore.dart';
+import 'package:vocabhub/widgets/synonymslist.dart';
 
 class WordDetail extends StatefulWidget {
   final Word? word;
@@ -119,27 +120,8 @@ class _WordDetailState extends State<WordDetail>
                 SizedBox(
                   height: 20,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Wrap(
-                      direction: Axis.horizontal,
-                      runSpacing: 5,
-                      spacing: 10,
-                      children:
-                          List.generate(widget.word!.synonyms!.length, (index) {
-                        String synonym = widget.word!.synonyms![index];
-                        return Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                                color: Colors.lightBlue.withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(20)),
-                            child: Text(synonym));
-                      }),
-                    ),
-                  ],
+                SynonymsList(
+                  synonyms: widget.word!.synonyms,
                 ),
                 SizedBox(
                   height: 50,
