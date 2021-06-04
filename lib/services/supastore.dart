@@ -53,12 +53,15 @@ class SupaStore {
     return response;
   }
 
-  Future<PostgrestResponse> update({
+  Future<PostgrestResponse> updateMeaning({
     required String id,
     required Map<String, dynamic> json,
   }) async {
-    final response =
-        await _supabase.from(tableName).update(json).eq('id', id).execute();
+    final response = await _supabase
+        .from(tableName)
+        .update({"id": "$id"})
+        .eq("meaning", json['meaning'])
+        .execute();
     _logger.i(response.toJson());
     return response;
   }

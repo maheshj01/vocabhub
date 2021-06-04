@@ -6,7 +6,8 @@ class WordTile extends StatefulWidget {
   final bool isMobile;
   final Function(Word)? onSelect;
 
-  const WordTile({Key? key, required this.word,this.onSelect,this.isMobile = false})
+  const WordTile(
+      {Key? key, required this.word, this.onSelect, this.isMobile = false})
       : super(key: key);
 
   @override
@@ -29,10 +30,10 @@ class _WordTileState extends State<WordTile> {
             ],
           )
         : GestureDetector(
-          onTap: ()=>widget.onSelect!(widget.word),
-          child: ListTile(
+            onTap: () => widget.onSelect!(widget.word),
+            child: ListTile(
               title: Text(widget.word.word),
             ),
-        );
+          );
   }
 }
