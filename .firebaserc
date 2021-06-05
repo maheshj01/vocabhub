@@ -2,5 +2,17 @@
   "projects": {
     "default": "vocabhub-34c7f",
     "production": "vocabhub-34c7f"
+  },
+  "targets": {
+    "vocabhub-34c7f": {
+      "hosting": {
+         "vocab": [
+          "vocabhub"
+        ],
+        "words": [
+          "wordshub"
+        ]
+      }
+    }
   }
 }

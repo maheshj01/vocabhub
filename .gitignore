@@ -105,3 +105,4 @@ macos/**/xcuserdata/
 ios/Flutter/Debug.xcconfig
 ios/Flutter/Release.xcconfig
 secrets.dart
+lib/pages/home.dart
