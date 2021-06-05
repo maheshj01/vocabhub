@@ -68,6 +68,7 @@ class _WordDetailState extends State<WordDetail>
       _animationController.duration = Duration(seconds: 3);
     }
     textEditingController.clear();
+    editModeNotifier.value = false;
     unfocus();
     _tween.end = length;
     _animationController.reset();
@@ -109,8 +110,7 @@ class _WordDetailState extends State<WordDetail>
               editModeNotifier.value = false;
               unfocus();
             },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: ListView(
               children: [
                 SizedBox(
                   height: size.height / 5,
