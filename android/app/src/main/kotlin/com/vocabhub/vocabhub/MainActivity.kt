@@ -1,4 +1,4 @@
-package com.vocabhub.app
+package com.vocabhub.vocabhub
 
 import io.flutter.embedding.android.FlutterActivity
 
