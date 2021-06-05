@@ -1,11 +1,11 @@
 {
-    "name": "flutter_create",
-    "short_name": "flutter_create",
+    "name": "Vocabhub",
+    "short_name": "Vocabhub",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "An App to help build your vocabulary.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
