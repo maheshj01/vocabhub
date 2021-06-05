@@ -4,6 +4,7 @@ import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/secrets.dart';
 import 'package:postgrest/postgrest.dart';
+import 'package:vocabhub/services/secrets.dart';
 
 class SupaStore {
   static String tableName = 'vocabsheet';
