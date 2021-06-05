@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "vocabhub-34c7f"
+    "default": "vocabhub-34c7f",
+    "production": "vocabhub-34c7f"
   }
 }
