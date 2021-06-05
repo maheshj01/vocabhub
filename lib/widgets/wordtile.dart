@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
+import 'package:vocabhub/utils/extensions.dart';
 
 class WordTile extends StatefulWidget {
   final Word word;
   final bool isMobile;
   final Function(Word)? onSelect;
+  final bool isSelected;
 
   const WordTile(
-      {Key? key, required this.word, this.onSelect, this.isMobile = false})
+      {Key? key,
+      required this.word,
+      this.onSelect,
+      this.isSelected = false,
+      this.isMobile = false})
       : super(key: key);
 
   @override
@@ -22,7 +29,7 @@ class _WordTileState extends State<WordTile> {
         ? ExpansionTile(
             expandedAlignment: Alignment.centerLeft,
             expandedCrossAxisAlignment: CrossAxisAlignment.start,
-            title: Text(widget.word.word),
+            title: Text(widget.word.word.capitalize()),
             children: [
               Padding(
                 padding:
@@ -40,8 +47,15 @@ class _WordTileState extends State<WordTile> {
           )
         : GestureDetector(
             onTap: () => widget.onSelect!(widget.word),
-            child: ListTile(
-              title: Text(widget.word.word),
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: ListTile(
+                title: Text(widget.word.word.capitalize()),
+                hoverColor: Colors.lightBlue.withOpacity(0.2),
+                tileColor: widget.isSelected
+                    ? Colors.blue.withOpacity(0.5)
+                    : Colors.transparent,
+              ),
             ),
           );
   }

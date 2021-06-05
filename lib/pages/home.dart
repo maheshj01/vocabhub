@@ -99,6 +99,7 @@ class _ListBuilderState extends State<ListBuilder> {
 
   List<Word> supaStoreWords = [];
   final ValueNotifier<List<Word>?> listNotifier = ValueNotifier<List<Word>>([]);
+  String selectedWord = '';
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -134,7 +135,14 @@ class _ListBuilderState extends State<ListBuilder> {
                       return WordTile(
                           word: value[x],
                           isMobile: size.width < MOBILE_WIDTH,
-                          onSelect: (word) => widget.onSelect!(word));
+                          isSelected: selectedWord.toLowerCase() ==
+                              value[x].word.toLowerCase(),
+                          onSelect: (word) {
+                            setState(() {
+                              selectedWord = word.word;
+                            });
+                            widget.onSelect!(word);
+                          });
                     }),
               ),
             ],

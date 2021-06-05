@@ -6,6 +6,7 @@ import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
 import 'package:vocabhub/widgets/widgets.dart';
+import 'package:vocabhub/utils/extensions.dart';
 
 class WordDetail extends StatefulWidget {
   final Word? word;
@@ -127,7 +128,7 @@ class _WordDetailState extends State<WordDetail>
                     child: MouseRegion(
                       cursor: SystemMouseCursors.click,
                       child: Text(
-                        widget.word!.word,
+                        widget.word!.word.capitalize(),
                         style: TextStyle(fontSize: size.height * 0.06),
                       ),
                     ),

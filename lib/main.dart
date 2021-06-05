@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
             title: '$APP_TITLE',
             debugShowCheckedModeBanner: kDebugMode,
             darkTheme: ThemeData.dark(),
-            theme: ThemeData(primaryColor: Colors.red),
+            theme: ThemeData(primaryColor: Colors.blueAccent),
             themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
             home: MyHomePage(title: '$APP_TITLE'),
           );
