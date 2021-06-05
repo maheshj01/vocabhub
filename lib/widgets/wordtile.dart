@@ -29,7 +29,6 @@ class _WordTileState extends State<WordTile> {
                     const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16),
                 child: SynonymsList(
                   synonyms: widget.word.synonyms,
-                  mainAxisAlignment: MainAxisAlignment.start,
                 ),
               ),
               Padding(

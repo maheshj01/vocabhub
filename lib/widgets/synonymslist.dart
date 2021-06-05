@@ -1,38 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/main.dart';
 
 class SynonymsList extends StatelessWidget {
   final List<String>? synonyms;
-  MainAxisAlignment mainAxisAlignment;
-  SynonymsList(
-      {Key? key,
-      this.synonyms,
-      this.mainAxisAlignment = MainAxisAlignment.center})
-      : super(key: key);
+  SynonymsList({
+    Key? key,
+    this.synonyms,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return synonyms!.isEmpty
         ? SizedBox(height: 20)
-        : Row(
-            mainAxisAlignment: mainAxisAlignment,
-            children: [
-              Wrap(
-                direction: Axis.horizontal,
-                runSpacing: 5,
-                spacing: 10,
-                children: List.generate(synonyms!.length, (index) {
-                  String synonym = synonyms![index];
-                  return Container(
-                      alignment: Alignment.center,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                          color: Colors.lightBlue.withOpacity(0.5),
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Text(synonym));
-                }),
-              ),
-            ],
+        : Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.symmetric(
+                horizontal: size.width > MOBILE_WIDTH ? 12.0 : 8.0),
+            child: Wrap(
+              direction: Axis.horizontal,
+              runSpacing: 5,
+              spacing: 10,
+              children: List.generate(synonyms!.length, (index) {
+                String synonym = synonyms![index];
+                return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                      color:
+                          darkNotifier.value ? Colors.white : Colors.blueAccent,
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Text('$synonym',
+                      style: TextStyle(
+                          color: darkNotifier.value
+                              ? Colors.black
+                              : Colors.white)),
+                );
+              }),
+            ),
           );
   }
 }
