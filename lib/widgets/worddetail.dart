@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/services/supastore.dart';
+import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
@@ -59,6 +62,11 @@ class _WordDetailState extends State<WordDetail>
         length = widget.word!.meaning.length;
       });
     }
+    if (length < 30) {
+      _animationController.duration = Duration(seconds: 1);
+    } else {
+      _animationController.duration = Duration(seconds: 3);
+    }
     textEditingController.clear();
     unfocus();
     _tween.end = length;
@@ -85,18 +93,6 @@ class _WordDetailState extends State<WordDetail>
 
   void unfocus() => FocusScope.of(context).unfocus();
 
-  void showMessage(BuildContext context, String message,
-      {Duration duration = const Duration(seconds: 2),
-      void Function()? onPressed}) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('$message'),
-      duration: duration,
-      action: onPressed == null
-          ? null
-          : SnackBarAction(label: 'ACTION', onPressed: onPressed),
-    ));
-  }
-
   late String edited;
   late String meaning;
   late SupaStore supaStore;
@@ -121,9 +117,20 @@ class _WordDetailState extends State<WordDetail>
                 ),
                 Align(
                   alignment: Alignment.topCenter,
-                  child: Text(
-                    widget.word!.word,
-                    style: TextStyle(fontSize: size.height * 0.06),
+                  child: GestureDetector(
+                    onTap: () async {
+                      await Clipboard.setData(
+                          ClipboardData(text: "${widget.word!.word}"));
+                      showMessage(context,
+                          " copied ${widget.word!.word} to clipboard.");
+                    },
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: Text(
+                        widget.word!.word,
+                        style: TextStyle(fontSize: size.height * 0.06),
+                      ),
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -154,9 +161,13 @@ class _WordDetailState extends State<WordDetail>
                                 AnimatedContainer(
                                   padding: const EdgeInsets.all(16.0),
                                   duration: Duration(seconds: 1),
-                                  color: editMode
-                                      ? Colors.black12
-                                      : Colors.transparent,
+                                  margin: EdgeInsets.symmetric(horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: editMode
+                                          ? Colors.grey.withOpacity(0.08)
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(
+                                          editMode ? 20 : 0)),
                                   child: TextField(
                                       controller: textEditingController,
                                       readOnly: !editMode,
