@@ -30,7 +30,6 @@ class SupaStore {
         .contains('words', word)
         .execute();
     List<Word> words = [];
-    print('fetching');
     if (response.status == 200) {
       words = (response.data as List).map((e) => Word.fromJson(e)).toList();
     }
@@ -41,7 +40,6 @@ class SupaStore {
   Future<List<Word>> findAll() async {
     final response = await _supabase.from(tableName).select("*").execute();
     List<Word> words = [];
-    print('fetching');
     if (response.status == 200) {
       words = (response.data as List).map((e) => Word.fromJson(e)).toList();
     }

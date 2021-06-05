@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
+import 'package:vocabhub/widgets/widgets.dart';
 
 class WordDetail extends StatefulWidget {
   final Word? word;
@@ -66,20 +67,35 @@ class _WordDetailState extends State<WordDetail>
   }
 
   Future<void> updateMeaning() async {
-    meaning = edited;
-    textEditingController.text = edited;
-    String id = widget.word!.id;
-    Word word = widget.word!;
-    word.meaning = edited;
-    final response = await supaStore.updateMeaning(id: id, word: word);
-    if (response.status == 200) {
-      print("updated");
-    } else {
-      print('failed to update ${response.error!.message}');
+    if (edited.isNotEmpty) {
+      meaning = edited;
+      textEditingController.text = edited;
+      String id = widget.word!.id;
+      Word word = widget.word!;
+      word.meaning = edited;
+      final response = await supaStore.updateMeaning(id: id, word: word);
+      stopCircularIndicator(context);
+      if (response.status == 200) {
+        showMessage(context, " meaning of word ${word.word} updated.");
+      } else {
+        print('failed to update ${response.error!.message}');
+      }
     }
   }
 
   void unfocus() => FocusScope.of(context).unfocus();
+
+  void showMessage(BuildContext context, String message,
+      {Duration duration = const Duration(seconds: 2),
+      void Function()? onPressed}) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('$message'),
+      duration: duration,
+      action: onPressed == null
+          ? null
+          : SnackBarAction(label: 'ACTION', onPressed: onPressed),
+    ));
+  }
 
   late String edited;
   late String meaning;
@@ -96,13 +112,6 @@ class _WordDetailState extends State<WordDetail>
             onTap: () async {
               editModeNotifier.value = false;
               unfocus();
-              if (edited != meaning &&
-                  _animationController.status == AnimationStatus.completed) {
-                /// TODO: Update meaning
-                length = edited.length;
-                _tween.end = length;
-                updateMeaning();
-              }
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,17 +143,21 @@ class _WordDetailState extends State<WordDetail>
                         onTap: () {
                           editModeNotifier.value = true;
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: AnimatedBuilder(
-                            animation: _animation,
-                            builder: (BuildContext _, Widget? child) {
-                              meaning = widget.word!.meaning
-                                  .substring(0, _animation.value);
-                              textEditingController.text = meaning;
-                              return Column(
-                                children: [
-                                  TextField(
+                        child: AnimatedBuilder(
+                          animation: _animation,
+                          builder: (BuildContext _, Widget? child) {
+                            meaning = widget.word!.meaning
+                                .substring(0, _animation.value);
+                            textEditingController.text = meaning;
+                            return Column(
+                              children: [
+                                AnimatedContainer(
+                                  padding: const EdgeInsets.all(16.0),
+                                  duration: Duration(seconds: 1),
+                                  color: editMode
+                                      ? Colors.black12
+                                      : Colors.transparent,
+                                  child: TextField(
                                       controller: textEditingController,
                                       readOnly: !editMode,
                                       maxLines: 5,
@@ -160,10 +173,42 @@ class _WordDetailState extends State<WordDetail>
                                           focusedBorder: InputBorder.none,
                                           border: InputBorder.none),
                                       style: TextStyle(fontSize: 20)),
-                                ],
-                              );
-                            },
-                          ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                AnimatedAlign(
+                                  alignment: editMode
+                                      ? Alignment.center
+                                      : Alignment.centerRight,
+                                  duration: Duration(milliseconds: 400),
+                                  child: AnimatedOpacity(
+                                    duration: Duration(seconds: 1),
+                                    opacity: editMode ? 1.0 : 0.0,
+                                    child: ElevatedButton(
+                                      child: Text('Save'),
+                                      onPressed: editMode
+                                          ? () {
+                                              editModeNotifier.value = false;
+                                              unfocus();
+                                              showCircularIndicator(context);
+                                              if (edited != meaning &&
+                                                  _animationController.status ==
+                                                      AnimationStatus
+                                                          .completed) {
+                                                /// TODO: Update meaning
+                                                length = edited.length;
+                                                _tween.end = length;
+                                                updateMeaning();
+                                              }
+                                            }
+                                          : null,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            );
+                          },
                         ),
                       );
                     })
