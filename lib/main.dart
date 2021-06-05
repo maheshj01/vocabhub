@@ -7,17 +7,22 @@ void main() {
   runApp(MyApp());
 }
 
+final ValueNotifier<bool> darkNotifier = ValueNotifier<bool>(false);
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '$APP_TITLE',
-      debugShowCheckedModeBanner: kDebugMode,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: '$APP_TITLE'),
-    );
+    return ValueListenableBuilder<bool>(
+        valueListenable: darkNotifier,
+        builder: (context, bool isDark, Widget? child) {
+          return MaterialApp(
+            title: '$APP_TITLE',
+            debugShowCheckedModeBanner: kDebugMode,
+            darkTheme: ThemeData.dark(),
+            theme: ThemeData.light(),
+            themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
+            home: MyHomePage(title: '$APP_TITLE'),
+          );
+        });
   }
 }

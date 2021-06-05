@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/constants.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/widgets/search.dart';
@@ -19,18 +20,31 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String query = '';
   Word? selected;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    darkNotifier.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (_, constraints) {
       return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            darkNotifier.value = !darkNotifier.value;
+          },
+          child: Icon(!darkNotifier.value
+              ? Icons.brightness_2_outlined
+              : Icons.wb_sunny_rounded),
         ),
         body: Row(
           children: [
             constraints.maxWidth > MOBILE_WIDTH
                 ? Expanded(
-                    flex: 2,
+                    flex: constraints.maxWidth < TABLET_WIDTH ? 3 : 2,
                     child: ListBuilder(
                       onSelect: (x) {
                         setState(() {
