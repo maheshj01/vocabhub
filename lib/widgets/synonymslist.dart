@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/utils/extensions.dart';
 
 class SynonymsList extends StatelessWidget {
   final List<String>? synonyms;
@@ -23,7 +24,7 @@ class SynonymsList extends StatelessWidget {
               runSpacing: 5,
               spacing: 10,
               children: List.generate(synonyms!.length, (index) {
-                String synonym = synonyms![index];
+                String synonym = synonyms![index].capitalize();
                 return Container(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(

@@ -191,30 +191,35 @@ class _WordDetailState extends State<WordDetail>
                                 ),
                                 AnimatedAlign(
                                   alignment: editMode
-                                      ? Alignment.center
-                                      : Alignment.centerRight,
+                                      ? Alignment(0.0, 0.0)
+                                      : Alignment(1.2, 0.0),
                                   duration: Duration(milliseconds: 400),
                                   child: AnimatedOpacity(
                                     duration: Duration(seconds: 1),
                                     opacity: editMode ? 1.0 : 0.0,
-                                    child: ElevatedButton(
-                                      child: Text('Save'),
-                                      onPressed: editMode
-                                          ? () {
-                                              editModeNotifier.value = false;
-                                              unfocus();
-                                              showCircularIndicator(context);
-                                              if (edited != meaning &&
-                                                  _animationController.status ==
-                                                      AnimationStatus
-                                                          .completed) {
-                                                /// TODO: Update meaning
-                                                length = edited.length;
-                                                _tween.end = length;
-                                                updateMeaning();
+                                    child: Container(
+                                      width: 100,
+                                      height: 40,
+                                      child: ElevatedButton(
+                                        child: Text('Save'),
+                                        onPressed: editMode
+                                            ? () {
+                                                editModeNotifier.value = false;
+                                                unfocus();
+                                                showCircularIndicator(context);
+                                                if (edited != meaning &&
+                                                    _animationController
+                                                            .status ==
+                                                        AnimationStatus
+                                                            .completed) {
+                                                  /// TODO: Update meaning
+                                                  length = edited.length;
+                                                  _tween.end = length;
+                                                  updateMeaning();
+                                                }
                                               }
-                                            }
-                                          : null,
+                                            : null,
+                                      ),
                                     ),
                                   ),
                                 )
