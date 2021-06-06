@@ -1,15 +1,13 @@
 # Vocabhub
 
 A vocab app built with Flutter and Supabase
-[Live version here](https://wordshub.web.app/#/) 
+[Live version here](https://vocabhub.netlify.app/)
 
 ![image](https://user-images.githubusercontent.com/31410839/120900881-131b2d00-c655-11eb-8c00-6aafade70d29.png)
-
 
 ## Contributing
 
 Feel Free to contribute to this app, Data being collected from [this sheet](https://docs.google.com/spreadsheets/d/1G1RtQfsEDqHhHP4cgOpO9x_ZtQ1dYa6QrGCq3KFlu50/edit#gid=0). Contribution does not necessarily mean sending a pull request you could also contribute by improving the sheet.
- 
 
 ## Getting Started
 
