@@ -121,7 +121,10 @@ class _ListBuilderState extends State<ListBuilder> {
                   }
                   List<Word> result = [];
                   supaStoreWords.forEach((element) {
-                    if (element.word.toLowerCase().contains(x.toLowerCase())) {
+                    if (element.word.toLowerCase().contains(x.toLowerCase()) ||
+                        element.meaning
+                            .toLowerCase()
+                            .contains(x.toLowerCase())) {
                       result.add(element);
                     }
                   });
