@@ -2,12 +2,11 @@ import 'package:supabase/supabase.dart';
 import 'package:logger/logger.dart' as log;
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/word_model.dart';
-import 'package:vocabhub/secrets.dart';
 import 'package:postgrest/postgrest.dart';
 import 'package:vocabhub/services/secrets.dart';
 
 class SupaStore {
-  static String tableName = 'vocabsheet';
+  static String tableName = '$TABLE_NAME';
   final _logger = log.Logger();
   final SupabaseClient _supabase = SupabaseClient("$CONFIG_URL", "$APIkey");
 
@@ -15,7 +14,7 @@ class SupaStore {
     final response = await _supabase
         .from(tableName)
         .select()
-        .eq('id', id)
+        .eq('$ID_COLUMN', id)
         .single()
         .execute();
     return response;
@@ -28,7 +27,7 @@ class SupaStore {
     final response = await _supabase
         .from(tableName)
         .select("*")
-        .contains('words', word)
+        .contains('$WORD_COLUMN', word)
         .execute();
     List<Word> words = [];
     if (response.status == 200) {
@@ -58,8 +57,8 @@ class SupaStore {
   }) async {
     final response = await _supabase
         .from(tableName)
-        .update({"meaning": word.meaning})
-        .eq("id", "$id")
+        .update({"$MEANING_COLUMN": word.meaning})
+        .eq("$ID_COLUMN", "$id")
         .execute();
     _logger.i(response.toJson());
     return response;
@@ -68,7 +67,7 @@ class SupaStore {
   Future<PostgrestResponse> deleteById(String id) async {
     _logger.i(tableName);
     final response =
-        await _supabase.from(tableName).delete().eq('id', id).execute();
+        await _supabase.from(tableName).delete().eq('$ID_COLUMN', id).execute();
     _logger.i(response.toJson());
     return response;
   }
