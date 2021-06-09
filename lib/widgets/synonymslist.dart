@@ -31,7 +31,7 @@ class SynonymsList extends StatelessWidget {
                       color:
                           darkNotifier.value ? Colors.white : Colors.blueAccent,
                       borderRadius: BorderRadius.circular(20)),
-                  child: Text('$synonym',
+                  child: Text('${synonym.trim()}',
                       style: TextStyle(
                           color: darkNotifier.value
                               ? Colors.black

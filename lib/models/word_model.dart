@@ -31,10 +31,11 @@ class Word {
   String meaning;
   List<String>? synonyms;
   List<String>? antonyms;
+  List<String>? examples;
   final String? note;
 
   Word(this.id, this.word, this.meaning,
-      {this.synonyms, this.antonyms, this.note});
+      {this.synonyms, this.antonyms, this.note, this.examples});
   factory Word.fromJson(Map<String, dynamic> json) => _$WordFromJson(json);
   Map<String, dynamic> toJson() => _$WordToJson(this);
 }
