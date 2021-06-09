@@ -20,9 +20,8 @@ Word _$WordFromJson(Map<String, dynamic> json) {
             .toList()
         : [],
     note: json['note'] as String?,
-    examples: (json['examples']?.split(';').toList() as List<dynamic>?)
-        ?.map((e) => e as String)
-        .toList(),
+    examples:
+        (json['examples'] as List<dynamic>?)?.map((e) => e as String).toList(),
   );
 }
 
