@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/utils/extensions.dart';
 
 class SynonymsList extends StatelessWidget {
@@ -25,17 +27,27 @@ class SynonymsList extends StatelessWidget {
               spacing: 10,
               children: List.generate(synonyms!.length, (index) {
                 String synonym = synonyms![index].capitalize();
-                return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                      color:
-                          darkNotifier.value ? Colors.white : Colors.blueAccent,
-                      borderRadius: BorderRadius.circular(20)),
-                  child: Text('${synonym.trim()}',
-                      style: TextStyle(
+                return MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () {
+                      searchController.text = synonym.trim();
+                    },
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
                           color: darkNotifier.value
-                              ? Colors.black
-                              : Colors.white)),
+                              ? Colors.white
+                              : Colors.blueAccent,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Text('${synonym.trim()}',
+                          style: TextStyle(
+                              color: darkNotifier.value
+                                  ? Colors.black
+                                  : Colors.white)),
+                    ),
+                  ),
                 );
               }),
             ),

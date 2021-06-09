@@ -8,6 +8,8 @@ import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
 import 'package:vocabhub/widgets/wordtile.dart';
 
+TextEditingController searchController = TextEditingController();
+
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
@@ -25,6 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     // TODO: implement dispose
     darkNotifier.dispose();
+    searchController.dispose();
     super.dispose();
   }
 
