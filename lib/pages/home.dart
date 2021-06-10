@@ -3,6 +3,7 @@ import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/services/supastore.dart';
+import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/search.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
@@ -35,6 +36,33 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (_, constraints) {
       return Scaffold(
+        drawer: constraints.maxWidth <= MOBILE_WIDTH ? Drawer() : null,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          iconTheme: Theme.of(context).iconTheme,
+          centerTitle: constraints.maxWidth <= MOBILE_WIDTH ? true : false,
+          title: Text(
+            '$APP_TITLE',
+            style: TextStyle(color: primaryBlue),
+          ),
+          actions: [
+            constraints.maxWidth <= MOBILE_WIDTH
+                ? Container()
+                : IconButton(
+                    icon: Image.asset('assets/github.png'),
+                    onPressed: () {
+                      launchUrl(SOURCE_CODE_URL, isNewTab: false);
+                    },
+                  ),
+            IconButton(
+              icon: Icon(
+                Icons.add,
+                color: Colors.blue,
+              ),
+              onPressed: () {},
+            )
+          ],
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             darkNotifier.value = !darkNotifier.value;

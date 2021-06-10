@@ -1,13 +1,5 @@
+import 'dart:js' as js;
 import 'package:flutter/material.dart';
-
-/**
- * 
- * A utility class containing all the helper functions
- * to keep your code clean and readable and helping to maintain
- * the Single responsibility princple
- */
-
-int squareOfNumber(int x) => x * x;
 
 void showMessage(BuildContext context, String message,
     {Duration duration = const Duration(seconds: 2),
@@ -19,4 +11,8 @@ void showMessage(BuildContext context, String message,
         ? null
         : SnackBarAction(label: 'ACTION', onPressed: onPressed),
   ));
+}
+
+void launchUrl(String url, {bool isNewTab = true}) {
+  js.context.callMethod('open', ['$url', isNewTab ? '_blank' : '_self']);
 }

@@ -2,6 +2,7 @@
 
 const BASE_URL = '';
 const CONFIG_URL = 'https://bisasplfdnyiiggonpcx.supabase.co';
+const SOURCE_CODE_URL = 'https://github.com/maheshmnj/vocabhub';
 const MOBILE_WIDTH = 500.0;
 const TABLET_WIDTH = 800.0;
 const TABLE_NAME = 'vocabsheet';
