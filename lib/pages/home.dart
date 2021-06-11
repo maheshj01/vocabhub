@@ -35,6 +35,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = darkNotifier.value;
+
+    Widget actionIcon(IconData data, String url, {String toolTip = ''}) {
+      return IconButton(
+          tooltip: toolTip,
+          icon: Icon(
+            data,
+            color: isDark ? Colors.white : Colors.black.withOpacity(0.75),
+          ),
+          onPressed: () {
+            launchUrl(url);
+          });
+    }
+
     return LayoutBuilder(builder: (_, constraints) {
       return Scaffold(
         drawer: constraints.maxWidth <= MOBILE_WIDTH
@@ -43,46 +57,40 @@ class _MyHomePageState extends State<MyHomePage> {
               )
             : null,
         appBar: AppBar(
-          backgroundColor: darkNotifier.value ? null : Colors.white,
+          backgroundColor: isDark ? null : Colors.white,
           iconTheme: Theme.of(context).iconTheme,
           centerTitle: constraints.maxWidth <= MOBILE_WIDTH ? true : false,
           title: Text(
             '$APP_TITLE',
-            style: TextStyle(
-                color: darkNotifier.value ? Colors.white : primaryColor),
+            style: TextStyle(color: isDark ? Colors.white : primaryColor),
           ),
           actions: [
             constraints.maxWidth <= MOBILE_WIDTH
                 ? Container()
                 : IconButton(
                     icon: Image.asset(
-                      !darkNotifier.value
+                      !isDark
                           ? '$GITHUB_ASSET_PATH'
                           : '$GITHUB_WHITE_ASSET_PATH',
+                      scale: 2.0,
                     ),
                     tooltip: 'Github',
                     onPressed: () {
                       launchUrl(SOURCE_CODE_URL, isNewTab: true);
                     },
                   ),
-            IconButton(
-              tooltip: 'Add a word',
-              icon: Icon(
-                Icons.add,
-              ),
-              onPressed: () {},
-            )
+            actionIcon(Icons.insert_drive_file, SHEET_URL,
+                toolTip: 'Contribute'),
+            actionIcon(Icons.help, REPORT_URL, toolTip: 'Report'),
           ],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             darkNotifier.value = !darkNotifier.value;
           },
-          backgroundColor:
-              darkNotifier.value ? Colors.cyanAccent : primaryColor,
-          child: Icon(!darkNotifier.value
-              ? Icons.brightness_2_outlined
-              : Icons.wb_sunny_rounded),
+          backgroundColor: isDark ? Colors.cyanAccent : primaryColor,
+          child: Icon(
+              !isDark ? Icons.brightness_2_outlined : Icons.wb_sunny_rounded),
         ),
         body: Row(
           children: [
@@ -91,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     flex: constraints.maxWidth < TABLET_WIDTH ? 4 : 3,
                     child: Container(
                       decoration: BoxDecoration(
-                          color: darkNotifier.value
+                          color: isDark
                               ? Colors.grey.withOpacity(0.5)
                               : Colors.white,
                           boxShadow: [
