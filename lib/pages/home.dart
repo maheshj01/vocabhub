@@ -110,10 +110,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ))
                 : Container(),
-            // Container(
-            //   width: 0.5,
-            //   color: Colors.grey.withOpacity(0.5),
-            // ),
             Expanded(
                 flex: 6,
                 child: constraints.maxWidth > MOBILE_WIDTH

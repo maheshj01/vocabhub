@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:vocabhub/constants/colors.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/pages/home.dart';
@@ -39,7 +40,7 @@ class SynonymsList extends StatelessWidget {
                       decoration: BoxDecoration(
                           color: darkNotifier.value
                               ? Colors.white
-                              : Colors.blueAccent,
+                              : secondaryColor,
                           borderRadius: BorderRadius.circular(20)),
                       child: Text('${synonym.trim()}',
                           style: TextStyle(
