@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             constraints.maxWidth > MOBILE_WIDTH
                 ? Expanded(
-                    flex: constraints.maxWidth < TABLET_WIDTH ? 3 : 2,
+                    flex: constraints.maxWidth < TABLET_WIDTH ? 4 : 3,
                     child: Container(
                       decoration: BoxDecoration(
                           color: darkNotifier.value
@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ))
                 : Container(),
             Expanded(
-                flex: 6,
+                flex: 8,
                 child: constraints.maxWidth > MOBILE_WIDTH
                     ? WordDetail(
                         word: selected,
