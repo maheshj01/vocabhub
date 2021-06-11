@@ -192,7 +192,7 @@ class _WordsBuilderState extends State<WordsBuilder> {
                       itemBuilder: (_, x) {
                         return WordTile(
                             word: value[x],
-                            isMobile: size.width < MOBILE_WIDTH,
+                            isMobile: size.width <= MOBILE_WIDTH,
                             isSelected: selectedWord.toLowerCase() ==
                                 value[x].word.toLowerCase(),
                             onSelect: (word) {
