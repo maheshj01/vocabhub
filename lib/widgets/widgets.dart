@@ -21,3 +21,17 @@ class LoadingWidget extends StatelessWidget {
     return Center(child: CircularProgressIndicator());
   }
 }
+
+Widget hLine({Color? color}) {
+  return Container(
+    height: 0.4,
+    color: color ?? Colors.grey.withOpacity(0.5),
+  );
+}
+
+Widget vLine({Color? color}) {
+  return Container(
+    width: 0.4,
+    color: color ?? Colors.grey.withOpacity(0.5),
+  );
+}

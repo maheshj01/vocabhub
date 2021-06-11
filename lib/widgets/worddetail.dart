@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:vocabhub/exports.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -113,6 +114,24 @@ class _WordDetailState extends State<WordDetail>
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    bool isDark = darkNotifier.value;
+
+    Color? textfieldBgColor(bool editMode) {
+      if (editMode) {
+        if (isDark) {
+          return Colors.grey;
+        } else {
+          return Colors.grey[100];
+        }
+      } else {
+        if (isDark) {
+          return Colors.transparent;
+        } else {
+          return Colors.white12;
+        }
+      }
+    }
+
     return widget.word == null
         ? EmptyWord()
         : GestureDetector(
@@ -185,22 +204,25 @@ class _WordDetailState extends State<WordDetail>
                                       boxShadow: editMode
                                           ? [
                                               BoxShadow(
-                                                color: Colors.grey[100]!,
+                                                color: isDark
+                                                    ? primaryDark
+                                                    : Colors.grey[100]!,
                                                 // .withOpacity(0.2),
                                                 offset: Offset(-6.0, -6.0),
                                                 blurRadius: 16.0,
                                               ),
                                               BoxShadow(
-                                                color: Colors.black
-                                                    .withOpacity(0.1),
+                                                color: isDark
+                                                    ? Colors.black
+                                                        .withOpacity(0.2)
+                                                    : Colors.black
+                                                        .withOpacity(0.1),
                                                 offset: Offset(6.0, 6.0),
                                                 blurRadius: 16.0,
                                               ),
                                             ]
                                           : null,
-                                      color: editMode
-                                          ? Colors.grey[100]
-                                          : Colors.white12,
+                                      color: textfieldBgColor(editMode),
                                       borderRadius: BorderRadius.circular(
                                           editMode ? 12 : 0)),
                                   child: StatefulBuilder(
@@ -223,11 +245,11 @@ class _WordDetailState extends State<WordDetail>
                                                 ? null
                                                 : "Add a meaning",
                                             hintStyle: TextStyle(
-                                                fontSize: 16,
+                                                fontSize: 18,
                                                 color: Colors.grey),
                                             focusedBorder: InputBorder.none,
                                             border: InputBorder.none),
-                                        style: TextStyle(fontSize: 16)),
+                                        style: TextStyle(fontSize: 20)),
                                   ),
                                 ),
                                 hasError

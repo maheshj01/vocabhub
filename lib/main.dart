@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:vocabhub/pages/home.dart';
@@ -20,9 +21,16 @@ class VocabApp extends StatelessWidget {
             title: '$APP_TITLE',
             debugShowCheckedModeBanner: !kDebugMode,
             darkTheme: ThemeData.dark(),
+            color: primaryColor,
             theme: ThemeData(
-                primaryColor: Colors.blueAccent,
-                iconTheme: IconThemeData(color: primaryBlue)),
+              primaryColor: primaryColor,
+              iconTheme: IconThemeData(
+                  color: darkNotifier.value ? Colors.white : primaryColor),
+              cupertinoOverrideTheme: CupertinoThemeData(
+                primaryColor: primaryColor,
+              ),
+              cursorColor: primaryColor,
+            ),
             themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
             home: MyHomePage(title: '$APP_TITLE'),
           );

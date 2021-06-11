@@ -37,27 +37,38 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (_, constraints) {
       return Scaffold(
+        drawer: constraints.maxWidth <= MOBILE_WIDTH
+            ? Drawer(
+                child: DrawerBuilder(),
+              )
+            : null,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: darkNotifier.value ? null : Colors.white,
           iconTheme: Theme.of(context).iconTheme,
           centerTitle: constraints.maxWidth <= MOBILE_WIDTH ? true : false,
           title: Text(
             '$APP_TITLE',
-            style: TextStyle(color: primaryBlue),
+            style: TextStyle(
+                color: darkNotifier.value ? Colors.white : primaryColor),
           ),
           actions: [
             constraints.maxWidth <= MOBILE_WIDTH
                 ? Container()
                 : IconButton(
-                    icon: Image.asset('assets/github.png'),
+                    icon: Image.asset(
+                      !darkNotifier.value
+                          ? '$GITHUB_ASSET_PATH'
+                          : '$GITHUB_WHITE_ASSET_PATH',
+                    ),
+                    tooltip: 'Github',
                     onPressed: () {
                       launchUrl(SOURCE_CODE_URL, isNewTab: true);
                     },
                   ),
             IconButton(
+              tooltip: 'Add a word',
               icon: Icon(
                 Icons.add,
-                color: Colors.blue,
               ),
               onPressed: () {},
             )
@@ -67,6 +78,8 @@ class _MyHomePageState extends State<MyHomePage> {
           onPressed: () {
             darkNotifier.value = !darkNotifier.value;
           },
+          backgroundColor:
+              darkNotifier.value ? Colors.cyanAccent : primaryColor,
           child: Icon(!darkNotifier.value
               ? Icons.brightness_2_outlined
               : Icons.wb_sunny_rounded),
@@ -76,25 +89,38 @@ class _MyHomePageState extends State<MyHomePage> {
             constraints.maxWidth > MOBILE_WIDTH
                 ? Expanded(
                     flex: constraints.maxWidth < TABLET_WIDTH ? 3 : 2,
-                    child: ListBuilder(
-                      onSelect: (x) {
-                        setState(() {
-                          selected = x;
-                        });
-                      },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: darkNotifier.value
+                              ? Colors.grey.withOpacity(0.5)
+                              : Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                spreadRadius: 4,
+                                blurRadius: 4,
+                                color: Colors.grey.withOpacity(0.2),
+                                offset: Offset(1, 0))
+                          ]),
+                      child: WordsBuilder(
+                        onSelect: (x) {
+                          setState(() {
+                            selected = x;
+                          });
+                        },
+                      ),
                     ))
                 : Container(),
-            Container(
-              width: 0.5,
-              color: Colors.grey.withOpacity(0.5),
-            ),
+            // Container(
+            //   width: 0.5,
+            //   color: Colors.grey.withOpacity(0.5),
+            // ),
             Expanded(
                 flex: 6,
                 child: constraints.maxWidth > MOBILE_WIDTH
                     ? WordDetail(
                         word: selected,
                       )
-                    : ListBuilder()),
+                    : WordsBuilder()),
           ],
         ),
       );
@@ -102,15 +128,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class ListBuilder extends StatefulWidget {
-  ListBuilder({Key? key, this.onSelect}) : super(key: key);
+class WordsBuilder extends StatefulWidget {
+  WordsBuilder({Key? key, this.onSelect}) : super(key: key);
   final Function(Word)? onSelect;
 
   @override
-  _ListBuilderState createState() => _ListBuilderState();
+  _WordsBuilderState createState() => _WordsBuilderState();
 }
 
-class _ListBuilderState extends State<ListBuilder> {
+class _WordsBuilderState extends State<WordsBuilder> {
   SupaStore supaStore = SupaStore();
 
   @override
@@ -163,21 +189,24 @@ class _ListBuilderState extends State<ListBuilder> {
                 },
               ),
               Expanded(
-                child: ListView.builder(
-                    itemCount: value.length,
-                    itemBuilder: (_, x) {
-                      return WordTile(
-                          word: value[x],
-                          isMobile: size.width < MOBILE_WIDTH,
-                          isSelected: selectedWord.toLowerCase() ==
-                              value[x].word.toLowerCase(),
-                          onSelect: (word) {
-                            setState(() {
-                              selectedWord = word.word;
+                child: Scrollbar(
+                  radius: Radius.circular(2.0),
+                  child: ListView.builder(
+                      itemCount: value.length,
+                      itemBuilder: (_, x) {
+                        return WordTile(
+                            word: value[x],
+                            isMobile: size.width < MOBILE_WIDTH,
+                            isSelected: selectedWord.toLowerCase() ==
+                                value[x].word.toLowerCase(),
+                            onSelect: (word) {
+                              setState(() {
+                                selectedWord = word.word;
+                              });
+                              widget.onSelect!(word);
                             });
-                            widget.onSelect!(word);
-                          });
-                    }),
+                      }),
+                ),
               ),
             ],
           );
