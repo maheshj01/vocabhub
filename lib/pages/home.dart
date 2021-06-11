@@ -4,6 +4,7 @@ import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/utils/utility.dart';
+import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/search.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
@@ -36,7 +37,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (_, constraints) {
       return Scaffold(
-        drawer: constraints.maxWidth <= MOBILE_WIDTH ? Drawer() : null,
         appBar: AppBar(
           backgroundColor: Colors.white,
           iconTheme: Theme.of(context).iconTheme,
@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 : IconButton(
                     icon: Image.asset('assets/github.png'),
                     onPressed: () {
-                      launchUrl(SOURCE_CODE_URL, isNewTab: false);
+                      launchUrl(SOURCE_CODE_URL, isNewTab: true);
                     },
                   ),
             IconButton(

@@ -29,6 +29,7 @@ class _WordDetailState extends State<WordDetail>
         AnimationController(vsync: this, duration: Duration(seconds: 3));
     meaning = '';
     if (widget.word != null) {
+      selectedWord = widget.word!.word;
       meaning = widget.word!.meaning;
       length = widget.word!.meaning.length;
     }
@@ -45,6 +46,7 @@ class _WordDetailState extends State<WordDetail>
 
   int length = 0;
   int synLength = 0;
+  String selectedWord = '';
   @override
   void dispose() {
     // TODO: implement dispose
@@ -61,6 +63,8 @@ class _WordDetailState extends State<WordDetail>
     if (widget.word != null) {
       setState(() {
         length = widget.word!.meaning.length;
+        meaning = widget.word!.meaning;
+        edited = meaning;
       });
     }
     if (length < 30) {
@@ -72,24 +76,28 @@ class _WordDetailState extends State<WordDetail>
     editModeNotifier.value = false;
     unfocus();
     _tween.end = length;
-    _animationController.reset();
-    _animationController.forward();
+    if (widget.word?.word != selectedWord) {
+      _animationController.reset();
+      _animationController.forward();
+    }
+    if (widget.word != null) {
+      selectedWord = widget.word!.word;
+    }
   }
 
   Future<void> updateMeaning() async {
-    if (edited.isNotEmpty) {
-      meaning = edited;
-      textEditingController.text = edited;
-      String id = widget.word!.id;
-      Word word = widget.word!;
-      word.meaning = edited;
-      final response = await supaStore.updateMeaning(id: id, word: word);
-      stopCircularIndicator(context);
-      if (response.status == 200) {
-        showMessage(context, " meaning of word ${word.word} updated.");
-      } else {
-        print('failed to update ${response.error!.message}');
-      }
+    showCircularIndicator(context);
+    meaning = edited;
+    textEditingController.text = edited;
+    String id = widget.word!.id;
+    Word word = widget.word!;
+    word.meaning = edited;
+    final response = await supaStore.updateMeaning(id: id, word: word);
+    stopCircularIndicator(context);
+    if (response.status == 200) {
+      showMessage(context, "meaning of word ${word.word} updated.");
+    } else {
+      print('failed to update ${response.error!.message}');
     }
   }
 
@@ -97,6 +105,7 @@ class _WordDetailState extends State<WordDetail>
 
   late String edited;
   late String meaning;
+  bool hasError = false;
   late SupaStore supaStore;
   final ValueNotifier<bool> editModeNotifier = ValueNotifier<bool>(false);
   TextEditingController textEditingController = TextEditingController(text: "");
@@ -169,23 +178,35 @@ class _WordDetailState extends State<WordDetail>
                                           : Colors.transparent,
                                       borderRadius: BorderRadius.circular(
                                           editMode ? 20 : 0)),
-                                  child: TextField(
-                                      controller: textEditingController,
-                                      readOnly: !editMode,
-                                      maxLines: 5,
-                                      autofocus: false,
-                                      onChanged: (x) {
-                                        edited = x;
-                                      },
-                                      onTap: () {
-                                        editModeNotifier.value = true;
-                                      },
-                                      decoration: InputDecoration(
-                                          hintText: "Add a meaning",
-                                          focusedBorder: InputBorder.none,
-                                          border: InputBorder.none),
-                                      style: TextStyle(fontSize: 20)),
+                                  child: StatefulBuilder(
+                                    builder: (_, state) => TextField(
+                                        controller: textEditingController,
+                                        readOnly: !editMode,
+                                        maxLines: 5,
+                                        autofocus: false,
+                                        onChanged: (x) {
+                                          state(() {
+                                            edited = x;
+                                          });
+                                        },
+                                        onTap: () {
+                                          editModeNotifier.value = true;
+                                        },
+                                        decoration: InputDecoration(
+                                            hintText: length > 0
+                                                ? null
+                                                : "Add a meaning",
+                                            focusedBorder: InputBorder.none,
+                                            border: InputBorder.none),
+                                        style: TextStyle(fontSize: 20)),
+                                  ),
                                 ),
+                                hasError
+                                    ? Text(
+                                        "Meaning cannot be empty",
+                                        style: TextStyle(color: Colors.red),
+                                      )
+                                    : Container(),
                                 SizedBox(
                                   height: 10,
                                 ),
@@ -195,34 +216,47 @@ class _WordDetailState extends State<WordDetail>
                                       : Alignment(1.2, 0.0),
                                   duration: Duration(milliseconds: 400),
                                   child: AnimatedOpacity(
-                                    duration: Duration(seconds: 1),
-                                    opacity: editMode ? 1.0 : 0.0,
-                                    child: Container(
-                                      width: 100,
-                                      height: 40,
-                                      child: ElevatedButton(
-                                        child: Text('Save'),
-                                        onPressed: editMode
-                                            ? () {
-                                                editModeNotifier.value = false;
-                                                unfocus();
-                                                showCircularIndicator(context);
-                                                if (edited != meaning &&
-                                                    _animationController
-                                                            .status ==
-                                                        AnimationStatus
-                                                            .completed) {
-                                                  /// TODO: Update meaning
-                                                  length = edited.length;
-                                                  _tween.end = length;
-                                                  updateMeaning();
+                                      duration: Duration(seconds: 1),
+                                      opacity: editMode ? 1.0 : 0.0,
+                                      child: Container(
+                                        width: 100,
+                                        height: 40,
+                                        child: ElevatedButton(
+                                          child: Text('Save'),
+                                          onPressed: editMode
+                                              ? () {
+                                                  final text =
+                                                      textEditingController
+                                                          .text;
+                                                  if (text.isNotEmpty) {
+                                                    setState(() {
+                                                      hasError = false;
+                                                    });
+                                                    editModeNotifier.value =
+                                                        false;
+                                                    unfocus();
+                                                    if (edited != meaning &&
+                                                        _animationController
+                                                                .status ==
+                                                            AnimationStatus
+                                                                .completed) {
+                                                      /// TODO: Update meaning
+                                                      length = edited.length;
+                                                      _tween.end = length;
+                                                      updateMeaning();
+                                                    }
+                                                  } else {
+                                                    setState(() {
+                                                      hasError = true;
+                                                    });
+                                                    editModeNotifier.value =
+                                                        true;
+                                                  }
                                                 }
-                                              }
-                                            : null,
-                                      ),
-                                    ),
-                                  ),
-                                )
+                                              : null,
+                                        ),
+                                      )),
+                                ),
                               ],
                             );
                           },
