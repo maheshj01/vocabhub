@@ -36,20 +36,21 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     bool isDark = darkNotifier.value;
-
-    Widget actionIcon(IconData data, String url, {String toolTip = ''}) {
-      return IconButton(
-          tooltip: toolTip,
-          icon: Icon(
-            data,
-            color: isDark ? Colors.white : Colors.black.withOpacity(0.75),
-          ),
-          onPressed: () {
-            launchUrl(url);
-          });
-    }
-
     return LayoutBuilder(builder: (_, constraints) {
+      Widget actionIcon(IconData data, String url, {String toolTip = ''}) {
+        return constraints.maxWidth <= MOBILE_WIDTH
+            ? Container()
+            : IconButton(
+                tooltip: toolTip,
+                icon: Icon(
+                  data,
+                  color: isDark ? Colors.white : Colors.black.withOpacity(0.75),
+                ),
+                onPressed: () {
+                  launchUrl(url);
+                });
+      }
+
       return Scaffold(
         drawer: constraints.maxWidth <= MOBILE_WIDTH
             ? Drawer(
