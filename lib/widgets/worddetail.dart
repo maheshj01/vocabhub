@@ -119,6 +119,9 @@ class _WordDetailState extends State<WordDetail>
             behavior: HitTestBehavior.translucent,
             onTap: () async {
               editModeNotifier.value = false;
+              setState(() {
+                hasError = false;
+              });
               unfocus();
             },
             child: ListView(
@@ -170,6 +173,7 @@ class _WordDetailState extends State<WordDetail>
                             return Column(
                               children: [
                                 AnimatedContainer(
+                                  curve: Curves.easeIn,
                                   padding: const EdgeInsets.all(16.0),
                                   duration: Duration(seconds: 1),
                                   margin: EdgeInsets.symmetric(
@@ -178,11 +182,27 @@ class _WordDetailState extends State<WordDetail>
                                           ? 24.0
                                           : 48.0),
                                   decoration: BoxDecoration(
+                                      boxShadow: editMode
+                                          ? [
+                                              BoxShadow(
+                                                color: Colors.grey[100]!,
+                                                // .withOpacity(0.2),
+                                                offset: Offset(-6.0, -6.0),
+                                                blurRadius: 16.0,
+                                              ),
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.1),
+                                                offset: Offset(6.0, 6.0),
+                                                blurRadius: 16.0,
+                                              ),
+                                            ]
+                                          : null,
                                       color: editMode
-                                          ? Colors.grey.withOpacity(0.08)
-                                          : Colors.transparent,
+                                          ? Colors.grey[100]
+                                          : Colors.white12,
                                       borderRadius: BorderRadius.circular(
-                                          editMode ? 20 : 0)),
+                                          editMode ? 12 : 0)),
                                   child: StatefulBuilder(
                                     builder: (_, state) => TextField(
                                         controller: textEditingController,
@@ -202,9 +222,12 @@ class _WordDetailState extends State<WordDetail>
                                             hintText: length > 0
                                                 ? null
                                                 : "Add a meaning",
+                                            hintStyle: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.grey),
                                             focusedBorder: InputBorder.none,
                                             border: InputBorder.none),
-                                        style: TextStyle(fontSize: 20)),
+                                        style: TextStyle(fontSize: 16)),
                                   ),
                                 ),
                                 hasError

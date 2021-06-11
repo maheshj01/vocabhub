@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:vocabhub/constants/colors.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
 import 'package:vocabhub/utils/extensions.dart';
@@ -47,14 +48,17 @@ class _WordTileState extends State<WordTile> {
           )
         : GestureDetector(
             onTap: () => widget.onSelect!(widget.word),
-            child: MouseRegion(
-              cursor: SystemMouseCursors.click,
+            child: Container(
+              color: widget.isSelected ? primaryBlue : Colors.transparent,
               child: ListTile(
-                title: Text(widget.word.word.capitalize()),
+                mouseCursor: SystemMouseCursors.click,
+                title: Text(
+                  widget.word.word.capitalize(),
+                  style: TextStyle(
+                    color: widget.isSelected ? Colors.white : Colors.black,
+                  ),
+                ),
                 hoverColor: Colors.lightBlue.withOpacity(0.2),
-                tileColor: widget.isSelected
-                    ? Colors.blue.withOpacity(0.5)
-                    : Colors.transparent,
               ),
             ),
           );
