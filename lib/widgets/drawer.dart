@@ -123,7 +123,7 @@ class VersionBuilder extends StatelessWidget {
           future: getAppDetails(),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             return snapshot.data == null
-                ? const Text('Loading ...', style: TextStyle(fontSize: 10))
+                ? const Text('v0.1.0', style: TextStyle(fontSize: 10))
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
