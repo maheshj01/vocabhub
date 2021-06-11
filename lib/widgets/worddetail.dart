@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -171,7 +172,11 @@ class _WordDetailState extends State<WordDetail>
                                 AnimatedContainer(
                                   padding: const EdgeInsets.all(16.0),
                                   duration: Duration(seconds: 1),
-                                  margin: EdgeInsets.symmetric(horizontal: 8),
+                                  margin: EdgeInsets.symmetric(
+                                      horizontal: (size.width > MOBILE_WIDTH &&
+                                              size.width < TABLET_WIDTH)
+                                          ? 24.0
+                                          : 48.0),
                                   decoration: BoxDecoration(
                                       color: editMode
                                           ? Colors.grey.withOpacity(0.08)
@@ -183,6 +188,7 @@ class _WordDetailState extends State<WordDetail>
                                         controller: textEditingController,
                                         readOnly: !editMode,
                                         maxLines: 5,
+                                        textAlign: TextAlign.center,
                                         autofocus: false,
                                         onChanged: (x) {
                                           state(() {
