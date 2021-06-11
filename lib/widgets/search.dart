@@ -16,6 +16,7 @@ class _SearchBuilderState extends State<SearchBuilder> {
     // TODO: implement initState
     super.initState();
     searchController.addListener(() {
+      setState(() {});
       widget.onChanged(searchController.text);
     });
   }
@@ -26,8 +27,15 @@ class _SearchBuilderState extends State<SearchBuilder> {
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: TextField(
           controller: searchController,
-          onChanged: (x) => widget.onChanged(x),
-          decoration: InputDecoration(hintText: "Search by word, meaning"),
+          decoration: InputDecoration(
+              suffixIcon: searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: Icon(Icons.clear),
+                      onPressed: () {
+                        searchController.clear();
+                      })
+                  : SizedBox(width: 1),
+              hintText: "Search by word, meaning"),
         ));
   }
 }
