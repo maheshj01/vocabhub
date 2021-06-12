@@ -259,7 +259,7 @@ class _WordDetailState extends State<WordDetail>
                                       )
                                     : Container(),
                                 SizedBox(
-                                  height: 10,
+                                  height: 20,
                                 ),
                                 AnimatedAlign(
                                   alignment: editMode
@@ -273,6 +273,12 @@ class _WordDetailState extends State<WordDetail>
                                         width: 100,
                                         height: 40,
                                         child: ElevatedButton(
+                                          style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStateProperty
+                                                      .all<Color>(!isDark
+                                                          ? primaryColor
+                                                          : secondaryDark)),
                                           child: Text('Save'),
                                           onPressed: editMode
                                               ? () {

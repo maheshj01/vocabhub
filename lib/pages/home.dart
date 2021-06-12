@@ -74,8 +74,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           ? '$GITHUB_ASSET_PATH'
                           : '$GITHUB_WHITE_ASSET_PATH',
                       scale: 2.0,
+                      height: isDark ? 26 : 35,
                     ),
                     tooltip: 'Github',
+                    padding: EdgeInsets.zero,
                     onPressed: () {
                       launchUrl(SOURCE_CODE_URL, isNewTab: true);
                     },
@@ -83,6 +85,11 @@ class _MyHomePageState extends State<MyHomePage> {
             actionIcon(Icons.insert_drive_file, SHEET_URL,
                 toolTip: 'Contribute'),
             actionIcon(Icons.help, REPORT_URL, toolTip: 'Report'),
+            IconButton(
+              icon: Icon(Icons.add),
+              tooltip: 'Add a word',
+              onPressed: () {},
+            ),
           ],
         ),
         floatingActionButton: FloatingActionButton(

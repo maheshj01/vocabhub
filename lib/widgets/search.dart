@@ -16,7 +16,6 @@ class _SearchBuilderState extends State<SearchBuilder> {
     // TODO: implement initState
     super.initState();
     searchController.addListener(() {
-      setState(() {});
       widget.onChanged(searchController.text);
     });
   }
