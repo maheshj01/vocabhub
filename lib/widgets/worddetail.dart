@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -314,6 +316,22 @@ class _WordDetailState extends State<WordDetail>
                                         ),
                                       )),
                                 ),
+                                SizedBox(
+                                  height: 24,
+                                ),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: ExampleBuilder(
+                                        examples: (widget.word!.examples ==
+                                                    null ||
+                                                widget.word!.examples!.isEmpty)
+                                            ? []
+                                            : widget.word!.examples,
+                                        word: widget.word!.word,
+                                      )),
+                                )
                               ],
                             );
                           },
@@ -322,6 +340,44 @@ class _WordDetailState extends State<WordDetail>
                     })
               ],
             ),
+          );
+  }
+}
+
+class ExampleBuilder extends StatefulWidget {
+  final List<String>? examples;
+  final String word;
+  const ExampleBuilder({Key? key, required this.examples, required this.word})
+      : super(key: key);
+
+  @override
+  _ExampleBuilderState createState() => _ExampleBuilderState();
+}
+
+class _ExampleBuilderState extends State<ExampleBuilder> {
+  TextSpan getWord(String word) {
+    return TextSpan(text: word);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.examples!.isEmpty
+        ? Container()
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Example',
+                style: TextStyle(fontSize: 24),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              ...[
+                for (int i = 0; i < widget.examples!.length; i++)
+                  Text('\n- ${widget.examples![i]}')
+              ]
+            ],
           );
   }
 }
