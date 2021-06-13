@@ -6,9 +6,15 @@ import 'package:postgrest/postgrest.dart';
 import 'package:vocabhub/utils/secrets.dart';
 
 class SupaStore {
-  static String tableName = '$TABLE_NAME';
-  final _logger = log.Logger();
-  final SupabaseClient _supabase = SupabaseClient("$CONFIG_URL", "$APIkey");
+  String tableName = '$TABLE_NAME';
+  late Logger _logger;
+
+  late SupabaseClient _supabase;
+
+  SupaStore() {
+    _supabase = SupabaseClient("$CONFIG_URL", dotenv.env['APIkey']!);
+    _logger = log.Logger();
+  }
 
   Future<PostgrestResponse> findById(String id) async {
     final response = await _supabase
