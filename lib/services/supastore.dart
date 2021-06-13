@@ -3,7 +3,7 @@ import 'package:logger/logger.dart' as log;
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:postgrest/postgrest.dart';
-import 'package:vocabhub/services/secrets.dart';
+import 'package:vocabhub/utils/secrets.dart';
 
 class SupaStore {
   static String tableName = '$TABLE_NAME';
