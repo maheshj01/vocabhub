@@ -316,28 +316,27 @@ class _WordDetailState extends State<WordDetail>
                                         ),
                                       )),
                                 ),
-                                SizedBox(
-                                  height: 24,
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: ExampleBuilder(
-                                        examples: (widget.word!.examples ==
-                                                    null ||
-                                                widget.word!.examples!.isEmpty)
-                                            ? []
-                                            : widget.word!.examples,
-                                        word: widget.word!.word,
-                                      )),
-                                )
                               ],
                             );
                           },
                         ),
                       );
-                    })
+                    }),
+                SizedBox(
+                  height: 24,
+                ),
+                Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ExampleBuilder(
+                      examples: (widget.word!.examples == null ||
+                              widget.word!.examples!.isEmpty)
+                          ? []
+                          : widget.word!.examples,
+                      word: widget.word!.word,
+                    )),
+                SizedBox(
+                  height: 100,
+                ),
               ],
             ),
           );
@@ -355,8 +354,23 @@ class ExampleBuilder extends StatefulWidget {
 }
 
 class _ExampleBuilderState extends State<ExampleBuilder> {
-  TextSpan getWord(String word) {
-    return TextSpan(text: word);
+  RichText getExample(String example) {
+    final textSpans = [TextSpan(text: ' - ')];
+
+    final iterable = example
+        .split(' ')
+        .toList()
+        .map((e) => TextSpan(
+            text: e + ' ',
+            style: TextStyle(
+                fontWeight:
+                    (e.toLowerCase().contains(widget.word.toLowerCase()))
+                        ? FontWeight.bold
+                        : FontWeight.normal)))
+        .toList();
+    textSpans.addAll(iterable);
+    textSpans.add(TextSpan(text: '\n'));
+    return RichText(text: TextSpan(children: textSpans));
   }
 
   @override
@@ -375,7 +389,7 @@ class _ExampleBuilderState extends State<ExampleBuilder> {
               ),
               ...[
                 for (int i = 0; i < widget.examples!.length; i++)
-                  Text('\n- ${widget.examples![i]}')
+                  getExample(widget.examples![i])
               ]
             ],
           );
