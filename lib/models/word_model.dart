@@ -35,7 +35,19 @@ class Word {
   final String? note;
 
   Word(this.id, this.word, this.meaning,
-      {this.synonyms, this.antonyms, this.note, this.examples});
+      {this.synonyms = const [],
+      this.antonyms = const [],
+      this.note,
+      this.examples = const []});
   factory Word.fromJson(Map<String, dynamic> json) => _$WordFromJson(json);
+
+  factory Word.copyWith(Word w) {
+    return Word(w.id, w.word, w.meaning,
+        examples: w.examples,
+        antonyms: w.antonyms,
+        note: w.note,
+        synonyms: w.synonyms);
+  }
+
   Map<String, dynamic> toJson() => _$WordToJson(this);
 }

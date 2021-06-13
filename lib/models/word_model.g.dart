@@ -13,11 +13,8 @@ Word _$WordFromJson(Map<String, dynamic> json) {
     json['meaning'] != null ? json['meaning'] as String : "",
     synonyms:
         (json['synonyms'] as List<dynamic>?)?.map((e) => e as String).toList(),
-    antonyms: json['antonyms'] != null
-        ? (json['antonyms']?.split(',').toList() as List<String>?)
-            ?.map((e) => e.trim() as String)
-            .toList()
-        : [],
+    antonyms:
+        (json['antonyms'] as List<dynamic>?)?.map((e) => e as String).toList(),
     note: json['note'] as String?,
     examples:
         (json['examples'] as List<dynamic>?)?.map((e) => e as String).toList(),
