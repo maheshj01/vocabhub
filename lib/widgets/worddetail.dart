@@ -370,7 +370,11 @@ class _ExampleBuilderState extends State<ExampleBuilder> {
         .toList();
     textSpans.addAll(iterable);
     textSpans.add(TextSpan(text: '\n'));
-    return RichText(text: TextSpan(children: textSpans));
+    return RichText(
+        text: TextSpan(
+            style: TextStyle(
+                color: darkNotifier.value ? Colors.white : Colors.black),
+            children: textSpans));
   }
 
   @override
