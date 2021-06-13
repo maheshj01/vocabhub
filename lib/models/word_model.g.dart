@@ -10,7 +10,7 @@ Word _$WordFromJson(Map<String, dynamic> json) {
   return Word(
     json['id'] as String,
     json['word'] as String,
-    json['meaning'] != null ? json['meaning'] as String : "",
+    json['meaning'] as String,
     synonyms:
         (json['synonyms'] as List<dynamic>?)?.map((e) => e as String).toList(),
     antonyms:
