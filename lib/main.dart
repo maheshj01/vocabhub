@@ -1,13 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'constants/colors.dart';
 import 'constants/constants.dart' show APP_TITLE;
 
-Future<void> main() async {
-  await dotenv.load(fileName: ".env");
+void main() {
   runApp(VocabApp());
 }
 
