@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:vocabhub/constants/colors.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word_model.dart';
+import 'package:vocabhub/widgets/examplebuilder.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
 import 'package:vocabhub/utils/extensions.dart';
 
@@ -82,7 +83,16 @@ class _WordTileState extends State<WordTile> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
                   child: Text(widget.word.meaning),
-                )
+                ),
+                Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ExampleBuilder(
+                      examples: (widget.word.examples == null ||
+                              widget.word.examples!.isEmpty)
+                          ? []
+                          : widget.word.examples,
+                      word: widget.word.word,
+                    )),
               ],
             ),
           )

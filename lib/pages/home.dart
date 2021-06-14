@@ -73,7 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       !isDark
                           ? '$GITHUB_ASSET_PATH'
                           : '$GITHUB_WHITE_ASSET_PATH',
-                      scale: 2.0,
                       height: isDark ? 26 : 35,
                     ),
                     tooltip: 'Github',
