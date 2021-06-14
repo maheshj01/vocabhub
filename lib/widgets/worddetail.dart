@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -345,10 +346,19 @@ class _WordDetailState extends State<WordDetail>
 }
 
 class EmptyWord extends StatelessWidget {
-  const EmptyWord({Key? key}) : super(key: key);
+  EmptyWord({Key? key}) : super(key: key);
+
+  final List<String> tips = [
+    'Do you know you can search by synonyms?\n Try searching for "reduce"',
+    'Do you know you can copy the word by just tapping on it?',
+    'You think the meaning of the word is wrong or can be improved?\nyou can just tap on the meaning and edit it',
+    'Do you have a word thats missing from this sheet?\n consider contributing by tapping on the 📄 icon',
+    "You don't remember the word but know what it means?\nTry searching for its meaning."
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final randIndex = Random().nextInt(tips.length);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -356,6 +366,12 @@ class EmptyWord extends StatelessWidget {
           Text(
             'Whats the word on your mind?',
             style: TextStyle(fontSize: 20),
+          ),
+          SizedBox(height: 16),
+          Text(
+            tips[randIndex],
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey, fontSize: 12),
           )
         ],
       ),
