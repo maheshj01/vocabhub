@@ -34,7 +34,7 @@ class _SearchBuilderState extends State<SearchBuilder> {
                         searchController.clear();
                       })
                   : SizedBox(width: 1),
-              hintText: "Search by word, meaning"),
+              hintText: "Search "),
         ));
   }
 }

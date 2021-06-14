@@ -345,9 +345,14 @@ class _WordDetailState extends State<WordDetail>
   }
 }
 
-class EmptyWord extends StatelessWidget {
+class EmptyWord extends StatefulWidget {
   EmptyWord({Key? key}) : super(key: key);
 
+  @override
+  _EmptyWordState createState() => _EmptyWordState();
+}
+
+class _EmptyWordState extends State<EmptyWord> {
   final List<String> tips = [
     'Do you know you can search by synonyms?\n Try searching for "reduce"',
     'Do you know you can copy the word by just tapping on it?',
@@ -356,9 +361,17 @@ class EmptyWord extends StatelessWidget {
     "You don't remember the word but know what it means?\nTry searching for its meaning."
   ];
 
+  late int randIndex;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    randIndex = Random().nextInt(tips.length);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final randIndex = Random().nextInt(tips.length);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -369,7 +382,7 @@ class EmptyWord extends StatelessWidget {
           ),
           SizedBox(height: 16),
           Text(
-            tips[randIndex],
+            'Tip: ' + tips[randIndex],
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey, fontSize: 12),
           )
