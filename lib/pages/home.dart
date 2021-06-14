@@ -165,6 +165,19 @@ class _WordsBuilderState extends State<WordsBuilder> {
     listNotifier.value = supaStoreWords;
   }
 
+  bool isInSynonym(String query, List<String>? synonyms) {
+    bool result = false;
+    if (synonyms == null || synonyms.isEmpty) {
+      return result;
+    }
+    synonyms.forEach((element) {
+      if (element.toLowerCase() == query.toLowerCase()) {
+        result = true;
+      }
+    });
+    return result;
+  }
+
   List<Word> supaStoreWords = [];
   final ValueNotifier<List<Word>?> listNotifier = ValueNotifier<List<Word>>([]);
   String selectedWord = '';
@@ -192,7 +205,8 @@ class _WordsBuilderState extends State<WordsBuilder> {
                     if (element.word.toLowerCase().contains(x.toLowerCase()) ||
                         element.meaning
                             .toLowerCase()
-                            .contains(x.toLowerCase())) {
+                            .contains(x.toLowerCase()) ||
+                        isInSynonym(x, element.synonyms)) {
                       result.add(element);
                     }
                   });
