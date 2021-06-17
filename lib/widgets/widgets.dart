@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vocabhub/constants/colors.dart';
 
 void removeFocus(BuildContext context) => FocusScope.of(context).unfocus();
 
@@ -18,7 +19,10 @@ void stopCircularIndicator(BuildContext context) {
 class LoadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: CircularProgressIndicator());
+    return Center(
+        child: CircularProgressIndicator(
+      color: primaryGreen,
+    ));
   }
 }
 

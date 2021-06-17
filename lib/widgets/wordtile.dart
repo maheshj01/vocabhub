@@ -26,10 +26,29 @@ class WordTile extends StatefulWidget {
 }
 
 class _WordTileState extends State<WordTile> {
+  late Color expandedColor;
+
+  @override
+  void didUpdateWidget(covariant WordTile oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    if (widget.isMobile) {
+      setState(() {
+        expandedColor = darkNotifier.value ? Colors.white : Colors.black;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    expandedColor = darkNotifier.value ? Colors.white : Colors.black;
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isDark = darkNotifier.value;
-
     Color tileColor() {
       if (widget.isSelected) {
         if (isDark) {
@@ -70,7 +89,22 @@ class _WordTileState extends State<WordTile> {
             child: ExpansionTile(
               expandedAlignment: Alignment.centerLeft,
               expandedCrossAxisAlignment: CrossAxisAlignment.start,
-              title: Text(widget.word.word.capitalize()),
+              title: Text(
+                widget.word.word.capitalize(),
+                style: TextStyle(color: expandedColor),
+              ),
+              onExpansionChanged: (expanded) {
+                if (expanded) {
+                  setState(() {
+                    expandedColor = isDark ? Colors.cyanAccent : primaryColor;
+                  });
+                } else {
+                  setState(() {
+                    expandedColor = isDark ? Colors.white : Colors.black;
+                  });
+                }
+              },
+              trailing: Container(width: 1),
               children: [
                 Padding(
                   padding:
