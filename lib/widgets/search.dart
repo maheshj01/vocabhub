@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vocabhub/exports.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/pages/home.dart';
 
 class SearchBuilder extends StatefulWidget {
@@ -22,14 +24,20 @@ class _SearchBuilderState extends State<SearchBuilder> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = darkNotifier.value;
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: TextField(
           controller: searchController,
           decoration: InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                borderSide:
+                    BorderSide(color: isDark ? Colors.white : primaryColor),
+              ),
               suffixIcon: searchController.text.isNotEmpty
                   ? IconButton(
-                      icon: Icon(Icons.clear),
+                      icon: Icon(Icons.clear,
+                          color: isDark ? Colors.white : primaryColor),
                       onPressed: () {
                         searchController.clear();
                       })
