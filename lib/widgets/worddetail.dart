@@ -9,10 +9,13 @@ import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/utils/utility.dart';
+import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/utils/extensions.dart';
+
+import 'wordscount.dart';
 
 class WordDetail extends StatefulWidget {
   final Word? word;
@@ -376,6 +379,7 @@ class _EmptyWordState extends State<EmptyWord> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Expanded(child: Container()),
           Text(
             'Whats the word on your mind?',
             style: TextStyle(fontSize: 20),
@@ -386,30 +390,12 @@ class _EmptyWordState extends State<EmptyWord> {
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey, fontSize: 12),
           ),
-          ValueListenableBuilder<int>(
-            valueListenable: totalNotifier,
-            builder: (BuildContext context, int total, Widget? child) {
-              if (total == 0) {
-                return Container();
-              }
-              return TweenAnimationBuilder<double>(
-                  tween: Tween<double>(begin: 0.0, end: total.toDouble()),
-                  duration: Duration(seconds: 5),
-                  builder: (BuildContext context, double value, Widget? child) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 50,
-                        ),
-                        Text('Total Words '),
-                        Text(value.toInt().toString(),
-                            style: TextStyle(fontSize: 35))
-                      ],
-                    );
-                  });
-            },
-          ),
+          WordsCountAnimator(),
+          Expanded(child: Container()),
+          Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: VersionBuilder()),
+          SizedBox(height: 40),
         ],
       ),
     );

@@ -4,6 +4,9 @@ import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/widgets.dart';
+import 'package:vocabhub/widgets/wordscount.dart';
+
+bool isAnimated = false;
 
 class DrawerBuilder extends StatefulWidget {
   const DrawerBuilder({Key? key}) : super(key: key);
@@ -25,6 +28,13 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
       '$text',
       style: listTitleStyle,
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    isAnimated = true;
+    super.dispose();
   }
 
   @override
@@ -95,6 +105,9 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
           hLine(),
           Expanded(child: Container()),
           hLine(),
+          WordsCountAnimator(
+            isAnimated: isAnimated,
+          ),
           Container(
             height: 80,
             child: VersionBuilder(),
