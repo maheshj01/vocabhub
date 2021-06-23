@@ -6,6 +6,7 @@
 ### 0.2.1
 
 - Add Drawer and app bar
+- Add Example sentences
 - Change color scheme to green
 
 ### 0.2.0
@@ -13,6 +14,7 @@
 - Improve color schemes
 - Add text animation
 - Improve responsiveness
+- Improved search.
 
 ### 0.1.2
 
