@@ -385,7 +385,31 @@ class _EmptyWordState extends State<EmptyWord> {
             'Tip: ' + tips[randIndex],
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey, fontSize: 12),
-          )
+          ),
+          ValueListenableBuilder<int>(
+            valueListenable: totalNotifier,
+            builder: (BuildContext context, int total, Widget? child) {
+              if (total == 0) {
+                return Container();
+              }
+              return TweenAnimationBuilder<double>(
+                  tween: Tween<double>(begin: 0.0, end: total.toDouble()),
+                  duration: Duration(seconds: 5),
+                  builder: (BuildContext context, double value, Widget? child) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 50,
+                        ),
+                        Text('Total Words '),
+                        Text(value.toInt().toString(),
+                            style: TextStyle(fontSize: 35))
+                      ],
+                    );
+                  });
+            },
+          ),
         ],
       ),
     );

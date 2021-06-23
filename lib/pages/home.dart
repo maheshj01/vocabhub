@@ -3,12 +3,14 @@ import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/services/supastore.dart';
+import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/search.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
 import 'package:vocabhub/widgets/wordtile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 TextEditingController searchController = TextEditingController();
 
@@ -29,10 +31,21 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     // TODO: implement dispose
     darkNotifier.dispose();
+    totalNotifier.dispose();
     searchController.dispose();
     super.dispose();
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    SharedPreferences.getInstance().then((value) {
+      sharedPreferences = value;
+    });
+  }
+
+  late SharedPreferences sharedPreferences;
   @override
   Widget build(BuildContext context) {
     bool isDark = darkNotifier.value;
@@ -94,6 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             darkNotifier.value = !darkNotifier.value;
+            Settings().dark = darkNotifier.value;
           },
           backgroundColor: isDark ? Colors.cyanAccent : primaryColor,
           child: Icon(
@@ -163,6 +177,7 @@ class _WordsBuilderState extends State<WordsBuilder> {
     supaStoreWords = await supaStore.findByWord("");
     stopCircularIndicator(context);
     listNotifier.value = supaStoreWords;
+    totalNotifier.value = supaStoreWords.length;
   }
 
   bool isInSynonym(String query, List<String>? synonyms) {
