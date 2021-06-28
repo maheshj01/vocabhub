@@ -50,6 +50,7 @@ doc/api/
 **/android/**/gradle-wrapper.jar
 **/android/.gradle
 **/android/captures/
+**/android/app/google-services.json
 **/android/gradlew
 **/android/gradlew.bat
 **/android/local.properties
@@ -80,6 +81,7 @@ doc/api/
 **/ios/Flutter/flutter_assets/
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Runner/GoogleService-Info.plist
 
 # Exceptions to above rules.
 !**/ios/**/default.mode1v3
