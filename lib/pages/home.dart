@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word_model.dart';
+import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -40,11 +41,13 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    firebaseAnalytics = Analytics();
     SharedPreferences.getInstance().then((value) {
       sharedPreferences = value;
     });
   }
 
+  late Analytics firebaseAnalytics;
   late SharedPreferences sharedPreferences;
   @override
   Widget build(BuildContext context) {
@@ -135,6 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           setState(() {
                             selected = x;
                           });
+                          firebaseAnalytics.logEvent('${x.word}');
                         },
                       ),
                     ))
