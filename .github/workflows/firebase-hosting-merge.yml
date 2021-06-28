@@ -20,10 +20,10 @@ jobs:
       - run: echo $SECRETS_FILE_CONTENT | base64 -d > lib/utils/secrets.dart
         env:
           SECRETS_FILE_CONTENT: ${{ secrets.SECRETS_FILE_CONTENT }}
-      - run: echo $GOOGLE_SERVICES_JSON | base64 -d > lib/android/app/google-services.json
+      - run: echo $GOOGLE_SERVICES_JSON | base64 -d > android/app/google-services.json
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
-      - run: echo $GOOGLE_SERVICES_INFO_PLIST | base64 -d > lib/ios/Runner/GoogleService-Info.plist
+      - run: echo $GOOGLE_SERVICES_INFO_PLIST | base64 -d > ios/Runner/GoogleService-Info.plist
         env:
           GOOGLE_SERVICES_INFO_PLIST: ${{ secrets.GOOGLE_SERVICES_INFO_PLIST }}
       - run: flutter pub get
