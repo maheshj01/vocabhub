@@ -1,13 +1,15 @@
 // import 'package:firebase_analytics/firebase_analytics.dart';
 // import 'package:firebase_analytics/observer.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/models/word_model.dart';
 
 class Analytics {
 //   FirebaseAnalyticsObserver observer;
 //   FirebaseAnalytics analytics;
 
-  Future<void> logEvent(String event) async {
-    await analytics.logEvent(name: '${event.toLowerCase()}');
+  Future<void> logWordSelection(Word word) async {
+    await analytics
+        .logEvent(name: 'WORD_SELECTED', parameters: {'word': word.word});
   }
 
 //   Future<void> logShare(String event) async {
