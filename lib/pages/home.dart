@@ -138,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           setState(() {
                             selected = x;
                           });
-                          firebaseAnalytics.logEvent('${x.word}');
+                          firebaseAnalytics.logEvent('${x.word.toUpperCase()}');
                         },
                       ),
                     ))
