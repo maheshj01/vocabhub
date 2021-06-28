@@ -9,7 +9,7 @@ class Analytics {
 
   Future<void> logWordSelection(Word word) async {
     await analytics
-        .logEvent(name: 'WORD_SELECTED', parameters: {'word': word.word});
+        .logEvent(name: 'word_selected', parameters: {'word': word.word});
   }
 
 //   Future<void> logShare(String event) async {
