@@ -22,15 +22,33 @@
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
- <!-- The core Firebase JS SDK is always required and must be listed first -->
-<script src="/__/firebase/8.6.5/firebase-app.js"></script>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
 
 <!-- TODO: Add SDKs for Firebase products that you want to use
      https://firebase.google.com/docs/web/setup#available-libraries -->
-<script src="/__/firebase/8.6.5/firebase-analytics.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-analytics.js"></script>
+
+<script>
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  var firebaseConfig = {
+    apiKey: "AIzaSyCeoO3BACxhCcm8Sq2oGkZR2uRbca6VHRE",
+    authDomain: "vocabhub-34c7f.firebaseapp.com",
+    projectId: "vocabhub-34c7f",
+    storageBucket: "vocabhub-34c7f.appspot.com",
+    messagingSenderId: "726058956773",
+    appId: "1:726058956773:web:7fcbf23d2ea0e1c246610c",
+    measurementId: "G-PX6FK67F2P"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+</script>
 
 <!-- Initialize Firebase -->
-<script src="/__/firebase/init.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.1/init.js"></script>
  <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
