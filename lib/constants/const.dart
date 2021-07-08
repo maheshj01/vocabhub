@@ -9,6 +9,7 @@ const SHEET_URL =
     'https://docs.google.com/spreadsheets/d/1G1RtQfsEDqHhHP4cgOpO9x_ZtQ1dYa6QrGCq3KFlu50';
 const MOBILE_WIDTH = 500.0;
 const TABLET_WIDTH = 800.0;
+const Duration wordCountAnimationDuration = Duration(seconds: 3);
 const TABLE_NAME = 'vocabsheet';
 const WORD_COLUMN = 'word';
 const ID_COLUMN = 'id';

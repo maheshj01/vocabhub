@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word_model.dart';
+import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/supastore.dart';
+import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/drawer.dart';
@@ -47,13 +49,46 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _openCustomDialog() {
+    showGeneralDialog(
+        barrierColor: Colors.black.withOpacity(0.5),
+        transitionBuilder: (context, a1, a2, widget) {
+          return Transform.scale(
+              scale: a1.value,
+              child: Transform.translate(
+                  offset: Offset(0, 150 * a1.value), child: AddWordForm()));
+        },
+        transitionDuration: Duration(milliseconds: 500),
+        barrierDismissible: true,
+        barrierLabel: '',
+        context: context,
+        pageBuilder: (context, animation1, animation2) {
+          return Container(
+            child: Text('Hello'),
+          );
+        });
+  }
+
+  Widget _buildNewTransition(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return Transform.translate(
+      offset: Offset(0, animation.value * -50),
+      child: child,
+    );
+  }
+
   late Analytics firebaseAnalytics;
   late SharedPreferences sharedPreferences;
   @override
   Widget build(BuildContext context) {
     bool isDark = darkNotifier.value;
     return LayoutBuilder(builder: (_, constraints) {
-      Widget actionIcon(IconData data, String url, {String toolTip = ''}) {
+      Widget actionIcon(IconData data, String url,
+          {String toolTip = '', Function? onTap}) {
         return constraints.maxWidth <= MOBILE_WIDTH
             ? Container()
             : IconButton(
@@ -62,9 +97,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   data,
                   color: isDark ? Colors.white : Colors.black.withOpacity(0.75),
                 ),
-                onPressed: () {
-                  launchUrl(url);
-                });
+                onPressed: onTap != null
+                    ? () => onTap()
+                    : () {
+                        launchUrl(url);
+                      });
       }
 
       return Scaffold(
@@ -82,6 +119,10 @@ class _MyHomePageState extends State<MyHomePage> {
             style: TextStyle(color: isDark ? Colors.white : primaryColor),
           ),
           actions: [
+            actionIcon(Icons.add, SHEET_URL, toolTip: 'Random', onTap: () {
+              _openCustomDialog();
+              // navigate(context, RandomPlay());
+            }),
             constraints.maxWidth <= MOBILE_WIDTH
                 ? Container()
                 : IconButton(
