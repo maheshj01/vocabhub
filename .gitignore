@@ -100,7 +100,7 @@ macos/Runner.xcworkspace/contents.xcworkspacedata
 # Macos Flutter-related
 macos/**/Flutter/ephemeral/
 macos/**/Pods/
-
+macos/Runner/GoogleService-Info.plist
 # Xcode-related
 macos/**/xcuserdata/
 

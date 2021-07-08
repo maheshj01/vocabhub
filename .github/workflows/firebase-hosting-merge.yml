@@ -26,14 +26,12 @@ jobs:
       - run: echo $GOOGLE_SERVICES_INFO_PLIST | base64 -d > ios/Runner/GoogleService-Info.plist
         env:
           GOOGLE_SERVICES_INFO_PLIST: ${{ secrets.GOOGLE_SERVICES_INFO_PLIST }}
+      - run: echo $GOOGLE_SERVICES_INFO_PLIST | base64 -d > macos/Runner/GoogleService-Info.plist
+        env:
+          GOOGLE_SERVICES_INFO_PLIST: ${{ secrets.GOOGLE_SERVICES_INFO_PLIST }}
       - run: flutter pub get
       - run: flutter pub run build_runner build --delete-conflicting-outputs
       - run: flutter build web --release
-      - run: flutter build apk --release
-      - uses: actions/upload-artifact@v1
-        with:
-          name: release-apk
-          path: build/app/outputs/apk/release/app-release.apk
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
@@ -42,3 +40,8 @@ jobs:
           projectId: vocabhub-34c7f
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
+      - run: flutter build apk --release
+      - uses: actions/upload-artifact@v1
+        with:
+          name: release-apk
+          path: build/app/outputs/apk/release/app-release.apk
