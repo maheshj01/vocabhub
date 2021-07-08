@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -53,6 +54,7 @@ class VocabApp extends StatelessWidget {
                       iconTheme: IconThemeData(
                           color:
                               darkNotifier.value ? Colors.white : primaryColor),
+                      textTheme: GoogleFonts.quicksandTextTheme(),
                       cupertinoOverrideTheme: CupertinoThemeData(
                         primaryColor: primaryColor,
                       ),

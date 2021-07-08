@@ -34,6 +34,7 @@ dependencies:
   realtime_client: ^0.0.8
   supabase: ^0.0.1-dev.16
   url_launcher: ^6.0.6
+  google_fonts: ^2.1.0
 
 dev_dependencies:
   flutter_test:

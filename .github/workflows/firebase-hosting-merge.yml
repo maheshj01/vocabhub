@@ -26,9 +26,9 @@ jobs:
       - run: echo $GOOGLE_SERVICES_INFO_PLIST | base64 -d > ios/Runner/GoogleService-Info.plist
         env:
           GOOGLE_SERVICES_INFO_PLIST: ${{ secrets.GOOGLE_SERVICES_INFO_PLIST }}
-      - run: echo $GOOGLE_SERVICES_INFO_PLIST | base64 -d > macos/Runner/GoogleService-Info.plist
-        env:
-          GOOGLE_SERVICES_INFO_PLIST: ${{ secrets.GOOGLE_SERVICES_INFO_PLIST }}
+      # - run: echo $GOOGLE_SERVICES_INFO_PLIST | base64 -d > macos/Runner/GoogleService-Info.plist
+      #   env:
+      #     GOOGLE_SERVICES_INFO_PLIST: ${{ secrets.GOOGLE_SERVICES_INFO_PLIST }}
       - run: flutter pub get
       - run: flutter pub run build_runner build --delete-conflicting-outputs
       - run: flutter build web --release
