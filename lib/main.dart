@@ -5,6 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -21,6 +22,8 @@ Future<void> main() async {
 
 final ValueNotifier<bool> darkNotifier = ValueNotifier<bool>(false);
 final ValueNotifier<int> totalNotifier = ValueNotifier<int>(0);
+final ValueNotifier<List<Word>?> listNotifier = ValueNotifier<List<Word>>([]);
+
 FirebaseAnalytics analytics = FirebaseAnalytics();
 FirebaseAnalyticsObserver observer =
     FirebaseAnalyticsObserver(analytics: analytics);

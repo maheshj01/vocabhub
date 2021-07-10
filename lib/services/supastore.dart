@@ -5,6 +5,14 @@ import 'package:vocabhub/models/word_model.dart';
 import 'package:postgrest/postgrest.dart';
 import 'package:vocabhub/utils/secrets.dart';
 
+class VocabResponse {
+  bool didSucced;
+  String message;
+  int? status;
+
+  VocabResponse({required this.didSucced, required this.message, this.status});
+}
+
 class SupaStore {
   static String tableName = '$TABLE_NAME';
   final _logger = log.Logger();
@@ -36,6 +44,23 @@ class SupaStore {
     return words;
   }
 
+  Future<VocabResponse> addWord(Word word) async {
+    final json = word.toJson();
+    final vocabresponse = VocabResponse(didSucced: false, message: "Failed");
+    try {
+      print('inserting \n $json');
+      final response = await insert(json);
+      print('response  =${response.data}');
+      if (response.status == 201) {
+        vocabresponse.didSucced = true;
+        vocabresponse.message = 'Success';
+      }
+    } catch (_) {
+      print(_);
+    }
+    return vocabresponse;
+  }
+
   /// ```Select * from words;```
   Future<List<Word>> findAll() async {
     final response = await _supabase.from(tableName).select("*").execute();
@@ -47,7 +72,14 @@ class SupaStore {
   }
 
   Future<PostgrestResponse> insert(Map<String, dynamic> json) async {
-    final response = await _supabase.from(tableName).insert(json).execute();
+    json.remove('id');
+    json.remove('antonyms');
+    final response = await _supabase
+        .from(tableName)
+        .insert(
+          json,
+        )
+        .execute();
     return response;
   }
 
