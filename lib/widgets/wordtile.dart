@@ -50,34 +50,18 @@ class _WordTileState extends State<WordTile> {
   Widget build(BuildContext context) {
     bool isDark = darkNotifier.value;
     Color tileColor() {
-      if (widget.isSelected) {
-        if (isDark) {
-          return Colors.white54;
-        } else {
-          return secondaryColor;
-        }
+      if (isDark) {
+        return Colors.white54;
       } else {
-        if (isDark) {
-          return primaryDark;
-        } else {
-          return Colors.white;
-        }
+        return secondaryColor;
       }
     }
 
     Color textColor() {
-      if (widget.isSelected) {
-        if (isDark) {
-          return Colors.black;
-        } else {
-          return Colors.black;
-        }
+      if (!widget.isSelected && isDark) {
+        return Colors.white;
       } else {
-        if (isDark) {
-          return Colors.white;
-        } else {
-          return Colors.black;
-        }
+        return Colors.black;
       }
     }
 
@@ -116,7 +100,10 @@ class _WordTileState extends State<WordTile> {
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-                  child: Text(widget.word.meaning),
+                  child: Text(
+                    widget.word.meaning,
+                    style: Theme.of(context).textTheme.headline5,
+                  ),
                 ),
                 Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -133,12 +120,15 @@ class _WordTileState extends State<WordTile> {
         : GestureDetector(
             onTap: () => widget.onSelect!(widget.word),
             child: Container(
-              color: tileColor(),
+              color: widget.isSelected ? tileColor() : null,
               child: ListTile(
                 mouseCursor: SystemMouseCursors.click,
                 title: Text(
                   widget.word.word.capitalize(),
-                  style: TextStyle(color: textColor()),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline5!
+                      .copyWith(color: textColor()),
                 ),
               ),
             ),

@@ -5,12 +5,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'constants/colors.dart';
-import 'constants/constants.dart' show APP_TITLE;
+import 'constants/constants.dart' show APP_TITLE, googleFontsTextTheme;
 import 'utils/settings.dart';
 
 Future<void> main() async {
@@ -47,14 +46,16 @@ class VocabApp extends StatelessWidget {
                 return MaterialApp(
                     title: '$APP_TITLE',
                     debugShowCheckedModeBanner: !kDebugMode,
-                    darkTheme: ThemeData.dark(),
+                    darkTheme: ThemeData.dark().copyWith(
+                      textTheme: googleFontsTextTheme(context),
+                    ),
                     color: primaryColor,
                     theme: ThemeData(
                       primaryColor: primaryColor,
                       iconTheme: IconThemeData(
                           color:
                               darkNotifier.value ? Colors.white : primaryColor),
-                      textTheme: GoogleFonts.quicksandTextTheme(),
+                      textTheme: googleFontsTextTheme(context),
                       cupertinoOverrideTheme: CupertinoThemeData(
                         primaryColor: primaryColor,
                       ),

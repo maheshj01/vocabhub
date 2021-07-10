@@ -7,5 +7,5 @@ const Color primaryGrey = Colors.grey;
 const Color primaryBlue = Colors.blueAccent;
 const Color primaryColor = primaryGreen;
 Color secondaryColor = primaryGreen.withOpacity(0.6);
-Color primaryDark = Colors.grey.withOpacity(0.5);
-Color secondaryDark = Colors.grey.withOpacity(0.2);
+Color primaryDark = Colors.black.withOpacity(0.6);
+Color secondaryDark = Colors.black.withOpacity(0.7);

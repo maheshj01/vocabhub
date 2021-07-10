@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
@@ -5,7 +6,6 @@ import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/supastore.dart';
-import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/drawer.dart';
@@ -53,19 +53,15 @@ class _MyHomePageState extends State<MyHomePage> {
     showGeneralDialog(
         barrierColor: Colors.black.withOpacity(0.5),
         transitionBuilder: (context, a1, a2, widget) {
-          return Transform.scale(
-              scale: a1.value,
-              child: Transform.translate(
-                  offset: Offset(0, 150 * a1.value), child: AddWordForm()));
+          return Transform.translate(
+              offset: Offset(0, 150 * a1.value), child: AddWordForm());
         },
         transitionDuration: Duration(milliseconds: 500),
         barrierDismissible: true,
         barrierLabel: '',
         context: context,
         pageBuilder: (context, animation1, animation2) {
-          return Container(
-            child: Text('Hello'),
-          );
+          return Container();
         });
   }
 
@@ -252,30 +248,33 @@ class _WordsBuilderState extends State<WordsBuilder> {
               child: CircularProgressIndicator(),
             );
           }
-          return Column(
-            children: [
-              SearchBuilder(
-                onChanged: (x) {
-                  if (x.isEmpty) {
-                    listNotifier.value = supaStoreWords;
-                    return;
-                  }
-                  List<Word> result = [];
-                  supaStoreWords.forEach((element) {
-                    if (element.word.toLowerCase().contains(x.toLowerCase()) ||
-                        element.meaning
-                            .toLowerCase()
-                            .contains(x.toLowerCase()) ||
-                        isInSynonym(x, element.synonyms)) {
-                      result.add(element);
+          return Container(
+            color: darkNotifier.value ? primaryDark : Colors.white,
+            child: Column(
+              children: [
+                SearchBuilder(
+                  onChanged: (x) {
+                    if (x.isEmpty) {
+                      listNotifier.value = supaStoreWords;
+                      return;
                     }
-                  });
-                  listNotifier.value = result;
-                },
-              ),
-              Expanded(
-                child: Scrollbar(
-                  radius: Radius.circular(2.0),
+                    List<Word> result = [];
+                    supaStoreWords.forEach((element) {
+                      if (element.word
+                              .toLowerCase()
+                              .contains(x.toLowerCase()) ||
+                          element.meaning
+                              .toLowerCase()
+                              .contains(x.toLowerCase()) ||
+                          isInSynonym(x, element.synonyms)) {
+                        result.add(element);
+                      }
+                    });
+                    listNotifier.value = result;
+                  },
+                ),
+                Expanded(
+                  // TODO: Wrap with scrollbar widget currently it is buggy
                   child: ListView.builder(
                       itemCount: value.length,
                       itemBuilder: (_, x) {
@@ -292,8 +291,8 @@ class _WordsBuilderState extends State<WordsBuilder> {
                             });
                       }),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         });
   }

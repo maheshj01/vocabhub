@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/pages/addword.dart';
+import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/wordscount.dart';
@@ -26,7 +28,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
   Widget title(String text) {
     return Text(
       '$text',
-      style: listTitleStyle,
+      style: Theme.of(context).textTheme.headline5,
     );
   }
 
@@ -57,7 +59,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             alignment: Alignment.center,
             decoration:
                 isDark ? null : BoxDecoration(gradient: primaryGradient),
-            child: Text('Coming Soon'),
+            child: Text('Hello', style: Theme.of(context).textTheme.headline3),
             margin: EdgeInsets.all(0),
           ),
           hLine(),
@@ -103,6 +105,20 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             ),
           ),
           hLine(),
+          ListTile(
+            onTap: () {
+              popView(context);
+              navigate(context, AddWordForm(), type: SlideTransitionType.btt);
+            },
+            trailing: trailingIcon(
+              Icons.add,
+            ),
+            title: title(
+              'Add a word',
+            ),
+            subtitle: subTitle('Can\'t find a word?'),
+          ),
+          hLine(),
           Expanded(child: Container()),
           hLine(),
           WordsCountAnimator(
@@ -136,13 +152,13 @@ class VersionBuilder extends StatelessWidget {
           future: getAppDetails(),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             return snapshot.data == null
-                ? const Text('$VERSION', style: TextStyle(fontSize: 10))
+                ? Text('$VERSION', style: Theme.of(context).textTheme.caption)
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('v', style: const TextStyle(fontSize: 10)),
+                      Text('v', style: Theme.of(context).textTheme.caption),
                       Text(snapshot.data!,
-                          style: const TextStyle(fontSize: 10)),
+                          style: Theme.of(context).textTheme.caption),
                     ],
                   );
           }),

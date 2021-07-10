@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/colors.dart';
+import 'package:vocabhub/main.dart';
 
 void removeFocus(BuildContext context) => FocusScope.of(context).unfocus();
 
@@ -38,4 +39,25 @@ Widget vLine({Color? color}) {
     width: 0.4,
     color: color ?? Colors.grey.withOpacity(0.5),
   );
+}
+
+RichText buildExample(String example, String word) {
+  final textSpans = [TextSpan(text: ' - ')];
+  final iterable = example
+      .split(' ')
+      .toList()
+      .map((e) => TextSpan(
+          text: e + ' ',
+          style: TextStyle(
+              fontWeight: (e.toLowerCase().contains(word.toLowerCase()))
+                  ? FontWeight.bold
+                  : FontWeight.normal)))
+      .toList();
+  textSpans.addAll(iterable);
+  textSpans.add(TextSpan(text: '\n'));
+  return RichText(
+      text: TextSpan(
+          style: TextStyle(
+              color: darkNotifier.value ? Colors.white : Colors.black),
+          children: textSpans));
 }

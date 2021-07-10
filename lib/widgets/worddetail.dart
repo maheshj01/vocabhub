@@ -168,7 +168,10 @@ class _WordDetailState extends State<WordDetail>
                       cursor: SystemMouseCursors.click,
                       child: Text(
                         widget.word!.word.capitalize(),
-                        style: TextStyle(fontSize: size.height * 0.06),
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline3!
+                            .copyWith(fontSize: size.height * 0.06),
                       ),
                     ),
                   ),
@@ -256,7 +259,9 @@ class _WordDetailState extends State<WordDetail>
                                                 color: Colors.grey),
                                             focusedBorder: InputBorder.none,
                                             border: InputBorder.none),
-                                        style: TextStyle(fontSize: 20)),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .subtitle1),
                                   ),
                                 ),
                                 hasError
@@ -382,14 +387,12 @@ class _EmptyWordState extends State<EmptyWord> {
           Expanded(child: Container()),
           Text(
             'Whats the word on your mind?',
-            style: TextStyle(fontSize: 20),
+            style: Theme.of(context).textTheme.headline4,
           ),
           SizedBox(height: 16),
-          Text(
-            'Tip: ' + tips[randIndex],
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey, fontSize: 12),
-          ),
+          Text('Tip: ' + tips[randIndex],
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.caption),
           WordsCountAnimator(),
           Expanded(child: Container()),
           Padding(

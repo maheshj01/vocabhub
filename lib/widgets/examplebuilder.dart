@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/widgets/widgets.dart';
 
 class ExampleBuilder extends StatefulWidget {
   final List<String>? examples;
@@ -13,32 +14,10 @@ class ExampleBuilder extends StatefulWidget {
 }
 
 class _ExampleBuilderState extends State<ExampleBuilder> {
-  RichText getExample(String example) {
-    final textSpans = [TextSpan(text: ' - ')];
-
-    final iterable = example
-        .split(' ')
-        .toList()
-        .map((e) => TextSpan(
-            text: e + ' ',
-            style: TextStyle(
-                fontWeight:
-                    (e.toLowerCase().contains(widget.word.toLowerCase()))
-                        ? FontWeight.bold
-                        : FontWeight.normal)))
-        .toList();
-    textSpans.addAll(iterable);
-    textSpans.add(TextSpan(text: '\n'));
-    return RichText(
-        text: TextSpan(
-            style: TextStyle(
-                color: darkNotifier.value ? Colors.white : Colors.black),
-            children: textSpans));
-  }
-
   @override
   Widget build(BuildContext context) {
     bool isMobile = MediaQuery.of(context).size.width <= MOBILE_WIDTH;
+    bool isDark = darkNotifier.value;
     return widget.examples!.isEmpty
         ? Container()
         : Column(
@@ -46,14 +25,16 @@ class _ExampleBuilderState extends State<ExampleBuilder> {
             children: [
               Text(
                 'Example',
-                style: TextStyle(fontSize: isMobile ? 18 : 24),
+                style: Theme.of(context).textTheme.headline4!.copyWith(
+                    fontSize: isMobile ? 18 : 24,
+                    color: isDark ? Colors.white : Colors.black),
               ),
               SizedBox(
                 height: 20,
               ),
               ...[
                 for (int i = 0; i < widget.examples!.length; i++)
-                  getExample(widget.examples![i])
+                  buildExample(widget.examples![i], widget.word)
               ]
             ],
           );
