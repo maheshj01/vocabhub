@@ -168,10 +168,9 @@ class _WordDetailState extends State<WordDetail>
                       cursor: SystemMouseCursors.click,
                       child: Text(
                         widget.word!.word.capitalize(),
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline3!
-                            .copyWith(fontSize: size.height * 0.06),
+                        style: Theme.of(context).textTheme.headline3!.copyWith(
+                            fontSize: size.height * 0.06,
+                            color: isDark ? Colors.white : Colors.black),
                       ),
                     ),
                   ),
@@ -261,7 +260,11 @@ class _WordDetailState extends State<WordDetail>
                                             border: InputBorder.none),
                                         style: Theme.of(context)
                                             .textTheme
-                                            .subtitle1),
+                                            .subtitle1!
+                                            .copyWith(
+                                                color: isDark
+                                                    ? Colors.white
+                                                    : Colors.black)),
                                   ),
                                 ),
                                 hasError
