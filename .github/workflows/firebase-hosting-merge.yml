@@ -29,6 +29,9 @@ jobs:
       - run: echo $KEY_JKS | base64 -d > android/key.jks
         env:
           KEY_JKS: ${{ secrets.KEY_JKS }}
+      - run: echo $KEY_PROPERTIES | base64 -d > android/key.properties
+        env:
+          KEY_PROPERTIES: ${{ secrets.KEY_PROPERTIES }}
       - run: flutter pub get
       - run: flutter pub run build_runner build --delete-conflicting-outputs
       - run: flutter build web --release
