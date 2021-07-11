@@ -47,13 +47,15 @@ class _AddWordFormState extends State<AddWordForm> {
         wordObject.synonyms = _synonyms;
       }
       final response = await supaStore.addWord(wordObject);
-      stopCircularIndicator(context);
       if (response.didSucced) {
-        final supaStoreWords = await supaStore.findByWord("");
-        listNotifier.value = supaStoreWords;
-        totalNotifier.value = supaStoreWords.length;
-        showMessage(context, 'Congrats! You just added $word to vocabhub ');
-        popView(context);
+        showMessage(context, 'Congrats! You just added $word to vocabhub',
+            onClosed: () {
+          List<Word?>? newList = listNotifier.value;
+          newList!.add(response.data as Word);
+          totalNotifier.value = newList.length;
+          stopCircularIndicator(context);
+          popView(context);
+        });
       } else {
         setState(() {
           isDisabled = false;
@@ -77,11 +79,22 @@ class _AddWordFormState extends State<AddWordForm> {
     meaningController = TextEditingController();
     exampleController = TextEditingController();
     synonymController = TextEditingController();
+    wordFocus = FocusNode(canRequestFocus: true);
+    meaningFocus = FocusNode(canRequestFocus: true);
     wordController.addListener(() {
       setState(() {
         word = wordController.text;
       });
+      if (wordController.text.isNotEmpty && meaningController.text.isNotEmpty) {
+        _errorNotifier.value = false;
+      }
     });
+    meaningController.addListener(() {
+      if (wordController.text.isNotEmpty && meaningController.text.isNotEmpty) {
+        _errorNotifier.value = false;
+      }
+    });
+
     exampleController.addListener(() {
       setState(() {});
     });
@@ -108,6 +121,8 @@ class _AddWordFormState extends State<AddWordForm> {
   int maxExampleCount = 3;
   int maxSynonymCount = 5;
   String error = '';
+  late FocusNode wordFocus;
+  late FocusNode meaningFocus;
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
@@ -129,13 +144,12 @@ class _AddWordFormState extends State<AddWordForm> {
       );
     }
 
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Container(
-          color: isDark ? Colors.grey[850] : Colors.white,
-          height: size.width < MOBILE_WIDTH ? size.height * 0.8 : null,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListView(
             children: [
               Align(
@@ -162,6 +176,7 @@ class _AddWordFormState extends State<AddWordForm> {
                 fontSize: 30,
                 maxlength: 20,
                 hint: 'e.g Ambivalent',
+                focusNode: wordFocus,
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp('[A-Za-z]+'))
                 ],
@@ -173,6 +188,7 @@ class _AddWordFormState extends State<AddWordForm> {
                   hint: 'What does ' +
                       '${word.isEmpty ? 'it mean?' : word + ' mean?'}',
                   controller: meaningController,
+                  focusNode: meaningFocus,
                   maxlines: 4,
                 ),
               ),
@@ -215,8 +231,15 @@ class _AddWordFormState extends State<AddWordForm> {
                                     onPressed: () {
                                       String newSynonym =
                                           synonymController.text;
-                                      if (newSynonym.isNotEmpty) {
-                                        _synonyms.add(newSynonym);
+                                      if (word.isNotEmpty) {
+                                        if (newSynonym.isNotEmpty) {
+                                          _synonyms.add(newSynonym);
+                                        }
+                                      } else {
+                                        showMessage(context,
+                                            'You must add a word first');
+                                        FocusScope.of(context)
+                                            .requestFocus(wordFocus);
                                       }
                                       setState(() {});
                                       synonymController.clear();
@@ -274,9 +297,14 @@ class _AddWordFormState extends State<AddWordForm> {
                                       String text = exampleController.text;
                                       if (word.isNotEmpty) {
                                         _examples.add(text);
+                                        exampleController.clear();
+                                      } else {
+                                        showMessage(
+                                            context, 'Add a word first');
+                                        FocusScope.of(context)
+                                            .requestFocus(wordFocus);
                                       }
                                       setState(() {});
-                                      exampleController.clear();
                                     },
                                     icon: Icon(Icons.done, size: 32)),
                               )
@@ -335,6 +363,7 @@ class VocabField extends StatefulWidget {
   final int? maxlength;
   final bool autofocus;
   final double fontSize;
+  final FocusNode? focusNode;
   final List<TextInputFormatter>? inputFormatters;
   final TextEditingController controller;
 
@@ -343,6 +372,7 @@ class VocabField extends StatefulWidget {
       required this.hint,
       this.maxlines = 1,
       this.maxlength,
+      this.focusNode,
       this.inputFormatters,
       required this.controller,
       this.fontSize = 16,
@@ -367,6 +397,7 @@ class VocabFieldState extends State<VocabField> {
               textAlign: TextAlign.center,
               maxLength: widget.maxlength,
               autofocus: widget.autofocus,
+              focusNode: widget.focusNode,
               inputFormatters: widget.inputFormatters,
               decoration: InputDecoration(
                   hintText: widget.hint,

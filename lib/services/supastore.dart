@@ -9,8 +9,10 @@ class VocabResponse {
   bool didSucced;
   String message;
   int? status;
+  Object? data;
 
-  VocabResponse({required this.didSucced, required this.message, this.status});
+  VocabResponse(
+      {required this.didSucced, required this.message, this.status, this.data});
 }
 
 class SupaStore {
@@ -54,6 +56,8 @@ class SupaStore {
       if (response.status == 201) {
         vocabresponse.didSucced = true;
         vocabresponse.message = 'Success';
+        final word = Word.fromJson(response.data[0]);
+        vocabresponse.data = word;
       }
     } catch (_) {
       print(_);
