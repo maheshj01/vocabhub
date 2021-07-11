@@ -13,7 +13,14 @@ class WordsCountAnimator extends StatefulWidget {
 }
 
 class _WordsCountAnimatorState extends State<WordsCountAnimator> {
-  double _opacity = 0.0;
+  final _opacityNotifier = ValueNotifier<double>(0.0);
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _opacityNotifier.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<int>(
@@ -26,9 +33,7 @@ class _WordsCountAnimatorState extends State<WordsCountAnimator> {
             tween: Tween<double>(begin: 0.0, end: total.toDouble()),
             duration: isAnimated ? Duration.zero : wordCountAnimationDuration,
             onEnd: () {
-              setState(() {
-                _opacity = 1.0;
-              });
+              _opacityNotifier.value = 1.0;
             },
             builder: (BuildContext context, double value, Widget? child) {
               return Column(
@@ -43,16 +48,22 @@ class _WordsCountAnimatorState extends State<WordsCountAnimator> {
                     children: [
                       Container(
                         width: 90,
+                        alignment: Alignment.bottomRight,
                         child: Text(value.toInt().toString(),
                             style: Theme.of(context).textTheme.headline3),
                       ),
-                      AnimatedOpacity(
-                          duration: Duration(milliseconds: 500),
-                          opacity: _opacity,
-                          child: Text(
-                            ' Words added so far...',
-                            style: Theme.of(context).textTheme.headline6,
-                          ))
+                      ValueListenableBuilder<double>(
+                          valueListenable: _opacityNotifier,
+                          builder: (BuildContext context, double value,
+                              Widget? child) {
+                            return AnimatedOpacity(
+                                duration: Duration(milliseconds: 500),
+                                opacity: value,
+                                child: Text(
+                                  ' Words added so far...',
+                                  style: Theme.of(context).textTheme.headline6,
+                                ));
+                          })
                     ],
                   ),
                 ],

@@ -6,6 +6,7 @@ import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/supastore.dart';
+import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/drawer.dart';
@@ -116,9 +117,9 @@ class _MyHomePageState extends State<MyHomePage> {
             style: TextStyle(color: isDark ? Colors.white : primaryColor),
           ),
           actions: [
-            actionIcon(Icons.add, SHEET_URL, toolTip: 'Random', onTap: () {
-              _openCustomDialog();
-              // navigate(context, RandomPlay());
+            actionIcon(Icons.add, SHEET_URL, toolTip: 'Add a word', onTap: () {
+              // _openCustomDialog();
+              navigate(context, AddWordForm(), type: SlideTransitionType.btt);
             }),
             constraints.maxWidth <= MOBILE_WIDTH
                 ? Container()
@@ -138,11 +139,6 @@ class _MyHomePageState extends State<MyHomePage> {
             actionIcon(Icons.insert_drive_file, SHEET_URL,
                 toolTip: 'Contribute'),
             actionIcon(Icons.help, REPORT_URL, toolTip: 'Report'),
-            // IconButton(
-            //   icon: Icon(Icons.add),
-            //   tooltip: 'Add a word',
-            //   onPressed: () {},
-            // ),
           ],
         ),
         floatingActionButton: FloatingActionButton(

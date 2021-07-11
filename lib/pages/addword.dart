@@ -129,202 +129,199 @@ class _AddWordFormState extends State<AddWordForm> {
       );
     }
 
-    return Material(
-      child: Align(
-        alignment: Alignment.center,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Container(
-            color: isDark ? Colors.grey[850] : Colors.white,
-            height: size.width < MOBILE_WIDTH ? size.height * 0.8 : null,
-            child: ListView(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0, top: 16),
-                    child: IconButton(
-                        onPressed: () => popView(context),
-                        icon: Icon(Icons.clear, size: 32)),
-                  ),
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Container(
+          color: isDark ? Colors.grey[850] : Colors.white,
+          height: size.width < MOBILE_WIDTH ? size.height * 0.8 : null,
+          child: ListView(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16.0, top: 16),
+                  child: IconButton(
+                      onPressed: () => popView(context),
+                      icon: Icon(Icons.clear, size: 32)),
                 ),
-                Center(
-                  child: Text('Lets add a new word',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline3!
-                          .copyWith(fontWeight: FontWeight.w500)),
+              ),
+              Center(
+                child: Text('Lets add a new word',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline3!
+                        .copyWith(fontWeight: FontWeight.w500)),
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              VocabField(
+                autofocus: true,
+                fontSize: 30,
+                maxlength: 20,
+                hint: 'e.g Ambivalent',
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp('[A-Za-z]+'))
+                ],
+                controller: wordController,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: VocabField(
+                  hint: 'What does ' +
+                      '${word.isEmpty ? 'it mean?' : word + ' mean?'}',
+                  controller: meaningController,
+                  maxlines: 4,
                 ),
-                SizedBox(
-                  height: 50,
-                ),
-                VocabField(
-                  autofocus: true,
-                  fontSize: 30,
-                  maxlength: 20,
-                  hint: 'e.g Ambivalent',
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp('[A-Za-z]+'))
-                  ],
-                  controller: wordController,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: VocabField(
-                    hint: 'What does ' +
-                        '${word.isEmpty ? 'it mean?' : word + ' mean?'}',
-                    controller: meaningController,
-                    maxlines: 4,
-                  ),
-                ),
-                Wrap(
-                  direction: Axis.horizontal,
-                  alignment: WrapAlignment.center,
-                  spacing: 8,
-                  runSpacing: 2,
-                  children: List.generate(_synonyms.length, (index) {
-                    return synonymChip(_synonyms[index], () {
-                      _synonyms.remove(_synonyms[index]);
-                      setState(() {});
-                    });
-                  }),
-                ),
-                _synonyms.length == maxSynonymCount
-                    ? Container()
-                    : Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 150,
-                            child: VocabField(
-                              fontSize: 16,
-                              hint: 'add synonym',
-                              maxlength: 16,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp('[A-Za-z]+'))
-                              ],
-                              controller: synonymController,
-                            ),
-                          ),
-                          synonymController.text.isNotEmpty
-                              ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16.0, right: 16, top: 8),
-                                  child: IconButton(
-                                      onPressed: () {
-                                        String newSynonym =
-                                            synonymController.text;
-                                        if (newSynonym.isNotEmpty) {
-                                          _synonyms.add(newSynonym);
-                                        }
-                                        setState(() {});
-                                        synonymController.clear();
-                                      },
-                                      icon: Icon(Icons.done, size: 32)),
-                                )
-                              : Container(),
-                        ],
-                      ),
-                SizedBox(
-                  height: 32,
-                ),
-                ...List.generate(_examples.length, (index) {
-                  return Container(
-                    margin: EdgeInsets.symmetric(
-                        horizontal: size.width < MOBILE_WIDTH ? 16 : 24.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              ),
+              Wrap(
+                direction: Axis.horizontal,
+                alignment: WrapAlignment.center,
+                spacing: 8,
+                runSpacing: 2,
+                children: List.generate(_synonyms.length, (index) {
+                  return synonymChip(_synonyms[index], () {
+                    _synonyms.remove(_synonyms[index]);
+                    setState(() {});
+                  });
+                }),
+              ),
+              _synonyms.length == maxSynonymCount
+                  ? Container()
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(child: buildExample(_examples[index], word)),
-                        GestureDetector(
-                            onTap: () {
-                              _examples.remove(_examples.elementAt(index));
-                              setState(() {});
-                            },
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Icon(Icons.delete),
-                            )),
+                        Container(
+                          width: 150,
+                          child: VocabField(
+                            fontSize: 16,
+                            hint: 'add synonym',
+                            maxlength: 16,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp('[A-Za-z]+'))
+                            ],
+                            controller: synonymController,
+                          ),
+                        ),
+                        synonymController.text.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16.0, right: 16, top: 8),
+                                child: IconButton(
+                                    onPressed: () {
+                                      String newSynonym =
+                                          synonymController.text;
+                                      if (newSynonym.isNotEmpty) {
+                                        _synonyms.add(newSynonym);
+                                      }
+                                      setState(() {});
+                                      synonymController.clear();
+                                    },
+                                    icon: Icon(Icons.done, size: 32)),
+                              )
+                            : Container(),
                       ],
                     ),
-                  );
-                }),
-                _examples.length < maxExampleCount
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Flexible(
-                            child: VocabField(
-                              hint:
-                                  'An example sentence ${word.isEmpty ? "" : "with $word"} (Optional)',
-                              controller: exampleController,
-                              maxlines: 4,
-                            ),
+              SizedBox(
+                height: 32,
+              ),
+              ...List.generate(_examples.length, (index) {
+                return Container(
+                  margin: EdgeInsets.symmetric(
+                      horizontal: size.width < MOBILE_WIDTH ? 16 : 24.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(child: buildExample(_examples[index], word)),
+                      GestureDetector(
+                          onTap: () {
+                            _examples.remove(_examples.elementAt(index));
+                            setState(() {});
+                          },
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Icon(Icons.delete),
+                          )),
+                    ],
+                  ),
+                );
+              }),
+              _examples.length < maxExampleCount
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Flexible(
+                          child: VocabField(
+                            hint:
+                                'An example sentence ${word.isEmpty ? "" : "with $word"} (Optional)',
+                            controller: exampleController,
+                            maxlines: 4,
                           ),
-                          exampleController.text.isNotEmpty
-                              ? Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 16.0, right: 16, top: 8),
-                                  child: IconButton(
-                                      onPressed: () {
-                                        String text = exampleController.text;
-                                        if (word.isNotEmpty) {
-                                          _examples.add(text);
-                                        }
-                                        setState(() {});
-                                        exampleController.clear();
-                                      },
-                                      icon: Icon(Icons.done, size: 32)),
-                                )
-                              : Container(),
-                        ],
-                      )
-                    : Container(),
-                SizedBox(
-                  height: 50,
-                ),
-                Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      height: 40,
-                      width: 100,
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: isDark ? Colors.teal : primaryColor,
-                          ),
-                          onPressed: isDisabled ? null : () => submitForm(),
-                          child: Text('Submit',
-                              style: TextStyle(
-                                  color: isDisabled
-                                      ? Colors.black
-                                      : Colors.white))),
-                    )),
-                SizedBox(height: 16),
-                ValueListenableBuilder<bool>(
-                    valueListenable: _errorNotifier,
-                    builder: (context, value, Widget? widget) {
-                      if (value) {
-                        return Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            '$error',
+                        ),
+                        exampleController.text.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16.0, right: 16, top: 8),
+                                child: IconButton(
+                                    onPressed: () {
+                                      String text = exampleController.text;
+                                      if (word.isNotEmpty) {
+                                        _examples.add(text);
+                                      }
+                                      setState(() {});
+                                      exampleController.clear();
+                                    },
+                                    icon: Icon(Icons.done, size: 32)),
+                              )
+                            : Container(),
+                      ],
+                    )
+                  : Container(),
+              SizedBox(
+                height: 50,
+              ),
+              Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    height: 40,
+                    width: 100,
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: isDark ? Colors.teal : primaryColor,
+                        ),
+                        onPressed: isDisabled ? null : () => submitForm(),
+                        child: Text('Submit',
                             style: TextStyle(
-                                color: isDark ? Colors.white : Colors.red),
-                          ),
-                        );
-                      }
-                      return Container();
-                    }),
-                SizedBox(
-                  height: 40,
-                )
-              ],
-            ),
+                                color:
+                                    isDisabled ? Colors.black : Colors.white))),
+                  )),
+              SizedBox(height: 16),
+              ValueListenableBuilder<bool>(
+                  valueListenable: _errorNotifier,
+                  builder: (context, value, Widget? widget) {
+                    if (value) {
+                      return Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          '$error',
+                          style: TextStyle(
+                              color: isDark ? Colors.white : Colors.red),
+                        ),
+                      );
+                    }
+                    return Container();
+                  }),
+              SizedBox(
+                height: 40,
+              )
+            ],
           ),
         ),
       ),
