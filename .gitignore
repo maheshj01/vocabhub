@@ -52,6 +52,7 @@ doc/api/
 **/android/captures/
 **/android/app/google-services.json
 **/android/gradlew
+**/android/key.jks
 **/android/gradlew.bat
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
