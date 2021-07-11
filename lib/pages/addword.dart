@@ -88,6 +88,22 @@ class _AddWordFormState extends State<AddWordForm> {
       if (wordController.text.isNotEmpty && meaningController.text.isNotEmpty) {
         _errorNotifier.value = false;
       }
+      final list = listNotifier.value;
+      Word found = list!.firstWhere(
+          (element) => element.word.toLowerCase() == word.toLowerCase(),
+          orElse: () => Word('', '', ''));
+      if (found.word.isNotEmpty) {
+        setState(() {
+          isDisabled = true;
+        });
+        error = '${word.capitalize()} already present';
+        _errorNotifier.value = true;
+      } else {
+        setState(() {
+          isDisabled = false;
+        });
+        _errorNotifier.value = false;
+      }
     });
     meaningController.addListener(() {
       if (wordController.text.isNotEmpty && meaningController.text.isNotEmpty) {
@@ -140,7 +156,7 @@ class _AddWordFormState extends State<AddWordForm> {
         isEnabled: true,
         backgroundColor: isDark ? secondaryDark : secondaryColor,
         useDeleteButtonTooltip: true,
-        deleteButtonTooltipMessage: 'soimething',
+        deleteButtonTooltipMessage: 'remove',
       );
     }
 
