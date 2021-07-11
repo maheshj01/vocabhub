@@ -66,7 +66,9 @@ class VocabApp extends StatelessWidget {
                           TextSelectionThemeData(cursorColor: primaryColor),
                     ),
                     themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
-                    home: MyHomePage(title: '$APP_TITLE'),
+                    home:
+                        // AppSignIn(),
+                        MyHomePage(title: '$APP_TITLE'),
                     navigatorObservers: [
                       FirebaseAnalyticsObserver(analytics: analytics),
                     ]);
