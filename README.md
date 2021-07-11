@@ -15,7 +15,7 @@ A vocab app built with Flutter and Supabase
 
 | Android | iOS | MacOS | Web |
 | :-----: | :-: | :---: | :-: |
-|   ✅    | ✅  |  ✅   | ✅  |
+|   ✅    | ✅  |  ❌   | ✅  |
 
 ## Contributing
 
