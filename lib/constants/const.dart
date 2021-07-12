@@ -1,7 +1,7 @@
 /// APP CONSTANTS GO HERE IN THIS FILE
 
 const BASE_URL = '';
-const VERSION = 'v0.2.2';
+const VERSION = 'v0.2.3';
 const CONFIG_URL = 'https://bisasplfdnyiiggonpcx.supabase.co';
 const SOURCE_CODE_URL = 'https://github.com/maheshmnj/vocabhub';
 const REPORT_URL = 'https://github.com/maheshmnj/vocabhub/issues/new/choose';
