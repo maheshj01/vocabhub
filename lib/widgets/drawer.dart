@@ -70,26 +70,24 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             subtitle: subTitle(
               'Report a bug or Request a feature',
             ),
-            trailing: trailingIcon(
-              Icons.help,
-            ),
+            trailing: trailingIcon(Icons.bug_report),
             title: title(
               'Report',
             ),
           ),
           hLine(),
-          ListTile(
-            onTap: () {
-              launchUrl(SHEET_URL);
-            },
-            trailing: trailingIcon(
-              Icons.insert_drive_file,
-            ),
-            title: title(
-              'Contribute',
-            ),
-            subtitle: subTitle('Contribute to the excel sheet'),
-          ),
+          // ListTile(
+          //   onTap: () {
+          //     launchUrl(SHEET_URL);
+          //   },
+          //   trailing: trailingIcon(
+          //     Icons.insert_drive_file,
+          //   ),
+          //   title: title(
+          //     'Contribute',
+          //   ),
+          //   subtitle: subTitle('Contribute to the excel sheet'),
+          // ),
           hLine(),
           ListTile(
             subtitle: subTitle('The code to this app is Open Sourced'),

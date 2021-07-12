@@ -5,8 +5,8 @@ const VERSION = 'v0.2.3';
 const CONFIG_URL = 'https://bisasplfdnyiiggonpcx.supabase.co';
 const SOURCE_CODE_URL = 'https://github.com/maheshmnj/vocabhub';
 const REPORT_URL = 'https://github.com/maheshmnj/vocabhub/issues/new/choose';
-const SHEET_URL =
-    'https://docs.google.com/spreadsheets/d/1G1RtQfsEDqHhHP4cgOpO9x_ZtQ1dYa6QrGCq3KFlu50';
+// const SHEET_URL =
+//     'https://docs.google.com/spreadsheets/d/1G1RtQfsEDqHhHP4cgOpO9x_ZtQ1dYa6QrGCq3KFlu50';
 const MOBILE_WIDTH = 500.0;
 const TABLET_WIDTH = 800.0;
 const Duration wordCountAnimationDuration = Duration(seconds: 3);
