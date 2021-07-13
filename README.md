@@ -13,13 +13,13 @@ A vocab app built with Flutter and Supabase
 ### Say Hello to Dark Mode
 
 
-Solarized dark             |  Solarized Ocean         |  Solarized Ocean
+Drawer             |  Home         |  Add Word
 :-------------------------:|:-------------------------:|:-------------------------:
 <img src="https://user-images.githubusercontent.com/31410839/125229282-19f02c00-e2f4-11eb-81bc-a561491df733.png" width="450"/>  |  <img src="https://user-images.githubusercontent.com/31410839/125229719-f679b100-e2f4-11eb-8441-d93aa297cee2.png" width="450"/> |  <img src="https://user-images.githubusercontent.com/31410839/125230599-b5829c00-e2f6-11eb-84fd-4f13506b0e99.png" width="420"/>
 
 ### Say Hello to Light Mode
 
-Solarized dark             |  Solarized Ocean         |  Solarized Ocean
+Drawer             |  Home         |  Add Word
 :-------------------------:|:-------------------------:|:-------------------------:
 <img src="https://user-images.githubusercontent.com/31410839/125231492-79503b00-e2f8-11eb-818c-c10fe5338e5d.png" width="420"/>  |  <img src="https://user-images.githubusercontent.com/31410839/125230053-a4855b00-e2f5-11eb-986b-14b1cb26635f.png" width="450"/> |  <img src="https://user-images.githubusercontent.com/31410839/125230060-aa7b3c00-e2f5-11eb-85d9-db65b39d3eba.png" width="450"/>
 
