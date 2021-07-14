@@ -12,7 +12,11 @@ import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
 class AddWordForm extends StatefulWidget {
-  const AddWordForm({Key? key}) : super(key: key);
+  final bool isEdit;
+  final Word? word;
+
+  const AddWordForm({Key? key, this.isEdit = false, this.word})
+      : super(key: key);
 
   @override
   _AddWordFormState createState() => _AddWordFormState();
@@ -43,7 +47,7 @@ class _AddWordFormState extends State<AddWordForm> {
       if (_examples.isNotEmpty) {
         wordObject.examples = _examples;
       }
-      if (_examples.isNotEmpty) {
+      if (_synonyms.isNotEmpty) {
         wordObject.synonyms = _synonyms;
       }
       final response = await supaStore.addWord(wordObject);
@@ -81,13 +85,49 @@ class _AddWordFormState extends State<AddWordForm> {
     synonymController = TextEditingController();
     wordFocus = FocusNode(canRequestFocus: true);
     meaningFocus = FocusNode(canRequestFocus: true);
-    wordController.addListener(() {
-      setState(() {
-        word = wordController.text;
-      });
+    _title = 'Lets add a new word';
+    if (widget.isEdit) {
+      _populateData();
+      _title = 'Editing Word';
+    }
+    
+    wordController.addListener(_listenWordChanges);
+    meaningController.addListener(() {
       if (wordController.text.isNotEmpty && meaningController.text.isNotEmpty) {
         _errorNotifier.value = false;
       }
+    });
+    exampleController.addListener(_rebuild);
+    synonymController.addListener(_rebuild);
+  }
+
+  void _populateData() {
+    wordController.text = widget.word!.word;
+    meaningController.text = widget.word!.meaning;
+    if (widget.word!.synonyms != null && widget.word!.synonyms!.isNotEmpty) {
+      _synonyms = widget.word!.synonyms!;
+    }
+    if (widget.word!.examples != null && widget.word!.examples!.isNotEmpty) {
+      _examples = widget.word!.examples!;
+    }
+  }
+
+  void _rebuild() => setState(() {});
+
+  void _listenWordChanges() {
+    setState(() {
+      word = wordController.text;
+    });
+    if (wordController.text.isNotEmpty && meaningController.text.isNotEmpty) {
+      _errorNotifier.value = false;
+    }
+    if (widget.isEdit) {
+      /// TODO: Compare each field if
+      /// there is a change in Object if yes then isDisabled = false
+      setState(() {
+        isDisabled = false;
+      });
+    } else {
       final list = listNotifier.value;
       Word found = list!.firstWhere(
           (element) => element.word.toLowerCase() == word.toLowerCase(),
@@ -104,19 +144,39 @@ class _AddWordFormState extends State<AddWordForm> {
         });
         _errorNotifier.value = false;
       }
-    });
-    meaningController.addListener(() {
-      if (wordController.text.isNotEmpty && meaningController.text.isNotEmpty) {
-        _errorNotifier.value = false;
-      }
-    });
+    }
+  }
 
-    exampleController.addListener(() {
-      setState(() {});
-    });
-    synonymController.addListener(() {
-      setState(() {});
-    });
+  Future<void> updateWord() async {
+    showCircularIndicator(context);
+    String id = widget.word!.id;
+    Word word = widget.word!;
+    final newWord = wordController.text;
+    final meaning = meaningController.text;
+    if (newWord.isNotEmpty && meaning.isNotEmpty) {
+      setState(() {
+        isDisabled = true;
+      });
+
+      if (_examples.isNotEmpty) {
+        word.examples = _examples;
+      }
+      if (_synonyms.isNotEmpty) {
+        word.synonyms = _synonyms;
+      }
+      final response = await supaStore.updateMeaning(id: id, word: word);
+      stopCircularIndicator(context);
+      if (response.status == 200) {
+        showMessage(context, "The word \"${word.word}\" is updated.",
+            onClosed: () => popView(context));
+      } else {
+        print('failed to update ${response.error!.message}');
+      }
+    } else {
+      stopCircularIndicator(context);
+      error = 'word or meaning cannot be empty!';
+      _errorNotifier.value = true;
+    }
   }
 
   @override
@@ -139,6 +199,7 @@ class _AddWordFormState extends State<AddWordForm> {
   String error = '';
   late FocusNode wordFocus;
   late FocusNode meaningFocus;
+  late String _title;
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
@@ -146,7 +207,7 @@ class _AddWordFormState extends State<AddWordForm> {
     Widget synonymChip(String synonym, Function onDeleted) {
       return InputChip(
         label: Text(
-          '${synonym.capitalize()}',
+          '${synonym.trim().capitalize()}',
           style: Theme.of(context)
               .textTheme
               .headline5!
@@ -178,7 +239,7 @@ class _AddWordFormState extends State<AddWordForm> {
                 ),
               ),
               Center(
-                child: Text('Lets add a new word',
+                child: Text('$_title',
                     style: Theme.of(context)
                         .textTheme
                         .headline3!
@@ -340,8 +401,10 @@ class _AddWordFormState extends State<AddWordForm> {
                         style: ElevatedButton.styleFrom(
                           primary: isDark ? Colors.teal : primaryColor,
                         ),
-                        onPressed: isDisabled ? null : () => submitForm(),
-                        child: Text('Submit',
+                        onPressed: isDisabled
+                            ? null
+                            : () => widget.isEdit ? updateWord() : submitForm(),
+                        child: Text(widget.isEdit ? 'Update' : 'Submit',
                             style: TextStyle(
                                 color:
                                     isDisabled ? Colors.black : Colors.white))),
