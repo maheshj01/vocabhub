@@ -7,7 +7,7 @@ part 'word_model.g.dart';
 ///
 /// define a schema for your class and annotate
 /// and then run
-/// ```flutter pub run build_runner build```
+/// ```flutter pub run build_runner build --delete-conflicting-outputs```
 /// to watch the file changes and generate the outpur
 /// ```flutter pub run build_runner watch```
 // @JsonSerializable()
@@ -30,23 +30,19 @@ class Word {
   final String word;
   String meaning;
   List<String>? synonyms;
-  List<String>? antonyms;
   List<String>? examples;
   final String? note;
 
   Word(this.id, this.word, this.meaning,
       {this.synonyms = const [],
-      this.antonyms = const [],
+      // this.antonyms = const [],
       this.note,
       this.examples = const []});
   factory Word.fromJson(Map<String, dynamic> json) => _$WordFromJson(json);
 
   factory Word.copyWith(Word w) {
     return Word(w.id, w.word, w.meaning,
-        examples: w.examples,
-        antonyms: w.antonyms,
-        note: w.note,
-        synonyms: w.synonyms);
+        examples: w.examples, note: w.note, synonyms: w.synonyms);
   }
 
   Map<String, dynamic> toJson() => _$WordToJson(this);

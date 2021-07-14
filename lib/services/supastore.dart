@@ -87,6 +87,20 @@ class SupaStore {
     return response;
   }
 
+  Future<PostgrestResponse> updateWord({
+    required String id,
+    required Word word,
+  }) async {
+    final Map<String, dynamic> json = word.toJson();
+    final response = await _supabase
+        .from(tableName)
+        .update(json)
+        .eq("$ID_COLUMN", "$id")
+        .execute();
+    _logger.i(response.toJson());
+    return response;
+  }
+
   Future<PostgrestResponse> updateMeaning({
     required String id,
     required Word word,

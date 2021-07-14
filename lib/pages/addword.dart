@@ -90,7 +90,7 @@ class _AddWordFormState extends State<AddWordForm> {
       _populateData();
       _title = 'Editing Word';
     }
-    
+
     wordController.addListener(_listenWordChanges);
     meaningController.addListener(() {
       if (wordController.text.isNotEmpty && meaningController.text.isNotEmpty) {
@@ -164,7 +164,7 @@ class _AddWordFormState extends State<AddWordForm> {
       if (_synonyms.isNotEmpty) {
         word.synonyms = _synonyms;
       }
-      final response = await supaStore.updateMeaning(id: id, word: word);
+      final response = await supaStore.updateWord(id: id, word: word);
       stopCircularIndicator(context);
       if (response.status == 200) {
         showMessage(context, "The word \"${word.word}\" is updated.",
