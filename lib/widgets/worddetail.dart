@@ -60,8 +60,6 @@ class _WordDetailState extends State<WordDetail>
   void dispose() {
     // TODO: implement dispose
     _animationController.dispose();
-    // editModeNotifier.dispose();
-    // textEditingController.dispose();
     super.dispose();
   }
 
@@ -95,8 +93,6 @@ class _WordDetailState extends State<WordDetail>
 
   late String meaning;
   late SupaStore supaStore;
-  // final ValueNotifier<bool> editModeNotifier = ValueNotifier<bool>(false);
-  // TextEditingController textEditingController = TextEditingController(text: "");
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

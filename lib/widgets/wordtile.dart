@@ -3,6 +3,8 @@ import 'package:flutter/rendering.dart';
 import 'package:vocabhub/constants/colors.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word_model.dart';
+import 'package:vocabhub/pages/addword.dart';
+import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
 import 'package:vocabhub/utils/extensions.dart';
@@ -93,8 +95,28 @@ class _WordTileState extends State<WordTile> {
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16),
-                  child: SynonymsList(
-                    synonyms: widget.word.synonyms,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: SynonymsList(
+                          synonyms: widget.word.synonyms,
+                        ),
+                      ),
+                      Container(
+                          alignment: Alignment.topRight,
+                          padding: EdgeInsets.only(right: 16),
+                          child: IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () {
+                                navigate(
+                                    context,
+                                    AddWordForm(
+                                      isEdit: true,
+                                      word: widget.word,
+                                    ),
+                                    type: SlideTransitionType.btt);
+                              })),
+                    ],
                   ),
                 ),
                 Padding(
