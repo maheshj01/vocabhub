@@ -76,33 +76,6 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             ),
           ),
           hLine(),
-          // ListTile(
-          //   onTap: () {
-          //     launchUrl(SHEET_URL);
-          //   },
-          //   trailing: trailingIcon(
-          //     Icons.insert_drive_file,
-          //   ),
-          //   title: title(
-          //     'Contribute',
-          //   ),
-          //   subtitle: subTitle('Contribute to the excel sheet'),
-          // ),
-          hLine(),
-          ListTile(
-            subtitle: subTitle('The code to this app is Open Sourced'),
-            onTap: () {
-              launchUrl(SOURCE_CODE_URL);
-            },
-            title: title(
-              'Github',
-            ),
-            trailing: Image.asset(
-              isDark ? GITHUB_WHITE_ASSET_PATH : GITHUB_ASSET_PATH,
-              width: 26,
-            ),
-          ),
-          hLine(),
           ListTile(
             onTap: () {
               popView(context);
@@ -115,6 +88,31 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
               'Add a word',
             ),
             subtitle: subTitle('Can\'t find a word?'),
+          ),
+          hLine(),
+          ListTile(
+            subtitle: subTitle('The code to this app is Open Sourced'),
+            onTap: () {
+              launchUrl(SOURCE_CODE_URL);
+            },
+            title: title(
+              'Source code',
+            ),
+            trailing: Image.asset(
+              isDark ? GITHUB_WHITE_ASSET_PATH : GITHUB_ASSET_PATH,
+              width: 26,
+            ),
+          ),
+          hLine(),
+          ListTile(
+            onTap: () {
+              launchUrl(PRIVACY_POLICY);
+            },
+            trailing: trailingIcon(Icons.privacy_tip),
+            title: title(
+              'Privacy Policy',
+            ),
+            subtitle: subTitle(''),
           ),
           hLine(),
           Expanded(child: Container()),

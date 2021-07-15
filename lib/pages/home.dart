@@ -121,23 +121,24 @@ class _MyHomePageState extends State<MyHomePage> {
               // _openCustomDialog();
               navigate(context, AddWordForm(), type: SlideTransitionType.btt);
             }),
-            constraints.maxWidth <= MOBILE_WIDTH
-                ? Container()
-                : IconButton(
-                    icon: Image.asset(
-                      !isDark
-                          ? '$GITHUB_ASSET_PATH'
-                          : '$GITHUB_WHITE_ASSET_PATH',
-                      height: isDark ? 26 : 35,
-                    ),
-                    tooltip: 'Github',
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      launchUrl(SOURCE_CODE_URL, isNewTab: true);
-                    },
-                  ),
-            // actionIcon(Icons.insert_drive_file, SHEET_URL,
-            //     toolTip: 'Contribute'),
+            // constraints.maxWidth <= MOBILE_WIDTH
+            //     ? Container()
+            //     : IconButton(
+            //         icon: Image.asset(
+            //           !isDark
+            //               ? '$GITHUB_ASSET_PATH'
+            //               : '$GITHUB_WHITE_ASSET_PATH',
+            //           height: isDark ? 26 : 35,
+            //         ),
+            //         tooltip: 'Github',
+            //         padding: EdgeInsets.zero,
+            //         onPressed: () {
+            //           launchUrl(SOURCE_CODE_URL, isNewTab: true);
+            //         },
+            //       ),
+            actionIcon(Icons.code, SOURCE_CODE_URL, toolTip: 'Source code'),
+            actionIcon(Icons.privacy_tip, PRIVACY_POLICY,
+                toolTip: 'Privacy Policy'),
             actionIcon(Icons.bug_report, REPORT_URL, toolTip: 'Report'),
           ],
         ),
