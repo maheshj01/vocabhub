@@ -1,4 +1,4 @@
-# Vocabhub 0.2.3
+# Vocabhub 0.3.0
 
 A vocab app built with Flutter and Supabase
 [Live version here](https://vocabhub.web.app/)

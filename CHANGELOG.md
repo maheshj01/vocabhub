@@ -1,3 +1,13 @@
+### 0.3.0
+
+- Adds Edit Mode feature
+- Improved consistency across mobile and web.
+
+### 0.2.3
+
+- Adds Analytics for better stats.
+- minor fixes
+
 ### 0.2.2
 
 - Maintain Dark mode state
