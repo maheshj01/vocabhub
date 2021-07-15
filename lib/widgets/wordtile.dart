@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:vocabhub/constants/colors.dart';
+import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/pages/addword.dart';
+import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/utils/navigator.dart';
+import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
-import 'package:vocabhub/utils/extensions.dart';
 
 class WordTile extends StatefulWidget {
   final Word word;
@@ -29,7 +29,7 @@ class WordTile extends StatefulWidget {
 
 class _WordTileState extends State<WordTile> {
   late Color expandedColor;
-
+  late Analytics firebaseAnalytics;
   @override
   void didUpdateWidget(covariant WordTile oldWidget) {
     // TODO: implement didUpdateWidget
@@ -46,6 +46,7 @@ class _WordTileState extends State<WordTile> {
     // TODO: implement initState
     super.initState();
     expandedColor = darkNotifier.value ? Colors.white : Colors.black;
+    firebaseAnalytics = Analytics();
   }
 
   @override
@@ -84,6 +85,7 @@ class _WordTileState extends State<WordTile> {
                   setState(() {
                     expandedColor = isDark ? Colors.cyanAccent : primaryColor;
                   });
+                  firebaseAnalytics.logWordSelection(widget.word);
                 } else {
                   setState(() {
                     expandedColor = isDark ? Colors.white : Colors.black;

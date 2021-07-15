@@ -117,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
             style: TextStyle(color: isDark ? Colors.white : primaryColor),
           ),
           actions: [
-            actionIcon(Icons.add, SHEET_URL, toolTip: 'Add a word', onTap: () {
+            actionIcon(Icons.add, '', toolTip: 'Add a word', onTap: () {
               // _openCustomDialog();
               navigate(context, AddWordForm(), type: SlideTransitionType.btt);
             }),
@@ -136,9 +136,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       launchUrl(SOURCE_CODE_URL, isNewTab: true);
                     },
                   ),
-            actionIcon(Icons.insert_drive_file, SHEET_URL,
-                toolTip: 'Contribute'),
-            actionIcon(Icons.help, REPORT_URL, toolTip: 'Report'),
+            // actionIcon(Icons.insert_drive_file, SHEET_URL,
+            //     toolTip: 'Contribute'),
+            actionIcon(Icons.bug_report, REPORT_URL, toolTip: 'Report'),
           ],
         ),
         floatingActionButton: FloatingActionButton(
