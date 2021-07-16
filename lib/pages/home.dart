@@ -15,6 +15,7 @@ import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
 import 'package:vocabhub/widgets/wordtile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 TextEditingController searchController = TextEditingController();
 
@@ -119,7 +120,8 @@ class _MyHomePageState extends State<MyHomePage> {
           actions: [
             actionIcon(Icons.add, '', toolTip: 'Add a word', onTap: () {
               // _openCustomDialog();
-              navigate(context, AddWordForm(), slideTransitionType: SlideTransitionType.btt);
+              navigate(context, AddWordForm(),
+                  slideTransitionType: SlideTransitionType.btt);
             }),
             // constraints.maxWidth <= MOBILE_WIDTH
             //     ? Container()
@@ -219,6 +221,14 @@ class _WordsBuilderState extends State<WordsBuilder> {
     totalNotifier.value = supaStoreWords.length;
   }
 
+  Future<void> refresh() async {
+    supaStoreWords = await supaStore.findByWord("");
+    listNotifier.value = supaStoreWords;
+    totalNotifier.value = supaStoreWords.length;
+    print('${totalNotifier.value}');
+    _refreshController.refreshCompleted();
+  }
+
   bool isInSynonym(String query, List<String>? synonyms) {
     bool result = false;
     if (synonyms == null || synonyms.isEmpty) {
@@ -232,6 +242,8 @@ class _WordsBuilderState extends State<WordsBuilder> {
     return result;
   }
 
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   List<Word> supaStoreWords = [];
   String selectedWord = '';
   @override
@@ -272,21 +284,27 @@ class _WordsBuilderState extends State<WordsBuilder> {
                 ),
                 Expanded(
                   // TODO: Wrap with scrollbar widget currently it is buggy
-                  child: ListView.builder(
-                      itemCount: value.length,
-                      itemBuilder: (_, x) {
-                        return WordTile(
-                            word: value[x],
-                            isMobile: size.width <= MOBILE_WIDTH,
-                            isSelected: selectedWord.toLowerCase() ==
-                                value[x].word.toLowerCase(),
-                            onSelect: (word) {
-                              setState(() {
-                                selectedWord = word.word;
+                  child: SmartRefresher(
+                    enablePullDown: size.width > MOBILE_WIDTH ? false : true,
+                    enablePullUp: false,
+                    controller: _refreshController,
+                    onRefresh: () => refresh(),
+                    child: ListView.builder(
+                        itemCount: value.length,
+                        itemBuilder: (_, x) {
+                          return WordTile(
+                              word: value[x],
+                              isMobile: size.width <= MOBILE_WIDTH,
+                              isSelected: selectedWord.toLowerCase() ==
+                                  value[x].word.toLowerCase(),
+                              onSelect: (word) {
+                                setState(() {
+                                  selectedWord = word.word;
+                                });
+                                widget.onSelect!(word);
                               });
-                              widget.onSelect!(word);
-                            });
-                      }),
+                        }),
+                  ),
                 ),
               ],
             ),
