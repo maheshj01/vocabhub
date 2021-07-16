@@ -71,6 +71,7 @@ class SupaStore {
     List<Word> words = [];
     if (response.status == 200) {
       words = (response.data as List).map((e) => Word.fromJson(e)).toList();
+      words.sort((a, b) => a.word.compareTo(b.word));
     }
     return words;
   }
