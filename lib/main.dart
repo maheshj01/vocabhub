@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:vocabhub/models/word_model.dart';
-import 'package:vocabhub/pages/home.dart';
+import 'package:vocabhub/pages/splashscreen.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'constants/colors.dart';
@@ -66,9 +66,7 @@ class VocabApp extends StatelessWidget {
                           TextSelectionThemeData(cursorColor: primaryColor),
                     ),
                     themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
-                    home:
-                        // AppSignIn(),
-                        MyHomePage(title: '$APP_TITLE'),
+                    home: SplashScreen(),
                     navigatorObservers: [
                       FirebaseAnalyticsObserver(analytics: analytics),
                     ]);

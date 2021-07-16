@@ -24,9 +24,7 @@ TextTheme googleFontsTextTheme(BuildContext context) {
         color: isDark ? Colors.white : Colors.black,
         fontWeight: FontWeight.bold),
     headline2: GoogleFonts.quicksand(
-        fontSize: 48.0,
-        color: isDark ? Colors.white : Colors.black,
-        fontWeight: FontWeight.w500),
+        fontSize: 48.0, color: Colors.white, fontWeight: FontWeight.w500),
     headline3: GoogleFonts.quicksand(
         fontSize: 36.0,
         color: isDark ? Colors.white : Colors.black,
