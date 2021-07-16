@@ -13,7 +13,7 @@ Future<void> navigateReplace(BuildContext context, Widget widget,
 Future<void> navigate(BuildContext context, Widget widget,
         {bool isDialog = false,
         bool isRootNavigator = true,
-        SlideTransitionType slideTransitionType = SlideTransitionType.tr}) =>
+        SlideTransitionType slideTransitionType = SlideTransitionType.btt}) =>
     Navigator.of(context, rootNavigator: isRootNavigator)
         .push(NavigateRoute(widget, type: slideTransitionType));
 // pop all Routes except first
@@ -25,9 +25,10 @@ void popView(BuildContext context, {bool isRootNavigator = true}) async =>
     Navigator.of(context, rootNavigator: isRootNavigator).pop();
 
 navigateAndPopAll(BuildContext context, Widget widget,
-        {bool isRootNavigator = true}) =>
+        {bool isRootNavigator = true,
+        SlideTransitionType slideTransitionType = SlideTransitionType.tr}) =>
     Navigator.of(context, rootNavigator: isRootNavigator).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => widget),
+        NavigateRoute(widget, type: slideTransitionType),
         (Route<dynamic> route) => false);
 
 Offset getTransitionOffset(SlideTransitionType type) {

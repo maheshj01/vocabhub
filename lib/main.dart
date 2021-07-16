@@ -3,14 +3,16 @@ import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:vocabhub/models/word_model.dart';
+import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/pages/splashscreen.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'constants/colors.dart';
-import 'constants/constants.dart' show APP_TITLE, googleFontsTextTheme;
+import 'constants/constants.dart';
 import 'utils/settings.dart';
 
 Future<void> main() async {
@@ -66,7 +68,11 @@ class VocabApp extends StatelessWidget {
                           TextSelectionThemeData(cursorColor: primaryColor),
                     ),
                     themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
-                    home: SplashScreen(),
+                    home: Builder(
+                        builder: (BuildContext _) =>
+                            kIsWeb && MediaQuery.of(_).size.width > MOBILE_WIDTH
+                                ? MyHomePage(title: '$APP_TITLE')
+                                : SplashScreen()),
                     navigatorObservers: [
                       FirebaseAnalyticsObserver(analytics: analytics),
                     ]);
