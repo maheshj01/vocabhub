@@ -116,7 +116,7 @@ class _WordTileState extends State<WordTile> {
                                       isEdit: true,
                                       word: widget.word,
                                     ),
-                                    type: SlideTransitionType.btt);
+                                    slideTransitionType: SlideTransitionType.btt);
                               })),
                     ],
                   ),

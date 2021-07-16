@@ -133,7 +133,7 @@ class _WordDetailState extends State<WordDetail>
                             isEdit: true,
                             word: widget.word,
                           ),
-                          type: SlideTransitionType.btt);
+                          slideTransitionType: SlideTransitionType.btt);
                     })),
             Align(
               alignment: Alignment.topCenter,

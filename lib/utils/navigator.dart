@@ -5,16 +5,17 @@ enum SlideTransitionType { ltr, rtl, ttb, btt, bl, br, tl, tr }
 Future<void> navigateReplace(BuildContext context, Widget widget,
         {bool isDialog = false,
         bool isRootNavigator = true,
-        SlideTransitionType type = SlideTransitionType.tr}) async =>
+        SlideTransitionType slideTransitionType =
+            SlideTransitionType.tr}) async =>
     await Navigator.of(context, rootNavigator: isRootNavigator)
-        .pushReplacement(NavigateRoute(widget, type: type));
+        .pushReplacement(NavigateRoute(widget, type: slideTransitionType));
 
 Future<void> navigate(BuildContext context, Widget widget,
         {bool isDialog = false,
         bool isRootNavigator = true,
-        SlideTransitionType type = SlideTransitionType.tr}) =>
+        SlideTransitionType slideTransitionType = SlideTransitionType.tr}) =>
     Navigator.of(context, rootNavigator: isRootNavigator)
-        .push(NavigateRoute(widget, type: type));
+        .push(NavigateRoute(widget, type: slideTransitionType));
 // pop all Routes except first
 void popToFirst(BuildContext context, {bool isRootNavigator = true}) =>
     Navigator.of(context, rootNavigator: isRootNavigator)

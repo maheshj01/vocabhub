@@ -79,7 +79,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
           ListTile(
             onTap: () {
               popView(context);
-              navigate(context, AddWordForm(), type: SlideTransitionType.btt);
+              navigate(context, AddWordForm(), slideTransitionType: SlideTransitionType.btt);
             },
             trailing: trailingIcon(
               Icons.add,

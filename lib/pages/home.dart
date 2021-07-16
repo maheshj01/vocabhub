@@ -119,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
           actions: [
             actionIcon(Icons.add, '', toolTip: 'Add a word', onTap: () {
               // _openCustomDialog();
-              navigate(context, AddWordForm(), type: SlideTransitionType.btt);
+              navigate(context, AddWordForm(), slideTransitionType: SlideTransitionType.btt);
             }),
             // constraints.maxWidth <= MOBILE_WIDTH
             //     ? Container()
