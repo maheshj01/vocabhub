@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/exports.dart';
+import 'package:vocabhub/pages/home.dart';
+import 'package:vocabhub/utils/navigator.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -15,9 +17,9 @@ class _SplashScreenState extends State<SplashScreen>
     vsync: this,
   );
 
-  late final Animation<Offset> _offsetAnimation = Tween<Offset>(
-    begin: Offset(0.0, -50.0),
-    end: Offset.zero,
+  late final Animation<double> _animation = Tween<double>(
+    begin: 0.0,
+    end: 1.0,
   ).animate(CurvedAnimation(
     parent: _controller,
     curve: Curves.bounceIn,
@@ -27,6 +29,14 @@ class _SplashScreenState extends State<SplashScreen>
     // TODO: implement initState
     super.initState();
     _controller.forward();
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        navigate(
+          context,
+          MyHomePage(title: '$APP_TITLE'),
+        );
+      }
+    });
   }
 
   @override
@@ -50,8 +60,9 @@ class _SplashScreenState extends State<SplashScreen>
               ]),
         ),
         alignment: Alignment.center,
-        child: SlideTransition(
-            position: _offsetAnimation,
+        child: ScaleTransition(
+            // position: _offsetAnimation,
+            scale: _animation,
             child: Stack(
               children: [
                 Positioned(
