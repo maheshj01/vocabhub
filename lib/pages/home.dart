@@ -109,41 +109,45 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: DrawerBuilder(),
               )
             : null,
-        appBar: AppBar(
-          backgroundColor: isDark ? null : Colors.white,
-          iconTheme: Theme.of(context).iconTheme,
-          centerTitle: constraints.maxWidth <= MOBILE_WIDTH ? true : false,
-          title: Text(
-            '$APP_TITLE',
-            style: TextStyle(color: isDark ? Colors.white : primaryColor),
-          ),
-          actions: [
-            actionIcon(Icons.add, '', toolTip: 'Add a word', onTap: () {
-              // _openCustomDialog();
-              navigate(context, AddWordForm(),
-                  slideTransitionType: SlideTransitionType.btt);
-            }),
-            // constraints.maxWidth <= MOBILE_WIDTH
-            //     ? Container()
-            //     : IconButton(
-            //         icon: Image.asset(
-            //           !isDark
-            //               ? '$GITHUB_ASSET_PATH'
-            //               : '$GITHUB_WHITE_ASSET_PATH',
-            //           height: isDark ? 26 : 35,
-            //         ),
-            //         tooltip: 'Github',
-            //         padding: EdgeInsets.zero,
-            //         onPressed: () {
-            //           launchUrl(SOURCE_CODE_URL, isNewTab: true);
-            //         },
-            //       ),
-            actionIcon(Icons.code, SOURCE_CODE_URL, toolTip: 'Source code'),
-            actionIcon(Icons.privacy_tip, PRIVACY_POLICY,
-                toolTip: 'Privacy Policy'),
-            actionIcon(Icons.bug_report, REPORT_URL, toolTip: 'Report'),
-          ],
-        ),
+        appBar: constraints.maxWidth < MOBILE_WIDTH
+            ? null
+            : AppBar(
+                backgroundColor: isDark ? null : Colors.white,
+                iconTheme: Theme.of(context).iconTheme,
+                centerTitle:
+                    constraints.maxWidth <= MOBILE_WIDTH ? true : false,
+                title: Text(
+                  '$APP_TITLE',
+                  style: TextStyle(color: isDark ? Colors.white : primaryColor),
+                ),
+                actions: [
+                  actionIcon(Icons.add, '', toolTip: 'Add a word', onTap: () {
+                    // _openCustomDialog();
+                    navigate(context, AddWordForm(),
+                        slideTransitionType: SlideTransitionType.btt);
+                  }),
+                  // constraints.maxWidth <= MOBILE_WIDTH
+                  //     ? Container()
+                  //     : IconButton(
+                  //         icon: Image.asset(
+                  //           !isDark
+                  //               ? '$GITHUB_ASSET_PATH'
+                  //               : '$GITHUB_WHITE_ASSET_PATH',
+                  //           height: isDark ? 26 : 35,
+                  //         ),
+                  //         tooltip: 'Github',
+                  //         padding: EdgeInsets.zero,
+                  //         onPressed: () {
+                  //           launchUrl(SOURCE_CODE_URL, isNewTab: true);
+                  //         },
+                  //       ),
+                  actionIcon(Icons.code, SOURCE_CODE_URL,
+                      toolTip: 'Source code'),
+                  actionIcon(Icons.privacy_tip, PRIVACY_POLICY,
+                      toolTip: 'Privacy Policy'),
+                  actionIcon(Icons.bug_report, REPORT_URL, toolTip: 'Report'),
+                ],
+              ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             darkNotifier.value = !darkNotifier.value;
