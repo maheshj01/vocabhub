@@ -25,24 +25,62 @@ class _SearchBuilderState extends State<SearchBuilder> {
   @override
   Widget build(BuildContext context) {
     bool isDark = darkNotifier.value;
+    Size size = MediaQuery.of(context).size;
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: TextField(
-          controller: searchController,
-          decoration: InputDecoration(
-              focusedBorder: UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: isDark ? Colors.white : primaryColor),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        margin: EdgeInsets.symmetric(horizontal: 16),
+        decoration: size.width > MOBILE_WIDTH
+            ? null
+            : BoxDecoration(
+                color: isDark ? Colors.grey[900] : Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: isDark ? Colors.black : Colors.grey.withOpacity(.5),
+                    blurRadius: 16.0, // soften the shadow
+                    spreadRadius: 0.0, //extend the shadow
+                    offset: Offset(
+                      5.0, // Move to right 10  horizontally
+                      5.0, // Move to bottom 10 Vertically
+                    ),
+                  )
+                ],
+                borderRadius: BorderRadius.circular(8.0)),
+        child: Row(
+          children: [
+            size.width < MOBILE_WIDTH
+                ? IconButton(
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                    icon: Icon(Icons.menu),
+                  )
+                : Container(),
+            SizedBox(
+              width: size.width < MOBILE_WIDTH ? 8 : 0,
+            ),
+            Expanded(
+              child: TextField(
+                controller: searchController,
+                decoration: InputDecoration(
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                    suffixIcon: searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: Icon(Icons.clear,
+                                color: isDark ? Colors.white : primaryColor),
+                            onPressed: () {
+                              searchController.clear();
+                            })
+                        : SizedBox(width: 1),
+                    hintText: "Search "),
               ),
-              suffixIcon: searchController.text.isNotEmpty
-                  ? IconButton(
-                      icon: Icon(Icons.clear,
-                          color: isDark ? Colors.white : primaryColor),
-                      onPressed: () {
-                        searchController.clear();
-                      })
-                  : SizedBox(width: 1),
-              hintText: "Search "),
+            ),
+            SizedBox(
+              width: size.width > MOBILE_WIDTH ? 8 : 0,
+            ),
+          ],
         ));
   }
 }
