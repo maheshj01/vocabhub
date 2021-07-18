@@ -125,7 +125,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
           SizedBox(
             height: 20,
           ),
-          if (kIsWeb) playStoreRedirect(),
+          if (kIsWeb) playStoreRedirect(context),
           Container(
             height: 60,
             alignment: Alignment.center,

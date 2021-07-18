@@ -394,7 +394,7 @@ class _EmptyWordState extends State<EmptyWord> {
               style: Theme.of(context).textTheme.caption),
           WordsCountAnimator(),
           Expanded(child: Container()),
-          if (kIsWeb) playStoreRedirect(),
+          if (kIsWeb) playStoreRedirect(context),
           Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
               child: VersionBuilder()),

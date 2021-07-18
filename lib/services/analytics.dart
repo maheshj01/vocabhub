@@ -12,7 +12,13 @@ class Analytics {
         .logEvent(name: 'word_selected', parameters: {'word': word.word});
   }
 
-//   Future<void> logShare(String event) async {
+  /// Platform is either Desktop or Web(PWA)
+  Future<void> logRedirectToStore(String platform) async {
+    await analytics
+        .logEvent(name: 'play_store', parameters: {'Platform': '$platform'});
+  }
+
+//   Future<void> logShare(String event) async
 //     await analytics.logShare(contentType: event);
 //   }
 
