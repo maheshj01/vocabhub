@@ -157,7 +157,9 @@ class _AddWordFormState extends State<AddWordForm> {
       setState(() {
         isDisabled = true;
       });
-
+      // TODO: to be removed in a future release
+      word.word = newWord;
+      word.meaning = meaning;
       if (_examples.isNotEmpty) {
         word.examples = _examples;
       }

@@ -27,7 +27,7 @@ part 'word_model.g.dart';
 @JsonSerializable()
 class Word {
   final String id;
-  final String word;
+  String word;
   String meaning;
   List<String>? synonyms;
   List<String>? examples;
