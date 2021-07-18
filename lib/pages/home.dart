@@ -103,76 +103,79 @@ class _MyHomePageState extends State<MyHomePage> {
                       });
       }
 
-      return Scaffold(
-        drawer: constraints.maxWidth <= MOBILE_WIDTH
-            ? Drawer(
-                child: DrawerBuilder(),
-              )
-            : null,
-        appBar: AppBar(
-          backgroundColor: isDark ? null : Colors.white,
-          iconTheme: Theme.of(context).iconTheme,
-          centerTitle: constraints.maxWidth <= MOBILE_WIDTH ? true : false,
-          title: Text(
-            '$APP_TITLE',
-            style: TextStyle(color: isDark ? Colors.white : primaryColor),
+      return GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          drawer: constraints.maxWidth <= MOBILE_WIDTH
+              ? Drawer(
+                  child: DrawerBuilder(),
+                )
+              : null,
+          appBar: AppBar(
+            backgroundColor: isDark ? null : Colors.white,
+            iconTheme: Theme.of(context).iconTheme,
+            centerTitle: constraints.maxWidth <= MOBILE_WIDTH ? true : false,
+            title: Text(
+              '$APP_TITLE',
+              style: TextStyle(color: isDark ? Colors.white : primaryColor),
+            ),
+            actions: [
+              actionIcon(Icons.add, '', toolTip: 'Add a word', onTap: () {
+                // _openCustomDialog();
+                navigate(context, AddWordForm(),
+                    slideTransitionType: SlideTransitionType.btt);
+              }),
+              actionIcon(Icons.code, SOURCE_CODE_URL, toolTip: 'Source code'),
+              actionIcon(Icons.privacy_tip, PRIVACY_POLICY,
+                  toolTip: 'Privacy Policy'),
+              actionIcon(Icons.bug_report, REPORT_URL, toolTip: 'Report'),
+            ],
           ),
-          actions: [
-            actionIcon(Icons.add, '', toolTip: 'Add a word', onTap: () {
-              // _openCustomDialog();
-              navigate(context, AddWordForm(),
-                  slideTransitionType: SlideTransitionType.btt);
-            }),
-            actionIcon(Icons.code, SOURCE_CODE_URL, toolTip: 'Source code'),
-            actionIcon(Icons.privacy_tip, PRIVACY_POLICY,
-                toolTip: 'Privacy Policy'),
-            actionIcon(Icons.bug_report, REPORT_URL, toolTip: 'Report'),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            darkNotifier.value = !darkNotifier.value;
-            Settings().dark = darkNotifier.value;
-          },
-          backgroundColor: isDark ? Colors.cyanAccent : primaryColor,
-          child: Icon(
-              !isDark ? Icons.brightness_2_outlined : Icons.wb_sunny_rounded),
-        ),
-        body: Row(
-          children: [
-            constraints.maxWidth > MOBILE_WIDTH
-                ? Expanded(
-                    flex: constraints.maxWidth < TABLET_WIDTH ? 4 : 3,
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.grey.withOpacity(0.5)
-                              : Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                                spreadRadius: 4,
-                                blurRadius: 4,
-                                color: Colors.grey.withOpacity(0.2),
-                                offset: Offset(1, 0))
-                          ]),
-                      child: WordsBuilder(
-                        onSelect: (x) {
-                          setState(() {
-                            selected = x;
-                          });
-                          firebaseAnalytics.logWordSelection(x);
-                        },
-                      ),
-                    ))
-                : Container(),
-            Expanded(
-                flex: 8,
-                child: constraints.maxWidth > MOBILE_WIDTH
-                    ? WordDetail(
-                        word: selected,
-                      )
-                    : WordsBuilder()),
-          ],
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              darkNotifier.value = !darkNotifier.value;
+              Settings().dark = darkNotifier.value;
+            },
+            backgroundColor: isDark ? Colors.cyanAccent : primaryColor,
+            child: Icon(
+                !isDark ? Icons.brightness_2_outlined : Icons.wb_sunny_rounded),
+          ),
+          body: Row(
+            children: [
+              constraints.maxWidth > MOBILE_WIDTH
+                  ? Expanded(
+                      flex: constraints.maxWidth < TABLET_WIDTH ? 4 : 3,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.grey.withOpacity(0.5)
+                                : Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                  spreadRadius: 4,
+                                  blurRadius: 4,
+                                  color: Colors.grey.withOpacity(0.2),
+                                  offset: Offset(1, 0))
+                            ]),
+                        child: WordsBuilder(
+                          onSelect: (x) {
+                            setState(() {
+                              selected = x;
+                            });
+                            firebaseAnalytics.logWordSelection(x);
+                          },
+                        ),
+                      ))
+                  : Container(),
+              Expanded(
+                  flex: 8,
+                  child: constraints.maxWidth > MOBILE_WIDTH
+                      ? WordDetail(
+                          word: selected,
+                        )
+                      : WordsBuilder()),
+            ],
+          ),
         ),
       );
     });
