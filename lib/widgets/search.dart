@@ -29,6 +29,7 @@ class _SearchBuilderState extends State<SearchBuilder> {
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: TextField(
           controller: searchController,
+          autofocus: false,
           decoration: InputDecoration(
               focusedBorder: UnderlineInputBorder(
                 borderSide:

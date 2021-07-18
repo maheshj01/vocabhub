@@ -13,6 +13,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
+      
   late final AnimationController _controller = AnimationController(
     duration: const Duration(seconds: 2),
     vsync: this,
@@ -25,6 +26,7 @@ class _SplashScreenState extends State<SplashScreen>
     parent: _controller,
     curve: Curves.bounceIn,
   ));
+
   @override
   void initState() {
     // TODO: implement initState
