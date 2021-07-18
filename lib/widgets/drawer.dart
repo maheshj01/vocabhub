@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:vocabhub/constants/constants.dart';
@@ -79,7 +80,8 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
           ListTile(
             onTap: () {
               popView(context);
-              navigate(context, AddWordForm(), slideTransitionType: SlideTransitionType.btt);
+              navigate(context, AddWordForm(),
+                  slideTransitionType: SlideTransitionType.btt);
             },
             trailing: trailingIcon(
               Icons.add,
@@ -120,8 +122,13 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
           WordsCountAnimator(
             isAnimated: isAnimated,
           ),
+          SizedBox(
+            height: 20,
+          ),
+          if (kIsWeb) playStoreRedirect(),
           Container(
-            height: 80,
+            height: 60,
+            alignment: Alignment.center,
             child: VersionBuilder(),
           )
         ],

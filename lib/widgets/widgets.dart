@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/colors.dart';
+import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/utils/utility.dart';
 
 void removeFocus(BuildContext context) => FocusScope.of(context).unfocus();
 
@@ -60,4 +62,15 @@ RichText buildExample(String example, String word) {
           style: TextStyle(
               color: darkNotifier.value ? Colors.white : Colors.black),
           children: textSpans));
+}
+
+Widget playStoreRedirect() {
+  return GestureDetector(
+    onTap: () {
+      launchUrl(PLAY_STORE_URL);
+    },
+    child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Image.asset('assets/googleplay.png', height: 50)),
+  );
 }
