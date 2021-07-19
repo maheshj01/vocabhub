@@ -31,11 +31,13 @@ class Word {
   String meaning;
   List<String>? synonyms;
   List<String>? examples;
+  List<String>? mnemonics;
   final String? note;
 
   Word(this.id, this.word, this.meaning,
       {this.synonyms = const [],
       // this.antonyms = const [],
+      this.mnemonics,
       this.note,
       this.examples = const []});
   factory Word.fromJson(Map<String, dynamic> json) => _$WordFromJson(json);

@@ -13,6 +13,8 @@ Word _$WordFromJson(Map<String, dynamic> json) {
     json['meaning'] as String,
     synonyms:
         (json['synonyms'] as List<dynamic>?)?.map((e) => e as String).toList(),
+    mnemonics:
+        (json['mnemonics'] as List<dynamic>?)?.map((e) => e as String).toList(),
     note: json['note'] as String?,
     examples:
         (json['examples'] as List<dynamic>?)?.map((e) => e as String).toList(),
@@ -25,5 +27,6 @@ Map<String, dynamic> _$WordToJson(Word instance) => <String, dynamic>{
       'meaning': instance.meaning,
       'synonyms': instance.synonyms,
       'examples': instance.examples,
+      'mnemonics': instance.mnemonics,
       'note': instance.note,
     };

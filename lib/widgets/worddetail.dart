@@ -13,6 +13,7 @@ import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
+import 'package:vocabhub/widgets/mnemonicbuilder.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/utils/extensions.dart';
@@ -342,6 +343,15 @@ class _WordDetailState extends State<WordDetail>
                             widget.word!.examples!.isEmpty)
                         ? []
                         : widget.word!.examples,
+                    word: widget.word!.word,
+                  )),
+              Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: MnemonnicBuilder(
+                    mnemonics: (widget.word!.mnemonics == null ||
+                            widget.word!.mnemonics!.isEmpty)
+                        ? []
+                        : widget.word!.mnemonics,
                     word: widget.word!.word,
                   )),
               SizedBox(

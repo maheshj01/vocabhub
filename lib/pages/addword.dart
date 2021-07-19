@@ -30,6 +30,7 @@ class _AddWordFormState extends State<AddWordForm> {
   late TextEditingController meaningController;
   late TextEditingController exampleController;
   late TextEditingController synonymController;
+  late TextEditingController mnemonicController;
 
   Future<void> submitForm() async {
     showCircularIndicator(context);
@@ -49,6 +50,9 @@ class _AddWordFormState extends State<AddWordForm> {
       }
       if (_synonyms.isNotEmpty) {
         wordObject.synonyms = _synonyms;
+      }
+      if (_mnemonics.isNotEmpty) {
+        wordObject.mnemonics = _mnemonics;
       }
       final response = await supaStore.addWord(wordObject);
       if (response.didSucced) {
@@ -83,6 +87,7 @@ class _AddWordFormState extends State<AddWordForm> {
     meaningController = TextEditingController();
     exampleController = TextEditingController();
     synonymController = TextEditingController();
+    mnemonicController = TextEditingController();
     wordFocus = FocusNode(canRequestFocus: true);
     meaningFocus = FocusNode(canRequestFocus: true);
     _title = 'Lets add a new word';
@@ -99,6 +104,7 @@ class _AddWordFormState extends State<AddWordForm> {
     });
     exampleController.addListener(_rebuild);
     synonymController.addListener(_rebuild);
+    mnemonicController.addListener(_rebuild);
   }
 
   void _populateData() {
@@ -109,6 +115,9 @@ class _AddWordFormState extends State<AddWordForm> {
     }
     if (widget.word!.examples != null && widget.word!.examples!.isNotEmpty) {
       _examples = widget.word!.examples!;
+    }
+    if (widget.word!.mnemonics != null && widget.word!.mnemonics!.isNotEmpty) {
+      _mnemonics = widget.word!.mnemonics!;
     }
   }
 
@@ -166,6 +175,9 @@ class _AddWordFormState extends State<AddWordForm> {
       if (_synonyms.isNotEmpty) {
         word.synonyms = _synonyms;
       }
+      if (_mnemonics.isNotEmpty) {
+        word.mnemonics = _mnemonics;
+      }
       final response = await supaStore.updateWord(id: id, word: word);
       stopCircularIndicator(context);
       if (response.status == 200) {
@@ -189,6 +201,7 @@ class _AddWordFormState extends State<AddWordForm> {
     meaningController.dispose();
     exampleController.dispose();
     synonymController.dispose();
+    mnemonicController.dispose();
     _errorNotifier.dispose();
   }
 
@@ -196,8 +209,10 @@ class _AddWordFormState extends State<AddWordForm> {
   String word = '';
   List<String> _examples = [];
   List<String> _synonyms = [];
+  List<String> _mnemonics = [];
   int maxExampleCount = 3;
   int maxSynonymCount = 5;
+  int maxMnemonicCount = 5;
   String error = '';
   late FocusNode wordFocus;
   late FocusNode meaningFocus;
@@ -248,7 +263,7 @@ class _AddWordFormState extends State<AddWordForm> {
                         .copyWith(fontWeight: FontWeight.w500)),
               ),
               SizedBox(
-                height: 50,
+                height: 25,
               ),
               VocabField(
                 autofocus: true,
@@ -329,7 +344,7 @@ class _AddWordFormState extends State<AddWordForm> {
                       ],
                     ),
               SizedBox(
-                height: 32,
+                height: 30,
               ),
               ...List.generate(_examples.length, (index) {
                 return Container(
@@ -377,6 +392,69 @@ class _AddWordFormState extends State<AddWordForm> {
                                       if (word.isNotEmpty) {
                                         _examples.add(text);
                                         exampleController.clear();
+                                      } else {
+                                        showMessage(
+                                            context, 'Add a word first');
+                                        FocusScope.of(context)
+                                            .requestFocus(wordFocus);
+                                      }
+                                      setState(() {});
+                                    },
+                                    icon: Icon(Icons.done, size: 32)),
+                              )
+                            : Container(),
+                      ],
+                    )
+                  : Container(),
+              ...List.generate(_mnemonics.length, (index) {
+                return Container(
+                  margin: EdgeInsets.symmetric(
+                      horizontal: size.width < MOBILE_WIDTH ? 16 : 24.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(child: buildExample(_mnemonics[index], word)),
+                      GestureDetector(
+                          onTap: () {
+                            _mnemonics.remove(_mnemonics.elementAt(index));
+                            setState(() {});
+                          },
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Icon(Icons.delete),
+                          )),
+                    ],
+                  ),
+                );
+              }),
+              SizedBox(
+                height: 24,
+              ),
+              _mnemonics.length < maxMnemonicCount
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Flexible(
+                          child: VocabField(
+                            hint:
+                                'A mnemonic to help remember $word (Optional)',
+                            controller: mnemonicController,
+                            maxlines: 4,
+                          ),
+                        ),
+                        mnemonicController.text.isNotEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16.0, right: 16, top: 8),
+                                child: IconButton(
+                                    onPressed: () {
+                                      String text = mnemonicController.text;
+                                      if (word.isNotEmpty) {
+                                        _mnemonics.add(text);
+                                        mnemonicController.clear();
                                       } else {
                                         showMessage(
                                             context, 'Add a word first');

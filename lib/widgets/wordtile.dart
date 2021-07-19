@@ -7,6 +7,7 @@ import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
+import 'package:vocabhub/widgets/mnemonicbuilder.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
 
 class WordTile extends StatefulWidget {
@@ -116,7 +117,8 @@ class _WordTileState extends State<WordTile> {
                                       isEdit: true,
                                       word: widget.word,
                                     ),
-                                    slideTransitionType: SlideTransitionType.btt);
+                                    slideTransitionType:
+                                        SlideTransitionType.btt);
                               })),
                     ],
                   ),
@@ -129,13 +131,27 @@ class _WordTileState extends State<WordTile> {
                     style: Theme.of(context).textTheme.headline5,
                   ),
                 ),
+                SizedBox(
+                  height: 8,
+                ),
                 Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8),
                     child: ExampleBuilder(
                       examples: (widget.word.examples == null ||
                               widget.word.examples!.isEmpty)
                           ? []
                           : widget.word.examples,
+                      word: widget.word.word,
+                    )),
+                Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8),
+                    child: MnemonnicBuilder(
+                      mnemonics: (widget.word.mnemonics == null ||
+                              widget.word.mnemonics!.isEmpty)
+                          ? []
+                          : widget.word.mnemonics,
                       word: widget.word.word,
                     )),
               ],
