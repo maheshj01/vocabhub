@@ -39,6 +39,8 @@ class _SearchBuilderState extends State<SearchBuilder> {
                     BorderSide(color: isDark ? Colors.white : primaryColor),
               ),
               suffixIcon: IconButton(
+                  tooltip:
+                      searchController.text.isNotEmpty ? 'clear' : 'shuffle',
                   icon: Icon(
                       searchController.text.isNotEmpty
                           ? Icons.clear
