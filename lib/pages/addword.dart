@@ -121,7 +121,20 @@ class _AddWordFormState extends State<AddWordForm> {
     }
   }
 
-  void _rebuild() => setState(() {});
+  void _rebuild() {
+    final synonym = synonymController.text;
+    final example = exampleController.text;
+    final mnemonic = mnemonicController.text;
+    if (synonym.isNotEmpty || example.isNotEmpty || mnemonic.isNotEmpty) {
+      error = 'Please submit the field';
+      _errorNotifier.value = true;
+      isDisabled = true;
+    } else {
+      _errorNotifier.value = false;
+      isDisabled = false;
+    }
+    setState(() {});
+  }
 
   void _listenWordChanges() {
     setState(() {
