@@ -127,7 +127,7 @@ class _WordTileState extends State<WordTile> {
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-                  child: Text(
+                  child: SelectableText(
                     widget.word.meaning,
                     style: Theme.of(context).textTheme.headline5,
                   ),

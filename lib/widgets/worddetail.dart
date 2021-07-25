@@ -174,7 +174,7 @@ class _WordDetailState extends State<WordDetail>
                     return Container(
                       alignment: Alignment.center,
                       padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(meaning,
+                      child: SelectableText(meaning,
                           style: Theme.of(context)
                               .textTheme
                               .subtitle1!

@@ -17,7 +17,7 @@ class _MnemonnicBuilderState extends State<MnemonnicBuilder> {
   Widget buildMnemonic(String mnemonic) {
     return Padding(
       padding: const EdgeInsets.only(top: 4.0),
-      child: Text('- $mnemonic'),
+      child: SelectableText('- $mnemonic'),
     );
   }
 

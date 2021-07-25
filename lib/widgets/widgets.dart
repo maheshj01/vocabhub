@@ -46,7 +46,7 @@ Widget vLine({Color? color}) {
   );
 }
 
-RichText buildExample(String example, String word) {
+SelectableText buildExample(String example, String word) {
   final textSpans = [TextSpan(text: ' - ')];
   final iterable = example
       .split(' ')
@@ -60,11 +60,9 @@ RichText buildExample(String example, String word) {
       .toList();
   textSpans.addAll(iterable);
   textSpans.add(TextSpan(text: '\n'));
-  return RichText(
-      text: TextSpan(
-          style: TextStyle(
-              color: darkNotifier.value ? Colors.white : Colors.black),
-          children: textSpans));
+  return SelectableText.rich(TextSpan(
+      style: TextStyle(color: darkNotifier.value ? Colors.white : Colors.black),
+      children: textSpans));
 }
 
 Widget playStoreRedirect(BuildContext context) {
