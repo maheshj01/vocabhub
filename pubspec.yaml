@@ -29,7 +29,7 @@ dependencies:
   # firebase_crashlytics: ^2.0.6
   pull_to_refresh: ^2.0.0
   google_fonts: ^2.1.0
-  google_sign_in: ^5.0.4
+  # google_sign_in: ^5.0.4
   http: ^0.13.3
   json_annotation: ^4.0.1
   package_info: ^2.0.2

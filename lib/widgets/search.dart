@@ -5,8 +5,11 @@ import 'package:vocabhub/pages/home.dart';
 
 class SearchBuilder extends StatefulWidget {
   final Function(String) onChanged;
+  final Function() onShuffle;
 
-  const SearchBuilder({Key? key, required this.onChanged}) : super(key: key);
+  const SearchBuilder(
+      {Key? key, required this.onChanged, required this.onShuffle})
+      : super(key: key);
 
   @override
   _SearchBuilderState createState() => _SearchBuilderState();
@@ -35,14 +38,19 @@ class _SearchBuilderState extends State<SearchBuilder> {
                 borderSide:
                     BorderSide(color: isDark ? Colors.white : primaryColor),
               ),
-              suffixIcon: searchController.text.isNotEmpty
-                  ? IconButton(
-                      icon: Icon(Icons.clear,
-                          color: isDark ? Colors.white : primaryColor),
-                      onPressed: () {
-                        searchController.clear();
-                      })
-                  : SizedBox(width: 1),
+              suffixIcon: IconButton(
+                  icon: Icon(
+                      searchController.text.isNotEmpty
+                          ? Icons.clear
+                          : Icons.shuffle,
+                      color: isDark ? Colors.white : primaryColor),
+                  onPressed: () {
+                    if (searchController.text.isNotEmpty) {
+                      searchController.clear();
+                    } else {
+                      widget.onShuffle();
+                    }
+                  }),
               hintText: "Search "),
         ));
   }

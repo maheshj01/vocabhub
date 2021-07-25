@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:vocabhub/constants/colors.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
@@ -25,8 +26,9 @@ class LoadingWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
         child: CircularProgressIndicator(
-      color: primaryGreen,
-    ));
+            valueColor: new AlwaysStoppedAnimation<Color>(
+      primaryGreen,
+    )));
   }
 }
 

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/constants.dart';
@@ -113,10 +115,10 @@ class _MyHomePageState extends State<MyHomePage> {
           backgroundColor: isDark ? null : Colors.white,
           iconTheme: Theme.of(context).iconTheme,
           centerTitle: constraints.maxWidth <= MOBILE_WIDTH ? true : false,
-          title: Text(
-            '$APP_TITLE',
-            style: TextStyle(color: isDark ? Colors.white : primaryColor),
-          ),
+          title: Text('$APP_TITLE',
+              style: Theme.of(context).textTheme.headline4!.copyWith(
+                  color: isDark ? Colors.white : primaryColor,
+                  fontWeight: FontWeight.bold)),
           actions: [
             actionIcon(Icons.add, '', toolTip: 'Add a word', onTap: () {
               // _openCustomDialog();
@@ -247,6 +249,11 @@ class _WordsBuilderState extends State<WordsBuilder> {
             child: Column(
               children: [
                 SearchBuilder(
+                  onShuffle: () {
+                    final wordList = listNotifier.value;
+                    wordList!.shuffle(Random());
+                    setState(() {});
+                  },
                   onChanged: (x) {
                     if (x.isEmpty) {
                       listNotifier.value = supaStoreWords;
