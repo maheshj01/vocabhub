@@ -1,6 +1,6 @@
-# Vocabhub 0.3.0
+# Vocabhub 0.3.0                           
 
-A vocab app built with Flutter and Supabase
+A vocab app built with Flutter and Supabase.                    
 [Live version here](https://vocabhub.web.app/)
 
 ## Adds Support for Dark Mode
@@ -37,6 +37,10 @@ Drawer             |  Home         |  Add Word
 | Android | iOS | MacOS | Web |
 | :-----: | :-: | :---: | :-: |
 |   ✅    | ✅  |  ❌   | ✅  |
+
+<a href="https://play.google.com/store/apps/details?id=com.vocabhub.app">
+<img src="assets/googleplay.png" height="50">
+</a>
 
 ## Contributing
 
