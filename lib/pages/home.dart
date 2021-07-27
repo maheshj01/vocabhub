@@ -112,7 +112,6 @@ class _MyHomePageState extends State<MyHomePage> {
               )
             : null,
         appBar: AppBar(
-          backgroundColor: isDark ? null : Colors.white,
           iconTheme: Theme.of(context).iconTheme,
           centerTitle: constraints.maxWidth <= MOBILE_WIDTH ? true : false,
           title: Text('$APP_TITLE',

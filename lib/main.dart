@@ -52,11 +52,15 @@ class VocabApp extends StatelessWidget {
                     title: '$APP_TITLE',
                     debugShowCheckedModeBanner: !kDebugMode,
                     darkTheme: ThemeData.dark().copyWith(
+                      appBarTheme:
+                          AppBarTheme(backgroundColor: Colors.grey[800]),
+                      primaryColor: primaryDark,
                       textTheme: googleFontsTextTheme(context),
                     ),
                     color: primaryColor,
                     theme: ThemeData(
                       primaryColor: primaryColor,
+                      appBarTheme: AppBarTheme(backgroundColor: Colors.white),
                       iconTheme: IconThemeData(
                           color:
                               darkNotifier.value ? Colors.white : primaryColor),
