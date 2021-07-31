@@ -89,21 +89,39 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     bool isDark = darkNotifier.value;
     return LayoutBuilder(builder: (_, constraints) {
-      Widget actionIcon(IconData data, String url,
+      Widget actionWidget(String text, String url,
           {String toolTip = '', Function? onTap}) {
         return constraints.maxWidth <= MOBILE_WIDTH
             ? Container()
-            : IconButton(
-                tooltip: toolTip,
-                icon: Icon(
-                  data,
-                  color: isDark ? Colors.white : Colors.black.withOpacity(0.75),
-                ),
-                onPressed: onTap != null
+            : InkWell(
+                onTap: onTap != null
                     ? () => onTap()
                     : () {
                         launchUrl(url);
-                      });
+                      },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: constraints.maxWidth < TABLET_WIDTH ? 18 : 24,
+                      vertical: 4),
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Text(text,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline5!
+                              .copyWith(
+                                  color: isDark ? Colors.white : primaryColor,
+                                  fontWeight: FontWeight.bold)),
+                      // icon: Icon(
+                      //   data,
+                      //   color: isDark ? Colors.white : Colors.black.withOpacity(0.75),
+                      // ),
+                    ),
+                  ),
+                ),
+              );
       }
 
       return Scaffold(
@@ -120,15 +138,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: isDark ? Colors.white : primaryColor,
                   fontWeight: FontWeight.bold)),
           actions: [
-            actionIcon(Icons.add, '', toolTip: 'Add a word', onTap: () async {
+            actionWidget('Add word', '', toolTip: 'Add a word',
+                onTap: () async {
               // _openCustomDialog();
               await Navigate().push(context, AddWordForm(),
                   slideTransitionType: SlideTransitionType.btt);
             }),
-            actionIcon(Icons.code, SOURCE_CODE_URL, toolTip: 'Source code'),
-            actionIcon(Icons.privacy_tip, PRIVACY_POLICY,
+            actionWidget('source code', SOURCE_CODE_URL,
+                toolTip: 'Source code'),
+            actionWidget('Privacy Policy', PRIVACY_POLICY,
                 toolTip: 'Privacy Policy'),
-            actionIcon(Icons.bug_report, REPORT_URL, toolTip: 'Report'),
+            actionWidget('Report', REPORT_URL, toolTip: 'Report'),
           ],
         ),
         floatingActionButton: FloatingActionButton(
