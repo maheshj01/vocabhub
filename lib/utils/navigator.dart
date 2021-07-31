@@ -2,34 +2,45 @@ import 'package:flutter/material.dart';
 
 enum SlideTransitionType { ltr, rtl, ttb, btt, bl, br, tl, tr }
 
-Future<void> navigateReplace(BuildContext context, Widget widget,
-        {bool isDialog = false,
-        bool isRootNavigator = true,
-        SlideTransitionType slideTransitionType =
-            SlideTransitionType.tr}) async =>
-    await Navigator.of(context, rootNavigator: isRootNavigator)
+class Navigate<T> {
+  /// Replace the top widget with another widget
+  Future<T?> replace(BuildContext context, Widget widget,
+      {bool isDialog = false,
+      bool isRootNavigator = true,
+      SlideTransitionType slideTransitionType = SlideTransitionType.tr}) async {
+    final T value = await Navigator.of(context, rootNavigator: isRootNavigator)
         .pushReplacement(NavigateRoute(widget, type: slideTransitionType));
+    return value;
+  }
 
-Future<void> navigate(BuildContext context, Widget widget,
-        {bool isDialog = false,
-        bool isRootNavigator = true,
-        SlideTransitionType slideTransitionType = SlideTransitionType.btt}) =>
-    Navigator.of(context, rootNavigator: isRootNavigator)
+  Future<T?> push(BuildContext context, Widget widget,
+      {bool isDialog = false,
+      bool isRootNavigator = true,
+      SlideTransitionType slideTransitionType =
+          SlideTransitionType.btt}) async {
+    final T value = await Navigator.of(context, rootNavigator: isRootNavigator)
         .push(NavigateRoute(widget, type: slideTransitionType));
+    return value;
+  }
+
 // pop all Routes except first
-void popToFirst(BuildContext context, {bool isRootNavigator = true}) =>
-    Navigator.of(context, rootNavigator: isRootNavigator)
-        .popUntil((route) => route.isFirst);
+  static void popToFirst(BuildContext context, {bool isRootNavigator = true}) =>
+      Navigator.of(context, rootNavigator: isRootNavigator)
+          .popUntil((route) => route.isFirst);
 
-void popView(BuildContext context, {bool isRootNavigator = true}) async =>
-    Navigator.of(context, rootNavigator: isRootNavigator).pop();
+  void popView(BuildContext context,
+          {T? value, bool isRootNavigator = true}) async =>
+      Navigator.of(context, rootNavigator: isRootNavigator).pop(value);
 
-navigateAndPopAll(BuildContext context, Widget widget,
-        {bool isRootNavigator = true,
-        SlideTransitionType slideTransitionType = SlideTransitionType.tr}) =>
-    Navigator.of(context, rootNavigator: isRootNavigator).pushAndRemoveUntil(
-        NavigateRoute(widget, type: slideTransitionType),
-        (Route<dynamic> route) => false);
+  Future<T?> pushAndPopAll(BuildContext context, Widget widget,
+      {bool isRootNavigator = true,
+      SlideTransitionType slideTransitionType = SlideTransitionType.tr}) async {
+    final T value = await Navigator.of(context, rootNavigator: isRootNavigator)
+        .pushAndRemoveUntil(NavigateRoute(widget, type: slideTransitionType),
+            (Route<dynamic> route) => false);
+    return value;
+  }
+}
 
 Offset getTransitionOffset(SlideTransitionType type) {
   switch (type) {

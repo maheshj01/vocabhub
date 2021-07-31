@@ -129,7 +129,7 @@ class _WordDetailState extends State<WordDetail>
                   child: IconButton(
                       icon: Icon(Icons.edit),
                       onPressed: () {
-                        navigate(
+                        Navigate().push(
                             context,
                             AddWordForm(
                               isEdit: true,

@@ -50,9 +50,7 @@ class SupaStore {
     final json = word.toJson();
     final vocabresponse = VocabResponse(didSucced: false, message: "Failed");
     try {
-      print('inserting \n $json');
       final response = await insert(json);
-      print('response  =${response.data}');
       if (response.status == 201) {
         vocabresponse.didSucced = true;
         vocabresponse.message = 'Success';

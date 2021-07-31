@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        navigateAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
+        Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
             slideTransitionType: SlideTransitionType.ttb);
       }
     });

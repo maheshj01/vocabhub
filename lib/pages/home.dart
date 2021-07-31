@@ -82,6 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  SupaStore supaStore = SupaStore();
   late Analytics firebaseAnalytics;
   late SharedPreferences sharedPreferences;
   @override
@@ -119,9 +120,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: isDark ? Colors.white : primaryColor,
                   fontWeight: FontWeight.bold)),
           actions: [
-            actionIcon(Icons.add, '', toolTip: 'Add a word', onTap: () {
+            actionIcon(Icons.add, '', toolTip: 'Add a word', onTap: () async {
               // _openCustomDialog();
-              navigate(context, AddWordForm(),
+              await Navigate().push(context, AddWordForm(),
                   slideTransitionType: SlideTransitionType.btt);
             }),
             actionIcon(Icons.code, SOURCE_CODE_URL, toolTip: 'Source code'),

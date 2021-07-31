@@ -64,7 +64,7 @@ class _AddWordFormState extends State<AddWordForm> {
             newList!.add(response.data as Word);
             totalNotifier.value = newList.length;
             stopCircularIndicator(context);
-            popView(context);
+            Navigate().popView(context);
           });
         } else {
           setState(() {
@@ -205,7 +205,7 @@ class _AddWordFormState extends State<AddWordForm> {
       stopCircularIndicator(context);
       if (response.status == 200) {
         showMessage(context, "The word \"${word.word}\" is updated.",
-            onClosed: () => popView(context));
+            onClosed: () => Navigate().popView(context));
       } else {
         print('failed to update ${response.error!.message}');
       }
@@ -274,7 +274,7 @@ class _AddWordFormState extends State<AddWordForm> {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16.0, top: 16),
                   child: IconButton(
-                      onPressed: () => popView(context),
+                      onPressed: () => Navigate().popView(context),
                       icon: Icon(Icons.clear, size: 32)),
                 ),
               ),

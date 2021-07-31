@@ -112,7 +112,7 @@ class _WordTileState extends State<WordTile> {
                           child: IconButton(
                               icon: Icon(Icons.edit),
                               onPressed: () {
-                                navigate(
+                                Navigate().push(
                                     context,
                                     AddWordForm(
                                       isEdit: true,
