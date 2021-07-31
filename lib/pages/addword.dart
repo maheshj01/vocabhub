@@ -295,7 +295,7 @@ class _AddWordFormState extends State<AddWordForm> {
                 hint: 'e.g Ambivalent',
                 focusNode: wordFocus,
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp('[A-Za-z]+'))
+                  FilteringTextInputFormatter.allow(RegExp('[A-Z-a-z]+'))
                 ],
                 controller: wordController,
               ),
@@ -335,7 +335,7 @@ class _AddWordFormState extends State<AddWordForm> {
                             maxlength: 16,
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
-                                  RegExp('[A-Za-z]+'))
+                                  RegExp('[A-Z-a-z]+'))
                             ],
                             controller: synonymController,
                           ),
