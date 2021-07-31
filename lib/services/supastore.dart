@@ -60,7 +60,8 @@ class SupaStore {
         vocabresponse.data = word;
       }
     } catch (_) {
-      print(_);
+      print('error caught $_');
+      throw "Failed to add word";
     }
     return vocabresponse;
   }

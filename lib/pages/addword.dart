@@ -36,45 +36,55 @@ class _AddWordFormState extends State<AddWordForm> {
     showCircularIndicator(context);
     final newWord = wordController.text;
     final meaning = meaningController.text;
-    if (newWord.isNotEmpty && meaning.isNotEmpty) {
-      setState(() {
-        isDisabled = true;
-      });
-      final wordObject = Word(
-        '',
-        newWord,
-        meaning,
-      );
-      if (_examples.isNotEmpty) {
-        wordObject.examples = _examples;
-      }
-      if (_synonyms.isNotEmpty) {
-        wordObject.synonyms = _synonyms;
-      }
-      if (_mnemonics.isNotEmpty) {
-        wordObject.mnemonics = _mnemonics;
-      }
-      final response = await supaStore.addWord(wordObject);
-      if (response.didSucced) {
-        showMessage(context, 'Congrats! You just added $word to vocabhub',
-            onClosed: () {
-          List<Word?>? newList = listNotifier.value;
-          newList!.add(response.data as Word);
-          totalNotifier.value = newList.length;
-          stopCircularIndicator(context);
-          popView(context);
-        });
-      } else {
+    try {
+      if (newWord.isNotEmpty && meaning.isNotEmpty) {
         setState(() {
-          isDisabled = false;
-          error = 'Failed to add $word';
-          _errorNotifier.value = true;
+          isDisabled = true;
         });
+        final wordObject = Word(
+          '',
+          newWord,
+          meaning,
+        );
+        if (_examples.isNotEmpty) {
+          wordObject.examples = _examples;
+        }
+        if (_synonyms.isNotEmpty) {
+          wordObject.synonyms = _synonyms;
+        }
+        if (_mnemonics.isNotEmpty) {
+          wordObject.mnemonics = _mnemonics;
+        }
+
+        final response = await supaStore.addWord(wordObject);
+        if (response.didSucced) {
+          showMessage(context, 'Congrats! You just added $word to vocabhub',
+              onClosed: () {
+            List<Word?>? newList = listNotifier.value;
+            newList!.add(response.data as Word);
+            totalNotifier.value = newList.length;
+            stopCircularIndicator(context);
+            popView(context);
+          });
+        } else {
+          setState(() {
+            isDisabled = false;
+            error = 'Failed to add $word';
+            _errorNotifier.value = true;
+          });
+        }
+      } else {
+        stopCircularIndicator(context);
+        error = 'word or meaning cannot be empty!';
+        _errorNotifier.value = true;
       }
-    } else {
+    } catch (x) {
       stopCircularIndicator(context);
-      error = 'word or meaning cannot be empty!';
-      _errorNotifier.value = true;
+      setState(() {
+        isDisabled = false;
+        error = '$x';
+        _errorNotifier.value = true;
+      });
     }
   }
 
