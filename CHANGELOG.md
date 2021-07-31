@@ -1,3 +1,10 @@
+### 0.3.1
+
+- Shuffle word list
+- adds support for mnemonics
+- Improve color theme
+- fix minor UI issues
+
 ### 0.3.0
 
 - Adds Edit Mode feature
