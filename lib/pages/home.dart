@@ -114,10 +114,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               .copyWith(
                                   color: isDark ? Colors.white : primaryColor,
                                   fontWeight: FontWeight.bold)),
-                      // icon: Icon(
-                      //   data,
-                      //   color: isDark ? Colors.white : Colors.black.withOpacity(0.75),
-                      // ),
                     ),
                   ),
                 ),
