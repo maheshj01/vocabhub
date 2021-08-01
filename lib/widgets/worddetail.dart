@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:vocabhub/constants/strings.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/pages/addword.dart';
@@ -370,13 +371,6 @@ class EmptyWord extends StatefulWidget {
 }
 
 class _EmptyWordState extends State<EmptyWord> {
-  final List<String> tips = [
-    'Do you know you can search by synonyms?\n Try searching for "reduce"',
-    'Do you know you can copy the word by just tapping on it?',
-    'You think the meaning of the word is wrong or can be improved?\nyou can just tap on the meaning and edit it',
-    'Do you have a word thats missing from this sheet?\n consider contributing by tapping on the 📄 icon',
-    "You don't remember the word but know what it means?\nTry searching for its meaning."
-  ];
 
   late int randIndex;
 
