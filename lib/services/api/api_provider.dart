@@ -63,7 +63,6 @@ class ApiProvider {
     } on SocketException catch (_) {
       throw ConnectivityException('No Internet connection');
     } on TimeoutException catch (_) {
-      // TODO: how to pass the response object on Timeout
       // retryOnTimeOut(response: http.);
     } catch (_) {}
     return responseJson;
@@ -80,7 +79,6 @@ class ApiProvider {
     } on SocketException catch (_) {
       throw ConnectivityException('No Internet connection');
     } on TimeoutException catch (_) {
-      // TODO: how to pass the response object on Timeout
       // retryOnTimeOut(response: http.);
     } catch (_) {}
     return responseJson;
@@ -97,7 +95,6 @@ class ApiProvider {
     } on SocketException catch (_) {
       throw ConnectivityException('No Internet connection');
     } on TimeoutException catch (_) {
-      // TODO: how to pass the response object on Timeout
       // retryOnTimeOut(response: http.);
     } catch (_) {}
     return responseJson;
@@ -115,7 +112,6 @@ class ApiProvider {
     } on SocketException catch (_) {
       throw ConnectivityException('No Internet connection');
     } on TimeoutException catch (_) {
-      // TODO: how to pass the response object on Timeout
       // retryOnTimeOut(response: http.);
     } catch (_) {}
     return responseJson;

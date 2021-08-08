@@ -91,7 +91,6 @@ class _AddWordFormState extends State<AddWordForm> {
   final _errorNotifier = ValueNotifier<bool>(false);
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     wordController = TextEditingController();
     meaningController = TextEditingController();

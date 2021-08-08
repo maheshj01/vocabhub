@@ -16,7 +16,6 @@ class _WordsCountAnimatorState extends State<WordsCountAnimator> {
   final _opacityNotifier = ValueNotifier<double>(0.0);
   @override
   void dispose() {
-    // TODO: implement dispose
     _opacityNotifier.dispose();
     super.dispose();
   }

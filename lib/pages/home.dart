@@ -36,7 +36,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     darkNotifier.dispose();
     totalNotifier.dispose();
     searchController.dispose();
@@ -46,7 +45,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     firebaseAnalytics = Analytics();
     SharedPreferences.getInstance().then((value) {
@@ -291,7 +289,6 @@ class _WordsBuilderState extends State<WordsBuilder> {
                   },
                 ),
                 Expanded(
-                  // TODO: Wrap with scrollbar widget currently it is buggy
                   child: GestureDetector(
                     onTap: () => FocusScope.of(context).unfocus(),
                     child: SmartRefresher(

@@ -36,7 +36,6 @@ class _WordDetailState extends State<WordDetail>
   late Tween<int> _tween;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 3));
@@ -61,14 +60,12 @@ class _WordDetailState extends State<WordDetail>
   String selectedWord = '';
   @override
   void dispose() {
-    // TODO: implement dispose
     _animationController.dispose();
     super.dispose();
   }
 
   @override
   void didUpdateWidget(covariant WordDetail oldWidget) {
-    // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
     if (widget.word != null) {
       setState(() {
@@ -311,7 +308,6 @@ class _WordDetailState extends State<WordDetail>
               //                                                 .status ==
               //                                             AnimationStatus
               //                                                 .completed) {
-              //                                       /// TODO: Update meaning
               //                                       length = edited.length;
               //                                       _tween.end = length;
               //                                       updateMeaning();
@@ -371,7 +367,6 @@ class EmptyWord extends StatefulWidget {
 }
 
 class _EmptyWordState extends State<EmptyWord> {
-
   late int randIndex;
 
   @override

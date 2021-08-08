@@ -34,7 +34,6 @@ class _WordTileState extends State<WordTile> {
   late Analytics firebaseAnalytics;
   @override
   void didUpdateWidget(covariant WordTile oldWidget) {
-    // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
     if (widget.isMobile) {
       setState(() {
@@ -45,7 +44,6 @@ class _WordTileState extends State<WordTile> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     expandedColor = darkNotifier.value ? Colors.white : Colors.black;
     firebaseAnalytics = Analytics();
