@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+/// shows a snackbar message
 void showMessage(BuildContext context, String message,
     {Duration duration = const Duration(seconds: 2),
     bool isRoot = false,

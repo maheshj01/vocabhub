@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/models/user.dart';
+import 'package:vocabhub/services/auth.dart';
+import 'package:vocabhub/widgets/circle_avatar.dart';
 
 class AppSignIn extends StatefulWidget {
   const AppSignIn({Key? key}) : super(key: key);
@@ -8,6 +13,24 @@ class AppSignIn extends StatefulWidget {
 }
 
 class _AppSignInState extends State<AppSignIn> {
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+  );
+
+  Future<void> _handleSignIn(BuildContext context) async {
+    try {
+      Authentication auth = Authentication();
+      account = (await auth.googleSignIn(context));
+      setState(() {});
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  User? account;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,9 +45,15 @@ class _AppSignInState extends State<AppSignIn> {
           child: Center(child: Text('Vocabhub')),
         ),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () => _handleSignIn(context),
           child: Text('Sign In'),
         ),
+        account == null
+            ? CircularProgressIndicator()
+            : CircularAvatar(
+                url: account!.avatarUrl,
+                name: account!.name,
+              ),
         SizedBox(
           height: 100,
         )

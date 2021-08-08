@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/pages/home.dart';
+import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/utils/navigator.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -32,7 +33,8 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
+        Navigate().pushAndPopAll(context, AppSignIn(),
+            // MyHomePage(title: '$APP_TITLE'),
             slideTransitionType: SlideTransitionType.ttb);
       }
     });

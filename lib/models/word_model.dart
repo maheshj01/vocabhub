@@ -10,6 +10,7 @@ part 'word_model.g.dart';
 /// ```flutter pub run build_runner build --delete-conflicting-outputs```
 /// to watch the file changes and generate the outpur
 /// ```flutter pub run build_runner watch```
+
 // @JsonSerializable()
 // class UserModel {
 //   final String name;
