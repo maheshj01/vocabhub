@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/auth.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
@@ -20,10 +19,11 @@ class _AppSignInState extends State<AppSignIn> {
     ],
   );
 
+  Authentication auth = Authentication();
   Future<void> _handleSignIn(BuildContext context) async {
     try {
-      Authentication auth = Authentication();
-      account = (await auth.googleSignIn(context));
+      account = await auth.googleSignIn(context);
+      print('SIGNING IN');
       setState(() {});
     } catch (error) {
       print(error);

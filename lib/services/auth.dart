@@ -8,40 +8,31 @@ class Authentication {
   GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: <String>[
       'email',
-      'https://www.googleapis.com/auth/contacts.readonly',
+      //   'https://www.googleapis.com/auth/contacts.readonly',
     ],
   );
   Future<User?> googleSignIn(BuildContext context,
       {bool isLogin = true, bool socialSignUp = false}) async {
+    User? user;
     try {
-      await _googleSignIn.signOut();
       showCircularIndicator(context);
-      _googleSignIn.signIn().then((result) {
-        result!.authentication.then((googleKey) {
-          final String? accessToken = googleKey.accessToken;
-          final String? idToken = googleKey.idToken;
-          final User user = User(
-              _googleSignIn.currentUser!.displayName ?? '',
-              _googleSignIn.currentUser!.email,
-              _googleSignIn.currentUser!.photoUrl,
-              idToken: idToken,
-              accessToken: accessToken);
-          return user;
-        }).catchError((dynamic error) {
-          stopCircularIndicator(context);
-          showMessage(context, 'Failed to signIn');
-          return null;
-        });
-      }).catchError((dynamic error) {
-        stopCircularIndicator(context);
-        showMessage(context, 'Failed to signIn');
-        return null;
-      });
+      await _googleSignIn.signOut();
+      final result = await _googleSignIn.signIn();
+      //   .then((result) {
+      final googleKey = await result!.authentication;
+      //   .then((googleKey) {
+      final String? accessToken = googleKey.accessToken;
+      final String? idToken = googleKey.idToken;
+      user = User(_googleSignIn.currentUser!.displayName ?? '',
+          _googleSignIn.currentUser!.email, _googleSignIn.currentUser!.photoUrl,
+          idToken: idToken, accessToken: accessToken);
+      print('signed In as ${user.name}');
+      stopCircularIndicator(context);
     } catch (error) {
       stopCircularIndicator(context);
       showMessage(context, 'Failed to signIn');
-      return null;
     }
+    return user;
   }
 
   Future<void> googleSignOut(BuildContext context) async {
