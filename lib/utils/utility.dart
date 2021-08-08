@@ -24,11 +24,13 @@ void showMessage(BuildContext context, String message,
       .whenComplete(() => onClosed == null ? null : onClosed());
 }
 
+/// TODO: Add canLaunch condition back when this issue is fixed https://github.com/flutter/flutter/issues/74557
 Future<void> launchUrl(String url, {bool isNewTab = true}) async {
-  await canLaunch(url)
-      ? await launch(
-          url,
-          webOnlyWindowName: isNewTab ? '_blank' : '_self',
-        )
-      : throw 'Could not launch $url';
+  // await canLaunch(url)
+  // ?
+  await launch(
+    url,
+    webOnlyWindowName: isNewTab ? '_blank' : '_self',
+  );
+  // : throw 'Could not launch $url';
 }
