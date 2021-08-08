@@ -1,3 +1,7 @@
+### 0.3.2
+- fix drawer navigation
+- Improve Appbar layout for tablet
+
 ### 0.3.1
 
 - Shuffle word list
