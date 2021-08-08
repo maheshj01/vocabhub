@@ -80,9 +80,38 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  Future<void> _select(String text) async {
+    if (text.toLowerCase() == 'add word') {
+      await Navigate().push(context, AddWordForm(),
+          slideTransitionType: SlideTransitionType.btt);
+    } else {
+      String url = '';
+      switch (text.toLowerCase()) {
+        case 'source code':
+          url = '$SOURCE_CODE_URL';
+          break;
+        case 'privacy policy':
+          url = '$PRIVACY_POLICY';
+          break;
+        case 'report':
+          url = '$REPORT_URL';
+          break;
+        default:
+          url = '$SOURCE_CODE_URL';
+      }
+      await launchUrl(url);
+    }
+  }
+
   SupaStore supaStore = SupaStore();
   late Analytics firebaseAnalytics;
   late SharedPreferences sharedPreferences;
+  List<String> actions = [
+    'Add word',
+    'Source code',
+    'Privacy Policy',
+    'Report',
+  ];
   @override
   Widget build(BuildContext context) {
     bool isDark = darkNotifier.value;
@@ -132,17 +161,35 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: isDark ? Colors.white : primaryColor,
                   fontWeight: FontWeight.bold)),
           actions: [
-            actionWidget('Add word', '', toolTip: 'Add a word',
-                onTap: () async {
-              // _openCustomDialog();
-              await Navigate().push(context, AddWordForm(),
-                  slideTransitionType: SlideTransitionType.btt);
-            }),
-            actionWidget('source code', SOURCE_CODE_URL,
-                toolTip: 'Source code'),
-            actionWidget('Privacy Policy', PRIVACY_POLICY,
-                toolTip: 'Privacy Policy'),
-            actionWidget('Report', REPORT_URL, toolTip: 'Report'),
+            constraints.maxWidth < DESKTOP_WIDTH
+                ? PopupMenuButton<String>(
+                    onSelected: (String x) {
+                      _select(x);
+                    },
+                    itemBuilder: (BuildContext context) {
+                      return actions.map((String action) {
+                        return PopupMenuItem<String>(
+                          value: action,
+                          child: Text(action),
+                        );
+                      }).toList();
+                    },
+                  )
+                : Row(
+                    children: [
+                      actionWidget('Add word', '', toolTip: 'Add a word',
+                          onTap: () async {
+                        // _openCustomDialog();
+                        await Navigate().push(context, AddWordForm(),
+                            slideTransitionType: SlideTransitionType.btt);
+                      }),
+                      actionWidget('source code', SOURCE_CODE_URL,
+                          toolTip: 'Source code'),
+                      actionWidget('Privacy Policy', PRIVACY_POLICY,
+                          toolTip: 'Privacy Policy'),
+                      actionWidget('Report', REPORT_URL, toolTip: 'Report'),
+                    ],
+                  )
           ],
         ),
         floatingActionButton: FloatingActionButton(

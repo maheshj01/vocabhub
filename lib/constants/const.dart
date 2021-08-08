@@ -12,6 +12,7 @@ const REPORT_URL = 'https://github.com/maheshmnj/vocabhub/issues/new/choose';
 const PRIVACY_POLICY = 'https://maheshmnj.github.io/privacy';
 const MOBILE_WIDTH = 600.0;
 const TABLET_WIDTH = 800.0;
+const DESKTOP_WIDTH = 1024.0;
 const Duration wordCountAnimationDuration = Duration(seconds: 3);
 const TABLE_NAME = 'vocabsheet';
 const WORD_COLUMN = 'word';
