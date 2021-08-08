@@ -30,6 +30,7 @@ class Authentication {
       stopCircularIndicator(context);
     } catch (error) {
       stopCircularIndicator(context);
+      print('$error');
       showMessage(context, 'Failed to signIn');
     }
     return user;

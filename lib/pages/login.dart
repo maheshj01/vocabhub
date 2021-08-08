@@ -44,16 +44,16 @@ class _AppSignInState extends State<AppSignIn> {
         Expanded(
           child: Center(child: Text('Vocabhub')),
         ),
-        ElevatedButton(
-          onPressed: () => _handleSignIn(context),
-          child: Text('Sign In'),
-        ),
         account == null
             ? CircularProgressIndicator()
             : CircularAvatar(
                 url: account!.avatarUrl,
                 name: account!.name,
               ),
+        ElevatedButton(
+          onPressed: () => _handleSignIn(context),
+          child: Text('Sign In'),
+        ),
         SizedBox(
           height: 100,
         )
