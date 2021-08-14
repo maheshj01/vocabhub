@@ -4,7 +4,7 @@ enum SlideTransitionType { ltr, rtl, ttb, btt, bl, br, tl, tr }
 
 class Navigate<T> {
   /// Replace the top widget with another widget
-  Future<T?> replace(BuildContext context, Widget widget,
+  Future<T?> pushReplace(BuildContext context, Widget widget,
       {bool isDialog = false,
       bool isRootNavigator = true,
       SlideTransitionType slideTransitionType = SlideTransitionType.tr}) async {

@@ -3,6 +3,7 @@ import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/utils/navigator.dart';
+import 'package:vocabhub/utils/settings.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -33,11 +34,27 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        Navigate().pushAndPopAll(context, AppSignIn(),
-            // MyHomePage(title: '$APP_TITLE'),
-            slideTransitionType: SlideTransitionType.ttb);
+        signInUser();
       }
     });
+  }
+
+  Future<void> signInUser() async {
+    final bool signedIn = await Settings().isSignedIn;
+    final int count = await Settings().skipCount;
+    if (signedIn) {
+      // TODO: FETCH user data from database
+      Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
+          slideTransitionType: SlideTransitionType.ttb);
+    } else {
+      if (count > 0) {
+        Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
+            slideTransitionType: SlideTransitionType.ttb);
+        Settings().setSkipCount = count - 1;
+      } else {
+        Navigate().pushAndPopAll(context, AppSignIn());
+      }
+    }
   }
 
   @override

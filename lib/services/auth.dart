@@ -18,9 +18,7 @@ class Authentication {
       showCircularIndicator(context);
       await _googleSignIn.signOut();
       final result = await _googleSignIn.signIn();
-      //   .then((result) {
       final googleKey = await result!.authentication;
-      //   .then((googleKey) {
       final String? accessToken = googleKey.accessToken;
       final String? idToken = googleKey.idToken;
       user = User(_googleSignIn.currentUser!.displayName ?? '',
@@ -30,8 +28,8 @@ class Authentication {
       stopCircularIndicator(context);
     } catch (error) {
       stopCircularIndicator(context);
-      print('$error');
       showMessage(context, 'Failed to signIn');
+      throw 'Failed to signIn';
     }
     return user;
   }

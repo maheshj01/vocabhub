@@ -34,7 +34,7 @@ class VocabApp extends StatelessWidget {
   Future<bool> initatializeApp() async {
     firebaseAnalytics = Analytics();
     firebaseAnalytics.appOpen();
-    final isDark = await Settings().isDark();
+    final isDark = await Settings().isDark;
     return isDark;
   }
 
