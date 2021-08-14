@@ -161,7 +161,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: isDark ? Colors.white : primaryColor,
                   fontWeight: FontWeight.bold)),
           actions: [
-            constraints.maxWidth < DESKTOP_WIDTH
+            constraints.maxWidth < DESKTOP_WIDTH &&
+                    constraints.maxWidth > MOBILE_WIDTH
                 ? PopupMenuButton<String>(
                     onSelected: (String x) {
                       _select(x);
