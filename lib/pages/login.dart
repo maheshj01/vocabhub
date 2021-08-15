@@ -27,7 +27,6 @@ class _AppSignInState extends State<AppSignIn> {
   Future<void> _handleSignIn(BuildContext context) async {
     try {
       account = await auth.googleSignIn(context);
-      print('SIGNING IN');
       final user = Provider.of<User>(context, listen: false);
       user.user = account!;
       // TODO: SHOW LOGIN
@@ -134,15 +133,6 @@ class _AppSignInState extends State<AppSignIn> {
                 ),
                 _skipButton(),
                 Expanded(child: Container()),
-                Consumer<User>(
-                    builder: (BuildContext _, User? user, Widget? child) {
-                  if (user == null)
-                    return Container();
-                  else
-                    return Container(
-                      child: Text(user.email),
-                    );
-                }),
                 SizedBox(
                   height: 100,
                 )

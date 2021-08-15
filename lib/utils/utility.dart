@@ -35,3 +35,16 @@ Future<void> launchUrl(String url, {bool isNewTab = true}) async {
   );
   // : throw 'Could not launch $url';
 }
+
+String getInitial(String text) {
+  if (text != null) {
+    if (text.contains(' ')) {
+      final list = text.split(' ').toList();
+      return list[0].substring(0, 1) + list[1].substring(0, 1);
+    } else {
+      return text.substring(0, 1);
+    }
+  } else {
+    return 'N/A';
+  }
+}

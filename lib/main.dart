@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/pages/home.dart';
+import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/pages/splashscreen.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -32,15 +33,33 @@ FirebaseAnalytics analytics = FirebaseAnalytics();
 FirebaseAnalyticsObserver observer =
     FirebaseAnalyticsObserver(analytics: analytics);
 
-class VocabApp extends StatelessWidget {
+class VocabApp extends StatefulWidget {
+  @override
+  _VocabAppState createState() => _VocabAppState();
+}
+
+class _VocabAppState extends State<VocabApp> {
   Future<bool> initatializeApp() async {
     firebaseAnalytics = Analytics();
     firebaseAnalytics.appOpen();
     final isDark = await Settings().isDark;
+    isSignedIn = await Settings().isSignedIn;
     return isDark;
   }
 
   late Analytics firebaseAnalytics;
+
+  @override
+  void dispose() {
+    darkNotifier.dispose();
+    totalNotifier.dispose();
+    searchController.dispose();
+    listNotifier.dispose();
+    super.dispose();
+  }
+
+  late bool isSignedIn;
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -79,11 +98,18 @@ class VocabApp extends StatelessWidget {
                             TextSelectionThemeData(cursorColor: primaryColor),
                       ),
                       themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
-                      home: Builder(
-                          builder: (BuildContext _) => kIsWeb &&
-                                  MediaQuery.of(_).size.width > MOBILE_WIDTH
-                              ? MyHomePage(title: '$APP_TITLE')
-                              : SplashScreen()),
+                      home: Builder(builder: (BuildContext _) {
+                        if (kIsWeb &&
+                            MediaQuery.of(_).size.width > MOBILE_WIDTH) {
+                          if (isSignedIn) {
+                            return MyHomePage(title: '$APP_TITLE');
+                          } else {
+                            return AppSignIn();
+                          }
+                        } else {
+                          return SplashScreen();
+                        }
+                      }),
                       navigatorObservers: [
                         FirebaseAnalyticsObserver(analytics: analytics),
                       ]);

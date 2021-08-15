@@ -2,15 +2,19 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/pages/addword.dart';
+import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/utility.dart';
+import 'package:vocabhub/widgets/circle_avatar.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/search.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -35,21 +39,19 @@ class _MyHomePageState extends State<MyHomePage> {
   Word? selected;
 
   @override
-  void dispose() {
-    darkNotifier.dispose();
-    totalNotifier.dispose();
-    searchController.dispose();
-    listNotifier.dispose();
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     firebaseAnalytics = Analytics();
     SharedPreferences.getInstance().then((value) {
       sharedPreferences = value;
     });
+    userProvider = Provider.of<User>(context, listen: false);
+    if (userProvider.isLoggedIn) {
+      actions.add('Logout');
+      // TODO: fetch loggedIn user details
+    } else {
+      actions.add('Sign In');
+    }
   }
 
   void _openCustomDialog() {
@@ -84,6 +86,12 @@ class _MyHomePageState extends State<MyHomePage> {
     if (text.toLowerCase() == 'add word') {
       await Navigate().push(context, AddWordForm(),
           slideTransitionType: SlideTransitionType.btt);
+    } else if (text.toLowerCase() == 'logout') {
+      /// TODO : logout signed user
+
+    } else if (text.toLowerCase() == 'sign in') {
+      Navigate().pushAndPopAll(context, AppSignIn(),
+          slideTransitionType: SlideTransitionType.btt);
     } else {
       String url = '';
       switch (text.toLowerCase()) {
@@ -112,6 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
     'Privacy Policy',
     'Report',
   ];
+  late User userProvider;
   @override
   Widget build(BuildContext context) {
     bool isDark = darkNotifier.value;
@@ -176,6 +185,23 @@ class _MyHomePageState extends State<MyHomePage> {
                         );
                       }).toList();
                     },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Consumer<User>(
+                          builder: (BuildContext _, User? user, Widget? child) {
+                        if (user == null || user.email.isEmpty)
+                          return CircularAvatar(
+                            url: '$profileUrl',
+                            radius: 25,
+                          );
+                        else
+                          return CircularAvatar(
+                            name: getInitial('${user.name}'),
+                            radius: 25,
+                            onTap: null,
+                          );
+                      }),
+                    ),
                   )
                 : Row(
                     children: [
