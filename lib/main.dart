@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vocabhub/models/word_model.dart';
+import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/pages/splashscreen.dart';

@@ -1,7 +1,7 @@
 // import 'package:firebase_analytics/firebase_analytics.dart';
 // import 'package:firebase_analytics/observer.dart';
 import 'package:vocabhub/main.dart';
-import 'package:vocabhub/models/word_model.dart';
+import 'package:vocabhub/models/word.dart';
 
 class Analytics {
 //   FirebaseAnalyticsObserver observer;

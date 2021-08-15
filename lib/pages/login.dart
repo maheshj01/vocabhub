@@ -5,8 +5,10 @@ import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/services/auth.dart';
+import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
+import 'package:vocabhub/widgets/widgets.dart';
 
 class AppSignIn extends StatefulWidget {
   const AppSignIn({Key? key}) : super(key: key);
@@ -24,6 +26,7 @@ class _AppSignInState extends State<AppSignIn> {
   );
 
   Authentication auth = Authentication();
+
   Future<void> _handleSignIn(BuildContext context) async {
     try {
       account = await auth.googleSignIn(context);
@@ -38,7 +41,6 @@ class _AppSignInState extends State<AppSignIn> {
         throw 'User null';
       }
     } catch (error) {
-      print(error);
       await Settings().setIsSignedIn(false);
     }
   }
@@ -85,6 +87,18 @@ class _AppSignInState extends State<AppSignIn> {
     Settings.size = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: surfaceGreen,
+        floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              showCircularIndicator(context);
+              final users = await UserStore().findAllUsers();
+              if (users.length > 0) {
+                print('length= ${users.length}');
+              } else {
+                print('No users present');
+              }
+              stopCircularIndicator(context);
+            },
+            child: Icon(Icons.add)),
         body: Settings.size.width > DESKTOP_WIDTH
             ? Row(
                 children: [

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:vocabhub/models/word_model.dart';
+import 'package:vocabhub/models/models.dart';
 part 'user.g.dart';
 
 @JsonSerializable()
@@ -32,6 +32,15 @@ class User extends ChangeNotifier {
         accessToken: w.accessToken,
         bookmarks: w.bookmarks);
   }
+
+  /// TODO: add a method to convert a User to JSON object
+//  Map<String, dynamic> toJson() => {
+//         'id': id,
+//         'email': email,
+//         'created_at': createdAt,
+//         'last_sign_in_at': lastSignInAt,
+//         'updated_at': updatedAt,
+//       };
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
 

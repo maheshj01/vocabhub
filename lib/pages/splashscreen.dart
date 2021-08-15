@@ -33,12 +33,12 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.forward();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        signInUser();
+        handleNavigation();
       }
     });
   }
 
-  Future<void> signInUser() async {
+  Future<void> handleNavigation() async {
     final bool signedIn = await Settings().isSignedIn;
     final int count = await Settings().skipCount;
     if (signedIn) {

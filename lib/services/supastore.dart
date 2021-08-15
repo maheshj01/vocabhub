@@ -1,8 +1,8 @@
 import 'package:supabase/supabase.dart';
 import 'package:logger/logger.dart' as log;
 import 'package:vocabhub/constants/const.dart';
-import 'package:vocabhub/models/word_model.dart';
 import 'package:postgrest/postgrest.dart';
+import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/utils/secrets.dart';
 
 class VocabResponse {
@@ -16,7 +16,7 @@ class VocabResponse {
 }
 
 class SupaStore {
-  static String tableName = '$TABLE_NAME';
+  static String tableName = '$VOCAB_TABLE_NAME';
   final _logger = log.Logger();
   final SupabaseClient _supabase = SupabaseClient("$CONFIG_URL", "$APIkey");
 

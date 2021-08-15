@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
-import 'package:vocabhub/models/word_model.dart';
+import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/navigator.dart';

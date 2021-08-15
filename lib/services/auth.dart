@@ -37,14 +37,18 @@ class Authentication {
     return user;
   }
 
-  Future<void> googleSignOut(BuildContext context) async {
+  Future<bool> googleSignOut(BuildContext context) async {
     try {
       _googleSignIn.disconnect();
       if (await _googleSignIn.isSignedIn()) {
-        // showSnackBar('Failed to signOut', scaffoldKey: scaffoldKey);
+        _googleSignIn.signOut();
+        return false;
+      } else {
+        return true;
       }
     } catch (err) {
-      showMessage(context, 'Failed to signIn');
+      showMessage(context, 'Failed to signIn!');
+      return false;
     }
   }
 }

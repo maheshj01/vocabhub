@@ -6,10 +6,11 @@ import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/user.dart';
-import 'package:vocabhub/models/word_model.dart';
+import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
+import 'package:vocabhub/services/auth.dart';
 import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
@@ -87,8 +88,14 @@ class _MyHomePageState extends State<MyHomePage> {
       await Navigate().push(context, AddWordForm(),
           slideTransitionType: SlideTransitionType.btt);
     } else if (text.toLowerCase() == 'logout') {
-      /// TODO : logout signed user
-
+      final isSignedOut = await Authentication().googleSignOut(context);
+      if (isSignedOut) {
+        actions.removeLast();
+        actions.add('Sign In');
+        showMessage(context, 'Signed Out successfully!');
+      } else {
+        showMessage(context, 'Failed to sign out');
+      }
     } else if (text.toLowerCase() == 'sign in') {
       Navigate().pushAndPopAll(context, AppSignIn(),
           slideTransitionType: SlideTransitionType.btt);
