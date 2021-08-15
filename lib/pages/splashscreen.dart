@@ -43,7 +43,10 @@ class _SplashScreenState extends State<SplashScreen>
     final bool signedIn = await Settings().isSignedIn;
     final int count = await Settings().skipCount;
     if (signedIn) {
-      // TODO: FETCH user data from database
+      /// TODO: verify if new user store in database
+      /// TODO: else
+      /// TODO: FETCH user data from database and update User profile
+      /// TODO: push to homepage
       Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
           slideTransitionType: SlideTransitionType.ttb);
     } else {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/pages/home.dart';
@@ -18,7 +19,7 @@ class _AppSignInState extends State<AppSignIn> {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: [
       'email',
-      'https://www.googleapis.com/auth/contacts.readonly',
+      '$signInScopeUrl',
     ],
   );
 
@@ -27,13 +28,24 @@ class _AppSignInState extends State<AppSignIn> {
     try {
       account = await auth.googleSignIn(context);
       print('SIGNING IN');
-      setState(() {});
+      final user = Provider.of<User>(context, listen: false);
+      user.user = account!;
+      // TODO: SHOW LOGIN
+      if (user != null) {
+        await Settings().setIsSignedIn(true);
+        Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
+            slideTransitionType: SlideTransitionType.ttb);
+      } else {
+        throw 'User null';
+      }
     } catch (error) {
       print(error);
+      await Settings().setIsSignedIn(false);
     }
   }
 
   User? account;
+
   @override
   Widget build(BuildContext context) {
     Widget _heading(String text) {
@@ -49,10 +61,8 @@ class _AppSignInState extends State<AppSignIn> {
           child: VocabButton(
             width: 300,
             leading: Image.asset('assets/google.png', height: 32),
-            label: 'Sign in with Google',
-            onTap: () {
-              print('object');
-            }, // _handleSignIn(context),
+            label: 'Sign In with Google',
+            onTap: () => _handleSignIn(context),
             backgroundColor: Colors.white,
           ));
     }
@@ -64,7 +74,7 @@ class _AppSignInState extends State<AppSignIn> {
             width: 300,
             backgroundColor: primaryGreen,
             foregroundColor: Colors.white,
-            label: 'Skip Sign in',
+            label: 'Sign In as Guest',
             onTap: () {
               Navigate().pushReplace(context, MyHomePage(title: '$APP_TITLE'),
                   slideTransitionType: SlideTransitionType.ttb);
@@ -111,23 +121,32 @@ class _AppSignInState extends State<AppSignIn> {
                   )
                 ],
               )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 200,
-                  ),
-                  _heading('Hi!'),
-                  _heading('Welcome Back.'),
-                  Expanded(child: Container()),
-                  _signInButton(),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  _skipButton(),
-                  Expanded(child: Container()),
-                ],
-              ));
+            : Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                SizedBox(
+                  height: 200,
+                ),
+                _heading('Hi!'),
+                _heading('Welcome Back.'),
+                Expanded(child: Container()),
+                _signInButton(),
+                SizedBox(
+                  height: 20,
+                ),
+                _skipButton(),
+                Expanded(child: Container()),
+                Consumer<User>(
+                    builder: (BuildContext _, User? user, Widget? child) {
+                  if (user == null)
+                    return Container();
+                  else
+                    return Container(
+                      child: Text(user.email),
+                    );
+                }),
+                SizedBox(
+                  height: 100,
+                )
+              ]));
   }
 }
 

@@ -21,9 +21,12 @@ class Authentication {
       final googleKey = await result!.authentication;
       final String? accessToken = googleKey.accessToken;
       final String? idToken = googleKey.idToken;
-      user = User(_googleSignIn.currentUser!.displayName ?? '',
-          _googleSignIn.currentUser!.email, _googleSignIn.currentUser!.photoUrl,
-          idToken: idToken, accessToken: accessToken);
+      user = User(
+          name: _googleSignIn.currentUser!.displayName ?? '',
+          email: _googleSignIn.currentUser!.email,
+          avatarUrl: _googleSignIn.currentUser!.photoUrl,
+          idToken: idToken,
+          accessToken: accessToken);
       print('signed In as ${user.name}');
       stopCircularIndicator(context);
     } catch (error) {

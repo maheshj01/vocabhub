@@ -44,6 +44,12 @@ class Settings {
     final _isSignedIn = _sharedPreferences!.getBool('$signedInKey') ?? false;
     return _isSignedIn;
   }
+  Future<void> setIsSignedIn(bool status)async{
+     if (_sharedPreferences == null) {
+      _sharedPreferences = await SharedPreferences.getInstance();
+    }
+    await _sharedPreferences!.setBool('$signedInKey',status);
+  }
 
   set setSkipCount(int value) {
     _sharedPreferences!.setInt('$skipCountKey', value);

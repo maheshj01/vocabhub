@@ -9,6 +9,7 @@ const PLAY_STORE_URL =
 const REPORT_URL = 'https://github.com/maheshmnj/vocabhub/issues/new/choose';
 const String profileUrl =
     'https://i.ebayimg.com/images/g/jesAAOSwVlda9ccM/s-l300.jpg';
+const String signInScopeUrl = 'https://www.googleapis.com/auth/contacts.readonly';
 // const SHEET_URL =
 //     'https://docs.google.com/spreadsheets/d/1G1RtQfsEDqHhHP4cgOpO9x_ZtQ1dYa6QrGCq3KFlu50';
 const PRIVACY_POLICY = 'https://maheshmnj.github.io/privacy';
