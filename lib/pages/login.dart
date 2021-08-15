@@ -87,6 +87,8 @@ class _AppSignInState extends State<AppSignIn> {
     Settings.size = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: surfaceGreen,
+
+        /// TODO: to be removed once tested
         floatingActionButton: FloatingActionButton(
             onPressed: () async {
               showCircularIndicator(context);

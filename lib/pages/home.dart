@@ -178,6 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: isDark ? Colors.white : primaryColor,
                   fontWeight: FontWeight.bold)),
           actions: [
+            // TODO: verify google sign UI update in drawer on mobile side
             constraints.maxWidth < DESKTOP_WIDTH &&
                     constraints.maxWidth > MOBILE_WIDTH
                 ? PopupMenuButton<String>(
