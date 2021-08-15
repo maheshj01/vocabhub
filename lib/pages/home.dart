@@ -283,7 +283,6 @@ class _WordsBuilderState extends State<WordsBuilder> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getWords();
   }

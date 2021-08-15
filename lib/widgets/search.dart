@@ -18,7 +18,6 @@ class SearchBuilder extends StatefulWidget {
 class _SearchBuilderState extends State<SearchBuilder> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     searchController.addListener(() {
       widget.onChanged(searchController.text);

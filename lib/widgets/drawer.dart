@@ -35,7 +35,6 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     isAnimated = true;
     super.dispose();
   }

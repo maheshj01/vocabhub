@@ -371,7 +371,6 @@ class _EmptyWordState extends State<EmptyWord> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     randIndex = Random().nextInt(tips.length);
   }

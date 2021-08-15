@@ -217,14 +217,13 @@ class _AddWordFormState extends State<AddWordForm> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     wordController.dispose();
     meaningController.dispose();
     exampleController.dispose();
     synonymController.dispose();
     mnemonicController.dispose();
     _errorNotifier.dispose();
+    super.dispose();
   }
 
   bool isDisabled = false;

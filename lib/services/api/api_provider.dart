@@ -102,7 +102,6 @@ class ApiProvider {
 
   Future<http.Response> patchRequest(String endPoint,
       {Map<String, Object>? body, Map<String, String>? headers}) async {
-    final response = await http.patch(Uri.parse(BASE_URL + endPoint));
     var responseJson;
     try {
       final response = await http
