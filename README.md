@@ -38,9 +38,14 @@ Drawer             |  Home         |  Add Word
 | :-----: | :-: | :---: | :-: |
 |   ✅    | ✅  |  ❌   | ✅  |
 
-<a href="https://play.google.com/store/apps/details?id=com.vocabhub.app">
-<img src="assets/googleplay.png" height="50">
+<a href="https://play.google.com/store/apps/details?id=com.vocabhub.app" target="_blank">
+<img src="assets/googleplay.png" height="60">
 </a>
+
+<a href="https://www.amazon.com/gp/product/B09CKFKHJ5" target="_blank">
+<img src="assets/amazonappstore.png" height="60">
+</a>
+
 
 ## Contributing
 
