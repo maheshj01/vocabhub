@@ -9,3 +9,6 @@ const Color primaryColor = primaryGreen;
 Color secondaryColor = primaryGreen.withOpacity(0.6);
 Color primaryDark = Colors.black.withOpacity(0.6);
 Color secondaryDark = Colors.black.withOpacity(0.7);
+Color shrinePink = Color(0xffFEDBD0);
+Color? surfaceGreen = Colors.green[50];
+Color? surfaceGrey = Colors.grey[850];

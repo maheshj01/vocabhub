@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocabhub/main.dart';
 
@@ -9,6 +10,7 @@ class Settings {
   static const skipCountKey = 'skipCount';
   static const darkKey = 'isDark';
   static const maxSkipCount = 3;
+  static Size size = Size.zero;
   Settings() {
     init();
   }

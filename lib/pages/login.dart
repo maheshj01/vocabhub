@@ -43,53 +43,91 @@ class _AppSignInState extends State<AppSignIn> {
       );
     }
 
-    final _size = MediaQuery.of(context).size;
+    Widget _signInButton() {
+      return Align(
+          alignment: Alignment.center,
+          child: VocabButton(
+            width: 300,
+            leading: Image.asset('assets/google.png', height: 32),
+            label: 'Sign in with Google',
+            onTap: () {
+              print('object');
+            }, // _handleSignIn(context),
+            backgroundColor: Colors.white,
+          ));
+    }
 
+    Widget _skipButton() {
+      return Align(
+          alignment: Alignment.center,
+          child: VocabButton(
+            width: 300,
+            backgroundColor: primaryGreen,
+            foregroundColor: Colors.white,
+            label: 'Skip Sign in',
+            onTap: () {
+              Navigate().pushReplace(context, MyHomePage(title: '$APP_TITLE'),
+                  slideTransitionType: SlideTransitionType.ttb);
+              Settings().setSkipCount = Settings.maxSkipCount;
+            }, // _handleSignIn(context),
+          ));
+    }
+
+    Settings.size = MediaQuery.of(context).size;
     return Scaffold(
-        body: Padding(
-      padding: EdgeInsets.all(_size.width > MOBILE_WIDTH ? 32.0 : 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(),
-          SizedBox(
-            height: 100,
-          ),
-          _heading('Hi!'),
-          _heading('Welcome Back.'),
-          Expanded(child: Container()),
-          Align(
-              alignment: Alignment.center,
-              child: VocabButton(
-                width: 300,
-                leading: Image.asset('assets/google.png', height: 32),
-                label: 'Sign in with Google',
-                onTap: () {
-                  print('object');
-                }, // _handleSignIn(context),
-                backgroundColor: Colors.white,
-              )),
-          SizedBox(
-            height: 20,
-          ),
-          Align(
-              alignment: Alignment.center,
-              child: VocabButton(
-                width: 300,
-                backgroundColor: primaryGreen,
-                foregroundColor: Colors.white,
-                label: 'Skip Sign in',
-                onTap: () {
-                  Navigate().pushReplace(
-                      context, MyHomePage(title: '$APP_TITLE'),
-                      slideTransitionType: SlideTransitionType.ttb);
-                  Settings().setSkipCount = Settings.maxSkipCount;
-                }, // _handleSignIn(context),
-              )),
-          Expanded(child: Container()),
-        ],
-      ),
-    ));
+        backgroundColor: surfaceGreen,
+        body: Settings.size.width > DESKTOP_WIDTH
+            ? Row(
+                children: [
+                  AnimatedContainer(
+                    width: Settings.size.width / 2,
+                    duration: Duration(seconds: 1),
+                    padding: EdgeInsets.symmetric(horizontal: 32),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _heading('Hi!'),
+                        _heading('Welcome Back.'),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      color: surfaceGrey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Expanded(child: Container()),
+                          _signInButton(),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          _skipButton(),
+                          Expanded(child: Container()),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 200,
+                  ),
+                  _heading('Hi!'),
+                  _heading('Welcome Back.'),
+                  Expanded(child: Container()),
+                  _signInButton(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  _skipButton(),
+                  Expanded(child: Container()),
+                ],
+              ));
   }
 }
 

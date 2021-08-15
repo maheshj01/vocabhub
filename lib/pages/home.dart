@@ -147,6 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
               );
       }
 
+      Settings.size = Size(constraints.maxWidth, constraints.minHeight);
       return Scaffold(
         drawer: constraints.maxWidth <= MOBILE_WIDTH
             ? Drawer(
