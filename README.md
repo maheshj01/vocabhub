@@ -42,7 +42,7 @@ Drawer             |  Home         |  Add Word
 <img src="assets/googleplay.png" height="60">
 </a>
 
-<a href="https://www.amazon.com/gp/product/B09CKFKHJ5" target="_blank">
+<a href="http://www.amazon.com/gp/mas/dl/android?p=com.vocabhub.app" target="_blank">
 <img src="assets/amazonappstore.png" height="60">
 </a>
 
