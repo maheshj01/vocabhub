@@ -8,6 +8,7 @@ import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/supastore.dart';
+import 'package:vocabhub/utils/circle_clipper.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -30,7 +31,8 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   String query = '';
   Word? selected;
 
@@ -40,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
     totalNotifier.dispose();
     searchController.dispose();
     listNotifier.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -47,9 +50,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     firebaseAnalytics = Analytics();
+    _animationController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1000));
     SharedPreferences.getInstance().then((value) {
       sharedPreferences = value;
     });
+    _animationController.forward();
   }
 
   void _openCustomDialog() {
@@ -104,6 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   SupaStore supaStore = SupaStore();
+  late AnimationController _animationController;
   late Analytics firebaseAnalytics;
   late SharedPreferences sharedPreferences;
   List<String> actions = [
@@ -147,62 +154,80 @@ class _MyHomePageState extends State<MyHomePage> {
               );
       }
 
-      return Scaffold(
-        drawer: constraints.maxWidth <= MOBILE_WIDTH
-            ? Drawer(
-                child: DrawerBuilder(),
-              )
-            : null,
-        appBar: AppBar(
-          iconTheme: Theme.of(context).iconTheme,
-          centerTitle: constraints.maxWidth <= MOBILE_WIDTH ? true : false,
-          title: Text('$APP_TITLE',
-              style: Theme.of(context).textTheme.headline4!.copyWith(
-                  color: isDark ? Colors.white : primaryColor,
-                  fontWeight: FontWeight.bold)),
-          actions: [
-            constraints.maxWidth < DESKTOP_WIDTH &&
-                    constraints.maxWidth > MOBILE_WIDTH
-                ? PopupMenuButton<String>(
-                    onSelected: (String x) {
-                      _select(x);
-                    },
-                    itemBuilder: (BuildContext context) {
-                      return actions.map((String action) {
-                        return PopupMenuItem<String>(
-                          value: action,
-                          child: Text(action),
-                        );
-                      }).toList();
-                    },
-                  )
-                : Row(
-                    children: [
-                      actionWidget('Add word', '', toolTip: 'Add a word',
-                          onTap: () async {
-                        // _openCustomDialog();
-                        await Navigate().push(context, AddWordForm(),
-                            slideTransitionType: SlideTransitionType.btt);
-                      }),
-                      actionWidget('source code', SOURCE_CODE_URL,
-                          toolTip: 'Source code'),
-                      actionWidget('Privacy Policy', PRIVACY_POLICY,
-                          toolTip: 'Privacy Policy'),
-                      actionWidget('Report', REPORT_URL, toolTip: 'Report'),
-                    ],
-                  )
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            darkNotifier.value = !darkNotifier.value;
-            Settings().dark = darkNotifier.value;
-          },
-          backgroundColor: isDark ? Colors.cyanAccent : primaryColor,
-          child: Icon(
-              !isDark ? Icons.brightness_2_outlined : Icons.wb_sunny_rounded),
-        ),
-        body: Row(
+      return AnimatedBuilder(
+        animation: _animationController,
+        builder: (BuildContext context, Widget? child) {
+          return ClipPath(
+            clipper: CircularClipper(
+                constraints.maxWidth * 3 * _animationController.value,
+                Offset(constraints.maxWidth - 100, constraints.maxHeight - 50)),
+            child: Scaffold(
+                drawer: constraints.maxWidth <= MOBILE_WIDTH
+                    ? Drawer(
+                        child: DrawerBuilder(),
+                      )
+                    : null,
+                appBar: AppBar(
+                  iconTheme: Theme.of(context).iconTheme,
+                  centerTitle:
+                      constraints.maxWidth <= MOBILE_WIDTH ? true : false,
+                  title: Text('$APP_TITLE',
+                      style: Theme.of(context).textTheme.headline4!.copyWith(
+                          color: isDark ? Colors.white : primaryColor,
+                          fontWeight: FontWeight.bold)),
+                  actions: [
+                    constraints.maxWidth < DESKTOP_WIDTH &&
+                            constraints.maxWidth > MOBILE_WIDTH
+                        ? PopupMenuButton<String>(
+                            onSelected: (String x) {
+                              _select(x);
+                            },
+                            itemBuilder: (BuildContext context) {
+                              return actions.map((String action) {
+                                return PopupMenuItem<String>(
+                                  value: action,
+                                  child: Text(action),
+                                );
+                              }).toList();
+                            },
+                          )
+                        : Row(
+                            children: [
+                              actionWidget('Add word', '',
+                                  toolTip: 'Add a word', onTap: () async {
+                                // _openCustomDialog();
+                                await Navigate().push(context, AddWordForm(),
+                                    slideTransitionType:
+                                        SlideTransitionType.btt);
+                              }),
+                              actionWidget('source code', SOURCE_CODE_URL,
+                                  toolTip: 'Source code'),
+                              actionWidget('Privacy Policy', PRIVACY_POLICY,
+                                  toolTip: 'Privacy Policy'),
+                              actionWidget('Report', REPORT_URL,
+                                  toolTip: 'Report'),
+                            ],
+                          )
+                  ],
+                ),
+                floatingActionButton: FloatingActionButton(
+                  onPressed: () {
+                    _animationController.reset();
+                    _animationController.forward();
+                    final dark = darkNotifier.value;
+                    print('dark=$dark');
+                    darkNotifier.value = !dark;
+                    Settings().dark = dark;
+                  },
+                  backgroundColor: isDark ? Colors.cyanAccent : primaryColor,
+                  child: Icon(!isDark
+                      ? Icons.brightness_2_outlined
+                      : Icons.wb_sunny_rounded),
+                ),
+                body: child),
+          );
+        },
+        child: Row(
           children: [
             constraints.maxWidth > MOBILE_WIDTH
                 ? Expanded(
