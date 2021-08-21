@@ -115,12 +115,16 @@ class _MyHomePageState extends State<MyHomePage>
   late AnimationController _animationController;
   late Analytics firebaseAnalytics;
   late SharedPreferences sharedPreferences;
+  GlobalKey key = GlobalKey();
   List<String> actions = [
     'Add word',
     'Source code',
     'Privacy Policy',
     'Report',
   ];
+  double x = 0;
+  double y = 0;
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (_, constraints) {
@@ -163,8 +167,9 @@ class _MyHomePageState extends State<MyHomePage>
           bool isDark = darkNotifier.value;
           return ClipPath(
             clipper: CircularClipper(
-                constraints.maxWidth * 3 * _animationController.value,
-                Offset(constraints.maxWidth - 100, constraints.maxHeight - 50)),
+                diagonal(Size(constraints.maxWidth, constraints.maxHeight)) *
+                    _animationController.value,
+                Offset(x + 20, y + 20)),
             child: Scaffold(
               drawer: constraints.maxWidth <= MOBILE_WIDTH
                   ? Drawer(
@@ -214,7 +219,13 @@ class _MyHomePageState extends State<MyHomePage>
                 ],
               ),
               floatingActionButton: FloatingActionButton(
+                key: key,
                 onPressed: () {
+                  final RenderBox box =
+                      key.currentContext!.findRenderObject() as RenderBox;
+                  Offset position = box.localToGlobal(Offset.zero);
+                  x = position.dx;
+                  y = position.dy;
                   _animationController.reset();
                   _animationController.forward();
                   darkNotifier.value = !darkNotifier.value;
