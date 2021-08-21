@@ -168,6 +168,7 @@ class _MyHomePageState extends State<MyHomePage>
           return ClipPath(
             clipper: CircularClipper(
                 diagonal(Size(constraints.maxWidth, constraints.maxHeight)) *
+                    2 *
                     _animationController.value,
                 Offset(x + 20, y + 20)),
             child: Scaffold(
