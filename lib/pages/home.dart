@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
@@ -8,6 +10,7 @@ import 'package:vocabhub/models/word_model.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/supastore.dart';
+import 'package:vocabhub/utils/circle_clipper.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -30,7 +33,8 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   String query = '';
   Word? selected;
 
@@ -40,6 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
     totalNotifier.dispose();
     searchController.dispose();
     listNotifier.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -47,9 +52,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     firebaseAnalytics = Analytics();
+    _animationController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: kIsWeb ? 2000 : 1000));
     SharedPreferences.getInstance().then((value) {
       sharedPreferences = value;
     });
+    _animationController.forward();
   }
 
   void _openCustomDialog() {
@@ -104,6 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   SupaStore supaStore = SupaStore();
+  late AnimationController _animationController;
   late Analytics firebaseAnalytics;
   late SharedPreferences sharedPreferences;
   List<String> actions = [
@@ -114,7 +123,6 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
   @override
   Widget build(BuildContext context) {
-    bool isDark = darkNotifier.value;
     return LayoutBuilder(builder: (_, constraints) {
       Widget actionWidget(String text, String url,
           {String toolTip = '', Function? onTap}) {
@@ -139,7 +147,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               .textTheme
                               .headline5!
                               .copyWith(
-                                  color: isDark ? Colors.white : primaryColor,
+                                  color: darkNotifier.value
+                                      ? Colors.white
+                                      : primaryColor,
                                   fontWeight: FontWeight.bold)),
                     ),
                   ),
@@ -147,97 +157,113 @@ class _MyHomePageState extends State<MyHomePage> {
               );
       }
 
-      return Scaffold(
-        drawer: constraints.maxWidth <= MOBILE_WIDTH
-            ? Drawer(
-                child: DrawerBuilder(),
-              )
-            : null,
-        appBar: AppBar(
-          iconTheme: Theme.of(context).iconTheme,
-          centerTitle: constraints.maxWidth <= MOBILE_WIDTH ? true : false,
-          title: Text('$APP_TITLE',
-              style: Theme.of(context).textTheme.headline4!.copyWith(
-                  color: isDark ? Colors.white : primaryColor,
-                  fontWeight: FontWeight.bold)),
-          actions: [
-            constraints.maxWidth < DESKTOP_WIDTH &&
-                    constraints.maxWidth > MOBILE_WIDTH
-                ? PopupMenuButton<String>(
-                    onSelected: (String x) {
-                      _select(x);
-                    },
-                    itemBuilder: (BuildContext context) {
-                      return actions.map((String action) {
-                        return PopupMenuItem<String>(
-                          value: action,
-                          child: Text(action),
-                        );
-                      }).toList();
-                    },
-                  )
-                : Row(
-                    children: [
-                      actionWidget('Add word', '', toolTip: 'Add a word',
-                          onTap: () async {
-                        // _openCustomDialog();
-                        await Navigate().push(context, AddWordForm(),
-                            slideTransitionType: SlideTransitionType.btt);
-                      }),
-                      actionWidget('source code', SOURCE_CODE_URL,
-                          toolTip: 'Source code'),
-                      actionWidget('Privacy Policy', PRIVACY_POLICY,
-                          toolTip: 'Privacy Policy'),
-                      actionWidget('Report', REPORT_URL, toolTip: 'Report'),
-                    ],
-                  )
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            darkNotifier.value = !darkNotifier.value;
-            Settings().dark = darkNotifier.value;
-          },
-          backgroundColor: isDark ? Colors.cyanAccent : primaryColor,
-          child: Icon(
-              !isDark ? Icons.brightness_2_outlined : Icons.wb_sunny_rounded),
-        ),
-        body: Row(
-          children: [
-            constraints.maxWidth > MOBILE_WIDTH
-                ? Expanded(
-                    flex: constraints.maxWidth < TABLET_WIDTH ? 4 : 3,
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.grey.withOpacity(0.5)
-                              : Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                                spreadRadius: 4,
-                                blurRadius: 4,
-                                color: Colors.grey.withOpacity(0.2),
-                                offset: Offset(1, 0))
-                          ]),
-                      child: WordsBuilder(
-                        onSelect: (x) {
-                          setState(() {
-                            selected = x;
-                          });
-                          firebaseAnalytics.logWordSelection(x);
-                        },
-                      ),
-                    ))
-                : Container(),
-            Expanded(
-                flex: 8,
-                child: constraints.maxWidth > MOBILE_WIDTH
-                    ? WordDetail(
-                        word: selected,
-                      )
-                    : WordsBuilder()),
-          ],
-        ),
+      return AnimatedBuilder(
+        animation: _animationController,
+        builder: (BuildContext context, Widget? child) {
+          bool isDark = darkNotifier.value;
+          return ClipPath(
+            clipper: CircularClipper(
+                constraints.maxWidth * 3 * _animationController.value,
+                Offset(constraints.maxWidth - 100, constraints.maxHeight - 50)),
+            child: Scaffold(
+              drawer: constraints.maxWidth <= MOBILE_WIDTH
+                  ? Drawer(
+                      child: DrawerBuilder(),
+                    )
+                  : null,
+              appBar: AppBar(
+                iconTheme: Theme.of(context).iconTheme,
+                centerTitle:
+                    constraints.maxWidth <= MOBILE_WIDTH ? true : false,
+                title: Text('$APP_TITLE',
+                    style: Theme.of(context).textTheme.headline4!.copyWith(
+                        color: isDark ? Colors.white : primaryColor,
+                        fontWeight: FontWeight.bold)),
+                actions: [
+                  constraints.maxWidth < DESKTOP_WIDTH &&
+                          constraints.maxWidth > MOBILE_WIDTH
+                      ? PopupMenuButton<String>(
+                          onSelected: (String x) {
+                            _select(x);
+                          },
+                          itemBuilder: (BuildContext context) {
+                            return actions.map((String action) {
+                              return PopupMenuItem<String>(
+                                value: action,
+                                child: Text(action),
+                              );
+                            }).toList();
+                          },
+                        )
+                      : Row(
+                          children: [
+                            actionWidget('Add word', '', toolTip: 'Add a word',
+                                onTap: () async {
+                              // _openCustomDialog();
+                              await Navigate().push(context, AddWordForm(),
+                                  slideTransitionType: SlideTransitionType.btt);
+                            }),
+                            actionWidget('source code', SOURCE_CODE_URL,
+                                toolTip: 'Source code'),
+                            actionWidget('Privacy Policy', PRIVACY_POLICY,
+                                toolTip: 'Privacy Policy'),
+                            actionWidget('Report', REPORT_URL,
+                                toolTip: 'Report'),
+                          ],
+                        )
+                ],
+              ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  _animationController.reset();
+                  _animationController.forward();
+                  darkNotifier.value = !darkNotifier.value;
+                  Settings().dark = darkNotifier.value;
+                },
+                backgroundColor: isDark ? Colors.cyanAccent : primaryColor,
+                child: Icon(!isDark
+                    ? Icons.brightness_2_outlined
+                    : Icons.wb_sunny_rounded),
+              ),
+              body: Row(
+                children: [
+                  constraints.maxWidth > MOBILE_WIDTH
+                      ? Expanded(
+                          flex: constraints.maxWidth < TABLET_WIDTH ? 4 : 3,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: isDark
+                                    ? Colors.grey.withOpacity(0.5)
+                                    : Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                      spreadRadius: 4,
+                                      blurRadius: 4,
+                                      color: Colors.grey.withOpacity(0.2),
+                                      offset: Offset(1, 0))
+                                ]),
+                            child: WordsBuilder(
+                              onSelect: (x) {
+                                setState(() {
+                                  selected = x;
+                                });
+                                firebaseAnalytics.logWordSelection(x);
+                              },
+                            ),
+                          ))
+                      : Container(),
+                  Expanded(
+                      flex: 8,
+                      child: constraints.maxWidth > MOBILE_WIDTH
+                          ? WordDetail(
+                              word: selected,
+                            )
+                          : WordsBuilder()),
+                ],
+              ),
+            ),
+          );
+        },
       );
     });
   }
