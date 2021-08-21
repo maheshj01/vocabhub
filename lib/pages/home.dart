@@ -53,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage>
     super.initState();
     firebaseAnalytics = Analytics();
     _animationController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: kIsWeb ? 2000 : 1000));
+        vsync: this, duration: Duration(milliseconds: kIsWeb ? 1500 : 1000));
     SharedPreferences.getInstance().then((value) {
       sharedPreferences = value;
     });
@@ -221,6 +221,7 @@ class _MyHomePageState extends State<MyHomePage>
               floatingActionButton: FloatingActionButton(
                 key: key,
                 onPressed: () {
+                  darkNotifier.value = !darkNotifier.value;
                   final RenderBox box =
                       key.currentContext!.findRenderObject() as RenderBox;
                   Offset position = box.localToGlobal(Offset.zero);
@@ -228,7 +229,7 @@ class _MyHomePageState extends State<MyHomePage>
                   y = position.dy;
                   _animationController.reset();
                   _animationController.forward();
-                  darkNotifier.value = !darkNotifier.value;
+
                   Settings().dark = darkNotifier.value;
                 },
                 backgroundColor: isDark ? Colors.cyanAccent : primaryColor,
