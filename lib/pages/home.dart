@@ -53,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage>
     super.initState();
     firebaseAnalytics = Analytics();
     _animationController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: kIsWeb ? 1500 : 1000));
+        vsync: this, duration: Duration(milliseconds: kIsWeb ? 1000 : 800));
     SharedPreferences.getInstance().then((value) {
       sharedPreferences = value;
     });
