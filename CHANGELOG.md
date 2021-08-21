@@ -1,4 +1,9 @@
+### 0.3.3
+
+- Add dark mode animation
+
 ### 0.3.2
+
 - fix drawer navigation
 - Improve Appbar layout for tablet
 
