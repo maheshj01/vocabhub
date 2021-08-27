@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/constants.dart';
@@ -12,6 +14,7 @@ import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/auth.dart';
 import 'package:vocabhub/services/supastore.dart';
+import 'package:vocabhub/utils/circle_clipper.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -35,14 +38,27 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   String query = '';
   Word? selected;
+
+  @override
+  void dispose() {
+    darkNotifier.dispose();
+    totalNotifier.dispose();
+    searchController.dispose();
+    listNotifier.dispose();
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
     firebaseAnalytics = Analytics();
+    _animationController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: kIsWeb ? 1000 : 800));
     SharedPreferences.getInstance().then((value) {
       sharedPreferences = value;
     });
@@ -54,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       actions.add('Sign In');
     }
+    _animationController.forward();
   }
 
   void _openCustomDialog() {
@@ -122,8 +139,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   SupaStore supaStore = SupaStore();
+  late AnimationController _animationController;
   late Analytics firebaseAnalytics;
   late SharedPreferences sharedPreferences;
+  GlobalKey key = GlobalKey();
   List<String> actions = [
     'Add word',
     'Source code',
@@ -131,9 +150,11 @@ class _MyHomePageState extends State<MyHomePage> {
     'Report',
   ];
   late UserModel userProvider;
+  double x = 0;
+  double y = 0;
+
   @override
   Widget build(BuildContext context) {
-    bool isDark = darkNotifier.value;
     return LayoutBuilder(builder: (_, constraints) {
       Widget actionWidget(String text, String url,
           {String toolTip = '', Function? onTap}) {
@@ -158,7 +179,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               .textTheme
                               .headline5!
                               .copyWith(
-                                  color: isDark ? Colors.white : primaryColor,
+                                  color: darkNotifier.value
+                                      ? Colors.white
+                                      : primaryColor,
                                   fontWeight: FontWeight.bold)),
                     ),
                   ),
@@ -178,7 +201,7 @@ class _MyHomePageState extends State<MyHomePage> {
           centerTitle: constraints.maxWidth <= MOBILE_WIDTH ? true : false,
           title: Text('$APP_TITLE',
               style: Theme.of(context).textTheme.headline4!.copyWith(
-                  color: isDark ? Colors.white : primaryColor,
+                  color: darkNotifier.value ? Colors.white : primaryColor,
                   fontWeight: FontWeight.bold)),
           actions: [
             // TODO: verify google sign UI update in drawer on mobile side
@@ -240,9 +263,11 @@ class _MyHomePageState extends State<MyHomePage> {
             darkNotifier.value = !darkNotifier.value;
             Settings().dark = darkNotifier.value;
           },
-          backgroundColor: isDark ? Colors.cyanAccent : primaryColor,
-          child: Icon(
-              !isDark ? Icons.brightness_2_outlined : Icons.wb_sunny_rounded),
+          backgroundColor:
+              !darkNotifier.value ? Colors.cyanAccent : primaryColor,
+          child: Icon(darkNotifier.value
+              ? Icons.brightness_2_outlined
+              : Icons.wb_sunny_rounded),
         ),
         body: Row(
           children: [
@@ -251,7 +276,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     flex: constraints.maxWidth < TABLET_WIDTH ? 4 : 3,
                     child: Container(
                       decoration: BoxDecoration(
-                          color: isDark
+                          color: darkNotifier.value
                               ? Colors.grey.withOpacity(0.5)
                               : Colors.white,
                           boxShadow: [

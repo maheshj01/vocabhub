@@ -1,4 +1,6 @@
 // import 'dart:js' as js;
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -47,4 +49,8 @@ String getInitial(String text) {
   } else {
     return 'N/A';
   }
+}
+
+double diagonal(Size size) {
+  return pow(pow(size.width, 2) + pow(size.width, 2), 0.5) as double;
 }
