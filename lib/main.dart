@@ -64,7 +64,7 @@ class _VocabAppState extends State<VocabApp> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<User>(create: (context) => User()),
+        ChangeNotifierProvider<UserModel>(create: (context) => UserModel()),
       ],
       child: FutureBuilder<bool>(
           future: initatializeApp(),

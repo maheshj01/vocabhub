@@ -46,8 +46,9 @@ class _MyHomePageState extends State<MyHomePage> {
     SharedPreferences.getInstance().then((value) {
       sharedPreferences = value;
     });
-    userProvider = Provider.of<User>(context, listen: false);
+    userProvider = Provider.of<UserModel>(context, listen: false);
     if (userProvider.isLoggedIn) {
+      print('loggedIn user = ${userProvider.email}');
       actions.add('Logout');
       // TODO: fetch loggedIn user details
     } else {
@@ -93,6 +94,8 @@ class _MyHomePageState extends State<MyHomePage> {
         actions.removeLast();
         actions.add('Sign In');
         showMessage(context, 'Signed Out successfully!');
+        Navigate().pushAndPopAll(context, AppSignIn(),
+            slideTransitionType: SlideTransitionType.btt);
       } else {
         showMessage(context, 'Failed to sign out');
       }
@@ -127,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
     'Privacy Policy',
     'Report',
   ];
-  late User userProvider;
+  late UserModel userProvider;
   @override
   Widget build(BuildContext context) {
     bool isDark = darkNotifier.value;
@@ -182,6 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
             constraints.maxWidth < DESKTOP_WIDTH &&
                     constraints.maxWidth > MOBILE_WIDTH
                 ? PopupMenuButton<String>(
+                    offset: Offset(-20, 50),
                     onSelected: (String x) {
                       _select(x);
                     },
@@ -195,19 +199,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Consumer<User>(
-                          builder: (BuildContext _, User? user, Widget? child) {
+                      child: Consumer<UserModel>(builder:
+                          (BuildContext _, UserModel? user, Widget? child) {
                         if (user == null || user.email.isEmpty)
                           return CircularAvatar(
                             url: '$profileUrl',
                             radius: 25,
                           );
-                        else
+                        else {
+                          print('${user.name}');
                           return CircularAvatar(
                             name: getInitial('${user.name}'),
+                            url: user.avatarUrl,
                             radius: 25,
                             onTap: null,
                           );
+                        }
                       }),
                     ),
                   )

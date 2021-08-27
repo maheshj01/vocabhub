@@ -2,8 +2,6 @@
 /// that may need to be imported in some part of the app
 /// group the exports according to folder name
 
-/** constants */
-
 export 'constants/constants.dart';
 
 /// EXPORT constants ABOVE THIS LINE

@@ -28,15 +28,30 @@ class _AppSignInState extends State<AppSignIn> {
   Authentication auth = Authentication();
 
   Future<void> _handleSignIn(BuildContext context) async {
+    final userProvider = Provider.of<UserModel>(context, listen: false);
     try {
-      account = await auth.googleSignIn(context);
-      final user = Provider.of<User>(context, listen: false);
-      user.user = account!;
+      user = await auth.googleSignIn(context);
       // TODO: SHOW LOGIN
       if (user != null) {
-        await Settings().setIsSignedIn(true);
-        Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
-            slideTransitionType: SlideTransitionType.ttb);
+        final existingUser = await UserStore().findByEmail(email: user!.email);
+        print(existingUser);
+        if (existingUser == null) {
+          final isRegistered = await _register(user!);
+          if (isRegistered) {
+            userProvider.user = user!;
+            await Settings().setIsSignedIn(true, email: user!.email);
+            Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
+                slideTransitionType: SlideTransitionType.ttb);
+          } else {
+            await Settings().setIsSignedIn(false, email: existingUser!.email);
+            throw 'failed to register new user';
+          }
+        } else {
+          userProvider.user = user!;
+          await Settings().setIsSignedIn(true, email: existingUser.email);
+          Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
+              slideTransitionType: SlideTransitionType.ttb);
+        }
       } else {
         throw 'User null';
       }
@@ -45,7 +60,26 @@ class _AppSignInState extends State<AppSignIn> {
     }
   }
 
-  User? account;
+  Future<bool> _register(UserModel newUser) async {
+    try {
+      if (newUser != null) {
+        final resp = await UserStore().registerUser(newUser);
+        if (resp.didSucced)
+          return true;
+        else
+          return false;
+      } else {
+        await Settings().setIsSignedIn(false);
+        return false;
+      }
+    } catch (error) {
+      print(error);
+      await Settings().setIsSignedIn(false);
+      return false;
+    }
+  }
+
+  UserModel? user;
 
   @override
   Widget build(BuildContext context) {
@@ -92,11 +126,12 @@ class _AppSignInState extends State<AppSignIn> {
         floatingActionButton: FloatingActionButton(
             onPressed: () async {
               showCircularIndicator(context);
-              final users = await UserStore().findAllUsers();
-              if (users.length > 0) {
-                print('length= ${users.length}');
+              final user =
+                  await UserStore().findByEmail(email: 'maheshmn121@gmail.com');
+              if (user != null) {
+                print(user.email);
               } else {
-                print('No users present');
+                print('user not found');
               }
               stopCircularIndicator(context);
             },

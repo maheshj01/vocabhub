@@ -1,6 +1,7 @@
 import 'package:supabase/supabase.dart';
 import 'package:logger/logger.dart' as log;
 import 'package:vocabhub/constants/constants.dart';
+import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/utils/secrets.dart';
 import 'package:postgrest/postgrest.dart';
@@ -58,23 +59,25 @@ class UserStore {
 //: TODO: Add a new user to the database
 //: and verify
 
-//     Future<VocabResponse> addUser(User user) async {
-//     final json = user.toJson();
-//     final vocabresponse = VocabResponse(didSucced: false, message: "Failed");
-//     try {
-//       final response = await insert(json);
-//       if (response.status == 201) {
-//         vocabresponse.didSucced = true;
-//         vocabresponse.message = 'Success';
-//         final word = Word.fromJson(response.data[0]);
-//         vocabresponse.data = word;
-//       }
-//     } catch (_) {
-//       print('error caught $_');
-//       throw "Failed to add word";
-//     }
-//     return vocabresponse;
-//   }
+  Future<Response> registerUser(UserModel user) async {
+    final resp = Response(didSucced: false, message: "Failed");
+    final json = user.toJson();
+    try {
+      final response = await SupaStore().insert(json, table: USER_TABLE_NAME);
+      if (response.status == 201) {
+        resp.didSucced = true;
+        resp.message = 'Success';
+        resp.data = response.data;
+      } else {
+        print('error caught');
+        throw "Failed to register new user";
+      }
+    } catch (_) {
+      print('error caught $_');
+      throw "Failed to register new user";
+    }
+    return resp;
+  }
 
   Future<PostgrestResponse> updateWord({
     required String id,

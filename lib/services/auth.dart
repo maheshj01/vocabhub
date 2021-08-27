@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart' as log;
+import 'package:supabase/supabase.dart' as supabase;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:vocabhub/constants/constants.dart';
+import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/user.dart';
+import 'package:vocabhub/services/services.dart';
+import 'package:vocabhub/utils/secrets.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
@@ -11,9 +17,12 @@ class Authentication {
       //   'https://www.googleapis.com/auth/contacts.readonly',
     ],
   );
-  Future<User?> googleSignIn(BuildContext context,
+
+  static String tableName = '$USER_TABLE_NAME';
+
+  Future<UserModel?> googleSignIn(BuildContext context,
       {bool isLogin = true, bool socialSignUp = false}) async {
-    User? user;
+    UserModel? user;
     try {
       showCircularIndicator(context);
       await _googleSignIn.signOut();
@@ -21,7 +30,7 @@ class Authentication {
       final googleKey = await result!.authentication;
       final String? accessToken = googleKey.accessToken;
       final String? idToken = googleKey.idToken;
-      user = User(
+      user = UserModel(
           name: _googleSignIn.currentUser!.displayName ?? '',
           email: _googleSignIn.currentUser!.email,
           avatarUrl: _googleSignIn.currentUser!.photoUrl,

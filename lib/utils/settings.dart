@@ -7,6 +7,7 @@ import 'package:vocabhub/main.dart';
 class Settings {
   static SharedPreferences? _sharedPreferences;
   static const signedInKey = 'isSignedIn';
+  static const emailKey = 'emailKey';
   static const skipCountKey = 'skipCount';
   static const darkKey = 'isDark';
   static const maxSkipCount = 3;
@@ -44,11 +45,21 @@ class Settings {
     final _isSignedIn = _sharedPreferences!.getBool('$signedInKey') ?? false;
     return _isSignedIn;
   }
-  Future<void> setIsSignedIn(bool status)async{
-     if (_sharedPreferences == null) {
+  FutureOr<String> get email async {
+    if (_sharedPreferences == null) {
       _sharedPreferences = await SharedPreferences.getInstance();
     }
-    await _sharedPreferences!.setBool('$signedInKey',status);
+    final _email = _sharedPreferences!.getString('$emailKey')??'';
+    return _email;
+  }
+
+  Future<void> setIsSignedIn(bool status,{String email=''}) async {
+
+    if (_sharedPreferences == null) {
+      _sharedPreferences = await SharedPreferences.getInstance();
+    }
+    await _sharedPreferences!.setBool('$signedInKey', status);
+    await _sharedPreferences!.setString('$emailKey', email);
   }
 
   set setSkipCount(int value) {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vocabhub/exports.dart';
+import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/utils/navigator.dart';
@@ -39,16 +41,17 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> handleNavigation() async {
+    final user = Provider.of<UserModel>(context, listen: false);
     final bool signedIn = await Settings().isSignedIn;
+    final String _email = await Settings().email;
     final int count = await Settings().skipCount;
-    if (signedIn) {
-      /// TODO: verify if new user store in database
-      /// TODO: else
-      /// TODO: FETCH user data from database and update User profile
-      /// TODO: push to homepage
+    user.email = _email;
+    if (signedIn && _email.isNotEmpty) {
+      user.isLoggedIn = true;
       Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
           slideTransitionType: SlideTransitionType.ttb);
     } else {
+      user.isLoggedIn = false;
       if (count > 0) {
         Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
             slideTransitionType: SlideTransitionType.ttb);

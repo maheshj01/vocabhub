@@ -5,16 +5,18 @@ import 'package:postgrest/postgrest.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/utils/secrets.dart';
 
-class VocabResponse {
+class Response {
   bool didSucced;
   String message;
   int? status;
   Object? data;
 
-  VocabResponse(
+  Response(
       {required this.didSucced, required this.message, this.status, this.data});
 }
 
+// TODO: this class should be a private class around which other
+// TODO: wrappers must be defined
 class SupaStore {
   static String tableName = '$VOCAB_TABLE_NAME';
   final _logger = log.Logger();
@@ -46,9 +48,9 @@ class SupaStore {
     return words;
   }
 
-  Future<VocabResponse> addWord(Word word) async {
+  Future<Response> addWord(Word word) async {
     final json = word.toJson();
-    final vocabresponse = VocabResponse(didSucced: false, message: "Failed");
+    final vocabresponse = Response(didSucced: false, message: "Failed");
     try {
       final response = await insert(json);
       if (response.status == 201) {
@@ -75,11 +77,15 @@ class SupaStore {
     return words;
   }
 
-  Future<PostgrestResponse> insert(Map<String, dynamic> json) async {
+  Future<PostgrestResponse> insert(Map<String, dynamic> json,
+      {String table = '$VOCAB_TABLE_NAME'}) async {
     json.remove('id');
+
+    /// TODO: remove antonyms
     json.remove('antonyms');
+    json.remove('isLoggedIn');
     final response = await _supabase
-        .from(tableName)
+        .from(table)
         .insert(
           json,
         )

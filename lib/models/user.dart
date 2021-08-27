@@ -4,7 +4,7 @@ import 'package:vocabhub/models/models.dart';
 part 'user.g.dart';
 
 @JsonSerializable()
-class User extends ChangeNotifier {
+class UserModel extends ChangeNotifier {
   String? idToken;
   String? accessToken;
   List<Word> bookmarks;
@@ -13,7 +13,7 @@ class User extends ChangeNotifier {
   String? avatarUrl;
   bool isLoggedIn;
 
-  User(
+  UserModel(
       {this.name = '',
       this.email = '',
       this.avatarUrl,
@@ -21,10 +21,10 @@ class User extends ChangeNotifier {
       this.accessToken,
       this.isLoggedIn = false,
       this.bookmarks = const []});
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
 
-  factory User.copyWith(User w) {
-    return User(
+  factory UserModel.copyWith(UserModel w) {
+    return UserModel(
         name: w.name,
         email: w.email,
         avatarUrl: w.avatarUrl,
@@ -42,7 +42,7 @@ class User extends ChangeNotifier {
 //         'updated_at': updatedAt,
 //       };
 
-  Map<String, dynamic> toJson() => _$UserToJson(this);
+  Map<String, dynamic> toJson() => _$UserModelToJson(this);
 
   set setEmail(String m) {
     email = m;
@@ -69,7 +69,7 @@ class User extends ChangeNotifier {
     notifyListeners();
   }
 
-  set user(User user) {
+  set user(UserModel user) {
     avatarUrl = user.avatarUrl;
     accessToken = user.accessToken;
     idToken = user.idToken;
