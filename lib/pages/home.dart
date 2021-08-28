@@ -45,10 +45,6 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   void dispose() {
-    darkNotifier.dispose();
-    totalNotifier.dispose();
-    searchController.dispose();
-    listNotifier.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -57,8 +53,11 @@ class _MyHomePageState extends State<MyHomePage>
   void initState() {
     super.initState();
     firebaseAnalytics = Analytics();
+    print(Settings.size);
     _animationController = AnimationController(
-        vsync: this, duration: Duration(milliseconds: kIsWeb ? 1000 : 800));
+        vsync: this,
+        duration: Duration(
+            milliseconds: (Settings.size.width > TABLET_WIDTH) ? 1000 : 800));
     SharedPreferences.getInstance().then((value) {
       sharedPreferences = value;
     });
@@ -73,34 +72,6 @@ class _MyHomePageState extends State<MyHomePage>
     _animationController.forward();
   }
 
-  void _openCustomDialog() {
-    showGeneralDialog(
-        barrierColor: Colors.black.withOpacity(0.5),
-        transitionBuilder: (context, a1, a2, widget) {
-          return Transform.translate(
-              offset: Offset(0, 100 * a1.value), child: AddWordForm());
-        },
-        transitionDuration: Duration(milliseconds: 500),
-        barrierDismissible: true,
-        barrierLabel: '',
-        context: context,
-        pageBuilder: (context, animation1, animation2) {
-          return Container();
-        });
-  }
-
-  Widget _buildNewTransition(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
-    return Transform.translate(
-      offset: Offset(0, animation.value * -50),
-      child: child,
-    );
-  }
-
   Future<void> _select(String text) async {
     if (text.toLowerCase() == 'add word') {
       await Navigate().push(context, AddWordForm(),
@@ -110,6 +81,7 @@ class _MyHomePageState extends State<MyHomePage>
       if (isSignedOut) {
         actions.removeLast();
         actions.add('Sign In');
+        Settings().setIsSignedIn(false);
         showMessage(context, 'Signed Out successfully!');
         Navigate().pushAndPopAll(context, AppSignIn(),
             slideTransitionType: SlideTransitionType.btt);
@@ -153,42 +125,39 @@ class _MyHomePageState extends State<MyHomePage>
   double x = 0;
   double y = 0;
 
+  Widget actionWidget(String text, String url,
+      {String toolTip = '', Function? onTap}) {
+    return Settings.size.width <= MOBILE_WIDTH
+        ? Container()
+        : InkWell(
+            onTap: onTap != null
+                ? () => onTap()
+                : () {
+                    launchUrl(url);
+                  },
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: Settings.size.width < TABLET_WIDTH ? 18 : 24,
+                  vertical: 4),
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Text(text,
+                      style: Theme.of(context).textTheme.headline5!.copyWith(
+                          color:
+                              darkNotifier.value ? Colors.white : primaryColor,
+                          fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ),
+          );
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (_, constraints) {
-      Widget actionWidget(String text, String url,
-          {String toolTip = '', Function? onTap}) {
-        return constraints.maxWidth <= MOBILE_WIDTH
-            ? Container()
-            : InkWell(
-                onTap: onTap != null
-                    ? () => onTap()
-                    : () {
-                        launchUrl(url);
-                      },
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: constraints.maxWidth < TABLET_WIDTH ? 18 : 24,
-                      vertical: 4),
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: Text(text,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline5!
-                              .copyWith(
-                                  color: darkNotifier.value
-                                      ? Colors.white
-                                      : primaryColor,
-                                  fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                ),
-              );
-      }
-
+      Settings.size = Size(constraints.maxWidth, constraints.maxHeight);
       return AnimatedBuilder(
         animation: _animationController,
         builder: (BuildContext context, Widget? child) {

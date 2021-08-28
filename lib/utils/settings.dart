@@ -12,9 +12,11 @@ class Settings {
   static const darkKey = 'isDark';
   static const maxSkipCount = 3;
   static Size size = Size.zero;
+
   Settings() {
     init();
   }
+  
   Future<void> init() async {
     _sharedPreferences = await SharedPreferences.getInstance();
   }
