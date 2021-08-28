@@ -196,7 +196,11 @@ class _MyHomePageState extends State<MyHomePage>
             child: Scaffold(
               drawer: constraints.maxWidth <= MOBILE_WIDTH
                   ? Drawer(
-                      child: DrawerBuilder(),
+                      child: DrawerBuilder(
+                        onMenuTap: (x) {
+                          _select(x);
+                        },
+                      ),
                     )
                   : null,
               appBar: AppBar(
@@ -354,63 +358,67 @@ class _WordsBuilderState extends State<WordsBuilder> {
               child: CircularProgressIndicator(),
             );
           }
-          return Container(
-            color: darkNotifier.value ? primaryDark : Colors.white,
-            child: Column(
-              children: [
-                SearchBuilder(
-                  onShuffle: () {
-                    final wordList = listNotifier.value;
-                    wordList!.shuffle(Random());
-                    setState(() {});
-                  },
-                  onChanged: (x) {
-                    if (x.isEmpty) {
-                      listNotifier.value = supaStoreWords;
-                      return;
-                    }
-                    List<Word> result = [];
-                    supaStoreWords.forEach((element) {
-                      if (element.word
-                              .toLowerCase()
-                              .contains(x.toLowerCase()) ||
-                          element.meaning
-                              .toLowerCase()
-                              .contains(x.toLowerCase()) ||
-                          isInSynonym(x, element.synonyms)) {
-                        result.add(element);
+          return GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Container(
+              color: darkNotifier.value ? primaryDark : Colors.white,
+              child: Column(
+                children: [
+                  SearchBuilder(
+                    onShuffle: () {
+                      final wordList = listNotifier.value;
+                      wordList!.shuffle(Random());
+                      setState(() {});
+                    },
+                    onChanged: (x) {
+                      if (x.isEmpty) {
+                        listNotifier.value = supaStoreWords;
+                        return;
                       }
-                    });
-                    listNotifier.value = result;
-                  },
-                ),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () => FocusScope.of(context).unfocus(),
-                    child: SmartRefresher(
-                      enablePullDown: size.width > MOBILE_WIDTH ? false : true,
-                      enablePullUp: false,
-                      controller: _refreshController,
-                      onRefresh: () => refresh(),
-                      child: ListView.builder(
-                          itemCount: value.length,
-                          itemBuilder: (_, x) {
-                            return WordTile(
-                                word: value[x],
-                                isMobile: size.width <= MOBILE_WIDTH,
-                                isSelected: selectedWord.toLowerCase() ==
-                                    value[x].word.toLowerCase(),
-                                onSelect: (word) {
-                                  setState(() {
-                                    selectedWord = word.word;
+                      List<Word> result = [];
+                      supaStoreWords.forEach((element) {
+                        if (element.word
+                                .toLowerCase()
+                                .contains(x.toLowerCase()) ||
+                            element.meaning
+                                .toLowerCase()
+                                .contains(x.toLowerCase()) ||
+                            isInSynonym(x, element.synonyms)) {
+                          result.add(element);
+                        }
+                      });
+                      listNotifier.value = result;
+                    },
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => FocusScope.of(context).unfocus(),
+                      child: SmartRefresher(
+                        enablePullDown:
+                            size.width > MOBILE_WIDTH ? false : true,
+                        enablePullUp: false,
+                        controller: _refreshController,
+                        onRefresh: () => refresh(),
+                        child: ListView.builder(
+                            itemCount: value.length,
+                            itemBuilder: (_, x) {
+                              return WordTile(
+                                  word: value[x],
+                                  isMobile: size.width <= MOBILE_WIDTH,
+                                  isSelected: selectedWord.toLowerCase() ==
+                                      value[x].word.toLowerCase(),
+                                  onSelect: (word) {
+                                    setState(() {
+                                      selectedWord = word.word;
+                                    });
+                                    widget.onSelect!(word);
                                   });
-                                  widget.onSelect!(word);
-                                });
-                          }),
+                            }),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         });

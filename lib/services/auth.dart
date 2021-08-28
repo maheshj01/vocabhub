@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:vocabhub/constants/constants.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -35,6 +36,7 @@ class Authentication {
       print('signed In as ${user.name}');
       stopCircularIndicator(context);
     } catch (error) {
+      logger.e(error);
       stopCircularIndicator(context);
       showMessage(context, 'Failed to signIn');
       throw 'Failed to signIn';
@@ -44,15 +46,17 @@ class Authentication {
 
   Future<bool> googleSignOut(BuildContext context) async {
     try {
-      _googleSignIn.disconnect();
-      if (await _googleSignIn.isSignedIn()) {
-        _googleSignIn.signOut();
-        return false;
-      } else {
-        return true;
-      }
+      await _googleSignIn.disconnect();
+      // if (await _googleSignIn.isSignedIn()) {
+      //   _googleSignIn.signOut();
+      //   return false;
+      // } else {
+      //   return true;
+      // }
+      return true;
     } catch (err) {
-      showMessage(context, 'Failed to signIn!');
+      logger.e(err);
+      showMessage(context, 'Failed to signout!');
       return false;
     }
   }

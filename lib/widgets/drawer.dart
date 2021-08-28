@@ -1,18 +1,23 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
+import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
+import 'package:vocabhub/widgets/circle_avatar.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/wordscount.dart';
 
 bool isAnimated = false;
 
 class DrawerBuilder extends StatefulWidget {
-  const DrawerBuilder({Key? key}) : super(key: key);
+  final Function(String)? onMenuTap;
+
+  const DrawerBuilder({Key? key, this.onMenuTap}) : super(key: key);
 
   @override
   _DrawerBuilderState createState() => _DrawerBuilderState();
@@ -39,10 +44,27 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
     super.dispose();
   }
 
+  Widget _avatar(UserModel user) {
+    if (user == null || user.email.isEmpty)
+      return CircularAvatar(
+        url: '$profileUrl',
+        radius: 35,
+      );
+    else {
+      print('${user.name}');
+      return CircularAvatar(
+        name: getInitial('${user.name}'),
+        url: user.avatarUrl,
+        radius: 35,
+        onTap: null,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isDark = darkNotifier.value;
-
+    final userProvider = Provider.of<UserModel>(context);
     Widget trailingIcon(IconData data) {
       return Icon(
         data,
@@ -54,14 +76,41 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
       decoration: isDark ? null : BoxDecoration(gradient: primaryGradient),
       child: Column(
         children: [
-          Container(
-            height: 150,
-            alignment: Alignment.center,
-            decoration:
-                isDark ? null : BoxDecoration(gradient: primaryGradient),
-            child: Text('Hello', style: Theme.of(context).textTheme.headline3),
-            margin: EdgeInsets.all(0),
-          ),
+          Consumer<UserModel>(
+              builder: (BuildContext _, UserModel? user, Widget? child) {
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+              height: 150,
+              decoration:
+                  isDark ? null : BoxDecoration(gradient: primaryGradient),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _avatar(user!),
+                  SizedBox(
+                    width: userProvider.isLoggedIn ? 20 : 30,
+                  ),
+                  Flexible(
+                    child: GestureDetector(
+                        onTap: () {
+                          if (!userProvider.isLoggedIn) {
+                            Navigate().popView(context);
+                            widget.onMenuTap?.call('Sign In');
+                          }
+                        },
+                        child: Text(
+                            userProvider.isLoggedIn
+                                ? '${user.name}'
+                                : 'Sign In',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline4!
+                                .copyWith(fontWeight: FontWeight.w500))),
+                  ),
+                ],
+              ),
+            );
+          }),
           hLine(),
           ListTile(
             onTap: () {
@@ -116,6 +165,20 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             subtitle: subTitle(''),
           ),
           hLine(),
+          userProvider.isLoggedIn
+              ? ListTile(
+                  onTap: () {
+                    Navigate().popView(context);
+                    widget.onMenuTap!('Sign Out');
+                  },
+                  trailing: trailingIcon(Icons.exit_to_app),
+                  title: title(
+                    'Sign Out',
+                  ),
+                  subtitle: subTitle(''),
+                )
+              : Container(),
+          !userProvider.isLoggedIn ? Container() : hLine(),
           Expanded(child: Container()),
           hLine(),
           WordsCountAnimator(

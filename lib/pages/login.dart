@@ -58,6 +58,7 @@ class _AppSignInState extends State<AppSignIn> {
         throw 'User null';
       }
     } catch (error) {
+      logger.e(error);
       await Settings().setIsSignedIn(false);
     }
   }
