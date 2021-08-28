@@ -11,3 +11,14 @@ final List<String> tips = [
   'Do you have a common GRE word thats missing?\n consider contributing by adding a word',
   "You don't remember the word but know what it means?\nTry searching for its meaning."
 ];
+
+Map<String, List<String>> popupMenu = {
+  'signout': [
+    'Add word',
+    'Source code',
+    'Privacy Policy',
+    'Report',
+    'Sign Out'
+  ],
+  'signin': ['Add word', 'Source code', 'Privacy Policy', 'Report', 'Sign In']
+};

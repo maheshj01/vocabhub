@@ -21,7 +21,8 @@ class UserModel extends ChangeNotifier {
       this.accessToken,
       this.isLoggedIn = false,
       this.bookmarks = const []});
-  factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
+
+  factory UserModel.fromJson(Map<String, dynamic> json) =>_$UserModelFromJson(json);
 
   factory UserModel.copyWith(UserModel w) {
     return UserModel(
@@ -69,13 +70,22 @@ class UserModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  set user(UserModel user) {
-    avatarUrl = user.avatarUrl;
-    accessToken = user.accessToken;
-    idToken = user.idToken;
-    name = user.name;
-    email = user.email;
-    isLoggedIn = true;
+  set user(UserModel? user) {
+    if (user == null) {
+      avatarUrl = null;
+      accessToken = null;
+      idToken = null;
+      name = '';
+      email = '';
+      isLoggedIn = false;
+    } else {
+      avatarUrl = user.avatarUrl;
+      accessToken = user.accessToken;
+      idToken = user.idToken;
+      name = user.name;
+      email = user.email;
+      isLoggedIn = true;
+    }
     notifyListeners();
   }
 }

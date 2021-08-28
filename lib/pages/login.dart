@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:vocabhub/exports.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/services/auth.dart';
@@ -120,9 +121,8 @@ class _AppSignInState extends State<AppSignIn> {
 
     Settings.size = MediaQuery.of(context).size;
     return Scaffold(
-        backgroundColor: surfaceGreen,
-
-        /// TODO: to be removed once tested
+        backgroundColor: darkNotifier.value ? surfaceGrey : surfaceGreen,
+        // TODO: floating action button to be removed once tested
         floatingActionButton: FloatingActionButton(
             onPressed: () async {
               showCircularIndicator(context);

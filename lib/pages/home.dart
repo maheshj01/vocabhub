@@ -62,13 +62,6 @@ class _MyHomePageState extends State<MyHomePage>
       sharedPreferences = value;
     });
     userProvider = Provider.of<UserModel>(context, listen: false);
-    if (userProvider.isLoggedIn) {
-      print('loggedIn user = ${userProvider.email}');
-      actions.add('Logout');
-      // TODO: fetch loggedIn user details
-    } else {
-      actions.add('Sign In');
-    }
     _animationController.forward();
   }
 
@@ -76,16 +69,20 @@ class _MyHomePageState extends State<MyHomePage>
     if (text.toLowerCase() == 'add word') {
       await Navigate().push(context, AddWordForm(),
           slideTransitionType: SlideTransitionType.btt);
-    } else if (text.toLowerCase() == 'logout') {
+    } else if (text.toLowerCase() == 'sign out') {
       final isSignedOut = await Authentication().googleSignOut(context);
+      showCircularIndicator(context);
       if (isSignedOut) {
-        actions.removeLast();
-        actions.add('Sign In');
-        Settings().setIsSignedIn(false);
+        Settings().setIsSignedIn(false, email: '');
+        userProvider.user = null;
         showMessage(context, 'Signed Out successfully!');
-        Navigate().pushAndPopAll(context, AppSignIn(),
-            slideTransitionType: SlideTransitionType.btt);
+        stopCircularIndicator(context);
+        Navigate()
+            .pushAndPopAll(context, AppSignIn(),
+                slideTransitionType: SlideTransitionType.btt)
+            .then((value) {});
       } else {
+        stopCircularIndicator(context);
         showMessage(context, 'Failed to sign out');
       }
     } else if (text.toLowerCase() == 'sign in') {
@@ -116,11 +113,12 @@ class _MyHomePageState extends State<MyHomePage>
   late SharedPreferences sharedPreferences;
   GlobalKey key = GlobalKey();
   List<String> actions = [
-    'Add word',
-    'Source code',
-    'Privacy Policy',
-    'Report',
+    // 'Add word',
+    // 'Source code',
+    // 'Privacy Policy',
+    // 'Report',
   ];
+
   late UserModel userProvider;
   double x = 0;
   double y = 0;
@@ -154,10 +152,37 @@ class _MyHomePageState extends State<MyHomePage>
           );
   }
 
+  Widget _userAvatar() {
+    return Consumer<UserModel>(
+        builder: (BuildContext _, UserModel? user, Widget? child) {
+      if (user == null || user.email.isEmpty)
+        return CircularAvatar(
+          url: '$profileUrl',
+          radius: 25,
+        );
+      else {
+        print('${user.name}');
+        return CircularAvatar(
+          name: getInitial('${user.name}'),
+          url: user.avatarUrl,
+          radius: 25,
+          onTap: null,
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (_, constraints) {
       Settings.size = Size(constraints.maxWidth, constraints.maxHeight);
+      if (userProvider.isLoggedIn) {
+        print('loggedIn user = ${userProvider.email}');
+        actions = popupMenu['signout']!;
+        // TODO: fetch loggedIn user details
+      } else {
+        actions = popupMenu['signin']!;
+      }
       return AnimatedBuilder(
         animation: _animationController,
         builder: (BuildContext context, Widget? child) {
@@ -184,58 +209,24 @@ class _MyHomePageState extends State<MyHomePage>
                         fontWeight: FontWeight.bold)),
                 actions: [
                   // TODO: verify google sign UI update in drawer on mobile side
-                  constraints.maxWidth < DESKTOP_WIDTH &&
-                          constraints.maxWidth > MOBILE_WIDTH
-                      ? PopupMenuButton<String>(
-                          offset: Offset(-20, 50),
-                          onSelected: (String x) {
-                            _select(x);
-                          },
-                          itemBuilder: (BuildContext context) {
-                            return actions.map((String action) {
-                              return PopupMenuItem<String>(
-                                value: action,
-                                child: Text(action),
-                              );
-                            }).toList();
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Consumer<UserModel>(builder: (BuildContext _,
-                                UserModel? user, Widget? child) {
-                              if (user == null || user.email.isEmpty)
-                                return CircularAvatar(
-                                  url: '$profileUrl',
-                                  radius: 25,
-                                );
-                              else {
-                                print('${user.name}');
-                                return CircularAvatar(
-                                  name: getInitial('${user.name}'),
-                                  url: user.avatarUrl,
-                                  radius: 25,
-                                  onTap: null,
-                                );
-                              }
-                            }),
-                          ),
-                        )
-                      : Row(
-                          children: [
-                            actionWidget('Add word', '', toolTip: 'Add a word',
-                                onTap: () async {
-                              // _openCustomDialog();
-                              await Navigate().push(context, AddWordForm(),
-                                  slideTransitionType: SlideTransitionType.btt);
-                            }),
-                            actionWidget('source code', SOURCE_CODE_URL,
-                                toolTip: 'Source code'),
-                            actionWidget('Privacy Policy', PRIVACY_POLICY,
-                                toolTip: 'Privacy Policy'),
-                            actionWidget('Report', REPORT_URL,
-                                toolTip: 'Report'),
-                          ],
-                        )
+                  if (constraints.maxWidth > MOBILE_WIDTH)
+                    PopupMenuButton<String>(
+                      offset: Offset(-20, 50),
+                      onSelected: (String x) {
+                        _select(x);
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return actions.map((String action) {
+                          return PopupMenuItem<String>(
+                            value: action,
+                            child: Text(action),
+                          );
+                        }).toList();
+                      },
+                      child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: _userAvatar()),
+                    )
                 ],
               ),
               floatingActionButton: FloatingActionButton(
