@@ -13,6 +13,7 @@ import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/auth.dart';
+import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/utils/circle_clipper.dart';
 import 'package:vocabhub/utils/navigator.dart';
@@ -63,6 +64,15 @@ class _MyHomePageState extends State<MyHomePage>
     });
     userProvider = Provider.of<UserModel>(context, listen: false);
     _animationController.forward();
+    getUser();
+  }
+
+  Future<void> getUser() async {
+    if (userProvider.isLoggedIn) {
+      final existingUser =
+          await UserStore().findByEmail(email: userProvider.email);
+      userProvider.user = existingUser;
+    }
   }
 
   Future<void> _select(String text) async {
@@ -177,9 +187,8 @@ class _MyHomePageState extends State<MyHomePage>
     return LayoutBuilder(builder: (_, constraints) {
       Settings.size = Size(constraints.maxWidth, constraints.maxHeight);
       if (userProvider.isLoggedIn) {
-        print('loggedIn user = ${userProvider.email}');
+        logger.d('loggedIn user = ${userProvider.email}');
         actions = popupMenu['signout']!;
-        // TODO: fetch loggedIn user details
       } else {
         actions = popupMenu['signin']!;
       }
