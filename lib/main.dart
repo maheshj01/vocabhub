@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/pages/login.dart';
+import 'package:logger/logger.dart' as log;
 import 'package:vocabhub/pages/splashscreen.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -25,6 +26,7 @@ Future<void> main() async {
   runApp(VocabApp());
 }
 
+final logger = log.Logger();
 final ValueNotifier<bool> darkNotifier = ValueNotifier<bool>(false);
 final ValueNotifier<int> totalNotifier = ValueNotifier<int>(0);
 final ValueNotifier<List<Word>?> listNotifier = ValueNotifier<List<Word>>([]);
@@ -55,6 +57,7 @@ class _VocabAppState extends State<VocabApp> {
     totalNotifier.dispose();
     searchController.dispose();
     listNotifier.dispose();
+    logger.close();
     super.dispose();
   }
 

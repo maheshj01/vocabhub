@@ -1,18 +1,14 @@
 import 'package:supabase/supabase.dart';
-import 'package:logger/logger.dart' as log;
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/utils/secrets.dart';
 import 'package:postgrest/postgrest.dart';
-
 import 'services.dart';
 
 class UserStore {
   static String _tableName = '$USER_TABLE_NAME';
-  final _logger = log.Logger();
   final SupabaseClient _supabase = SupabaseClient("$CONFIG_URL", "$APIkey");
-
   Future<PostgrestResponse> findById(String id) async {
     final response = await _supabase
         .from(_tableName)
@@ -23,21 +19,21 @@ class UserStore {
     return response;
   }
 
-  Future<User?> findByEmail({required String email}) async {
+  Future<UserModel?> findByEmail({required String email}) async {
     try {
       final response = await _supabase
           .from(_tableName)
           .select("*")
-          .contains('$USER_EMAIL_COLUMN', email)
+          .eq('$USER_EMAIL_COLUMN', email)
           .execute();
       if (response.status == 200) {
-        final user = User.fromJson(response.data);
+        final user = UserModel.fromJson((response.data as List).first);
         return user;
       } else {
         return null;
       }
     } catch (_) {
-      _logger.e(_);
+      logger.e(_);
       return null;
     }
   }
@@ -51,7 +47,7 @@ class UserStore {
         users = (response.data as List).map((e) => User.fromJson(e)).toList();
       }
     } catch (_) {
-      print(_);
+      logger.e(_);
     }
     return users;
   }
@@ -69,11 +65,11 @@ class UserStore {
         resp.message = 'Success';
         resp.data = response.data;
       } else {
-        print('error caught');
+        logger.e('error caught');
         throw "Failed to register new user";
       }
     } catch (_) {
-      print('error caught $_');
+      logger.e('error caught $_');
       throw "Failed to register new user";
     }
     return resp;
@@ -89,7 +85,7 @@ class UserStore {
         .update(json)
         .eq("$ID_COLUMN", "$id")
         .execute();
-    _logger.i(response.toJson());
+    logger.i(response.toJson());
     return response;
   }
 
@@ -102,18 +98,18 @@ class UserStore {
         .update({"$MEANING_COLUMN": word.meaning})
         .eq("$ID_COLUMN", "$id")
         .execute();
-    _logger.i(response.toJson());
+    logger.i(response.toJson());
     return response;
   }
 
   Future<PostgrestResponse> deleteById(String id) async {
-    _logger.i(_tableName);
+    logger.i(_tableName);
     final response = await _supabase
         .from(_tableName)
         .delete()
         .eq('$ID_COLUMN', id)
         .execute();
-    _logger.i(response.toJson());
+    logger.i(response.toJson());
     return response;
   }
 }

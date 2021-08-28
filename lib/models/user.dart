@@ -21,8 +21,8 @@ class UserModel extends ChangeNotifier {
       this.accessToken,
       this.isLoggedIn = false,
       this.bookmarks = const []});
-
-  factory UserModel.fromJson(Map<String, dynamic> json) =>_$UserModelFromJson(json);
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
 
   factory UserModel.copyWith(UserModel w) {
     return UserModel(

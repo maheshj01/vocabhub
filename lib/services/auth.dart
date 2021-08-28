@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart' as log;
-import 'package:supabase/supabase.dart' as supabase;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/user.dart';
-import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/utils/secrets.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 

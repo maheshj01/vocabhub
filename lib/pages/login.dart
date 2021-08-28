@@ -35,8 +35,8 @@ class _AppSignInState extends State<AppSignIn> {
       // TODO: SHOW LOGIN
       if (user != null) {
         final existingUser = await UserStore().findByEmail(email: user!.email);
-        print(existingUser);
         if (existingUser == null) {
+          logger.d('registering new user ${user!.email}');
           final isRegistered = await _register(user!);
           if (isRegistered) {
             userProvider.user = user!;
@@ -48,6 +48,7 @@ class _AppSignInState extends State<AppSignIn> {
             throw 'failed to register new user';
           }
         } else {
+          logger.d('found existing user ${user!.email}');
           userProvider.user = user!;
           await Settings().setIsSignedIn(true, email: existingUser.email);
           Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
@@ -63,16 +64,11 @@ class _AppSignInState extends State<AppSignIn> {
 
   Future<bool> _register(UserModel newUser) async {
     try {
-      if (newUser != null) {
-        final resp = await UserStore().registerUser(newUser);
-        if (resp.didSucced)
-          return true;
-        else
-          return false;
-      } else {
-        await Settings().setIsSignedIn(false);
+      final resp = await UserStore().registerUser(newUser);
+      if (resp.didSucced)
+        return true;
+      else
         return false;
-      }
     } catch (error) {
       print(error);
       await Settings().setIsSignedIn(false);
@@ -122,20 +118,20 @@ class _AppSignInState extends State<AppSignIn> {
     Settings.size = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: darkNotifier.value ? surfaceGrey : surfaceGreen,
-        // TODO: floating action button to be removed once tested
-        floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              showCircularIndicator(context);
-              final user =
-                  await UserStore().findByEmail(email: 'maheshmn121@gmail.com');
-              if (user != null) {
-                print(user.email);
-              } else {
-                print('user not found');
-              }
-              stopCircularIndicator(context);
-            },
-            child: Icon(Icons.add)),
+        //  floating action button to be removed once tested
+        // floatingActionButton: FloatingActionButton(
+        //     onPressed: () async {
+        //       showCircularIndicator(context);
+        //       final user =
+        //           await UserStore().findByEmail(email: 'maheshmn121@gmail.com');
+        //       if (user != null) {
+        //         print(user.email);
+        //       } else {
+        //         print('user not found');
+        //       }
+        //       stopCircularIndicator(context);
+        //     },
+        //     child: Icon(Icons.add)),
         body: Settings.size.width > DESKTOP_WIDTH
             ? Row(
                 children: [
