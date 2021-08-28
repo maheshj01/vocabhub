@@ -189,122 +189,144 @@ class _MyHomePageState extends State<MyHomePage>
               );
       }
 
-      Settings.size = Size(constraints.maxWidth, constraints.minHeight);
-      return Scaffold(
-        drawer: constraints.maxWidth <= MOBILE_WIDTH
-            ? Drawer(
-                child: DrawerBuilder(),
-              )
-            : null,
-        appBar: AppBar(
-          iconTheme: Theme.of(context).iconTheme,
-          centerTitle: constraints.maxWidth <= MOBILE_WIDTH ? true : false,
-          title: Text('$APP_TITLE',
-              style: Theme.of(context).textTheme.headline4!.copyWith(
-                  color: darkNotifier.value ? Colors.white : primaryColor,
-                  fontWeight: FontWeight.bold)),
-          actions: [
-            // TODO: verify google sign UI update in drawer on mobile side
-            constraints.maxWidth < DESKTOP_WIDTH &&
-                    constraints.maxWidth > MOBILE_WIDTH
-                ? PopupMenuButton<String>(
-                    offset: Offset(-20, 50),
-                    onSelected: (String x) {
-                      _select(x);
-                    },
-                    itemBuilder: (BuildContext context) {
-                      return actions.map((String action) {
-                        return PopupMenuItem<String>(
-                          value: action,
-                          child: Text(action),
-                        );
-                      }).toList();
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Consumer<UserModel>(builder:
-                          (BuildContext _, UserModel? user, Widget? child) {
-                        if (user == null || user.email.isEmpty)
-                          return CircularAvatar(
-                            url: '$profileUrl',
-                            radius: 25,
-                          );
-                        else {
-                          print('${user.name}');
-                          return CircularAvatar(
-                            name: getInitial('${user.name}'),
-                            url: user.avatarUrl,
-                            radius: 25,
-                            onTap: null,
-                          );
-                        }
-                      }),
-                    ),
-                  )
-                : Row(
-                    children: [
-                      actionWidget('Add word', '', toolTip: 'Add a word',
-                          onTap: () async {
-                        // _openCustomDialog();
-                        await Navigate().push(context, AddWordForm(),
-                            slideTransitionType: SlideTransitionType.btt);
-                      }),
-                      actionWidget('source code', SOURCE_CODE_URL,
-                          toolTip: 'Source code'),
-                      actionWidget('Privacy Policy', PRIVACY_POLICY,
-                          toolTip: 'Privacy Policy'),
-                      actionWidget('Report', REPORT_URL, toolTip: 'Report'),
-                    ],
-                  )
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            darkNotifier.value = !darkNotifier.value;
-            Settings().dark = darkNotifier.value;
-          },
-          backgroundColor:
-              !darkNotifier.value ? Colors.cyanAccent : primaryColor,
-          child: Icon(darkNotifier.value
-              ? Icons.brightness_2_outlined
-              : Icons.wb_sunny_rounded),
-        ),
-        body: Row(
-          children: [
-            constraints.maxWidth > MOBILE_WIDTH
-                ? Expanded(
-                    flex: constraints.maxWidth < TABLET_WIDTH ? 4 : 3,
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: darkNotifier.value
-                              ? Colors.grey.withOpacity(0.5)
-                              : Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                                spreadRadius: 4,
-                                blurRadius: 4,
-                                color: Colors.grey.withOpacity(0.2),
-                                offset: Offset(1, 0))
-                          ]),
-                      child: WordsBuilder(
-                        onSelect: (x) {
-                          setState(() {
-                            selected = x;
-                          });
-                          firebaseAnalytics.logWordSelection(x);
-                        },
-                      ),
-                    ))
-                : Container(),
-            Expanded(
-                flex: 8,
-                child: constraints.maxWidth > MOBILE_WIDTH
-                    ? WordDetail(
-                        word: selected,
-                      )
-                    : WordsBuilder()),
-          ],
-        ),
+      return AnimatedBuilder(
+        animation: _animationController,
+        builder: (BuildContext context, Widget? child) {
+          bool isDark = darkNotifier.value;
+          return ClipPath(
+            clipper: CircularClipper(
+                diagonal(Size(constraints.maxWidth, constraints.maxHeight)) *
+                    2 *
+                    _animationController.value,
+                Offset(x + 20, y + 20)),
+            child: Scaffold(
+              drawer: constraints.maxWidth <= MOBILE_WIDTH
+                  ? Drawer(
+                      child: DrawerBuilder(),
+                    )
+                  : null,
+              appBar: AppBar(
+                iconTheme: Theme.of(context).iconTheme,
+                centerTitle:
+                    constraints.maxWidth <= MOBILE_WIDTH ? true : false,
+                title: Text('$APP_TITLE',
+                    style: Theme.of(context).textTheme.headline4!.copyWith(
+                        color: isDark ? Colors.white : primaryColor,
+                        fontWeight: FontWeight.bold)),
+                actions: [
+                  // TODO: verify google sign UI update in drawer on mobile side
+                  constraints.maxWidth < DESKTOP_WIDTH &&
+                          constraints.maxWidth > MOBILE_WIDTH
+                      ? PopupMenuButton<String>(
+                          offset: Offset(-20, 50),
+                          onSelected: (String x) {
+                            _select(x);
+                          },
+                          itemBuilder: (BuildContext context) {
+                            return actions.map((String action) {
+                              return PopupMenuItem<String>(
+                                value: action,
+                                child: Text(action),
+                              );
+                            }).toList();
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Consumer<UserModel>(builder: (BuildContext _,
+                                UserModel? user, Widget? child) {
+                              if (user == null || user.email.isEmpty)
+                                return CircularAvatar(
+                                  url: '$profileUrl',
+                                  radius: 25,
+                                );
+                              else {
+                                print('${user.name}');
+                                return CircularAvatar(
+                                  name: getInitial('${user.name}'),
+                                  url: user.avatarUrl,
+                                  radius: 25,
+                                  onTap: null,
+                                );
+                              }
+                            }),
+                          ),
+                        )
+                      : Row(
+                          children: [
+                            actionWidget('Add word', '', toolTip: 'Add a word',
+                                onTap: () async {
+                              // _openCustomDialog();
+                              await Navigate().push(context, AddWordForm(),
+                                  slideTransitionType: SlideTransitionType.btt);
+                            }),
+                            actionWidget('source code', SOURCE_CODE_URL,
+                                toolTip: 'Source code'),
+                            actionWidget('Privacy Policy', PRIVACY_POLICY,
+                                toolTip: 'Privacy Policy'),
+                            actionWidget('Report', REPORT_URL,
+                                toolTip: 'Report'),
+                          ],
+                        )
+                ],
+              ),
+              floatingActionButton: FloatingActionButton(
+                key: key,
+                onPressed: () {
+                  darkNotifier.value = !darkNotifier.value;
+                  final RenderBox box =
+                      key.currentContext!.findRenderObject() as RenderBox;
+                  Offset position = box.localToGlobal(Offset.zero);
+                  x = position.dx;
+                  y = position.dy;
+                  _animationController.reset();
+                  _animationController.forward();
+
+                  Settings().dark = darkNotifier.value;
+                },
+                backgroundColor: isDark ? Colors.cyanAccent : primaryColor,
+                child: Icon(!isDark
+                    ? Icons.brightness_2_outlined
+                    : Icons.wb_sunny_rounded),
+              ),
+              body: Row(
+                children: [
+                  constraints.maxWidth > MOBILE_WIDTH
+                      ? Expanded(
+                          flex: constraints.maxWidth < TABLET_WIDTH ? 4 : 3,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: isDark
+                                    ? Colors.grey.withOpacity(0.5)
+                                    : Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                      spreadRadius: 4,
+                                      blurRadius: 4,
+                                      color: Colors.grey.withOpacity(0.2),
+                                      offset: Offset(1, 0))
+                                ]),
+                            child: WordsBuilder(
+                              onSelect: (x) {
+                                setState(() {
+                                  selected = x;
+                                });
+                                firebaseAnalytics.logWordSelection(x);
+                              },
+                            ),
+                          ))
+                      : Container(),
+                  Expanded(
+                      flex: 8,
+                      child: constraints.maxWidth > MOBILE_WIDTH
+                          ? WordDetail(
+                              word: selected,
+                            )
+                          : WordsBuilder()),
+                ],
+              ),
+            ),
+          );
+        },
       );
     });
   }
