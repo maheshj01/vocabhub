@@ -110,3 +110,4 @@ ios/Flutter/Debug.xcconfig
 ios/Flutter/Release.xcconfig
 lib/utils/secrets.dart
 ios/Flutter/flutter_export_environment.sh
+ios/build/Pods.build
