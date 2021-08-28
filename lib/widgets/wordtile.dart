@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/extensions.dart';
+import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
 import 'package:vocabhub/widgets/mnemonicbuilder.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
@@ -52,6 +55,8 @@ class _WordTileState extends State<WordTile> {
   @override
   Widget build(BuildContext context) {
     bool isDark = darkNotifier.value;
+    final userProvider = Provider.of<UserModel>(context);
+
     Color tileColor() {
       if (isDark) {
         return Colors.white54;
@@ -104,21 +109,23 @@ class _WordTileState extends State<WordTile> {
                           synonyms: widget.word.synonyms,
                         ),
                       ),
-                      Container(
-                          alignment: Alignment.topRight,
-                          padding: EdgeInsets.only(right: 16),
-                          child: IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () {
-                                Navigate().push(
-                                    context,
-                                    AddWordForm(
-                                      isEdit: true,
-                                      word: widget.word,
-                                    ),
-                                    slideTransitionType:
-                                        SlideTransitionType.btt);
-                              })),
+                      userProvider.isLoggedIn
+                          ? Container(
+                              alignment: Alignment.topRight,
+                              padding: EdgeInsets.only(right: 16),
+                              child: IconButton(
+                                  icon: Icon(Icons.edit),
+                                  onPressed: () {
+                                    Navigate().push(
+                                        context,
+                                        AddWordForm(
+                                          isEdit: true,
+                                          word: widget.word,
+                                        ),
+                                        slideTransitionType:
+                                            SlideTransitionType.btt);
+                                  }))
+                          : SizedBox(),
                     ],
                   ),
                 ),

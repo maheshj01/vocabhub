@@ -5,8 +5,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/strings.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/supastore.dart';
@@ -97,6 +99,7 @@ class _WordDetailState extends State<WordDetail>
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     bool isDark = darkNotifier.value;
+    final userProvider = Provider.of<UserModel>(context);
 
     Color? textfieldBgColor(bool editMode) {
       if (editMode) {
@@ -121,20 +124,22 @@ class _WordDetailState extends State<WordDetail>
               SizedBox(
                 height: size.height / 5,
               ),
-              Container(
-                  alignment: Alignment.topRight,
-                  padding: EdgeInsets.only(right: 16),
-                  child: IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        Navigate().push(
-                            context,
-                            AddWordForm(
-                              isEdit: true,
-                              word: widget.word,
-                            ),
-                            slideTransitionType: SlideTransitionType.btt);
-                      })),
+              userProvider.isLoggedIn
+                  ? Container(
+                      alignment: Alignment.topRight,
+                      padding: EdgeInsets.only(right: 16),
+                      child: IconButton(
+                          icon: Icon(Icons.edit),
+                          onPressed: () {
+                            Navigate().push(
+                                context,
+                                AddWordForm(
+                                  isEdit: true,
+                                  word: widget.word,
+                                ),
+                                slideTransitionType: SlideTransitionType.btt);
+                          }))
+                  : SizedBox(),
               Align(
                 alignment: Alignment.topCenter,
                 child: GestureDetector(
