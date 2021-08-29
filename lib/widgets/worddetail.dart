@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/constants/strings.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/user.dart';
@@ -401,8 +402,11 @@ class _EmptyWordState extends State<EmptyWord> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                playStoreRedirect(context),
-                playStoreRedirect(context,
+                storeRedirect(
+                  context,
+                ),
+                storeRedirect(context,
+                    redirectUrl: AMAZON_APP_STORE_URL,
                     assetUrl: 'assets/amazonappstore.png'),
               ],
             ),

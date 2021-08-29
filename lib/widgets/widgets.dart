@@ -65,14 +65,14 @@ SelectableText buildExample(String example, String word) {
       children: textSpans));
 }
 
-Widget playStoreRedirect(BuildContext context,{String assetUrl='assets/googleplay.png'}) {
+Widget storeRedirect(BuildContext context, {String redirectUrl = PLAY_STORE_URL,String assetUrl='assets/googleplay.png'}) {
   return GestureDetector(
     onTap: () {
       final firebaseAnalytics = Analytics();
       final width = MediaQuery.of(context).size.width;
       firebaseAnalytics
           .logRedirectToStore(width > MOBILE_WIDTH ? 'desktop' : 'mobile');
-      launchUrl(PLAY_STORE_URL);
+      launchUrl(redirectUrl);
     },
     child: MouseRegion(
         cursor: SystemMouseCursors.click,
