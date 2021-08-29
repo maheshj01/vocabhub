@@ -1,11 +1,13 @@
 /// APP CONSTANTS GO HERE IN THIS FILE
 
 const BASE_URL = '';
-const VERSION = 'v0.3.3';
+const VERSION = 'v0.3.4';
 const CONFIG_URL = 'https://bisasplfdnyiiggonpcx.supabase.co';
 const SOURCE_CODE_URL = 'https://github.com/maheshmnj/vocabhub';
 const PLAY_STORE_URL =
     'https://play.google.com/store/apps/details?id=com.vocabhub.app';
+const AMAZON_APP_STORE_URL =
+    'http://www.amazon.com/gp/mas/dl/android?p=com.vocabhub.app';
 const REPORT_URL = 'https://github.com/maheshmnj/vocabhub/issues/new/choose';
 const String profileUrl = 'assets/profile.png';
 const String signInScopeUrl =

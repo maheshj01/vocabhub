@@ -1,7 +1,11 @@
+### 0.3.4
+
+- Adds Google Signin support
+- edits restricted to signed in users
+
 ### 0.3.3
 
 - Add dark mode animation
-
 ### 0.3.2
 
 - fix drawer navigation

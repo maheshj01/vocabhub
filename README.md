@@ -1,4 +1,4 @@
-# Vocabhub 0.3.3                          
+# Vocabhub 0.3.4                          
 
 A vocabulary app built with Flutter and Supabase, that is simple to use and available on multiple platforms with 
 - 800+ most common GRE words
