@@ -1,7 +1,7 @@
 ### 0.3.4
 
-- Adds Google Signin support
-- edits restricted to signed in users
+- Adds Google Sign in support
+- edits restricted to signed-in users
 
 ### 0.3.3
 
