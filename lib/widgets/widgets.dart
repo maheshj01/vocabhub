@@ -65,7 +65,7 @@ SelectableText buildExample(String example, String word) {
       children: textSpans));
 }
 
-Widget playStoreRedirect(BuildContext context) {
+Widget playStoreRedirect(BuildContext context,{String assetUrl='assets/googleplay.png'}) {
   return GestureDetector(
     onTap: () {
       final firebaseAnalytics = Analytics();
@@ -76,6 +76,6 @@ Widget playStoreRedirect(BuildContext context) {
     },
     child: MouseRegion(
         cursor: SystemMouseCursors.click,
-        child: Image.asset('assets/googleplay.png', height: 50)),
+        child: Image.asset('$assetUrl', height: 50)),
   );
 }

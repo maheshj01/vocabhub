@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage>
   void initState() {
     super.initState();
     firebaseAnalytics = Analytics();
-    print(Settings.size);
+    logger.d(Settings.size);
     _animationController = AnimationController(
         vsync: this,
         duration: Duration(
@@ -171,7 +171,6 @@ class _MyHomePageState extends State<MyHomePage>
           radius: 25,
         );
       else {
-        print('${user.name}');
         return CircularAvatar(
           name: getInitial('${user.name}'),
           url: user.avatarUrl,
@@ -335,7 +334,6 @@ class _WordsBuilderState extends State<WordsBuilder> {
     supaStoreWords = await supaStore.findByWord("");
     listNotifier.value = supaStoreWords;
     totalNotifier.value = supaStoreWords.length;
-    print('${totalNotifier.value}');
     _refreshController.refreshCompleted();
   }
 

@@ -5,11 +5,11 @@ import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/pages/home.dart';
+import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/auth.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
-import 'package:vocabhub/widgets/widgets.dart';
 
 class AppSignIn extends StatefulWidget {
   const AppSignIn({Key? key}) : super(key: key);
@@ -32,7 +32,6 @@ class _AppSignInState extends State<AppSignIn> {
     final userProvider = Provider.of<UserModel>(context, listen: false);
     try {
       user = await auth.googleSignIn(context);
-      // TODO: SHOW LOGIN
       if (user != null) {
         final existingUser = await UserStore().findByEmail(email: user!.email);
         if (existingUser == null) {
@@ -53,6 +52,7 @@ class _AppSignInState extends State<AppSignIn> {
           await Settings().setIsSignedIn(true, email: existingUser.email);
           Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
               slideTransitionType: SlideTransitionType.ttb);
+          firebaseAnalytics.logSignIn(user!);
         }
       } else {
         throw 'User null';
@@ -66,9 +66,10 @@ class _AppSignInState extends State<AppSignIn> {
   Future<bool> _register(UserModel newUser) async {
     try {
       final resp = await UserStore().registerUser(newUser);
-      if (resp.didSucced)
+      if (resp.didSucced) {
+        firebaseAnalytics.logNewUser(newUser);
         return true;
-      else
+      } else
         return false;
     } catch (error) {
       print(error);
@@ -78,6 +79,14 @@ class _AppSignInState extends State<AppSignIn> {
   }
 
   UserModel? user;
+  late Analytics firebaseAnalytics;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    firebaseAnalytics = Analytics();
+  }
 
   @override
   Widget build(BuildContext context) {

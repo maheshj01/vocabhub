@@ -397,7 +397,15 @@ class _EmptyWordState extends State<EmptyWord> {
               style: Theme.of(context).textTheme.caption),
           WordsCountAnimator(),
           Expanded(child: Container()),
-          if (kIsWeb) playStoreRedirect(context),
+          if (kIsWeb)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                playStoreRedirect(context),
+                playStoreRedirect(context,
+                    assetUrl: 'assets/amazonappstore.png'),
+              ],
+            ),
           Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
               child: VersionBuilder()),

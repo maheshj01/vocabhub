@@ -2,9 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
+import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/navigator.dart';
@@ -58,6 +61,7 @@ class _AddWordFormState extends State<AddWordForm> {
 
         final response = await supaStore.addWord(wordObject);
         if (response.didSucced) {
+          firebaseAnalytics.logWordAdd(wordObject, userProvider.email);
           showMessage(context, 'Congrats! You just added $word to vocabhub',
               onClosed: () {
             List<Word?>? newList = listNotifier.value;
@@ -88,6 +92,7 @@ class _AddWordFormState extends State<AddWordForm> {
     }
   }
 
+  final firebaseAnalytics = Analytics();
   final _errorNotifier = ValueNotifier<bool>(false);
   @override
   void initState() {
@@ -114,6 +119,7 @@ class _AddWordFormState extends State<AddWordForm> {
     exampleController.addListener(_rebuild);
     synonymController.addListener(_rebuild);
     mnemonicController.addListener(_rebuild);
+    userProvider = Provider.of<UserModel>(context, listen: false);
   }
 
   void _populateData() {
@@ -178,6 +184,7 @@ class _AddWordFormState extends State<AddWordForm> {
     }
   }
 
+  /// Edit mode
   Future<void> updateWord() async {
     showCircularIndicator(context);
     String id = widget.word!.id;
@@ -203,6 +210,7 @@ class _AddWordFormState extends State<AddWordForm> {
       final response = await supaStore.updateWord(id: id, word: word);
       stopCircularIndicator(context);
       if (response.status == 200) {
+        firebaseAnalytics.logWordEdit(word, userProvider.email);
         showMessage(context, "The word \"${word.word}\" is updated.",
             onClosed: () => Navigate().popView(context));
       } else {
@@ -238,6 +246,7 @@ class _AddWordFormState extends State<AddWordForm> {
   late FocusNode wordFocus;
   late FocusNode meaningFocus;
   late String _title;
+  late UserModel userProvider;
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;

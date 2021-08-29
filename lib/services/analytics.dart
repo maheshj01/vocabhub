@@ -1,7 +1,8 @@
 // import 'package:firebase_analytics/firebase_analytics.dart';
 // import 'package:firebase_analytics/observer.dart';
+import 'package:flutter/foundation.dart';
 import 'package:vocabhub/main.dart';
-import 'package:vocabhub/models/word.dart';
+import 'package:vocabhub/models/models.dart';
 
 class Analytics {
 //   FirebaseAnalyticsObserver observer;
@@ -16,6 +17,32 @@ class Analytics {
   Future<void> logRedirectToStore(String platform) async {
     await analytics
         .logEvent(name: 'play_store', parameters: {'Platform': '$platform'});
+  }
+
+  Future<void> logWordEdit(Word word, String email) async {
+    await analytics.logEvent(
+        name: 'word_edit', parameters: {'word': word.word, 'email': email});
+  }
+
+  Future<void> logWordAdd(Word word, [String email = '']) async {
+    await analytics.logEvent(
+        name: 'word_add', parameters: {'word': word.word, 'email': email});
+  }
+
+  Future<void> logNewUser(UserModel user) async {
+    await analytics.logEvent(name: 'sign_up', parameters: {
+      'email': user.email,
+      'name': user.name,
+      'platform': kIsWeb ? 'web' : 'mobile'
+    });
+  }
+
+  Future<void> logSignIn(UserModel user) async {
+    await analytics.logEvent(name: 'sign_in', parameters: {
+      'email': user.email,
+      'name': user.name,
+      'platform': kIsWeb ? 'web' : 'mobile'
+    });
   }
 
 //   Future<void> logShare(String event) async
