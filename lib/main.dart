@@ -46,6 +46,7 @@ class _VocabAppState extends State<VocabApp> {
     firebaseAnalytics.appOpen();
     final isDark = await Settings().isDark;
     isSignedIn = await Settings().isSignedIn;
+    count = await Settings().skipCount;
     return isDark;
   }
 
@@ -62,7 +63,7 @@ class _VocabAppState extends State<VocabApp> {
   }
 
   late bool isSignedIn;
-
+  late int count;
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -107,7 +108,12 @@ class _VocabAppState extends State<VocabApp> {
                           if (isSignedIn) {
                             return MyHomePage(title: '$APP_TITLE');
                           } else {
-                            return AppSignIn();
+                            if (count > 0) {
+                              Settings().setSkipCount = count - 1;
+                              return MyHomePage(title: APP_TITLE);
+                            } else {
+                              return AppSignIn();
+                            }
                           }
                         } else {
                           return SplashScreen();
