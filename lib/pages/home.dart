@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -67,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage>
     getUser();
   }
 
+  /// TODO: INVESTIGATE THIS IS NOT WORKING FOR THE WEB
   Future<void> getUser() async {
     if (userProvider.isLoggedIn) {
       final existingUser =

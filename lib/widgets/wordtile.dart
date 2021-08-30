@@ -9,7 +9,6 @@ import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/extensions.dart';
-import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
 import 'package:vocabhub/widgets/mnemonicbuilder.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
