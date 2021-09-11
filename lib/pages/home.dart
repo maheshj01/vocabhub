@@ -84,6 +84,12 @@ class _MyHomePageState extends State<MyHomePage>
       print('signedIn =${userProvider.isLoggedIn}');
       print('email =${userProvider.email}');
     }
+    if (userProvider.isLoggedIn) {
+      logger.d('loggedIn user = ${userProvider.email}');
+      actions = popupMenu['signout']!;
+    } else {
+      actions = popupMenu['signin']!;
+    }
     getUser();
   }
 
@@ -192,12 +198,6 @@ class _MyHomePageState extends State<MyHomePage>
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (_, constraints) {
       Settings.size = Size(constraints.maxWidth, constraints.maxHeight);
-      if (userProvider.isLoggedIn) {
-        logger.d('loggedIn user = ${userProvider.email}');
-        actions = popupMenu['signout']!;
-      } else {
-        actions = popupMenu['signin']!;
-      }
       return AnimatedBuilder(
         animation: _animationController,
         builder: (BuildContext context, Widget? child) {
