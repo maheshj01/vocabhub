@@ -16,7 +16,7 @@ jobs:
           java-version: "12.x"
       - uses: subosito/flutter-action@v1
         with:
-          channel: "master"
+          channel: "stable"
       - run: echo $SECRETS_FILE_CONTENT | base64 -d > lib/utils/secrets.dart
         env:
           SECRETS_FILE_CONTENT: ${{ secrets.SECRETS_FILE_CONTENT }}
