@@ -30,7 +30,9 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 TextEditingController searchController = TextEditingController();
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  final bool isSignedIn;
+  MyHomePage({Key? key, required this.title, this.isSignedIn = false})
+      : super(key: key);
 
   final String title;
 
@@ -58,21 +60,31 @@ class _MyHomePageState extends State<MyHomePage>
         vsync: this,
         duration: Duration(
             milliseconds: (Settings.size.width > TABLET_WIDTH) ? 1000 : 800));
-    SharedPreferences.getInstance().then((value) {
-      sharedPreferences = value;
-    });
     userProvider = Provider.of<UserModel>(context, listen: false);
     _animationController.forward();
-    getUser();
+    initWebState();
   }
 
   /// TODO: INVESTIGATE THIS IS NOT WORKING FOR THE WEB
+
   Future<void> getUser() async {
     if (userProvider.isLoggedIn) {
       final existingUser =
           await UserStore().findByEmail(email: userProvider.email);
       userProvider.user = existingUser;
     }
+  }
+
+  Future<void> initWebState() async {
+    if (kIsWeb) {
+      final bool signedIn = await Settings().isSignedIn;
+      final String _email = await Settings().email;
+      userProvider.isLoggedIn = signedIn;
+      userProvider.email = _email;
+      print('signedIn =${userProvider.isLoggedIn}');
+      print('email =${userProvider.email}');
+    }
+    getUser();
   }
 
   Future<void> _select(String text) async {
@@ -122,12 +134,7 @@ class _MyHomePageState extends State<MyHomePage>
   late Analytics firebaseAnalytics;
   late SharedPreferences sharedPreferences;
   GlobalKey key = GlobalKey();
-  List<String> actions = [
-    // 'Add word',
-    // 'Source code',
-    // 'Privacy Policy',
-    // 'Report',
-  ];
+  List<String> actions = [];
 
   late UserModel userProvider;
   double x = 0;
@@ -220,7 +227,6 @@ class _MyHomePageState extends State<MyHomePage>
                         color: isDark ? Colors.white : primaryColor,
                         fontWeight: FontWeight.bold)),
                 actions: [
-                  // TODO: verify google sign UI update in drawer on mobile side
                   if (constraints.maxWidth > MOBILE_WIDTH)
                     PopupMenuButton<String>(
                       offset: Offset(-20, 50),

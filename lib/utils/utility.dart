@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/pages/addword.dart';
+import 'package:adaptive_breakpoints/adaptive_breakpoints.dart';
 
 /// shows a snackbar message
 void showMessage(BuildContext context, String message,
@@ -82,4 +83,19 @@ Widget _buildNewTransition(
     offset: Offset(0, animation.value * -50),
     child: child,
   );
+}
+
+
+
+/// Returns a boolean value whether the window is considered medium or large size.
+///
+/// Used to build adaptive and responsive layouts.
+bool isDisplayDesktop(BuildContext context) =>
+    getWindowType(context) >= AdaptiveWindowType.medium;
+
+/// Returns boolean value whether the window is considered medium size.
+///
+/// Used to build adaptive and responsive layouts.
+bool isDisplaySmallDesktop(BuildContext context) {
+  return getWindowType(context) == AdaptiveWindowType.medium;
 }
