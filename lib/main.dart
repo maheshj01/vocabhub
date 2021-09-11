@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vocabhub/models/word.dart';
+import 'package:vocabhub/pages/adaptive_nav.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:logger/logger.dart' as log;
@@ -103,6 +104,7 @@ class _VocabAppState extends State<VocabApp> {
                       ),
                       themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
                       home: Builder(builder: (BuildContext _) {
+                        return AdaptiveView();
                         if (kIsWeb &&
                             MediaQuery.of(_).size.width > MOBILE_WIDTH) {
                           if (isSignedIn) {

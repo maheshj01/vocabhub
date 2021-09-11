@@ -210,12 +210,10 @@ class _MyHomePageState extends State<MyHomePage>
                 Offset(x + 20, y + 20)),
             child: Scaffold(
               drawer: constraints.maxWidth <= MOBILE_WIDTH
-                  ? Drawer(
-                      child: DrawerBuilder(
-                        onMenuTap: (x) {
-                          _select(x);
-                        },
-                      ),
+                  ? DrawerBuilder(
+                      onMenuTap: (x) {
+                        _select(x);
+                      },
                     )
                   : null,
               appBar: AppBar(

@@ -71,7 +71,8 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
       );
     }
 
-    return Container(
+    return Drawer(
+        child: Container(
       decoration: isDark ? null : BoxDecoration(gradient: primaryGradient),
       child: Column(
         children: [
@@ -194,7 +195,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
           )
         ],
       ),
-    );
+    ));
   }
 }
 

@@ -18,6 +18,7 @@ const PRIVACY_POLICY = 'https://maheshmnj.github.io/privacy';
 const MOBILE_WIDTH = 600.0;
 const TABLET_WIDTH = 800.0;
 const DESKTOP_WIDTH = 1024.0;
+const appBarDesktopHeight = 128.0;
 const Duration wordCountAnimationDuration = Duration(seconds: 3);
 
 /// TABLES
