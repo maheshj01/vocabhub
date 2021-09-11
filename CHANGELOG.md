@@ -1,3 +1,7 @@
+### 0.3.5
+
+- Adds Delete word feature
+- Fixes login state not being maintained for web
 ### 0.3.4
 
 - Adds Google Sign in support
