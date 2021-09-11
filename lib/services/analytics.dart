@@ -23,6 +23,10 @@ class Analytics {
     await analytics.logEvent(
         name: 'word_edit', parameters: {'word': word.word, 'email': email});
   }
+  Future<void> logWordDelete(Word word, String email) async {
+    await analytics.logEvent(
+        name: 'word_delete', parameters: {'word': word.word, 'email': email});
+  }
 
   Future<void> logWordAdd(Word word, [String email = '']) async {
     await analytics.logEvent(

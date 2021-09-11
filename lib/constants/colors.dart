@@ -12,3 +12,4 @@ Color secondaryDark = Colors.black.withOpacity(0.7);
 Color shrinePink = Color(0xffFEDBD0);
 Color? surfaceGreen = Colors.green[50];
 Color? surfaceGrey = Colors.grey[850];
+Color? errorColor = Colors.red;

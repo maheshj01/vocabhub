@@ -223,6 +223,38 @@ class _AddWordFormState extends State<AddWordForm> {
     }
   }
 
+  Future<void> deleteWord() async {
+    if (widget.isEdit) {
+      showCircularIndicator(context);
+      String id = widget.word!.id;
+      final response = await supaStore.deleteById(id);
+      stopCircularIndicator(context);
+      if (response.status == 200) {
+        firebaseAnalytics.logWordDelete(widget.word!, userProvider.email);
+        showMessage(
+            context, "The word \"${widget.word!.word}\" has been deleted.",
+            onClosed: () => Navigate().popView(context));
+      } else {
+        print('failed to update ${response.error!.message}');
+      }
+    }
+  }
+
+  Future<void> _showAlert() async {
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => VocabAlert(
+            title: 'Are you sure you want to delete this word?',
+            onConfirm: () {
+              Navigator.of(context).pop();
+              deleteWord();
+            },
+            onCancel: () {
+              Navigate().popView(context);
+            }));
+  }
+
   @override
   void dispose() {
     wordController.dispose();
@@ -504,7 +536,7 @@ class _AddWordFormState extends State<AddWordForm> {
               ),
               Align(
                   alignment: Alignment.center,
-                  child: Container(
+                  child: SizedBox(
                     height: 40,
                     width: 100,
                     child: ElevatedButton(
@@ -535,6 +567,30 @@ class _AddWordFormState extends State<AddWordForm> {
                     }
                     return Container();
                   }),
+              SizedBox(
+                height: 16,
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  height: 40,
+                  width: 150,
+                  child: widget.isEdit
+                      ? TextButton(
+                          onPressed: _showAlert,
+                          child: Text(
+                            'Delete',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline4!
+                                .copyWith(
+                                    color: errorColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600),
+                          ))
+                      : SizedBox(),
+                ),
+              ),
               SizedBox(
                 height: 40,
               )
@@ -601,6 +657,43 @@ class VocabFieldState extends State<VocabField> {
                   fontWeight: FontWeight.bold, fontSize: widget.fontSize)),
         ],
       ),
+    );
+  }
+}
+
+class VocabAlert extends StatelessWidget {
+  final String title;
+  final Function()? onConfirm;
+  final Function()? onCancel;
+
+  const VocabAlert(
+      {Key? key,
+      required this.title,
+      required this.onConfirm,
+      required this.onCancel})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    bool isDark = darkNotifier.value;
+    return AlertDialog(
+      content: Text(title),
+      actions: [
+        TextButton(
+          onPressed: onConfirm,
+          child: Text(
+            'Delete',
+            style: TextStyle(color: errorColor),
+          ),
+        ),
+        TextButton(
+          onPressed: onCancel,
+          child: Text(
+            'Cancel',
+            style: TextStyle(color: isDark ? Colors.white : Colors.black),
+          ),
+        ),
+      ],
     );
   }
 }
