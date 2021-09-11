@@ -128,21 +128,7 @@ class _AppSignInState extends State<AppSignIn> {
     Settings.size = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: darkNotifier.value ? surfaceGrey : surfaceGreen,
-        //  floating action button to be removed once tested
-        // floatingActionButton: FloatingActionButton(
-        //     onPressed: () async {
-        //       showCircularIndicator(context);
-        //       final user =
-        //           await UserStore().findByEmail(email: 'maheshmn121@gmail.com');
-        //       if (user != null) {
-        //         print(user.email);
-        //       } else {
-        //         print('user not found');
-        //       }
-        //       stopCircularIndicator(context);
-        //     },
-        //     child: Icon(Icons.add)),
-        body: Settings.size.width > DESKTOP_WIDTH
+        body: Settings.size.width > MOBILE_WIDTH
             ? Row(
                 children: [
                   AnimatedContainer(
