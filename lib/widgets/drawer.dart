@@ -51,7 +51,6 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
         radius: 35,
       );
     else {
-      print('${user.name}');
       return CircularAvatar(
         name: getInitial('${user.name}'),
         url: user.avatarUrl,

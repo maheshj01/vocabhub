@@ -33,7 +33,6 @@ class Authentication {
           avatarUrl: _googleSignIn.currentUser!.photoUrl,
           idToken: idToken,
           accessToken: accessToken);
-      print('signed In as ${user.name}');
       stopCircularIndicator(context);
     } catch (error) {
       logger.e(error);

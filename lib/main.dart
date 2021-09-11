@@ -108,6 +108,7 @@ class _VocabAppState extends State<VocabApp> {
                           if (isSignedIn) {
                             return MyHomePage(title: '$APP_TITLE');
                           } else {
+                            logger.i('count=$count');
                             if (count > 0) {
                               Settings().setSkipCount = count - 1;
                               return MyHomePage(title: APP_TITLE);
