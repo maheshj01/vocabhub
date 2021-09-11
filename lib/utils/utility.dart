@@ -85,8 +85,6 @@ Widget _buildNewTransition(
   );
 }
 
-
-
 /// Returns a boolean value whether the window is considered medium or large size.
 ///
 /// Used to build adaptive and responsive layouts.
@@ -96,6 +94,10 @@ bool isDisplayDesktop(BuildContext context) =>
 /// Returns boolean value whether the window is considered medium size.
 ///
 /// Used to build adaptive and responsive layouts.
-bool isDisplaySmallDesktop(BuildContext context) {
+bool isDisplayMediumDesktop(BuildContext context) {
   return getWindowType(context) == AdaptiveWindowType.medium;
+}
+
+bool isDisplaySmallDesktop(BuildContext context) {
+  return getWindowType(context) == AdaptiveWindowType.xsmall;
 }
