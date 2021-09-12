@@ -108,7 +108,8 @@ class _WordTileState extends State<WordTile> {
                           synonyms: widget.word.synonyms,
                         ),
                       ),
-                      userProvider.isLoggedIn
+                      userProvider.isLoggedIn &&
+                              emails.contains(userProvider.email)
                           ? Container(
                               alignment: Alignment.topRight,
                               padding: EdgeInsets.only(right: 16),

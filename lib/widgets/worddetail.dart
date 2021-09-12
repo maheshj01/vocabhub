@@ -125,7 +125,7 @@ class _WordDetailState extends State<WordDetail>
               SizedBox(
                 height: size.height / 5,
               ),
-              userProvider.isLoggedIn
+              userProvider.isLoggedIn && emails.contains(userProvider.email)
                   ? Container(
                       alignment: Alignment.topRight,
                       padding: EdgeInsets.only(right: 16),

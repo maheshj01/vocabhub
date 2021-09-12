@@ -575,7 +575,7 @@ class _AddWordFormState extends State<AddWordForm> {
                 child: SizedBox(
                   height: 40,
                   width: 150,
-                  child: widget.isEdit
+                  child: widget.isEdit && emails.contains(userProvider.email)
                       ? TextButton(
                           onPressed: _showAlert,
                           child: Text(
