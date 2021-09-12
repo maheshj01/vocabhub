@@ -20,6 +20,8 @@ const TABLET_WIDTH = 800.0;
 const DESKTOP_WIDTH = 1024.0;
 const Duration wordCountAnimationDuration = Duration(seconds: 3);
 
+const List<String> emails = ['maheshmn121@gmail.com'];
+
 /// TABLES
 const VOCAB_TABLE_NAME = 'vocabsheet';
 const USER_TABLE_NAME = 'users';

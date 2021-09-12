@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:supabase/supabase.dart';
 import 'package:logger/logger.dart' as log;
 import 'package:vocabhub/constants/const.dart';
 import 'package:postgrest/postgrest.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/utils/secrets.dart';
+import 'package:vocabhub/utils/utility.dart';
 
 class Response {
   bool didSucced;
@@ -74,6 +77,19 @@ class SupaStore {
       words.sort((a, b) => a.word.compareTo(b.word));
     }
     return words;
+  }
+
+  Future<bool> downloadFile() async {
+    try {
+      final response = await _supabase.from(tableName).select("*").execute();
+      if (response.status == 200) {
+        save(json.encode(response.data), 'file.json');
+        return true;
+      }
+      return false;
+    } catch (x) {
+      return false;
+    }
   }
 
   Future<PostgrestResponse> insert(Map<String, dynamic> json,

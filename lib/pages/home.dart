@@ -86,11 +86,26 @@ class _MyHomePageState extends State<MyHomePage>
     }
     if (userProvider.isLoggedIn) {
       logger.d('loggedIn user = ${userProvider.email}');
-      actions = popupMenu['signout']!;
+      if (emails.contains(userProvider.email)) {
+        actions = popupMenu['admin']!;
+      } else {
+        actions = popupMenu['signout']!;
+      }
     } else {
       actions = popupMenu['signin']!;
     }
     getUser();
+  }
+
+  Future<void> downloadFile() async {
+    showCircularIndicator(context);
+    final success = await SupaStore().downloadFile();
+    if (success) {
+      showMessage(context, 'Downloaded successfully!');
+    } else {
+      showMessage(context, 'Failed to Download');
+    }
+    stopCircularIndicator(context);
   }
 
   Future<void> _select(String text) async {
@@ -113,6 +128,8 @@ class _MyHomePageState extends State<MyHomePage>
         stopCircularIndicator(context);
         showMessage(context, 'Failed to sign out');
       }
+    } else if (text.toLowerCase() == 'download file') {
+      downloadFile();
     } else if (text.toLowerCase() == 'sign in') {
       Navigate().pushAndPopAll(context, AppSignIn(),
           slideTransitionType: SlideTransitionType.btt);
@@ -210,13 +227,11 @@ class _MyHomePageState extends State<MyHomePage>
                 Offset(x + 20, y + 20)),
             child: Scaffold(
               drawer: constraints.maxWidth <= MOBILE_WIDTH
-                  ? Drawer(
-                      child: DrawerBuilder(
-                        onMenuTap: (x) {
-                          _select(x);
-                        },
-                      ),
-                    )
+                  ? DrawerBuilder(
+                    onMenuTap: (x) {
+                      _select(x);
+                    },
+                  )
                   : null,
               appBar: AppBar(
                 iconTheme: Theme.of(context).iconTheme,

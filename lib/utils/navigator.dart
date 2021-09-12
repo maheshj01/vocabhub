@@ -28,7 +28,7 @@ class Navigate<T> {
       Navigator.of(context, rootNavigator: isRootNavigator)
           .popUntil((route) => route.isFirst);
 
-  void popView(BuildContext context,
+  Future<void>popView(BuildContext context,
           {T? value, bool isRootNavigator = true}) async =>
       Navigator.of(context, rootNavigator: isRootNavigator).pop(value);
 

@@ -6,6 +6,7 @@ import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/addword.dart';
+import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
@@ -60,6 +61,15 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
     }
   }
 
+  Future<void> downloadFile() async {
+    final success = await SupaStore().downloadFile();
+    if (success) {
+      showMessage(context, 'Downloaded successfully!');
+    } else {
+      showMessage(context, 'Failed to Download');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isDark = darkNotifier.value;
@@ -71,128 +81,147 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
       );
     }
 
-    return Container(
-      decoration: isDark ? null : BoxDecoration(gradient: primaryGradient),
-      child: Column(
-        children: [
-          Consumer<UserModel>(
-              builder: (BuildContext _, UserModel? user, Widget? child) {
-            return Container(
-              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-              height: 150,
-              decoration:
-                  isDark ? null : BoxDecoration(gradient: primaryGradient),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _avatar(user!),
-                  SizedBox(
-                    width: userProvider.isLoggedIn ? 20 : 30,
-                  ),
-                  Flexible(
-                    child: GestureDetector(
-                        onTap: () {
-                          if (!userProvider.isLoggedIn) {
-                            Navigate().popView(context);
-                            widget.onMenuTap?.call('Sign In');
-                          }
-                        },
-                        child: Text(
-                            userProvider.isLoggedIn
-                                ? '${user.name}'
-                                : 'Sign In',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline4!
-                                .copyWith(fontWeight: FontWeight.w500))),
-                  ),
-                ],
+    bool isAdmin =
+        (userProvider.isLoggedIn && emails.contains(userProvider.email));
+
+    return Drawer(
+      child: Container(
+        decoration: isDark ? null : BoxDecoration(gradient: primaryGradient),
+        child: Column(
+          children: [
+            Consumer<UserModel>(
+                builder: (BuildContext _, UserModel? user, Widget? child) {
+              return Container(
+                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                height: 150,
+                decoration:
+                    isDark ? null : BoxDecoration(gradient: primaryGradient),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _avatar(user!),
+                    SizedBox(
+                      width: userProvider.isLoggedIn ? 20 : 30,
+                    ),
+                    Flexible(
+                      child: GestureDetector(
+                          onTap: () {
+                            if (!userProvider.isLoggedIn) {
+                              Navigate().popView(context);
+                              widget.onMenuTap?.call('Sign In');
+                            }
+                          },
+                          child: Text(
+                              userProvider.isLoggedIn
+                                  ? '${user.name}'
+                                  : 'Sign In',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline4!
+                                  .copyWith(fontWeight: FontWeight.w500))),
+                    ),
+                  ],
+                ),
+              );
+            }),
+            hLine(),
+            ListTile(
+              onTap: () {
+                launchUrl(REPORT_URL);
+              },
+              subtitle: subTitle(
+                'Report a bug or Request a feature',
               ),
-            );
-          }),
-          hLine(),
-          ListTile(
-            onTap: () {
-              launchUrl(REPORT_URL);
-            },
-            subtitle: subTitle(
-              'Report a bug or Request a feature',
+              trailing: trailingIcon(Icons.bug_report),
+              title: title(
+                'Report',
+              ),
             ),
-            trailing: trailingIcon(Icons.bug_report),
-            title: title(
-              'Report',
+            hLine(),
+            ListTile(
+              onTap: () {
+                Navigate().popView(context);
+                Navigate().push(context, AddWordForm(),
+                    slideTransitionType: SlideTransitionType.btt);
+              },
+              trailing: trailingIcon(
+                Icons.add,
+              ),
+              title: title(
+                'Add a word',
+              ),
+              subtitle: subTitle('Can\'t find a word?'),
             ),
-          ),
-          hLine(),
-          ListTile(
-            onTap: () {
-              Navigate().popView(context);
-              Navigate().push(context, AddWordForm(),
-                  slideTransitionType: SlideTransitionType.btt);
-            },
-            trailing: trailingIcon(
-              Icons.add,
+            hLine(),
+            ListTile(
+              subtitle: subTitle('The code to this app is Open Sourced'),
+              onTap: () {
+                launchUrl(SOURCE_CODE_URL);
+              },
+              title: title(
+                'Source code',
+              ),
+              trailing: Image.asset(
+                isDark ? GITHUB_WHITE_ASSET_PATH : GITHUB_ASSET_PATH,
+                width: 26,
+              ),
             ),
-            title: title(
-              'Add a word',
+            isAdmin && kIsWeb ? hLine() : SizedBox(),
+            isAdmin && kIsWeb
+                ? ListTile(
+                    subtitle: subTitle('Downlod the data as json'),
+                    onTap: () async {
+                      await Navigate().popView(context);
+                      downloadFile();
+                    },
+                    title: title(
+                      'Download file',
+                    ),
+                    trailing: trailingIcon(Icons.download),
+                  )
+                : SizedBox(),
+            hLine(),
+            ListTile(
+              onTap: () {
+                launchUrl(PRIVACY_POLICY);
+              },
+              trailing: trailingIcon(Icons.privacy_tip),
+              title: title(
+                'Privacy Policy',
+              ),
+              subtitle: subTitle(''),
             ),
-            subtitle: subTitle('Can\'t find a word?'),
-          ),
-          hLine(),
-          ListTile(
-            subtitle: subTitle('The code to this app is Open Sourced'),
-            onTap: () {
-              launchUrl(SOURCE_CODE_URL);
-            },
-            title: title(
-              'Source code',
+            hLine(),
+            userProvider.isLoggedIn
+                ? ListTile(
+                    onTap: () {
+                      Navigate().popView(context);
+                      widget.onMenuTap!('Sign Out');
+                    },
+                    trailing: trailingIcon(Icons.exit_to_app),
+                    title: title(
+                      'Sign Out',
+                    ),
+                    subtitle: subTitle(''),
+                  )
+                : Container(),
+            !userProvider.isLoggedIn ? Container() : hLine(),
+            Expanded(child: Container()),
+            hLine(),
+            WordsCountAnimator(
+              isAnimated: isAnimated,
             ),
-            trailing: Image.asset(
-              isDark ? GITHUB_WHITE_ASSET_PATH : GITHUB_ASSET_PATH,
-              width: 26,
+            SizedBox(
+              height: 20,
             ),
-          ),
-          hLine(),
-          ListTile(
-            onTap: () {
-              launchUrl(PRIVACY_POLICY);
-            },
-            trailing: trailingIcon(Icons.privacy_tip),
-            title: title(
-              'Privacy Policy',
-            ),
-            subtitle: subTitle(''),
-          ),
-          hLine(),
-          userProvider.isLoggedIn
-              ? ListTile(
-                  onTap: () {
-                    Navigate().popView(context);
-                    widget.onMenuTap!('Sign Out');
-                  },
-                  trailing: trailingIcon(Icons.exit_to_app),
-                  title: title(
-                    'Sign Out',
-                  ),
-                  subtitle: subTitle(''),
-                )
-              : Container(),
-          !userProvider.isLoggedIn ? Container() : hLine(),
-          Expanded(child: Container()),
-          hLine(),
-          WordsCountAnimator(
-            isAnimated: isAnimated,
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          if (kIsWeb) storeRedirect(context),
-          Container(
-            height: 60,
-            alignment: Alignment.center,
-            child: VersionBuilder(),
-          )
-        ],
+            if (kIsWeb) storeRedirect(context),
+            Container(
+              height: 60,
+              alignment: Alignment.center,
+              child: VersionBuilder(),
+            )
+          ],
+        ),
       ),
     );
   }

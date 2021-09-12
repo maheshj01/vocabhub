@@ -20,5 +20,13 @@ Map<String, List<String>> popupMenu = {
     'Report',
     'Sign Out'
   ],
-  'signin': ['Add word', 'Source code', 'Privacy Policy', 'Report', 'Sign In']
+  'signin': ['Add word', 'Source code', 'Privacy Policy', 'Report', 'Sign In'],
+  'admin': [
+    'Add word',
+    'Source code',
+    'Download file',
+    'Privacy Policy',
+    'Report',
+    'Sign Out'
+  ],
 };

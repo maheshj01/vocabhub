@@ -12,12 +12,14 @@ class UserModel extends ChangeNotifier {
   String name;
   String? avatarUrl;
   bool isLoggedIn;
+  bool isAdmin;
 
   UserModel(
       {this.name = '',
       this.email = '',
       this.avatarUrl,
       this.idToken,
+      this.isAdmin = false,
       this.accessToken,
       this.isLoggedIn = false,
       this.bookmarks = const []});
