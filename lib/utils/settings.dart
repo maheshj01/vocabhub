@@ -16,7 +16,7 @@ class Settings {
   Settings() {
     init();
   }
-  
+
   Future<void> init() async {
     _sharedPreferences = await SharedPreferences.getInstance();
   }
@@ -47,16 +47,16 @@ class Settings {
     final _isSignedIn = _sharedPreferences!.getBool('$signedInKey') ?? false;
     return _isSignedIn;
   }
+
   FutureOr<String> get email async {
     if (_sharedPreferences == null) {
       _sharedPreferences = await SharedPreferences.getInstance();
     }
-    final _email = _sharedPreferences!.getString('$emailKey')??'';
+    final _email = _sharedPreferences!.getString('$emailKey') ?? '';
     return _email;
   }
 
-  Future<void> setIsSignedIn(bool status,{String email=''}) async {
-
+  Future<void> setIsSignedIn(bool status, {String email = ''}) async {
     if (_sharedPreferences == null) {
       _sharedPreferences = await SharedPreferences.getInstance();
     }
@@ -73,8 +73,7 @@ class Settings {
       _sharedPreferences = await SharedPreferences.getInstance();
     }
 
-    final int count =
-        _sharedPreferences!.getInt('$skipCountKey') ?? maxSkipCount;
+    final int count = _sharedPreferences!.getInt('$skipCountKey') ?? 0;
     return count;
   }
 }
