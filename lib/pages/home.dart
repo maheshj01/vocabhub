@@ -98,14 +98,18 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   Future<void> downloadFile() async {
-    showCircularIndicator(context);
-    final success = await SupaStore().downloadFile();
-    if (success) {
-      showMessage(context, 'Downloaded successfully!');
-    } else {
-      showMessage(context, 'Failed to Download');
+    try {
+      showCircularIndicator(context);
+      final success = await SupaStore().downloadFile();
+      if (success) {
+        showMessage(context, 'Downloaded successfully!');
+      } else {
+        showMessage(context, 'Failed to Download');
+      }
+    } catch (x) {
+      stopCircularIndicator(context);
+      showMessage(context, '$x');
     }
-    stopCircularIndicator(context);
   }
 
   Future<void> _select(String text) async {
@@ -228,10 +232,10 @@ class _MyHomePageState extends State<MyHomePage>
             child: Scaffold(
               drawer: constraints.maxWidth <= MOBILE_WIDTH
                   ? DrawerBuilder(
-                    onMenuTap: (x) {
-                      _select(x);
-                    },
-                  )
+                      onMenuTap: (x) {
+                        _select(x);
+                      },
+                    )
                   : null,
               appBar: AppBar(
                 iconTheme: Theme.of(context).iconTheme,

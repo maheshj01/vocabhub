@@ -1,5 +1,3 @@
-import 'dart:js' as js;
-import 'dart:html' as html;
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -102,9 +100,4 @@ bool isDisplaySmallDesktop(BuildContext context) {
   return getWindowType(context) == AdaptiveWindowType.xsmall;
 }
 
-void save(Object bytes, String fileName) {
-  js.context.callMethod("saveAs", <Object>[
-    html.Blob(<Object>[bytes]),
-    fileName
-  ]);
-}
+

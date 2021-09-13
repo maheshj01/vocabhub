@@ -5,8 +5,10 @@ import 'package:logger/logger.dart' as log;
 import 'package:vocabhub/constants/const.dart';
 import 'package:postgrest/postgrest.dart';
 import 'package:vocabhub/models/models.dart';
+import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/secrets.dart';
-import 'package:vocabhub/utils/utility.dart';
+import 'package:vocabhub/platform/mobile.dart'
+    if (dart.library.html) 'package:vocabhub/platform/web.dart' as platformOnly;
 
 class Response {
   bool didSucced;
@@ -83,12 +85,13 @@ class SupaStore {
     try {
       final response = await _supabase.from(tableName).select("*").execute();
       if (response.status == 200) {
-        save(json.encode(response.data), 'file.json');
+        platformOnly.fileSaver(json.encode(response.data), 'file.json');
         return true;
       }
       return false;
     } catch (x) {
-      return false;
+      logger.d(x);
+      throw 'x';
     }
   }
 

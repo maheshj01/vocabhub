@@ -62,11 +62,15 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
   }
 
   Future<void> downloadFile() async {
-    final success = await SupaStore().downloadFile();
-    if (success) {
-      showMessage(context, 'Downloaded successfully!');
-    } else {
-      showMessage(context, 'Failed to Download');
+    try {
+      final success = await SupaStore().downloadFile();
+      if (success) {
+        showMessage(context, 'Downloaded successfully!');
+      } else {
+        showMessage(context, 'Failed to Download');
+      }
+    } catch (x) {
+      showMessage(context, '$x');
     }
   }
 
@@ -166,8 +170,8 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
                 width: 26,
               ),
             ),
-            isAdmin && kIsWeb ? hLine() : SizedBox(),
-            isAdmin && kIsWeb
+            isAdmin ? hLine() : SizedBox(),
+            isAdmin
                 ? ListTile(
                     subtitle: subTitle('Downlod the data as json'),
                     onTap: () async {
