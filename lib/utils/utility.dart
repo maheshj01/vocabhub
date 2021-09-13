@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:vocabhub/pages/addword.dart';
 import 'package:adaptive_breakpoints/adaptive_breakpoints.dart';
 
 /// shows a snackbar message
@@ -55,21 +54,21 @@ double diagonal(Size size) {
   return pow(pow(size.width, 2) + pow(size.width, 2), 0.5) as double;
 }
 
-void _openCustomDialog(BuildContext context) {
-  showGeneralDialog(
-      barrierColor: Colors.black.withOpacity(0.5),
-      transitionBuilder: (context, a1, a2, widget) {
-        return Transform.translate(
-            offset: Offset(0, 100 * a1.value), child: AddWordForm());
-      },
-      transitionDuration: Duration(milliseconds: 500),
-      barrierDismissible: true,
-      barrierLabel: '',
-      context: context,
-      pageBuilder: (context, animation1, animation2) {
-        return Container();
-      });
-}
+// void _openCustomDialog(BuildContext context) {
+//   showGeneralDialog(
+//       barrierColor: Colors.black.withOpacity(0.5),
+//       transitionBuilder: (context, a1, a2, widget) {
+//         return Transform.translate(
+//             offset: Offset(0, 100 * a1.value), child: AddWordForm());
+//       },
+//       transitionDuration: Duration(milliseconds: 500),
+//       barrierDismissible: true,
+//       barrierLabel: '',
+//       context: context,
+//       pageBuilder: (context, animation1, animation2) {
+//         return Container();
+//       });
+// }
 
 Widget _buildNewTransition(
   BuildContext context,
@@ -99,5 +98,3 @@ bool isDisplayMediumDesktop(BuildContext context) {
 bool isDisplaySmallDesktop(BuildContext context) {
   return getWindowType(context) == AdaptiveWindowType.xsmall;
 }
-
-
