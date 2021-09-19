@@ -2,7 +2,6 @@
 
 const BASE_URL = '';
 const VERSION = 'v0.3.5';
-const CONFIG_URL = 'https://bisasplfdnyiiggonpcx.supabase.co';
 const SOURCE_CODE_URL = 'https://github.com/maheshmnj/vocabhub';
 const PLAY_STORE_URL =
     'https://play.google.com/store/apps/details?id=com.vocabhub.app';

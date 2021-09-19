@@ -10,6 +10,7 @@ import 'package:vocabhub/services/auth.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
+import 'package:vocabhub/utils/utility.dart';
 
 class AppSignIn extends StatefulWidget {
   const AppSignIn({Key? key}) : super(key: key);
@@ -43,7 +44,9 @@ class _AppSignInState extends State<AppSignIn> {
             Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
                 slideTransitionType: SlideTransitionType.ttb);
           } else {
+            logger.d('failed to sign in User');
             await Settings().setIsSignedIn(false, email: existingUser!.email);
+            showMessage(context, 'User Not registered');
             throw 'failed to register new user';
           }
         } else {
