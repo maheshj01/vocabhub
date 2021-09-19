@@ -31,6 +31,7 @@ class UserStore {
         // if (user.email == 'maheshmn121@gmail.com') user.isAdmin = true;
         return user;
       } else {
+        logger.d('existing user not found');
         return null;
       }
     } catch (_) {
