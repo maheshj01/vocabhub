@@ -34,7 +34,7 @@ jobs:
           KEY_PROPERTIES: ${{ secrets.KEY_PROPERTIES }}
       - run: flutter pub get
       - run: flutter pub run build_runner build --delete-conflicting-outputs
-      - run: flutter build web --release --web-renderer canvaskit
+      - run: flutter build web
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
@@ -43,8 +43,8 @@ jobs:
           projectId: vocabhub-34c7f
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
-      - run: flutter build apk --release
-      - uses: actions/upload-artifact@v1
-        with:
-          name: release-apk
-          path: build/app/outputs/apk/release/app-release.apk
+      # - run: flutter build apk --release
+      # - uses: actions/upload-artifact@v1
+      #   with:
+      #     name: release-apk
+      #     path: build/app/outputs/apk/release/app-release.apk
