@@ -11,7 +11,7 @@ A vocabulary app built with Flutter and Supabase, that is simple to use and avai
 
 |                                                                     v0.2.2                                                                      |
 | :---------------------------------------------------------------------------------------------------------------------------------------------: |
-| <img src="https://user-images.githubusercontent.com/31410839/125232197-be28a180-e2f9-11eb-82db-980325528b55.png" alt="" style="width: 400px;"/> |
+| <img src="https://user-images.githubusercontent.com/31410839/125232197-be28a180-e2f9-11eb-82db-980325528b55.png"/> |
 
  
 ### Say Hello to Dark Mode
