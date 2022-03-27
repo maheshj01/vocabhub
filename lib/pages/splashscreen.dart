@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/user.dart';
-import 'package:vocabhub/pages/home.dart';
-import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/themes/vocab_theme_data.dart';
-import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -49,16 +46,14 @@ class _SplashScreenState extends State<SplashScreen>
     user.email = _email;
     if (signedIn && _email.isNotEmpty) {
       user.isLoggedIn = true;
-      Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
-          slideTransitionType: SlideTransitionType.ttb);
+      context.go('/home');
     } else {
       user.isLoggedIn = false;
       if (count > 0) {
-        Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
-            slideTransitionType: SlideTransitionType.ttb);
         Settings().setSkipCount = count - 1;
+        context.go('/home');
       } else {
-        Navigate().pushAndPopAll(context, AppSignIn());
+        context.go('/signIn');
       }
     }
   }
