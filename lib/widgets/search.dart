@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/pages/home.dart';
+import 'package:vocabhub/themes/vocab_theme_data.dart';
 
 class SearchBuilder extends StatefulWidget {
   final Function(String) onChanged;
@@ -35,7 +35,7 @@ class _SearchBuilderState extends State<SearchBuilder> {
           decoration: InputDecoration(
               focusedBorder: UnderlineInputBorder(
                 borderSide:
-                    BorderSide(color: isDark ? Colors.white : primaryColor),
+                    BorderSide(color: isDark ? Colors.white : VocabThemeData.primaryColor),
               ),
               suffixIcon: IconButton(
                   tooltip:
@@ -44,7 +44,7 @@ class _SearchBuilderState extends State<SearchBuilder> {
                       searchController.text.isNotEmpty
                           ? Icons.clear
                           : Icons.shuffle,
-                      color: isDark ? Colors.white : primaryColor),
+                      color: isDark ? Colors.white : VocabThemeData.primaryColor),
                   onPressed: () {
                     if (searchController.text.isNotEmpty) {
                       searchController.clear();

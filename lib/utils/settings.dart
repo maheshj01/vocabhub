@@ -56,7 +56,7 @@ class Settings {
     return _email;
   }
 
-  Future<void> setIsSignedIn(bool status, {String email = ''}) async {
+  static Future<void> setIsSignedIn(bool status, {String email = ''}) async {
     if (_sharedPreferences == null) {
       _sharedPreferences = await SharedPreferences.getInstance();
     }

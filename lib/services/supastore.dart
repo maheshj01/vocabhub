@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:supabase/supabase.dart';
 import 'package:logger/logger.dart' as log;
 import 'package:vocabhub/constants/const.dart';
-import 'package:postgrest/postgrest.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/secrets.dart';

@@ -1,8 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-// import 'education_model.dart';
 part 'word.g.dart';
-// part 'education_model.g.dart';
-
 ///
 ///
 /// define a schema for your class and annotate
@@ -10,20 +7,6 @@ part 'word.g.dart';
 /// ```flutter pub run build_runner build --delete-conflicting-outputs```
 /// to watch the file changes and generate the outpur
 /// ```flutter pub run build_runner watch```
-
-// @JsonSerializable()
-// class UserModel {
-//   final String name;
-//   final String email;
-//   final Word education;
-//   final String phone;
-//   final DateTime date;
-
-//   UserModel(this.name, this.email, this.phone, this.date, this.education);
-//   factory UserModel.fromJson(Map<String, dynamic> json) =>
-//       _$UserModelFromJson(json);
-//   Map<String, dynamic> toJson() => _$UserModelToJson(this);
-// }
 
 @JsonSerializable()
 class Word {
@@ -47,6 +30,22 @@ class Word {
     return Word(w.id, w.word, w.meaning,
         examples: w.examples, note: w.note, synonyms: w.synonyms);
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Word &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          word == other.word &&
+          meaning == other.meaning &&
+          synonyms == other.synonyms &&
+          examples == other.examples &&
+          mnemonics == other.mnemonics &&
+          note == other.note;
+
+  @override
+  int get hashCode => id.hashCode ^ word.hashCode;
 
   Map<String, dynamic> toJson() => _$WordToJson(this);
 }

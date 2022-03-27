@@ -8,12 +8,12 @@ const PLAY_STORE_URL =
 const AMAZON_APP_STORE_URL =
     'http://www.amazon.com/gp/mas/dl/android?p=com.vocabhub.app';
 const REPORT_URL = 'https://github.com/maheshmnj/vocabhub/issues/new/choose';
-const String profileUrl = 'assets/profile.png';
 const String signInScopeUrl =
     'https://www.googleapis.com/auth/contacts.readonly';
 // const SHEET_URL =
 //     'https://docs.google.com/spreadsheets/d/1G1RtQfsEDqHhHP4cgOpO9x_ZtQ1dYa6QrGCq3KFlu50';
 const PRIVACY_POLICY = 'https://maheshmnj.github.io/privacy';
+const String profileUrl = 'assets/profile.png';
 const MOBILE_WIDTH = 600.0;
 const TABLET_WIDTH = 800.0;
 const DESKTOP_WIDTH = 1024.0;

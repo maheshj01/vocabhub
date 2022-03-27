@@ -1,11 +1,9 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/constants.dart';
-import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
@@ -13,7 +11,7 @@ import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/auth.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/services/supastore.dart';
+import 'package:vocabhub/themes/vocab_theme_data.dart';
 import 'package:vocabhub/utils/circle_clipper.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
@@ -120,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage>
       final isSignedOut = await Authentication().googleSignOut(context);
       showCircularIndicator(context);
       if (isSignedOut) {
-        Settings().setIsSignedIn(false, email: '');
+        Settings.setIsSignedIn(false, email: '');
         userProvider.user = null;
         showMessage(context, 'Signed Out successfully!');
         stopCircularIndicator(context);
@@ -187,8 +185,9 @@ class _MyHomePageState extends State<MyHomePage>
                   alignment: Alignment.center,
                   child: Text(text,
                       style: Theme.of(context).textTheme.headline5!.copyWith(
-                          color:
-                              darkNotifier.value ? Colors.white : primaryColor,
+                          color: darkNotifier.value
+                              ? Colors.white
+                              : VocabThemeData.primaryColor,
                           fontWeight: FontWeight.bold)),
                 ),
               ),
@@ -243,7 +242,8 @@ class _MyHomePageState extends State<MyHomePage>
                     constraints.maxWidth <= MOBILE_WIDTH ? true : false,
                 title: Text('$APP_TITLE',
                     style: Theme.of(context).textTheme.headline4!.copyWith(
-                        color: isDark ? Colors.white : primaryColor,
+                        color:
+                            isDark ? Colors.white : VocabThemeData.primaryColor,
                         fontWeight: FontWeight.bold)),
                 actions: [
                   if (constraints.maxWidth > MOBILE_WIDTH)
@@ -280,7 +280,8 @@ class _MyHomePageState extends State<MyHomePage>
 
                   Settings().dark = darkNotifier.value;
                 },
-                backgroundColor: isDark ? Colors.cyanAccent : primaryColor,
+                backgroundColor:
+                    isDark ? Colors.cyanAccent : VocabThemeData.primaryColor,
                 child: Icon(!isDark
                     ? Icons.brightness_2_outlined
                     : Icons.wb_sunny_rounded),
@@ -393,7 +394,9 @@ class _WordsBuilderState extends State<WordsBuilder> {
           return GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: Container(
-              color: darkNotifier.value ? primaryDark : Colors.white,
+              color: darkNotifier.value
+                  ? VocabThemeData.primaryDark
+                  : Colors.white,
               child: Column(
                 children: [
                   SearchBuilder(

@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/constants.dart';
-import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/services.dart';
+import 'package:vocabhub/themes/vocab_theme_data.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
@@ -28,7 +28,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
   Widget subTitle(String text) {
     return Text(
       '$text',
-      style: listSubtitleStyle,
+      style: VocabThemeData.listSubtitleStyle,
     );
   }
 
@@ -90,7 +90,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
 
     return Drawer(
       child: Container(
-        decoration: isDark ? null : BoxDecoration(gradient: primaryGradient),
+        decoration: isDark ? null : BoxDecoration(gradient:VocabThemeData.primaryGradient),
         child: Column(
           children: [
             Consumer<UserModel>(
@@ -99,7 +99,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
                 padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
                 height: 150,
                 decoration:
-                    isDark ? null : BoxDecoration(gradient: primaryGradient),
+                    isDark ? null : BoxDecoration(gradient: VocabThemeData.primaryGradient),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
+import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/exports.dart';
-import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/user.dart';
-import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/auth.dart';
 import 'package:vocabhub/services/services.dart';
+import 'package:vocabhub/themes/vocab_theme_data.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -20,12 +19,6 @@ class AppSignIn extends StatefulWidget {
 }
 
 class _AppSignInState extends State<AppSignIn> {
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: [
-      'email',
-      '$signInScopeUrl',
-    ],
-  );
 
   Authentication auth = Authentication();
 
@@ -40,20 +33,20 @@ class _AppSignInState extends State<AppSignIn> {
           final isRegistered = await _register(user!);
           if (isRegistered) {
             userProvider.user = user!;
-            await Settings().setIsSignedIn(true, email: user!.email);
-            Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
+            await Settings.setIsSignedIn(true, email: user!.email);
+            Navigate().pushAndPopAll(context, BaseHome(),
                 slideTransitionType: SlideTransitionType.ttb);
           } else {
             logger.d('failed to sign in User');
-            await Settings().setIsSignedIn(false, email: existingUser!.email);
+            await Settings.setIsSignedIn(false, email: existingUser!.email);
             showMessage(context, 'User Not registered');
             throw 'failed to register new user';
           }
         } else {
           logger.d('found existing user ${user!.email}');
           userProvider.user = user!;
-          await Settings().setIsSignedIn(true, email: existingUser.email);
-          Navigate().pushAndPopAll(context, MyHomePage(title: '$APP_TITLE'),
+          await Settings.setIsSignedIn(true, email: existingUser.email);
+          Navigate().pushAndPopAll(context, BaseHome(),
               slideTransitionType: SlideTransitionType.ttb);
           firebaseAnalytics.logSignIn(user!);
         }
@@ -62,7 +55,7 @@ class _AppSignInState extends State<AppSignIn> {
       }
     } catch (error) {
       logger.e(error);
-      await Settings().setIsSignedIn(false);
+      await Settings.setIsSignedIn(false);
     }
   }
 
@@ -76,7 +69,7 @@ class _AppSignInState extends State<AppSignIn> {
         return false;
     } catch (error) {
       print(error);
-      await Settings().setIsSignedIn(false);
+      await Settings.setIsSignedIn(false);
       return false;
     }
   }
@@ -117,11 +110,11 @@ class _AppSignInState extends State<AppSignIn> {
           alignment: Alignment.center,
           child: VocabButton(
             width: 300,
-            backgroundColor: primaryGreen,
+            backgroundColor: VocabThemeData.primaryGreen,
             foregroundColor: Colors.white,
             label: 'Sign In as Guest',
             onTap: () {
-              Navigate().pushReplace(context, MyHomePage(title: '$APP_TITLE'),
+              Navigate().pushReplace(context, BaseHome(),
                   slideTransitionType: SlideTransitionType.ttb);
               Settings().setSkipCount = Settings.maxSkipCount;
             }, // _handleSignIn(context),
@@ -130,7 +123,9 @@ class _AppSignInState extends State<AppSignIn> {
 
     Settings.size = MediaQuery.of(context).size;
     return Scaffold(
-        backgroundColor: darkNotifier.value ? surfaceGrey : surfaceGreen,
+        backgroundColor: darkNotifier.value
+            ? VocabThemeData.surfaceGrey
+            : VocabThemeData.surfaceGreen,
         body: Settings.size.width > MOBILE_WIDTH
             ? Row(
                 children: [
@@ -149,7 +144,7 @@ class _AppSignInState extends State<AppSignIn> {
                   ),
                   Expanded(
                     child: Container(
-                      color: surfaceGrey,
+                      color: VocabThemeData.surfaceGrey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [

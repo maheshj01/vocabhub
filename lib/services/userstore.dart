@@ -1,9 +1,7 @@
 import 'package:supabase/supabase.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/models.dart';
-import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/utils/secrets.dart';
-import 'package:postgrest/postgrest.dart';
 import 'services.dart';
 
 class UserStore {

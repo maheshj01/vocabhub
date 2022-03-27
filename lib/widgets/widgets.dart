@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:vocabhub/constants/colors.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/services/analytics.dart';
+import 'package:vocabhub/themes/vocab_theme_data.dart';
 import 'package:vocabhub/utils/utility.dart';
 
 void removeFocus(BuildContext context) => FocusScope.of(context).unfocus();
@@ -27,7 +26,7 @@ class LoadingWidget extends StatelessWidget {
     return Center(
         child: CircularProgressIndicator(
             valueColor: new AlwaysStoppedAnimation<Color>(
-      primaryGreen,
+      VocabThemeData.primaryGreen,
     )));
   }
 }
@@ -65,7 +64,9 @@ SelectableText buildExample(String example, String word) {
       children: textSpans));
 }
 
-Widget storeRedirect(BuildContext context, {String redirectUrl = PLAY_STORE_URL,String assetUrl='assets/googleplay.png'}) {
+Widget storeRedirect(BuildContext context,
+    {String redirectUrl = PLAY_STORE_URL,
+    String assetUrl = 'assets/googleplay.png'}) {
   return GestureDetector(
     onTap: () {
       final firebaseAnalytics = Analytics();

@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
@@ -9,6 +7,7 @@ import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/supastore.dart';
+import 'package:vocabhub/themes/vocab_theme_data.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -294,7 +293,7 @@ class _AddWordFormState extends State<AddWordForm> {
         ),
         onDeleted: () => onDeleted(),
         isEnabled: true,
-        backgroundColor: isDark ? secondaryDark : secondaryColor,
+        backgroundColor: isDark ?VocabThemeData.secondaryDark : VocabThemeData.secondaryColor,
         useDeleteButtonTooltip: true,
         deleteButtonTooltipMessage: 'remove',
       );
@@ -541,7 +540,7 @@ class _AddWordFormState extends State<AddWordForm> {
                     width: 100,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          primary: isDark ? Colors.teal : primaryColor,
+                          primary: isDark ? Colors.teal : VocabThemeData.primaryColor,
                         ),
                         onPressed: isDisabled
                             ? null
@@ -584,7 +583,7 @@ class _AddWordFormState extends State<AddWordForm> {
                                 .textTheme
                                 .headline4!
                                 .copyWith(
-                                    color: errorColor,
+                                    color: VocabThemeData.errorColor,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600),
                           ))
@@ -683,7 +682,7 @@ class VocabAlert extends StatelessWidget {
           onPressed: onConfirm,
           child: Text(
             'Delete',
-            style: TextStyle(color: errorColor),
+            style: TextStyle(color: VocabThemeData.errorColor),
           ),
         ),
         TextButton(

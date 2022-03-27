@@ -4,6 +4,7 @@ import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/pages/login.dart';
+import 'package:vocabhub/themes/vocab_theme_data.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
 
@@ -79,8 +80,8 @@ class _SplashScreenState extends State<SplashScreen>
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                primaryColor.withOpacity(0.5),
-                secondaryColor,
+                VocabThemeData.primaryColor.withOpacity(0.5),
+                VocabThemeData.secondaryColor,
               ]),
         ),
         alignment: Alignment.center,

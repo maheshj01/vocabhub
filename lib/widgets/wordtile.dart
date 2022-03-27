@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
@@ -7,6 +6,7 @@ import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/analytics.dart';
+import 'package:vocabhub/themes/vocab_theme_data.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
@@ -60,7 +60,7 @@ class _WordTileState extends State<WordTile> {
       if (isDark) {
         return Colors.white54;
       } else {
-        return secondaryColor;
+        return VocabThemeData.secondaryColor;
       }
     }
 
@@ -75,7 +75,8 @@ class _WordTileState extends State<WordTile> {
     return widget.isMobile
         ? Theme(
             data: Theme.of(context).copyWith(
-                accentColor: isDark ? Colors.cyanAccent : primaryColor,
+                accentColor:
+                    isDark ? Colors.cyanAccent : VocabThemeData.primaryColor,
                 unselectedWidgetColor: isDark ? Colors.white : Colors.black),
             child: ExpansionTile(
               expandedAlignment: Alignment.centerLeft,
@@ -87,7 +88,9 @@ class _WordTileState extends State<WordTile> {
               onExpansionChanged: (expanded) {
                 if (expanded) {
                   setState(() {
-                    expandedColor = isDark ? Colors.cyanAccent : primaryColor;
+                    expandedColor = isDark
+                        ? Colors.cyanAccent
+                        : VocabThemeData.primaryColor;
                   });
                   firebaseAnalytics.logWordSelection(widget.word);
                 } else {

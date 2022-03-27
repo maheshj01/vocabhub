@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:vocabhub/constants/colors.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/pages/home.dart';
+import 'package:vocabhub/themes/vocab_theme_data.dart';
 import 'package:vocabhub/utils/extensions.dart';
 
 class SynonymsList extends StatelessWidget {
@@ -40,7 +39,7 @@ class SynonymsList extends StatelessWidget {
                       decoration: BoxDecoration(
                           color: darkNotifier.value
                               ? Colors.white
-                              : secondaryColor,
+                              : VocabThemeData.secondaryColor,
                           borderRadius: BorderRadius.circular(20)),
                       child: Text('${synonym.trim()}',
                           style: TextStyle(
