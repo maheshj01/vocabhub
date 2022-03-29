@@ -1,4 +1,6 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:vocabhub/themes/vocab_theme_data.dart';
 import 'package:vocabhub/utils/utility.dart';
 
 const appBarDesktopHeight = 128.0;
@@ -45,13 +47,12 @@ class _BaseHomeState extends State<BaseHome> {
     if (isDesktop) {
       return Row(
         children: [
-          ListDrawer(),
+          AdaptiveNavBar(
+            isDesktop: true,
+          ),
           const VerticalDivider(width: 1),
           Expanded(
             child: Scaffold(
-              appBar: AdaptiveAppBar(
-                isDesktop: true,
-              ),
               body: body,
               floatingActionButton: FloatingActionButton.extended(
                 heroTag: 'Extended Add',
@@ -68,9 +69,8 @@ class _BaseHomeState extends State<BaseHome> {
       );
     } else {
       return Scaffold(
-        appBar: AdaptiveAppBar(),
+        bottomNavigationBar: AdaptiveNavBar(),
         body: body,
-        drawer: ListDrawer(),
         floatingActionButton: FloatingActionButton(
           heroTag: 'Add',
           onPressed: () {},
@@ -84,103 +84,304 @@ class _BaseHomeState extends State<BaseHome> {
   }
 }
 
-class AdaptiveAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const AdaptiveAppBar({
-    Key? key,
-    this.isDesktop = false,
-  }) : super(key: key);
-
+class AdaptiveNavBar extends StatefulWidget {
   final bool isDesktop;
+  const AdaptiveNavBar({Key? key, this.isDesktop = false}) : super(key: key);
 
   @override
-  Size get preferredSize => isDesktop
-      ? const Size.fromHeight(appBarDesktopHeight)
-      : const Size.fromHeight(kToolbarHeight);
+  _AdaptiveNavBarState createState() => _AdaptiveNavBarState();
+}
+
+class _AdaptiveNavBarState extends State<AdaptiveNavBar> {
+  static const numItems = 9;
+  List<MenuItem> _items = [
+    MenuItem(Icons.dashboard, 'Dashboard'),
+    MenuItem(Icons.bookmark, 'Bookmarks'),
+    MenuItem(Icons.person, 'Profile'),
+  ];
+  int selectedItem = 0;
+  final NavbarNotifier _navbarNotifier = NavbarNotifier();
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return AnimatedBuilder(
+        animation: _navbarNotifier,
+        builder: (context, child) {
+          if (!widget.isDesktop) {
+            return VocabNavbar(
+              _navbarNotifier,
+              _items,
+              onItemTapped: (index) {
+                _navbarNotifier.index = index;
+              },
+            );
+          } else {
+            return NavigationRail(
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    SizedBox(
+                      height: 100,
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.people),
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+                extended: widget.isDesktop,
+                onDestinationSelected: (x) {
+                  _navbarNotifier.index = x;
+                },
+                destinations: _items
+                    .map((e) => NavigationRailDestination(
+                        icon: Icon(e.iconData), label: Text(e.text)))
+                    .toList(),
+                selectedIndex: _navbarNotifier.index);
+          }
+        });
+  }
+}
+
+/// Bottom navigation bar for small screens
+class VocabNavbar extends StatefulWidget {
+  const VocabNavbar(this.model, this.menuItems,
+      {Key? key, required this.onItemTapped})
+      : super(key: key);
+  final List<MenuItem> menuItems;
+  final NavbarNotifier model;
+  final Function(int) onItemTapped;
+
+  @override
+  _VocabNavbarState createState() => _VocabNavbarState();
+}
+
+class _VocabNavbarState extends State<VocabNavbar>
+    with SingleTickerProviderStateMixin {
+  @override
+  void didUpdateWidget(covariant VocabNavbar oldWidget) {
+    if (widget.model.hideBottomNavBar != isHidden) {
+      if (!isHidden) {
+        _showBottomNavBar();
+      } else {
+        _hideBottomNavBar();
+      }
+      isHidden = !isHidden;
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  void _hideBottomNavBar() {
+    _controller.reverse();
+    return;
+  }
+
+  void _showBottomNavBar() {
+    _controller.forward();
+    return;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+        duration: const Duration(milliseconds: 500), vsync: this)
+      ..addListener(() => setState(() {}));
+    animation = Tween(begin: 0.0, end: 100.0).animate(_controller);
+  }
+
+  late AnimationController _controller;
+  late Animation<double> animation;
+  bool isHidden = false;
 
   @override
   Widget build(BuildContext context) {
-    final themeData = Theme.of(context);
-    return AppBar(
-      automaticallyImplyLeading: !isDesktop,
-      title: isDesktop ? null : SelectableText('starterAppGenericTitle'),
-      bottom: isDesktop
-          ? PreferredSize(
-              preferredSize: const Size.fromHeight(26),
-              child: Container(
-                alignment: AlignmentDirectional.centerStart,
-                margin: const EdgeInsetsDirectional.fromSTEB(72, 0, 0, 22),
-                child: SelectableText(
-                  'starterAppGenericTitle',
-                ),
-              ),
-            )
-          : null,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.share),
-          onPressed: () {},
-        ),
-        IconButton(
-          icon: const Icon(Icons.favorite),
-          onPressed: () {},
-        ),
-        IconButton(
-          icon: const Icon(Icons.search),
-          onPressed: () {},
-        ),
-      ],
+    return AnimatedBuilder(
+        animation: animation,
+        builder: (BuildContext context, Widget? child) {
+          return Transform.translate(
+            offset: Offset(0, animation.value),
+            child: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              currentIndex: widget.model.index,
+              selectedItemColor: VocabThemeData.primaryGreen,
+              onTap: (x) => widget.onItemTapped(x),
+              showUnselectedLabels: true,
+              unselectedItemColor: Colors.black,
+              backgroundColor: VocabThemeData.navbarSurfaceGrey,
+              items: widget.menuItems
+                  .map((MenuItem menuItem) => BottomNavigationBarItem(
+                        icon: Icon(menuItem.iconData),
+                        label: menuItem.text,
+                      ))
+                  .toList(),
+            ),
+          );
+        });
+  }
+}
+
+class MenuItem {
+  const MenuItem(this.iconData, this.text);
+  final IconData iconData;
+  final String text;
+}
+
+class NavbarNotifier extends ChangeNotifier {
+  int _index = 0;
+  int _last = 0;
+  bool _shouldReload = false;
+  bool _hideBottomNavBar = false;
+  int _categoryIndex = 0;
+  List<int> _indexList = [];
+
+  /// while toggling the tabs programatically
+  /// update [shouldReload] to whether or not to fetch the updated Data from the network
+  bool get shouldReload => _shouldReload;
+
+  void remove() {
+    _indexList.removeLast();
+    notifyListeners();
+  }
+
+  void add(int x) {
+    _indexList.add(x);
+    notifyListeners();
+  }
+
+  int get top => _indexList.last;
+
+  int get length => _indexList.length;
+
+  int get index => _index;
+  set index(int x) {
+    _index = x;
+    notifyListeners();
+  }
+
+  int get categoryIndex => _categoryIndex;
+  set categoryIndex(int x) {
+    _categoryIndex = x;
+    notifyListeners();
+  }
+
+  set shouldReload(bool x) {
+    _shouldReload = x;
+    notifyListeners();
+  }
+
+  bool get hideBottomNavBar => _hideBottomNavBar;
+  set hideBottomNavBar(bool x) {
+    _hideBottomNavBar = x;
+    notifyListeners();
+  }
+}
+
+class AnimatedIndexedStack extends StatefulWidget {
+  const AnimatedIndexedStack({
+    Key? key,
+    required this.index,
+    required this.children,
+  }) : super(key: key);
+
+  /// selected Index
+  final int index;
+
+  /// List of menu items
+  final List<Widget> children;
+
+  @override
+  _AnimatedIndexedStackState createState() => _AnimatedIndexedStackState();
+}
+
+class _AnimatedIndexedStackState extends State<AnimatedIndexedStack>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  late int _index;
+
+  @override
+  void initState() {
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    _animation = Tween(begin: 0.4, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.linear,
+      ),
+    );
+
+    _index = widget.index;
+    _controller.forward();
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(AnimatedIndexedStack oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.index != _index) {
+      _controller.reverse().then((_) {
+        setState(() => _index = widget.index);
+        _controller.forward();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return FadeTransition(
+          opacity: _controller,
+          child: Transform.scale(
+            scale: 1.010 - (_controller.value * .010),
+            child: child,
+          ),
+        );
+      },
+      child: IndexedStack(
+        index: _index,
+        children: widget.children,
+      ),
     );
   }
 }
 
-class ListDrawer extends StatefulWidget {
-  const ListDrawer({Key? key}) : super(key: key);
+/// Currently not in use
+/// Wrapper around fadethrough animation
+class OpenContainerWrapper extends StatelessWidget {
+  const OpenContainerWrapper({
+    required this.closedBuilder,
+    required this.transitionType,
+    required this.onClosed,
+    required this.child,
+  });
 
-  @override
-  _ListDrawerState createState() => _ListDrawerState();
-}
-
-class _ListDrawerState extends State<ListDrawer> {
-  static const numItems = 9;
-
-  int selectedItem = 0;
+  final CloseContainerBuilder closedBuilder;
+  final ContainerTransitionType transitionType;
+  final ClosedCallback<bool?>? onClosed;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return Drawer(
-      child: SafeArea(
-        child: ListView(
-          children: [
-            ListTile(
-              title: SelectableText(
-                'starterAppTitle',
-                style: textTheme.headline6,
-              ),
-              subtitle: SelectableText(
-                'starterAppGenericSubtitle',
-                style: textTheme.bodyText2,
-              ),
-            ),
-            const Divider(),
-            ...Iterable<int>.generate(numItems).toList().map((i) {
-              return ListTile(
-                enabled: true,
-                selected: i == selectedItem,
-                leading: const Icon(Icons.favorite),
-                title: Text(
-                  'starterAppGenericSubtitle',
-                ),
-                onTap: () {
-                  setState(() {
-                    selectedItem = i;
-                  });
-                },
-              );
-            }),
-          ],
-        ),
-      ),
+    return OpenContainer<bool>(
+      transitionType: transitionType,
+      openBuilder: (BuildContext context, VoidCallback _) {
+        return child;
+      },
+      onClosed: onClosed,
+      tappable: false,
+      closedBuilder: closedBuilder,
     );
   }
 }
