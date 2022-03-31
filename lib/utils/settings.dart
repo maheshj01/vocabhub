@@ -10,7 +10,9 @@ class Settings {
   static const emailKey = 'emailKey';
   static const skipCountKey = 'skipCount';
   static const darkKey = 'isDark';
+
   static const maxSkipCount = 3;
+  /// screen size
   static Size size = Size.zero;
 
   Settings() {
@@ -40,7 +42,7 @@ class Settings {
     _sharedPreferences!.setBool('$signedInKey', value);
   }
 
-  FutureOr<bool> get isSignedIn async {
+  static FutureOr<bool> get isSignedIn async {
     if (_sharedPreferences == null) {
       _sharedPreferences = await SharedPreferences.getInstance();
     }
@@ -48,7 +50,7 @@ class Settings {
     return _isSignedIn;
   }
 
-  FutureOr<String> get email async {
+  static FutureOr<String> get email async {
     if (_sharedPreferences == null) {
       _sharedPreferences = await SharedPreferences.getInstance();
     }

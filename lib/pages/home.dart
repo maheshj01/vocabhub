@@ -75,8 +75,8 @@ class _MyHomePageState extends State<MyHomePage>
 
   Future<void> initWebState() async {
     if (kIsWeb) {
-      final bool signedIn = await Settings().isSignedIn;
-      final String _email = await Settings().email;
+      final bool signedIn = await Settings.isSignedIn;
+      final String _email = await Settings.email;
       userProvider.isLoggedIn = signedIn;
       userProvider.email = _email;
       print('signedIn =${userProvider.isLoggedIn}');

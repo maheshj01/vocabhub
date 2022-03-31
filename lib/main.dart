@@ -48,13 +48,14 @@ class _VocabAppState extends State<VocabApp> {
   Future<bool> initatializeApp() async {
     firebaseAnalytics = Analytics();
     firebaseAnalytics.appOpen();
-    final isDark = await Settings().isDark;
-    isSignedIn = await Settings().isSignedIn;
+    isDark = await Settings().isDark;
+    isSignedIn = await Settings.isSignedIn;
     count = await Settings().skipCount;
     return isDark;
   }
 
   late Analytics firebaseAnalytics;
+  late bool isDark;
 
   @override
   void dispose() {

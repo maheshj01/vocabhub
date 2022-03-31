@@ -293,7 +293,9 @@ class _AddWordFormState extends State<AddWordForm> {
         ),
         onDeleted: () => onDeleted(),
         isEnabled: true,
-        backgroundColor: isDark ?VocabThemeData.secondaryDark : VocabThemeData.secondaryColor,
+        backgroundColor: isDark
+            ? VocabThemeData.secondaryDark
+            : VocabThemeData.secondaryColor,
         useDeleteButtonTooltip: true,
         deleteButtonTooltipMessage: 'remove',
       );
@@ -540,7 +542,9 @@ class _AddWordFormState extends State<AddWordForm> {
                     width: 100,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          primary: isDark ? Colors.teal : VocabThemeData.primaryColor,
+                          primary: isDark
+                              ? Colors.teal
+                              : VocabThemeData.primaryColor,
                         ),
                         onPressed: isDisabled
                             ? null

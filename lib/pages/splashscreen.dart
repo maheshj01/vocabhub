@@ -40,8 +40,8 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> handleNavigation() async {
     final user = Provider.of<UserModel>(context, listen: false);
-    final bool signedIn = await Settings().isSignedIn;
-    final String _email = await Settings().email;
+    final bool signedIn = await Settings.isSignedIn;
+    final String _email = await Settings.email;
     final int count = await Settings().skipCount;
     user.email = _email;
     if (signedIn && _email.isNotEmpty) {

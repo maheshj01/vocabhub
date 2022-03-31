@@ -29,8 +29,8 @@ class _AdaptiveNavBarState extends State<AdaptiveNavBar> {
 
   List<MenuItem> _items = [
     MenuItem(Icons.dashboard, 'Dashboard'),
-    MenuItem(Icons.bookmark, 'Bookmarks'),
-    MenuItem(Icons.person, 'Profile'),
+    MenuItem(Icons.perm_contact_cal_rounded, 'Practice'),
+    MenuItem(Icons.explore, 'Explore'),
   ];
   int selectedItem = 0;
 //   final NavbarNotifier _navbarNotifier = NavbarNotifier();
@@ -49,7 +49,7 @@ class _AdaptiveNavBarState extends State<AdaptiveNavBar> {
           backgroundColor: VocabThemeData.navbarSurfaceGrey,
           labelType: NavigationRailLabelType.selected,
           trailing: IconButton(
-            icon: Icon(Icons.people),
+            icon: Icon(_items.last.iconData),
             onPressed: () {},
           ),
           extended: false,
