@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/analytics.dart';
-import 'package:vocabhub/themes/vocab_theme_data.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
@@ -75,7 +75,10 @@ class _WordTileState extends State<WordTile> {
     return widget.isMobile
         ? Theme(
             data: Theme.of(context).copyWith(
-                unselectedWidgetColor: isDark ? Colors.white : Colors.black, colorScheme: ColorScheme.fromSwatch().copyWith(secondary: isDark ? Colors.cyanAccent : VocabTheme.primaryColor)),
+                unselectedWidgetColor: isDark ? Colors.white : Colors.black,
+                colorScheme: ColorScheme.fromSwatch().copyWith(
+                    secondary:
+                        isDark ? Colors.cyanAccent : VocabTheme.primaryColor)),
             child: ExpansionTile(
               expandedAlignment: Alignment.centerLeft,
               expandedCrossAxisAlignment: CrossAxisAlignment.start,

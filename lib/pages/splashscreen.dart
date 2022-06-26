@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:vocabhub/models/user.dart';
-import 'package:vocabhub/themes/vocab_theme_data.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/settings.dart';
 
 class SplashScreen extends StatefulWidget {

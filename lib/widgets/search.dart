@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/pages/home.dart';
-import 'package:vocabhub/themes/vocab_theme_data.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
 
 class SearchBuilder extends StatefulWidget {
   final Function(String) onChanged;

@@ -7,8 +7,9 @@ import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/supastore.dart';
-import 'package:vocabhub/themes/vocab_theme_data.dart';
 import 'package:vocabhub/utils/extensions.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
+
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/widgets.dart';

@@ -3,7 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/navbar_notifier.dart' as menu;
-import 'package:vocabhub/themes/vocab_theme_data.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
+
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
 

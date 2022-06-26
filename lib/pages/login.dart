@@ -6,11 +6,13 @@ import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/auth.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/themes/vocab_theme_data.dart';
 import 'package:vocabhub/utils/navigator.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
+import 'package:vocabhub/widgets/button.dart';
 
 class AppSignIn extends StatefulWidget {
   const AppSignIn({Key? key}) : super(key: key);
@@ -179,67 +181,5 @@ class _AppSignInState extends State<AppSignIn> {
                   height: 100,
                 )
               ]));
-  }
-}
-
-class VocabButton extends StatefulWidget {
-  VocabButton(
-      {Key? key,
-      this.backgroundColor = Colors.white,
-      this.foregroundColor = Colors.black,
-      required this.onTap,
-      required this.label,
-      this.height = 55.0,
-      this.width,
-      this.leading})
-      : super(key: key);
-
-  final Function() onTap;
-
-  /// label on the button
-  final String label;
-
-  final Widget? leading;
-
-  final Color backgroundColor;
-
-  final Color foregroundColor;
-
-  final double height;
-
-  final double? width;
-
-  @override
-  _VocabButtonState createState() => _VocabButtonState();
-}
-
-class _VocabButtonState extends State<VocabButton> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: widget.height,
-      width: widget.width,
-      child: ElevatedButton(
-        style: ButtonStyle(
-            foregroundColor: MaterialStateColor.resolveWith(
-                (states) => widget.foregroundColor),
-            backgroundColor: MaterialStateColor.resolveWith(
-                (states) => widget.backgroundColor)),
-        onPressed: widget.onTap,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            widget.leading ?? SizedBox(),
-            SizedBox(width: widget.leading == null ? 0 : 20),
-            Text(
-              '${widget.label}',
-              style: Theme.of(context).textTheme.headline4!.copyWith(
-                  fontWeight: FontWeight.bold, color: widget.foregroundColor),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

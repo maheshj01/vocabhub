@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/services/analytics.dart';
-import 'package:vocabhub/themes/vocab_theme_data.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
+
 import 'package:vocabhub/utils/utility.dart';
 
 void removeFocus(BuildContext context) => FocusScope.of(context).unfocus();

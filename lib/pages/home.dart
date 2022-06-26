@@ -11,8 +11,9 @@ import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/auth.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/themes/vocab_theme_data.dart';
 import 'package:vocabhub/utils/circle_clipper.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
+
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/utility.dart';

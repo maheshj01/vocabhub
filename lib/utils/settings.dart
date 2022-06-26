@@ -3,17 +3,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocabhub/main.dart';
-import 'package:vocabhub/themes/vocab_theme_data.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
 
 class Settings extends ChangeNotifier {
   static final Settings _instance = Settings._internal();
 
   static Settings get instance => _instance;
 
-    factory Settings() {
+  factory Settings() {
     return _instance;
   }
-
 
   Settings._internal();
 
