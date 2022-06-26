@@ -34,8 +34,8 @@ class _SearchBuilderState extends State<SearchBuilder> {
           autofocus: false,
           decoration: InputDecoration(
               focusedBorder: UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: isDark ? Colors.white : VocabThemeData.primaryColor),
+                borderSide: BorderSide(
+                    color: isDark ? Colors.white : VocabTheme.primaryColor),
               ),
               suffixIcon: IconButton(
                   tooltip:
@@ -44,7 +44,7 @@ class _SearchBuilderState extends State<SearchBuilder> {
                       searchController.text.isNotEmpty
                           ? Icons.clear
                           : Icons.shuffle,
-                      color: isDark ? Colors.white : VocabThemeData.primaryColor),
+                      color: isDark ? Colors.white : VocabTheme.primaryColor),
                   onPressed: () {
                     if (searchController.text.isNotEmpty) {
                       searchController.clear();

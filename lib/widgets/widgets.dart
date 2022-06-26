@@ -26,7 +26,7 @@ class LoadingWidget extends StatelessWidget {
     return Center(
         child: CircularProgressIndicator(
             valueColor: new AlwaysStoppedAnimation<Color>(
-      VocabThemeData.primaryGreen,
+      VocabTheme.primaryGreen,
     )));
   }
 }

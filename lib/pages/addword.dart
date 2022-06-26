@@ -293,10 +293,8 @@ class _AddWordFormState extends State<AddWordForm> {
         ),
         onDeleted: () => onDeleted(),
         isEnabled: true,
-        backgroundColor: isDark
-            ? VocabThemeData.secondaryDark
-            : VocabThemeData.secondaryColor,
-        useDeleteButtonTooltip: true,
+        backgroundColor:
+            isDark ? VocabTheme.secondaryDark : VocabTheme.secondaryColor,
         deleteButtonTooltipMessage: 'remove',
       );
     }
@@ -542,9 +540,8 @@ class _AddWordFormState extends State<AddWordForm> {
                     width: 100,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          primary: isDark
-                              ? Colors.teal
-                              : VocabThemeData.primaryColor,
+                          primary:
+                              isDark ? Colors.teal : VocabTheme.primaryColor,
                         ),
                         onPressed: isDisabled
                             ? null
@@ -587,7 +584,7 @@ class _AddWordFormState extends State<AddWordForm> {
                                 .textTheme
                                 .headline4!
                                 .copyWith(
-                                    color: VocabThemeData.errorColor,
+                                    color: VocabTheme.errorColor,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600),
                           ))
@@ -686,7 +683,7 @@ class VocabAlert extends StatelessWidget {
           onPressed: onConfirm,
           child: Text(
             'Delete',
-            style: TextStyle(color: VocabThemeData.errorColor),
+            style: TextStyle(color: VocabTheme.errorColor),
           ),
         ),
         TextButton(

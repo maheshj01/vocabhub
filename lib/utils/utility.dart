@@ -38,7 +38,7 @@ Future<void> launchUrl(String url, {bool isNewTab = true}) async {
 }
 
 String getInitial(String text) {
-  if (text != null && text.isNotEmpty) {
+  if (text.isNotEmpty) {
     if (text.contains(' ')) {
       final list = text.split(' ').toList();
       return list[0].substring(0, 1) + list[1].substring(0, 1);

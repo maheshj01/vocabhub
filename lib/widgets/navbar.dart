@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/models/navbar_notifier.dart';
+import 'package:provider/provider.dart';
+import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/models/models.dart';
+import 'package:vocabhub/models/navbar_notifier.dart' as menu;
 import 'package:vocabhub/themes/vocab_theme_data.dart';
+import 'package:vocabhub/utils/utility.dart';
+import 'package:vocabhub/widgets/circle_avatar.dart';
 
 class AdaptiveNavBar extends StatefulWidget {
   final bool isDesktop;
@@ -27,12 +32,32 @@ class AdaptiveNavBar extends StatefulWidget {
 class _AdaptiveNavBarState extends State<AdaptiveNavBar> {
   static const numItems = 9;
 
-  List<MenuItem> _items = [
-    MenuItem(Icons.dashboard, 'Dashboard'),
-    MenuItem(Icons.perm_contact_cal_rounded, 'Practice'),
-    MenuItem(Icons.explore, 'Explore'),
+  List<menu.MenuItem> _items = [
+    menu.MenuItem(Icons.dashboard, 'Dashboard'),
+    menu.MenuItem(Icons.perm_contact_cal_rounded, 'Practice'),
+    menu.MenuItem(Icons.person, 'Profile'),
   ];
   int selectedItem = 0;
+
+  Widget _userAvatar() {
+    return Consumer<UserModel>(
+        builder: (BuildContext _, UserModel? user, Widget? child) {
+      if (user == null || user.email.isEmpty)
+        return CircularAvatar(
+          url: '$profileUrl',
+          radius: 25,
+        );
+      else {
+        return CircularAvatar(
+          name: getInitial('${user.name}'),
+          url: user.avatarUrl,
+          radius: 25,
+          onTap: null,
+        );
+      }
+    });
+  }
+
 //   final NavbarNotifier _navbarNotifier = NavbarNotifier();
   @override
   Widget build(BuildContext context) {
@@ -46,11 +71,11 @@ class _AdaptiveNavBarState extends State<AdaptiveNavBar> {
       );
     } else {
       return NavigationRail(
-          backgroundColor: VocabThemeData.navbarSurfaceGrey,
+          backgroundColor: VocabTheme.navbarSurfaceGrey,
           labelType: NavigationRailLabelType.selected,
-          trailing: IconButton(
-            icon: Icon(_items.last.iconData),
-            onPressed: () {},
+          trailing: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: _userAvatar(),
           ),
           extended: false,
           onDestinationSelected: (x) => widget.onChanged!(x),
@@ -71,7 +96,7 @@ class VocabNavbar extends StatefulWidget {
       required this.index,
       this.isHidden = false})
       : super(key: key);
-  final List<MenuItem> menuItems;
+  final List<menu.MenuItem> menuItems;
   final bool isHidden;
   final int index;
   final Function(int) onItemTapped;
@@ -128,13 +153,13 @@ class _VocabNavbarState extends State<VocabNavbar>
             child: BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
               currentIndex: widget.index,
-              selectedItemColor: VocabThemeData.primaryGreen,
+              selectedItemColor: VocabTheme.primaryGreen,
               onTap: (x) => widget.onItemTapped(x),
               showUnselectedLabels: true,
               unselectedItemColor: Colors.black,
-              backgroundColor: VocabThemeData.navbarSurfaceGrey,
+              backgroundColor: VocabTheme.navbarSurfaceGrey,
               items: widget.menuItems
-                  .map((MenuItem menuItem) => BottomNavigationBarItem(
+                  .map((menu.MenuItem menuItem) => BottomNavigationBarItem(
                         icon: Icon(menuItem.iconData),
                         label: menuItem.text,
                       ))

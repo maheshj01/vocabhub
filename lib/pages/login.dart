@@ -10,6 +10,7 @@ import 'package:vocabhub/themes/vocab_theme_data.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/utility.dart';
+import 'package:go_router/go_router.dart';
 
 class AppSignIn extends StatefulWidget {
   const AppSignIn({Key? key}) : super(key: key);
@@ -19,7 +20,6 @@ class AppSignIn extends StatefulWidget {
 }
 
 class _AppSignInState extends State<AppSignIn> {
-
   Authentication auth = Authentication();
 
   Future<void> _handleSignIn(BuildContext context) async {
@@ -110,13 +110,14 @@ class _AppSignInState extends State<AppSignIn> {
           alignment: Alignment.center,
           child: VocabButton(
             width: 300,
-            backgroundColor: VocabThemeData.primaryGreen,
+            backgroundColor: VocabTheme.primaryGreen,
             foregroundColor: Colors.white,
             label: 'Sign In as Guest',
             onTap: () {
               Navigate().pushReplace(context, BaseHome(),
                   slideTransitionType: SlideTransitionType.ttb);
-              Settings().setSkipCount = Settings.maxSkipCount;
+              context.go('/home');
+              Settings.setSkipCount = Settings.maxSkipCount;
             }, // _handleSignIn(context),
           ));
     }
@@ -124,8 +125,8 @@ class _AppSignInState extends State<AppSignIn> {
     Settings.size = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: darkNotifier.value
-            ? VocabThemeData.surfaceGrey
-            : VocabThemeData.surfaceGreen,
+            ? VocabTheme.surfaceGrey
+            : VocabTheme.surfaceGreen,
         body: Settings.size.width > MOBILE_WIDTH
             ? Row(
                 children: [
@@ -144,7 +145,7 @@ class _AppSignInState extends State<AppSignIn> {
                   ),
                   Expanded(
                     child: Container(
-                      color: VocabThemeData.surfaceGrey,
+                      color: VocabTheme.surfaceGrey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [

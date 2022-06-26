@@ -33,6 +33,7 @@ class ApiProvider {
         throw FetchDataException(
             'Error occured while Communication with Server with StatusCode : ${res.statusCode}');
     }
+    return null;
   }
 
   Future<http.Response> getRequest(String endPoint,

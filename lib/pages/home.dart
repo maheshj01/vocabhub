@@ -110,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage>
     }
   }
 
-  Future<void> _select(String text) async {
+  Future<void> _onMenuSelect(String text) async {
     if (text.toLowerCase() == 'add word') {
       await Navigate().push(context, AddWordForm(),
           slideTransitionType: SlideTransitionType.btt);
@@ -187,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage>
                       style: Theme.of(context).textTheme.headline5!.copyWith(
                           color: darkNotifier.value
                               ? Colors.white
-                              : VocabThemeData.primaryColor,
+                              : VocabTheme.primaryColor,
                           fontWeight: FontWeight.bold)),
                 ),
               ),
@@ -232,7 +232,7 @@ class _MyHomePageState extends State<MyHomePage>
               drawer: constraints.maxWidth <= MOBILE_WIDTH
                   ? DrawerBuilder(
                       onMenuTap: (x) {
-                        _select(x);
+                        _onMenuSelect(x);
                       },
                     )
                   : null,
@@ -242,15 +242,14 @@ class _MyHomePageState extends State<MyHomePage>
                     constraints.maxWidth <= MOBILE_WIDTH ? true : false,
                 title: Text('$APP_TITLE',
                     style: Theme.of(context).textTheme.headline4!.copyWith(
-                        color:
-                            isDark ? Colors.white : VocabThemeData.primaryColor,
+                        color: isDark ? Colors.white : VocabTheme.primaryColor,
                         fontWeight: FontWeight.bold)),
                 actions: [
                   if (constraints.maxWidth > MOBILE_WIDTH)
                     PopupMenuButton<String>(
                       offset: Offset(-20, 50),
                       onSelected: (String x) {
-                        _select(x);
+                        _onMenuSelect(x);
                       },
                       itemBuilder: (BuildContext context) {
                         return actions.map((String action) {
@@ -281,7 +280,7 @@ class _MyHomePageState extends State<MyHomePage>
                   Settings().dark = darkNotifier.value;
                 },
                 backgroundColor:
-                    isDark ? Colors.cyanAccent : VocabThemeData.primaryColor,
+                    isDark ? Colors.cyanAccent : VocabTheme.primaryColor,
                 child: Icon(!isDark
                     ? Icons.brightness_2_outlined
                     : Icons.wb_sunny_rounded),
@@ -394,9 +393,7 @@ class _WordsBuilderState extends State<WordsBuilder> {
           return GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: Container(
-              color: darkNotifier.value
-                  ? VocabThemeData.primaryDark
-                  : Colors.white,
+              color: darkNotifier.value ? VocabTheme.primaryDark : Colors.white,
               child: Column(
                 children: [
                   SearchBuilder(

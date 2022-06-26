@@ -39,7 +39,7 @@ class SynonymsList extends StatelessWidget {
                       decoration: BoxDecoration(
                           color: darkNotifier.value
                               ? Colors.white
-                              : VocabThemeData.secondaryColor,
+                              : VocabTheme.secondaryColor,
                           borderRadius: BorderRadius.circular(20)),
                       child: Text('${synonym.trim()}',
                           style: TextStyle(

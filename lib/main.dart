@@ -1,5 +1,4 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
 import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,9 +23,10 @@ import 'utils/settings.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  analytics = FirebaseAnalytics();
+  analytics = FirebaseAnalytics.instance;
   GoRouter.setUrlPathStrategy(UrlPathStrategy.path);
   // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  Settings.init();
   runApp(VocabApp());
 }
 
@@ -45,18 +45,14 @@ class VocabApp extends StatefulWidget {
 }
 
 class _VocabAppState extends State<VocabApp> {
-  Future<bool> initatializeApp() async {
+  Future<void> initatializeApp() async {
     firebaseAnalytics = Analytics();
-    firebaseAnalytics.appOpen();
-    isDark = await Settings().isDark;
     isSignedIn = await Settings.isSignedIn;
-    count = await Settings().skipCount;
-    return isDark;
+    count = await Settings.skipCount;
+    firebaseAnalytics.appOpen();
   }
 
   late Analytics firebaseAnalytics;
-  late bool isDark;
-
   @override
   void dispose() {
     darkNotifier.dispose();
@@ -71,17 +67,17 @@ class _VocabAppState extends State<VocabApp> {
   static late int count;
 
   final _router = GoRouter(
-      navigatorBuilder: (context, state, Widget child) {
-        return Navigator(
-            key: state.pageKey,
-            onGenerateRoute: (x) {
-              return MaterialPageRoute(
-                builder: (context) => child,
-                settings: x,
-              );
-            },
-            observers: [observer]);
-      },
+      // navigatorBuilder: (context, state, Widget child) {
+      //   return Navigator(
+      //       key: state.pageKey,
+      //       onGenerateRoute: (x) {
+      //         return MaterialPageRoute(
+      //           builder: (context) => child,
+      //           settings: x,
+      //         );
+      //       },
+      //       observers: [observer]);
+      // },
       routes: [
         GoRoute(
             path: '/',
@@ -93,7 +89,7 @@ class _VocabAppState extends State<VocabApp> {
                 } else {
                   logger.i('count=$count');
                   if (count > 0) {
-                    Settings().setSkipCount = count - 1;
+                    Settings.setSkipCount = count - 1;
                     return BaseHome(); //MyHomePage(title: APP_TITLE);
                   } else {
                     return AppSignIn();
@@ -129,59 +125,36 @@ class _VocabAppState extends State<VocabApp> {
       providers: [
         ChangeNotifierProvider<UserModel>(create: (context) => UserModel()),
       ],
-      child: FutureBuilder<bool>(
-          future: initatializeApp(),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-            return ValueListenableBuilder<bool>(
-                valueListenable: darkNotifier,
-                builder: (context, bool isDark, Widget? child) {
-                  if (snapshot.data == null) return LoadingWidget();
-                  return MaterialApp.router(
-                    title: '$APP_TITLE',
-                    debugShowCheckedModeBanner: !kDebugMode,
-                    darkTheme: ThemeData.dark().copyWith(
-                      appBarTheme:
-                          AppBarTheme(backgroundColor: Colors.grey[800]),
-                      primaryColor: VocabThemeData.primaryDark,
-                      textTheme: VocabThemeData.googleFontsTextTheme(context),
-                    ),
-                    color: VocabThemeData.primaryColor,
-                    theme: ThemeData(
-                      primaryColor: VocabThemeData.primaryColor,
-                      appBarTheme: AppBarTheme(backgroundColor: Colors.white),
-                      iconTheme: IconThemeData(
-                          color: darkNotifier.value
-                              ? Colors.white
-                              : VocabThemeData.primaryColor),
-                      textTheme: VocabThemeData.googleFontsTextTheme(context),
-                      cupertinoOverrideTheme: CupertinoThemeData(
-                        primaryColor: VocabThemeData.primaryColor,
-                      ),
-                      textSelectionTheme: TextSelectionThemeData(
-                          cursorColor: VocabThemeData.primaryColor),
-                    ),
-                    themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
-                    // builder:  (BuildContext _,Widget ? child) {
-                    //   if (kIsWeb && isDisplayDesktop(context)) {
-                    //     if (isSignedIn) {
-                    //       return BaseHome();
-                    //     } else {
-                    //       logger.i('count=$count');
-                    //       if (count > 0) {
-                    //         Settings().setSkipCount = count - 1;
-                    //         return BaseHome(); //MyHomePage(title: APP_TITLE);
-                    //       } else {
-                    //         return AppSignIn();
-                    //       }
-                    //     }
-                    //   } else {
-                    //     return SplashScreen();
-                    //   }
-                    // },
-                    routeInformationParser: _router.routeInformationParser,
-                    routerDelegate: _router.routerDelegate,
-                  );
-                });
+      child: AnimatedBuilder(
+          animation: Settings(),
+          builder: (BuildContext context, Widget? child) {
+            return MaterialApp.router(
+              title: '$APP_TITLE',
+              debugShowCheckedModeBanner: !kDebugMode,
+              darkTheme: ThemeData.dark().copyWith(
+                appBarTheme: AppBarTheme(backgroundColor: Colors.grey[800]),
+                primaryColor: VocabTheme.primaryDark,
+                textTheme: VocabTheme.googleFontsTextTheme(context),
+              ),
+              color: VocabTheme.primaryColor,
+              theme: ThemeData(
+                primaryColor: VocabTheme.primaryColor,
+                appBarTheme: AppBarTheme(backgroundColor: Colors.white),
+                iconTheme: IconThemeData(
+                    color: darkNotifier.value
+                        ? Colors.white
+                        : VocabTheme.primaryColor),
+                textTheme: VocabTheme.googleFontsTextTheme(context),
+                cupertinoOverrideTheme: CupertinoThemeData(
+                  primaryColor: VocabTheme.primaryColor,
+                ),
+                textSelectionTheme: TextSelectionThemeData(
+                    cursorColor: VocabTheme.primaryColor),
+              ),
+              themeMode: VocabTheme.isDark ? ThemeMode.dark : ThemeMode.light,
+              routeInformationParser: _router.routeInformationParser,
+              routerDelegate: _router.routerDelegate,
+            );
           }),
     );
   }

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/utils/settings.dart';
 
-class VocabThemeData {
+class VocabTheme {
+  static final VocabTheme _singleton = VocabTheme._internal();
+  VocabTheme._internal();
+
   static Color primaryGreen = Color(0xff4c9648);
   static Color primaryGrey = Colors.grey;
   static Color primaryBlue = Colors.blueAccent;
@@ -18,11 +22,57 @@ class VocabThemeData {
 
   static Color color1 = Color(0xff1D976C);
   static Color color2 = Color(0xff93F9B9);
- static LinearGradient primaryGradient = LinearGradient(
+  static LinearGradient primaryGradient = LinearGradient(
       colors: [color1.withOpacity(0.1), color2.withOpacity(0.2)]);
-static  LinearGradient secondaryGradient = LinearGradient(
+  static LinearGradient secondaryGradient = LinearGradient(
       colors: [primaryBlue.withOpacity(0.1), primaryGreen.withOpacity(0.2)]);
   static TextStyle listSubtitleStyle = TextStyle(fontSize: 12);
+
+  static const _lightFillColor = Colors.black;
+  static const _darkFillColor = Colors.white;
+
+  bool _isDark = false;
+
+  static bool get isDark => _singleton._isDark;
+
+  static set isDark(bool value) {
+    _singleton._isDark = value;
+  }
+
+  static ColorScheme get colorScheme =>
+      Settings.getTheme == ThemeMode.light ? lightColorScheme : darkColorScheme;
+
+  static ColorScheme lightColorScheme = ColorScheme(
+      brightness: Brightness.light,
+      // seedColor: const Color.fromARGB(255, 126, 120, 211),
+      primary: const Color.fromARGB(255, 87, 138, 206),
+      primaryContainer: const Color(0xFF117378),
+      secondary: const Color(0xFFEFF3F3),
+      secondaryContainer: const Color(0xFFFAFBFB),
+      background: const Color(0XFFFFFFFF),
+      surface: Colors.grey[100]!,
+      onBackground: Colors.white,
+      error: Colors.red,
+      onError: _lightFillColor,
+      onPrimary: _lightFillColor,
+      onSecondary: const Color(0xFF322942),
+      onSurface: _lightFillColor);
+
+  static ColorScheme darkColorScheme = ColorScheme(
+    primary: Color(0xFFFF8383),
+    primaryContainer: Color(0xFF1CDEC9),
+    secondary: Color(0xFF4D1F7C),
+    secondaryContainer: Color(0xFF451B6F),
+    background: Color(0xFF241E30),
+    surface: Color(0xFF1F1929),
+    onBackground: Color(0x0DFFFFFF), // White with 0.05 opacity
+    error: Colors.red,
+    onError: _darkFillColor,
+    onPrimary: _darkFillColor,
+    onSecondary: _darkFillColor,
+    onSurface: _darkFillColor,
+    brightness: Brightness.dark,
+  );
 
   static TextTheme googleFontsTextTheme(BuildContext context) {
     bool isDark = darkNotifier.value;

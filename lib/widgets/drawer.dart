@@ -28,7 +28,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
   Widget subTitle(String text) {
     return Text(
       '$text',
-      style: VocabThemeData.listSubtitleStyle,
+      style: VocabTheme.listSubtitleStyle,
     );
   }
 
@@ -46,7 +46,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
   }
 
   Widget _avatar(UserModel user) {
-    if (user == null || user.email.isEmpty)
+    if (user.email.isEmpty)
       return CircularAvatar(
         url: '$profileUrl',
         radius: 35,
@@ -90,7 +90,8 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
 
     return Drawer(
       child: Container(
-        decoration: isDark ? null : BoxDecoration(gradient:VocabThemeData.primaryGradient),
+        decoration:
+            isDark ? null : BoxDecoration(gradient: VocabTheme.primaryGradient),
         child: Column(
           children: [
             Consumer<UserModel>(
@@ -98,8 +99,9 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
               return Container(
                 padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
                 height: 150,
-                decoration:
-                    isDark ? null : BoxDecoration(gradient: VocabThemeData.primaryGradient),
+                decoration: isDark
+                    ? null
+                    : BoxDecoration(gradient: VocabTheme.primaryGradient),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [

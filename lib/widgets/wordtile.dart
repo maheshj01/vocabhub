@@ -60,7 +60,7 @@ class _WordTileState extends State<WordTile> {
       if (isDark) {
         return Colors.white54;
       } else {
-        return VocabThemeData.secondaryColor;
+        return VocabTheme.secondaryColor;
       }
     }
 
@@ -75,9 +75,7 @@ class _WordTileState extends State<WordTile> {
     return widget.isMobile
         ? Theme(
             data: Theme.of(context).copyWith(
-                accentColor:
-                    isDark ? Colors.cyanAccent : VocabThemeData.primaryColor,
-                unselectedWidgetColor: isDark ? Colors.white : Colors.black),
+                unselectedWidgetColor: isDark ? Colors.white : Colors.black, colorScheme: ColorScheme.fromSwatch().copyWith(secondary: isDark ? Colors.cyanAccent : VocabTheme.primaryColor)),
             child: ExpansionTile(
               expandedAlignment: Alignment.centerLeft,
               expandedCrossAxisAlignment: CrossAxisAlignment.start,
@@ -88,9 +86,8 @@ class _WordTileState extends State<WordTile> {
               onExpansionChanged: (expanded) {
                 if (expanded) {
                   setState(() {
-                    expandedColor = isDark
-                        ? Colors.cyanAccent
-                        : VocabThemeData.primaryColor;
+                    expandedColor =
+                        isDark ? Colors.cyanAccent : VocabTheme.primaryColor;
                   });
                   firebaseAnalytics.logWordSelection(widget.word);
                 } else {

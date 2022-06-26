@@ -3,8 +3,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/themes/vocab_theme_data.dart';
 
-class Settings {
+class Settings extends ChangeNotifier {
+  static final Settings _instance = Settings._internal();
+
+  static Settings get instance => _instance;
+
+    factory Settings() {
+    return _instance;
+  }
+
+
+  Settings._internal();
+
   static SharedPreferences? _sharedPreferences;
   static const signedInKey = 'isSignedIn';
   static const emailKey = 'emailKey';
@@ -12,33 +24,51 @@ class Settings {
   static const darkKey = 'isDark';
 
   static const maxSkipCount = 3;
+
   /// screen size
   static Size size = Size.zero;
 
-  Settings() {
-    init();
+  static Future<void> init() async {
+    _sharedPreferences = await SharedPreferences.getInstance();
+    loadTheme();
   }
 
-  Future<void> init() async {
+  static ThemeMode _theme = ThemeMode.light;
+
+  static ThemeMode get getTheme => _theme;
+
+  static void setTheme(ThemeMode theme) {
+    _theme = theme;
+    bool isDark = theme == ThemeMode.dark;
+    _sharedPreferences!.setBool(darkKey, isDark);
+    VocabTheme.isDark = isDark;
+    _instance.notify();
+  }
+
+  static Future<void> loadTheme() async {
+    final bool isDark = _sharedPreferences!.getBool(darkKey) ?? false;
+    _theme = isDark == true ? ThemeMode.dark : ThemeMode.light;
+    VocabTheme.isDark = isDark;
+    setTheme(_theme);
+  }
+
+  static Future<void> initSharedPreference() async {
     _sharedPreferences = await SharedPreferences.getInstance();
   }
 
   set dark(bool value) {
-    _sharedPreferences!.setBool('isDark', value);
+    _sharedPreferences!.setBool(darkKey, value);
   }
 
-  Future<bool> get isDark async {
-    if (_sharedPreferences == null) {
-      _sharedPreferences = await SharedPreferences.getInstance();
-    }
-    bool _dark = _sharedPreferences!.getBool('isDark') ?? false;
-    if (_dark) {
-      darkNotifier.value = true;
-    }
-    return _dark;
-  }
+  // static Future<bool> get isDark async {
+  //   bool _dark = _sharedPreferences!.getBool(darkKey) ?? false;
+  //   if (_dark) {
+  //     darkNotifier.value = true;
+  //   }
+  //   return _dark;
+  // }
 
-  set setSignedIn(bool value) {
+  static set setSignedIn(bool value) {
     _sharedPreferences!.setBool('$signedInKey', value);
   }
 
@@ -66,16 +96,24 @@ class Settings {
     await _sharedPreferences!.setString('$emailKey', email);
   }
 
-  set setSkipCount(int value) {
+  static set setSkipCount(int value) {
     _sharedPreferences!.setInt('$skipCountKey', value);
   }
 
-  FutureOr<int> get skipCount async {
+  static FutureOr<int> get skipCount async {
     if (_sharedPreferences == null) {
       _sharedPreferences = await SharedPreferences.getInstance();
     }
 
     final int count = _sharedPreferences!.getInt('$skipCountKey') ?? 0;
     return count;
+  }
+
+  static Future<void> clear() async {
+    await _sharedPreferences!.clear();
+  }
+
+  void notify() {
+    notifyListeners();
   }
 }

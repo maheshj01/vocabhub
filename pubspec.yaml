@@ -24,7 +24,7 @@ dependencies:
   adaptive_breakpoints: ^0.1.1
   animations: ^2.0.2
   cupertino_icons: ^1.0.4
-  firebase_analytics: ^8.1.2
+  firebase_analytics: ^9.1.10
   firebase_core: ^1.13.1
   flutter:
     sdk: flutter

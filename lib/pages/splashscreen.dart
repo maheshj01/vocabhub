@@ -42,7 +42,7 @@ class _SplashScreenState extends State<SplashScreen>
     final user = Provider.of<UserModel>(context, listen: false);
     final bool signedIn = await Settings.isSignedIn;
     final String _email = await Settings.email;
-    final int count = await Settings().skipCount;
+    final int count = await Settings.skipCount;
     user.email = _email;
     if (signedIn && _email.isNotEmpty) {
       user.isLoggedIn = true;
@@ -50,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen>
     } else {
       user.isLoggedIn = false;
       if (count > 0) {
-        Settings().setSkipCount = count - 1;
+        Settings.setSkipCount = count - 1;
         context.go('/home');
       } else {
         context.go('/signIn');
@@ -75,8 +75,8 @@ class _SplashScreenState extends State<SplashScreen>
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                VocabThemeData.primaryColor.withOpacity(0.5),
-                VocabThemeData.secondaryColor,
+                VocabTheme.primaryColor.withOpacity(0.5),
+                VocabTheme.secondaryColor,
               ]),
         ),
         alignment: Alignment.center,
