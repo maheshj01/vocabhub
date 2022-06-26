@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
 class ExampleBuilder extends StatefulWidget {
@@ -16,7 +17,7 @@ class ExampleBuilder extends StatefulWidget {
 class _ExampleBuilderState extends State<ExampleBuilder> {
   @override
   Widget build(BuildContext context) {
-    bool isMobile = MediaQuery.of(context).size.width <= MOBILE_WIDTH;
+    bool isMobile =SizeUtils.isMobile();
     bool isDark = darkNotifier.value;
     return widget.examples!.isEmpty
         ? Container()

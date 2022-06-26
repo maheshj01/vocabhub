@@ -1,9 +1,13 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/models/user.dart';
+import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
+import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
+import 'package:vocabhub/utils/size_utils.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -42,18 +46,18 @@ class _SplashScreenState extends State<SplashScreen>
     final user = Provider.of<UserModel>(context, listen: false);
     final bool signedIn = await Settings.isSignedIn;
     final String _email = await Settings.email;
-    final int count = await Settings.skipCount;
+    final int count = await Settings.skipCount + 1;
     user.email = _email;
     if (signedIn && _email.isNotEmpty) {
       user.isLoggedIn = true;
-      context.go('/home');
+      Navigate().push(context, AdaptiveNavbar());
     } else {
       user.isLoggedIn = false;
-      if (count > 0) {
-        Settings.setSkipCount = count - 1;
-        context.go('/home');
+      if (count % 3 != 0) {
+        Settings.setSkipCount = count;
+        Navigate().push(context, AdaptiveNavbar());
       } else {
-        context.go('/signIn');
+        Navigate().push(context, AppSignIn());
       }
     }
   }
@@ -66,7 +70,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    Settings.size = MediaQuery.of(context).size;
+    SizeUtils.size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Container(
@@ -80,9 +84,8 @@ class _SplashScreenState extends State<SplashScreen>
               ]),
         ),
         alignment: Alignment.center,
-        child: ScaleTransition(
-            // position: _offsetAnimation,
-            scale: _animation,
+        child: FadeScaleTransition(
+            animation: _animation,
             child: Stack(
               children: [
                 Positioned(

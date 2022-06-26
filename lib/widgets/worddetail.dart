@@ -135,7 +135,7 @@ class _WordDetailState extends State<WordDetail>
                                   isEdit: true,
                                   word: widget.word,
                                 ),
-                                slideTransitionType: SlideTransitionType.btt);
+                                slideTransitionType: TransitionType.btt);
                           }))
                   : SizedBox(),
               Align(

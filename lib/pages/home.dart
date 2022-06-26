@@ -13,9 +13,9 @@ import 'package:vocabhub/services/auth.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/circle_clipper.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
-
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
+import 'package:vocabhub/utils/size_utils.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
 import 'package:vocabhub/widgets/drawer.dart';
@@ -54,11 +54,11 @@ class _MyHomePageState extends State<MyHomePage>
   void initState() {
     super.initState();
     firebaseAnalytics = Analytics();
-    logger.d(Settings.size);
+    logger.d(SizeUtils.size);
     _animationController = AnimationController(
         vsync: this,
         duration: Duration(
-            milliseconds: (Settings.size.width > TABLET_WIDTH) ? 1000 : 800));
+            milliseconds: (!SizeUtils.isMobile()) ? 1000 : 800));
     userProvider = Provider.of<UserModel>(context, listen: false);
     _animationController.forward();
     initWebState();
@@ -114,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage>
   Future<void> _onMenuSelect(String text) async {
     if (text.toLowerCase() == 'add word') {
       await Navigate().push(context, AddWordForm(),
-          slideTransitionType: SlideTransitionType.btt);
+          slideTransitionType: TransitionType.btt);
     } else if (text.toLowerCase() == 'sign out') {
       final isSignedOut = await Authentication().googleSignOut(context);
       showCircularIndicator(context);
@@ -125,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage>
         stopCircularIndicator(context);
         Navigate()
             .pushAndPopAll(context, AppSignIn(),
-                slideTransitionType: SlideTransitionType.btt)
+                slideTransitionType: TransitionType.btt)
             .then((value) {});
       } else {
         stopCircularIndicator(context);
@@ -135,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage>
       downloadFile();
     } else if (text.toLowerCase() == 'sign in') {
       Navigate().pushAndPopAll(context, AppSignIn(),
-          slideTransitionType: SlideTransitionType.btt);
+          slideTransitionType: TransitionType.btt);
     } else {
       String url = '';
       switch (text.toLowerCase()) {
@@ -168,8 +168,8 @@ class _MyHomePageState extends State<MyHomePage>
 
   Widget actionWidget(String text, String url,
       {String toolTip = '', Function? onTap}) {
-    return Settings.size.width <= MOBILE_WIDTH
-        ? Container()
+    return SizeUtils.isMobile()
+        ? SizedBox()
         : InkWell(
             onTap: onTap != null
                 ? () => onTap()
@@ -178,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage>
                   },
             child: Padding(
               padding: EdgeInsets.symmetric(
-                  horizontal: Settings.size.width < TABLET_WIDTH ? 18 : 24,
+                  horizontal: SizeUtils.isTablet() ? 18 : 24,
                   vertical: 4),
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
@@ -218,7 +218,7 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (_, constraints) {
-      Settings.size = Size(constraints.maxWidth, constraints.maxHeight);
+      final size = MediaQuery.of(context).size;
       return AnimatedBuilder(
         animation: _animationController,
         builder: (BuildContext context, Widget? child) {
@@ -230,7 +230,7 @@ class _MyHomePageState extends State<MyHomePage>
                     _animationController.value,
                 Offset(x + 20, y + 20)),
             child: Scaffold(
-              drawer: constraints.maxWidth <= MOBILE_WIDTH
+              drawer: SizeUtils.isMobile()
                   ? DrawerBuilder(
                       onMenuTap: (x) {
                         _onMenuSelect(x);
@@ -240,13 +240,13 @@ class _MyHomePageState extends State<MyHomePage>
               appBar: AppBar(
                 iconTheme: Theme.of(context).iconTheme,
                 centerTitle:
-                    constraints.maxWidth <= MOBILE_WIDTH ? true : false,
+                    SizeUtils.isMobile() ? true : false,
                 title: Text('$APP_TITLE',
                     style: Theme.of(context).textTheme.headline4!.copyWith(
                         color: isDark ? Colors.white : VocabTheme.primaryColor,
                         fontWeight: FontWeight.bold)),
                 actions: [
-                  if (constraints.maxWidth > MOBILE_WIDTH)
+                  if (!SizeUtils.isMobile())
                     PopupMenuButton<String>(
                       offset: Offset(-20, 50),
                       onSelected: (String x) {
@@ -288,9 +288,9 @@ class _MyHomePageState extends State<MyHomePage>
               ),
               body: Row(
                 children: [
-                  constraints.maxWidth > MOBILE_WIDTH
+                  !SizeUtils.isMobile()
                       ? Expanded(
-                          flex: constraints.maxWidth < TABLET_WIDTH ? 4 : 3,
+                          flex: SizeUtils.isMobile() ? 4 : 3,
                           child: Container(
                             decoration: BoxDecoration(
                                 color: isDark
@@ -315,7 +315,7 @@ class _MyHomePageState extends State<MyHomePage>
                       : Container(),
                   Expanded(
                       flex: 8,
-                      child: constraints.maxWidth > MOBILE_WIDTH
+                      child: !SizeUtils.isMobile()
                           ? WordDetail(
                               word: selected,
                             )
@@ -428,7 +428,7 @@ class _WordsBuilderState extends State<WordsBuilder> {
                       onTap: () => FocusScope.of(context).unfocus(),
                       child: SmartRefresher(
                         enablePullDown:
-                            size.width > MOBILE_WIDTH ? false : true,
+                           !SizeUtils.isMobile()? false : true,
                         enablePullUp: false,
                         controller: _refreshController,
                         onRefresh: () => refresh(),
@@ -437,7 +437,7 @@ class _WordsBuilderState extends State<WordsBuilder> {
                             itemBuilder: (_, x) {
                               return WordTile(
                                   word: value[x],
-                                  isMobile: size.width <= MOBILE_WIDTH,
+                                  isMobile: SizeUtils.isMobile(),
                                   isSelected: selectedWord.toLowerCase() ==
                                       value[x].word.toLowerCase(),
                                   onSelect: (word) {

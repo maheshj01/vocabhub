@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vocabhub/main.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 
 class Settings extends ChangeNotifier {
@@ -23,9 +22,6 @@ class Settings extends ChangeNotifier {
   static const darkKey = 'isDark';
 
   static const maxSkipCount = 3;
-
-  /// screen size
-  static Size size = Size.zero;
 
   static Future<void> init() async {
     _sharedPreferences = await SharedPreferences.getInstance();

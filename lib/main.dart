@@ -9,12 +9,10 @@ import 'package:provider/provider.dart';
 import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/home.dart';
-import 'package:vocabhub/pages/login.dart';
 import 'package:logger/logger.dart' as log;
 import 'package:vocabhub/pages/splashscreen.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
-import 'package:vocabhub/utils/utility.dart';
 import 'constants/constants.dart';
 import 'models/user.dart';
 import 'utils/settings.dart';
@@ -65,58 +63,11 @@ class _VocabAppState extends State<VocabApp> {
   static late bool isSignedIn;
   static late int count;
 
-  final _router = GoRouter(
-      // navigatorBuilder: (context, state, Widget child) {
-      //   return Navigator(
-      //       key: state.pageKey,
-      //       onGenerateRoute: (x) {
-      //         return MaterialPageRoute(
-      //           builder: (context) => child,
-      //           settings: x,
-      //         );
-      //       },
-      //       observers: [observer]);
-      // },
-      routes: [
-        GoRoute(
-            path: '/',
-            builder: (context, state) {
-              bool isDesktop = isDisplayDesktop(context);
-              if (kIsWeb && isDesktop) {
-                if (isSignedIn) {
-                  return BaseHome();
-                } else {
-                  logger.i('count=$count');
-                  if (count > 0) {
-                    Settings.setSkipCount = count - 1;
-                    return BaseHome(); //MyHomePage(title: APP_TITLE);
-                  } else {
-                    return AppSignIn();
-                  }
-                }
-              } else {
-                return SplashScreen();
-              }
-            }),
-        GoRoute(
-          path: '/home',
-          builder: (context, state) => BaseHome(),
-        ),
-        GoRoute(
-          path: '/signIn',
-          builder: (context, state) => AppSignIn(),
-        ),
-      ],
-      errorBuilder: (context, state) {
-        return Material(
-          child: Center(
-            child: Text(
-              'Error: ${state.error}',
-              style: TextStyle(color: Colors.red),
-            ),
-          ),
-        );
-      });
+  @override
+  void initState() {
+    super.initState();
+    initatializeApp();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +78,7 @@ class _VocabAppState extends State<VocabApp> {
       child: AnimatedBuilder(
           animation: Settings(),
           builder: (BuildContext context, Widget? child) {
-            return MaterialApp.router(
+            return MaterialApp(
               title: '$APP_TITLE',
               debugShowCheckedModeBanner: !kDebugMode,
               darkTheme: ThemeData.dark().copyWith(
@@ -151,8 +102,7 @@ class _VocabAppState extends State<VocabApp> {
                     cursorColor: VocabTheme.primaryColor),
               ),
               themeMode: VocabTheme.isDark ? ThemeMode.dark : ThemeMode.light,
-              routeInformationParser: _router.routeInformationParser,
-              routerDelegate: _router.routerDelegate,
+              home: SplashScreen(),
             );
           }),
     );

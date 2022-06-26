@@ -12,6 +12,7 @@ import 'package:vocabhub/themes/vocab_theme.dart';
 
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
+import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
 class AddWordForm extends StatefulWidget {
@@ -411,7 +412,7 @@ class _AddWordFormState extends State<AddWordForm> {
               ...List.generate(_examples.length, (index) {
                 return Container(
                   margin: EdgeInsets.symmetric(
-                      horizontal: size.width < MOBILE_WIDTH ? 16 : 24.0),
+                      horizontal: SizeUtils.isMobile() ? 16 : 24.0),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -471,7 +472,7 @@ class _AddWordFormState extends State<AddWordForm> {
               ...List.generate(_mnemonics.length, (index) {
                 return Container(
                   margin: EdgeInsets.symmetric(
-                      horizontal: size.width < MOBILE_WIDTH ? 16 : 24.0),
+                      horizontal: SizeUtils.isMobile() ? 16 : 24.0),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,

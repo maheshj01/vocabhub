@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/utils/utils.dart';
 
 class MnemonnicBuilder extends StatefulWidget {
   final List<String>? mnemonics;
@@ -24,7 +24,7 @@ class _MnemonnicBuilderState extends State<MnemonnicBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    bool isMobile = MediaQuery.of(context).size.width <= MOBILE_WIDTH;
+    bool isMobile = SizeUtils.isMobile();
     bool isDark = darkNotifier.value;
     return widget.mnemonics!.isEmpty
         ? Container()

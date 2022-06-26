@@ -126,7 +126,7 @@ class _WordTileState extends State<WordTile> {
                                           word: widget.word,
                                         ),
                                         slideTransitionType:
-                                            SlideTransitionType.btt);
+                                            TransitionType.btt);
                                   }))
                           : SizedBox(),
                     ],

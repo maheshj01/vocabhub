@@ -148,7 +148,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
               onTap: () {
                 Navigate().popView(context);
                 Navigate().push(context, AddWordForm(),
-                    slideTransitionType: SlideTransitionType.btt);
+                    slideTransitionType: TransitionType.btt);
               },
               trailing: trailingIcon(
                 Icons.add,

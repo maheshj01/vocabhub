@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vocabhub/base_home.dart';
-import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/auth.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
-import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/utility.dart';
-import 'package:go_router/go_router.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
+import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
 
 class AppSignIn extends StatefulWidget {
@@ -36,8 +33,8 @@ class _AppSignInState extends State<AppSignIn> {
           if (isRegistered) {
             userProvider.user = user!;
             await Settings.setIsSignedIn(true, email: user!.email);
-            Navigate().pushAndPopAll(context, BaseHome(),
-                slideTransitionType: SlideTransitionType.ttb);
+            Navigate().pushAndPopAll(context, AdaptiveNavbar(),
+                slideTransitionType: TransitionType.ttb);
           } else {
             logger.d('failed to sign in User');
             await Settings.setIsSignedIn(false, email: existingUser!.email);
@@ -48,8 +45,8 @@ class _AppSignInState extends State<AppSignIn> {
           logger.d('found existing user ${user!.email}');
           userProvider.user = user!;
           await Settings.setIsSignedIn(true, email: existingUser.email);
-          Navigate().pushAndPopAll(context, BaseHome(),
-              slideTransitionType: SlideTransitionType.ttb);
+          Navigate().pushAndPopAll(context, AdaptiveNavbar(),
+              slideTransitionType: TransitionType.ttb);
           firebaseAnalytics.logSignIn(user!);
         }
       } else {
@@ -81,7 +78,6 @@ class _AppSignInState extends State<AppSignIn> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     firebaseAnalytics = Analytics();
   }
@@ -116,24 +112,22 @@ class _AppSignInState extends State<AppSignIn> {
             foregroundColor: Colors.white,
             label: 'Sign In as Guest',
             onTap: () {
-              Navigate().pushReplace(context, BaseHome(),
-                  slideTransitionType: SlideTransitionType.ttb);
-              context.go('/home');
+              Navigate().pushReplace(context, AdaptiveNavbar(),
+                  slideTransitionType: TransitionType.scale);
               Settings.setSkipCount = Settings.maxSkipCount;
             }, // _handleSignIn(context),
           ));
     }
 
-    Settings.size = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: darkNotifier.value
             ? VocabTheme.surfaceGrey
             : VocabTheme.surfaceGreen,
-        body: Settings.size.width > MOBILE_WIDTH
+        body: !SizeUtils.isMobile()
             ? Row(
                 children: [
                   AnimatedContainer(
-                    width: Settings.size.width / 2,
+                    width: SizeUtils.size.width / 2,
                     duration: Duration(seconds: 1),
                     padding: EdgeInsets.symmetric(horizontal: 32),
                     child: Column(

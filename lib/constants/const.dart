@@ -14,9 +14,6 @@ const String signInScopeUrl =
 //     'https://docs.google.com/spreadsheets/d/1G1RtQfsEDqHhHP4cgOpO9x_ZtQ1dYa6QrGCq3KFlu50';
 const PRIVACY_POLICY = 'https://maheshmnj.github.io/privacy';
 const String profileUrl = 'assets/profile.png';
-const MOBILE_WIDTH = 600.0;
-const TABLET_WIDTH = 800.0;
-const DESKTOP_WIDTH = 1024.0;
 const Duration wordCountAnimationDuration = Duration(seconds: 3);
 
 const List<String> emails = ['maheshmn121@gmail.com'];

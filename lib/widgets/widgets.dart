@@ -3,6 +3,7 @@ import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
+import 'package:vocabhub/utils/size_utils.dart';
 
 import 'package:vocabhub/utils/utility.dart';
 
@@ -73,7 +74,7 @@ Widget storeRedirect(BuildContext context,
       final firebaseAnalytics = Analytics();
       final width = MediaQuery.of(context).size.width;
       firebaseAnalytics
-          .logRedirectToStore(width > MOBILE_WIDTH ? 'desktop' : 'mobile');
+          .logRedirectToStore(width > SizeUtils.kTabletBreakPoint ? 'desktop' : 'mobile');
       launchUrl(redirectUrl);
     },
     child: MouseRegion(

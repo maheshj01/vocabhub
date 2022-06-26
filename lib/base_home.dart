@@ -1,160 +1,103 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:vocabhub/models/navbar_notifier.dart';
-import 'package:vocabhub/navbar/dashboard.dart';
-import 'package:vocabhub/utils/settings.dart';
-import 'package:vocabhub/utils/utility.dart';
-import 'package:vocabhub/widgets/animated_indexed_stack.dart';
-import 'package:vocabhub/widgets/navbar.dart';
-import 'package:vocabhub/widgets/widgets.dart';
+import 'package:navbar_router/navbar_router.dart';
+import 'package:vocabhub/navbar/navbar.dart';
+import 'package:vocabhub/utils/utils.dart';
 
 const appBarDesktopHeight = 128.0;
 
-class BaseHome extends StatefulWidget {
-  const BaseHome({Key? key}) : super(key: key);
+class DesktopHome extends StatefulWidget {
+  const DesktopHome({Key? key}) : super(key: key);
 
   @override
-  State<BaseHome> createState() => _BaseHomeState();
+  State<DesktopHome> createState() => _DesktopHomeState();
 }
 
-class _BaseHomeState extends State<BaseHome> {
-  final _navBarNotifier = NavbarNotifier();
-
-  void _addScrollListener() {
-    _scrollController.addListener(() {
-      if (_scrollController.position.userScrollDirection ==
-          ScrollDirection.forward) {
-        if (_navBarNotifier.hideBottomNavBar) {
-          _navBarNotifier.hideBottomNavBar = false;
-        }
-      } else {
-        if (!_navBarNotifier.hideBottomNavBar) {
-          _navBarNotifier.hideBottomNavBar = true;
-        }
-      }
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = ScrollController();
-    _addScrollListener();
-    WidgetsBinding.instance.addPostFrameCallback((x) {
-      init();
-    });
-  }
-
-  Future<void> init() async {
-    showCircularIndicator(context);
-    final list = await Future.wait([
-      Future.delayed(Duration(seconds: 2), () {
-        return Random().nextBool();
-      })
-    ]);
-    setState(() {
-      Settings.setIsSignedIn(list[0]);
-    });
-    stopCircularIndicator(context);
-  }
-
-  late ScrollController _scrollController;
-
+class _DesktopHomeState extends State<DesktopHome> {
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (_, constraints) {
-      final textTheme = Theme.of(context).textTheme;
-      final colorScheme = Theme.of(context).colorScheme;
-      final isDesktop = isDisplayDesktop(context);
-      Settings.size = Size(constraints.maxWidth, constraints.maxHeight);
-      
-      return AnimatedBuilder(
-          animation: _navBarNotifier,
-          builder: (_, x) {
-            final body = SafeArea(
-              child: AnimatedIndexedStack(
-                index: _navBarNotifier.index,
-                children: [
-                  Dashboard(),
-                  ListView.builder(
-                      padding: EdgeInsets.zero,
-                      itemCount: 20,
-                      controller: _scrollController,
-                      itemBuilder: (BuildContext context, int x) {
-                        return ListTile(
-                          title: Text('item $x'),
-                        );
-                      }),
-                  Center(
-                    child: Text(
-                      'User Logged in ${Settings.isSignedIn}',
-                      style: textTheme.bodyText1,
-                    ),
-                  ),
-                ],
+    return Scaffold(
+      body: Row(
+        children: [
+          Expanded(
+            child: Container(
+              color: Colors.red,
+              child: Center(
+                child: Text('Desktop Home'),
               ),
-            );
-            if (isDesktop) {
-              return Row(
-                children: [
-                  AdaptiveNavBar(
-                    isDesktop: true,
-                    index: _navBarNotifier.index,
-                    onChanged: (x) {
-                      _navBarNotifier.index = x;
-                    },
-                  ),
-                  Expanded(
-                    child: Material(
-                      child: body,
-                    ),
-                  ),
-                ],
-              );
-            } else {
-              return Scaffold(
-                floatingActionButton: FloatingActionButton(
-                  onPressed: () {},
-                  child: Icon(Icons.add),
-                ),
-                bottomNavigationBar: AdaptiveNavBar(
-                  isHidden: _navBarNotifier.hideBottomNavBar,
-                  isDesktop: false,
-                  onChanged: (x) {
-                    _navBarNotifier.index = x;
-                  },
-                  index: _navBarNotifier.index,
-                ),
-                body: body,
-              );
-            }
-          });
-    });
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
-class ResponsiveBuilder extends StatefulWidget {
-  final WidgetBuilder desktopBuilder;
-  final WidgetBuilder mobileBuilder;
-
-  const ResponsiveBuilder(
-      {Key? key, required this.desktopBuilder, required this.mobileBuilder})
-      : super(key: key);
+class AdaptiveNavbar extends StatefulWidget {
+  const AdaptiveNavbar({Key? key}) : super(key: key);
 
   @override
-  State<ResponsiveBuilder> createState() => _ResponsiveBuilderState();
+  State<AdaptiveNavbar> createState() => _AdaptiveNavbarState();
 }
 
-class _ResponsiveBuilderState extends State<ResponsiveBuilder> {
+class _AdaptiveNavbarState extends State<AdaptiveNavbar> {
+  List<NavbarItem> items = [
+    NavbarItem(Icons.dashboard, 'Home', backgroundColor: colors[0]),
+    NavbarItem(Icons.search, 'Search', backgroundColor: colors[1]),
+    NavbarItem(Icons.explore, 'Explore', backgroundColor: colors[2]),
+    NavbarItem(Icons.notifications_active_sharp, 'Notifications',
+        backgroundColor: colors[2]),
+    NavbarItem(Icons.person, 'Me', backgroundColor: colors[2]),
+  ];
+
+  final Map<int, Map<String, Widget>> _routes = {
+    0: {
+      DashboardMobile.route: DashboardMobile(),
+    },
+    1: {
+      Search.route: Search(),
+    },
+    2: {ExploreWordsMobile.route: ExploreWordsMobile()},
+    3: {Notifications.route: Notifications()},
+    4: {UserProfileMobile.route: UserProfileMobile()}
+  };
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constrains) {
-      if (constrains.maxWidth > 600) {
-        return widget.desktopBuilder(context);
-      }
-      return widget.mobileBuilder(context);
-    });
+    SizeUtils.size = MediaQuery.of(context).size;
+    return NavbarRouter(
+      errorBuilder: (context) {
+        return const Center(child: Text('Error 404'));
+      },
+      onBackButtonPressed: (isExiting) {
+        return isExiting;
+      },
+      isDesktop: !SizeUtils.isMobile(),
+      destinationAnimationCurve: Curves.fastOutSlowIn,
+      destinationAnimationDuration: 600,
+      decoration: NavbarDecoration(
+          isExtended: SizeUtils.isDesktop(),
+          navbarType: BottomNavigationBarType.shifting),
+      destinations: [
+        for (int i = 0; i < items.length; i++)
+          DestinationRouter(
+            navbarItem: items[i],
+            destinations: [
+              for (int j = 0; j < _routes[i]!.keys.length; j++)
+                Destination(
+                  route: _routes[i]!.keys.elementAt(j),
+                  widget: _routes[i]!.values.elementAt(j),
+                ),
+            ],
+            initialRoute: _routes[i]!.keys.elementAt(0),
+          ),
+      ],
+    );
   }
 }

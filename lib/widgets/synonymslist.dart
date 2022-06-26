@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 
 import 'package:vocabhub/utils/extensions.dart';
+import 'package:vocabhub/utils/size_utils.dart';
 
 class SynonymsList extends StatelessWidget {
   final List<String>? synonyms;
@@ -21,7 +21,7 @@ class SynonymsList extends StatelessWidget {
         : Container(
             alignment: Alignment.center,
             padding: EdgeInsets.symmetric(
-                horizontal: size.width > MOBILE_WIDTH ? 12.0 : 8.0),
+                horizontal: !SizeUtils.isMobile() ? 12.0 : 8.0),
             child: Wrap(
               direction: Axis.horizontal,
               runSpacing: 5,
