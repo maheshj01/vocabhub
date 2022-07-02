@@ -108,7 +108,7 @@ class _AppSignInState extends State<AppSignIn> {
           alignment: Alignment.center,
           child: VocabButton(
             width: 300,
-            backgroundColor: VocabTheme.primaryGreen,
+            backgroundColor: VocabTheme.primaryColor,
             foregroundColor: Colors.white,
             label: 'Sign In as Guest',
             onTap: () {
@@ -123,7 +123,7 @@ class _AppSignInState extends State<AppSignIn> {
         backgroundColor: darkNotifier.value
             ? VocabTheme.surfaceGrey
             : VocabTheme.surfaceGreen,
-        body: !SizeUtils.isMobile()
+        body: !SizeUtils.isMobile
             ? Row(
                 children: [
                   AnimatedContainer(

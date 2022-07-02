@@ -21,7 +21,7 @@ class SynonymsList extends StatelessWidget {
         : Container(
             alignment: Alignment.center,
             padding: EdgeInsets.symmetric(
-                horizontal: !SizeUtils.isMobile() ? 12.0 : 8.0),
+                horizontal: !SizeUtils.isMobile ? 12.0 : 8.0),
             child: Wrap(
               direction: Axis.horizontal,
               runSpacing: 5,

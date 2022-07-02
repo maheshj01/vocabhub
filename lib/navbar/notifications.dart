@@ -7,17 +7,11 @@ class Notifications extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Notifications'),
-      ),
-      body: ListView.builder(
-          padding: EdgeInsets.zero,
-          itemCount: 20,
-          itemBuilder: (BuildContext context, int x) {
-            return ListTile(
-              title: Text('item $x'),
-            );
-          }),
-    );
+        appBar: AppBar(
+          title: Text('Notifications'),
+        ),
+        body: Center(
+          child: Text('Notifications'),
+        ));
   }
 }

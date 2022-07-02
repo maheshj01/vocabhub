@@ -28,7 +28,7 @@ class LoadingWidget extends StatelessWidget {
     return Center(
         child: CircularProgressIndicator(
             valueColor: new AlwaysStoppedAnimation<Color>(
-      VocabTheme.primaryGreen,
+      VocabTheme.primaryColor,
     )));
   }
 }
@@ -73,8 +73,8 @@ Widget storeRedirect(BuildContext context,
     onTap: () {
       final firebaseAnalytics = Analytics();
       final width = MediaQuery.of(context).size.width;
-      firebaseAnalytics
-          .logRedirectToStore(width > SizeUtils.kTabletBreakPoint ? 'desktop' : 'mobile');
+      firebaseAnalytics.logRedirectToStore(
+          width > SizeUtils.kTabletBreakPoint ? 'desktop' : 'mobile');
       launchUrl(redirectUrl);
     },
     child: MouseRegion(

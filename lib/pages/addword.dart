@@ -412,7 +412,7 @@ class _AddWordFormState extends State<AddWordForm> {
               ...List.generate(_examples.length, (index) {
                 return Container(
                   margin: EdgeInsets.symmetric(
-                      horizontal: SizeUtils.isMobile() ? 16 : 24.0),
+                      horizontal: SizeUtils.isMobile ? 16 : 24.0),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -472,7 +472,7 @@ class _AddWordFormState extends State<AddWordForm> {
               ...List.generate(_mnemonics.length, (index) {
                 return Container(
                   margin: EdgeInsets.symmetric(
-                      horizontal: SizeUtils.isMobile() ? 16 : 24.0),
+                      horizontal: SizeUtils.isMobile ? 16 : 24.0),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,

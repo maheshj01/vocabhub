@@ -16,15 +16,11 @@ class SizeUtils {
     _size = value;
   }
 
-  static bool isDesktop() {
-    return _size.width > kDesktopBreakPoint;
-  }
+  static bool get isDesktop=>
+    _size.width > kDesktopBreakPoint;
 
-  static bool isTablet() {
-    return _size.width > kTabletBreakPoint && _size.width < kDesktopBreakPoint;
-  }
+  static bool get isTablet=> _size.width > kTabletBreakPoint && _size.width < kDesktopBreakPoint;
 
-  static bool isMobile() {
-    return _size.width < kTabletBreakPoint;
-  }
+
+  static bool get isMobile =>_size.width < kTabletBreakPoint;
 }

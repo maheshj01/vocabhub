@@ -1,14 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:vocabhub/widgets/responsive.dart';
+
+class ExploreWords extends StatefulWidget {
+  static const String route = '/';
+  const ExploreWords({Key? key}) : super(key: key);
+
+  @override
+  State<ExploreWords> createState() => _ExploreWordsState();
+}
+
+class _ExploreWordsState extends State<ExploreWords> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(
+        desktopBuilder: (context) => ExploreWordsDesktop(),
+        mobileBuilder: (context) => ExploreWordsMobile());
+  }
+}
 
 class ExploreWordsMobile extends StatelessWidget {
-  static const String route = '/';
   const ExploreWordsMobile({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Explore'),
+        title: Text('Explore Mobile'),
       ),
       body: ListView.builder(
           padding: EdgeInsets.zero,
@@ -21,8 +43,8 @@ class ExploreWordsMobile extends StatelessWidget {
     );
   }
 }
+
 class ExploreWordsDesktop extends StatelessWidget {
-  static const String route = '/';
   const ExploreWordsDesktop({Key? key}) : super(key: key);
 
   @override

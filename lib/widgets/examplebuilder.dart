@@ -17,7 +17,7 @@ class ExampleBuilder extends StatefulWidget {
 class _ExampleBuilderState extends State<ExampleBuilder> {
   @override
   Widget build(BuildContext context) {
-    bool isMobile =SizeUtils.isMobile();
+    bool isMobile =SizeUtils.isMobile;
     bool isDark = darkNotifier.value;
     return widget.examples!.isEmpty
         ? Container()

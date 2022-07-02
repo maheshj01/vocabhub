@@ -24,7 +24,7 @@ class _MnemonnicBuilderState extends State<MnemonnicBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    bool isMobile = SizeUtils.isMobile();
+    bool isMobile = SizeUtils.isMobile;
     bool isDark = darkNotifier.value;
     return widget.mnemonics!.isEmpty
         ? Container()

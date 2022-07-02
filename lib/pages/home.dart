@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage>
     _animationController = AnimationController(
         vsync: this,
         duration: Duration(
-            milliseconds: (!SizeUtils.isMobile()) ? 1000 : 800));
+            milliseconds: (!SizeUtils.isMobile) ? 1000 : 800));
     userProvider = Provider.of<UserModel>(context, listen: false);
     _animationController.forward();
     initWebState();
@@ -168,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   Widget actionWidget(String text, String url,
       {String toolTip = '', Function? onTap}) {
-    return SizeUtils.isMobile()
+    return SizeUtils.isMobile
         ? SizedBox()
         : InkWell(
             onTap: onTap != null
@@ -178,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage>
                   },
             child: Padding(
               padding: EdgeInsets.symmetric(
-                  horizontal: SizeUtils.isTablet() ? 18 : 24,
+                  horizontal: SizeUtils.isTablet ? 18 : 24,
                   vertical: 4),
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
@@ -230,7 +230,7 @@ class _MyHomePageState extends State<MyHomePage>
                     _animationController.value,
                 Offset(x + 20, y + 20)),
             child: Scaffold(
-              drawer: SizeUtils.isMobile()
+              drawer: SizeUtils.isMobile
                   ? DrawerBuilder(
                       onMenuTap: (x) {
                         _onMenuSelect(x);
@@ -240,13 +240,13 @@ class _MyHomePageState extends State<MyHomePage>
               appBar: AppBar(
                 iconTheme: Theme.of(context).iconTheme,
                 centerTitle:
-                    SizeUtils.isMobile() ? true : false,
+                    SizeUtils.isMobile ? true : false,
                 title: Text('$APP_TITLE',
                     style: Theme.of(context).textTheme.headline4!.copyWith(
                         color: isDark ? Colors.white : VocabTheme.primaryColor,
                         fontWeight: FontWeight.bold)),
                 actions: [
-                  if (!SizeUtils.isMobile())
+                  if (!SizeUtils.isMobile)
                     PopupMenuButton<String>(
                       offset: Offset(-20, 50),
                       onSelected: (String x) {
@@ -288,9 +288,9 @@ class _MyHomePageState extends State<MyHomePage>
               ),
               body: Row(
                 children: [
-                  !SizeUtils.isMobile()
+                  !SizeUtils.isMobile
                       ? Expanded(
-                          flex: SizeUtils.isMobile() ? 4 : 3,
+                          flex: SizeUtils.isMobile ? 4 : 3,
                           child: Container(
                             decoration: BoxDecoration(
                                 color: isDark
@@ -315,7 +315,7 @@ class _MyHomePageState extends State<MyHomePage>
                       : Container(),
                   Expanded(
                       flex: 8,
-                      child: !SizeUtils.isMobile()
+                      child: !SizeUtils.isMobile
                           ? WordDetail(
                               word: selected,
                             )
@@ -428,7 +428,7 @@ class _WordsBuilderState extends State<WordsBuilder> {
                       onTap: () => FocusScope.of(context).unfocus(),
                       child: SmartRefresher(
                         enablePullDown:
-                           !SizeUtils.isMobile()? false : true,
+                           !SizeUtils.isMobile? false : true,
                         enablePullUp: false,
                         controller: _refreshController,
                         onRefresh: () => refresh(),
@@ -437,7 +437,7 @@ class _WordsBuilderState extends State<WordsBuilder> {
                             itemBuilder: (_, x) {
                               return WordTile(
                                   word: value[x],
-                                  isMobile: SizeUtils.isMobile(),
+                                  isMobile: SizeUtils.isMobile,
                                   isSelected: selectedWord.toLowerCase() ==
                                       value[x].word.toLowerCase(),
                                   onSelect: (word) {

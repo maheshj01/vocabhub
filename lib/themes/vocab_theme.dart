@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vocabhub/main.dart';
 import 'package:vocabhub/utils/settings.dart';
 
 class VocabTheme {
   static final VocabTheme _singleton = VocabTheme._internal();
   VocabTheme._internal();
 
-  static Color primaryGreen = Color(0xff4c9648);
   static Color primaryGrey = Colors.grey;
   static Color primaryBlue = Colors.blueAccent;
-  static Color primaryColor = primaryGreen;
-  static Color secondaryColor = primaryGreen.withOpacity(0.6);
+  static Color primaryColor = Color(0xff4c9648);
+  static Color secondaryColor = primaryColor.withOpacity(0.6);
   static Color primaryDark = Colors.black.withOpacity(0.6);
   static Color secondaryDark = Colors.black.withOpacity(0.7);
   static Color shrinePink = Color(0xffFEDBD0);
@@ -25,12 +23,12 @@ class VocabTheme {
   static LinearGradient primaryGradient = LinearGradient(
       colors: [color1.withOpacity(0.1), color2.withOpacity(0.2)]);
   static LinearGradient secondaryGradient = LinearGradient(
-      colors: [primaryBlue.withOpacity(0.1), primaryGreen.withOpacity(0.2)]);
+      colors: [primaryBlue.withOpacity(0.1), primaryColor.withOpacity(0.2)]);
   static TextStyle listSubtitleStyle = TextStyle(fontSize: 12);
 
   static const _lightFillColor = Colors.black;
   static const _darkFillColor = Colors.white;
-
+  static const Color navigationBarColor = Color(0xffF2F4F7);
   bool _isDark = false;
 
   static bool get isDark => _singleton._isDark;
@@ -42,23 +40,68 @@ class VocabTheme {
   static ColorScheme get colorScheme =>
       Settings.getTheme == ThemeMode.light ? lightColorScheme : darkColorScheme;
 
+  static final Color _lightFocusColor = Colors.black.withOpacity(0.12);
+  static final Color _darkFocusColor = Colors.white.withOpacity(0.12);
+
+  static ThemeData lightThemeData =
+      _themeData(lightColorScheme, _lightFocusColor);
+  static ThemeData darkThemeData = _themeData(darkColorScheme, _darkFocusColor);
+
+  static ThemeData _themeData(ColorScheme colorScheme, Color focusColor) {
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: colorScheme,
+      textTheme: googleFontsTextTheme,
+      // Matches manifest.json colors and background color.
+      primaryColor: const Color(0xFF030303),
+      appBarTheme: AppBarTheme(
+        backgroundColor: colorScheme.background,
+        elevation: 3.5,
+        iconTheme: IconThemeData(color: colorScheme.primary),
+      ),
+      navigationRailTheme: NavigationRailThemeData(
+          backgroundColor: colorScheme.surface,
+          unselectedIconTheme: IconThemeData(
+            color: Colors.black87,
+          ),
+          unselectedLabelTextStyle: googleFontsTextTheme.headline6,
+          indicatorColor: colorScheme.primary),
+      iconTheme: IconThemeData(color: colorScheme.onPrimary),
+      canvasColor: colorScheme.background,
+      scaffoldBackgroundColor: colorScheme.background,
+      highlightColor: Colors.transparent,
+      bottomAppBarColor: colorScheme.primary,
+      focusColor: focusColor,
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Color.alphaBlend(
+          _lightFillColor.withOpacity(0.80),
+          _darkFillColor,
+        ),
+        contentTextStyle:
+            googleFontsTextTheme.subtitle1!.apply(color: _darkFillColor),
+      ),
+    );
+  }
+
   static ColorScheme lightColorScheme = ColorScheme(
-      brightness: Brightness.light,
-      // seedColor: const Color.fromARGB(255, 126, 120, 211),
-      primary: const Color.fromARGB(255, 87, 138, 206),
-      primaryContainer: const Color(0xFF117378),
-      secondary: const Color(0xFFEFF3F3),
-      secondaryContainer: const Color(0xFFFAFBFB),
-      background: const Color(0XFFFFFFFF),
-      surface: Colors.grey[100]!,
-      onBackground: Colors.white,
-      error: Colors.red,
-      onError: _lightFillColor,
-      onPrimary: _lightFillColor,
-      onSecondary: const Color(0xFF322942),
-      onSurface: _lightFillColor);
+    brightness: Brightness.light,
+    primary: const Color.fromRGBO(76, 150, 72, 1.0),
+    primaryContainer: const Color(0xFF117378),
+    secondary: const Color(0xFFEFF3F3),
+    secondaryContainer: const Color(0xFFFAFBFB),
+    background: Color(0XFFE5E5E5),
+    surface: const Color(0XFFFFFFFF),
+    onBackground: Colors.black,
+    error: Colors.red,
+    onError: _lightFillColor,
+    onPrimary: _lightFillColor,
+    onSecondary: const Color(0xFF322942),
+    onSurface: Color.fromRGBO(76, 150, 72, 1.0),
+  );
 
   static ColorScheme darkColorScheme = ColorScheme(
+    brightness: Brightness.dark,
     primary: Color(0xFFFF8383),
     primaryContainer: Color(0xFF1CDEC9),
     secondary: Color(0xFF4D1F7C),
@@ -71,40 +114,34 @@ class VocabTheme {
     onPrimary: _darkFillColor,
     onSecondary: _darkFillColor,
     onSurface: _darkFillColor,
-    brightness: Brightness.dark,
   );
 
-  static TextTheme googleFontsTextTheme(BuildContext context) {
-    bool isDark = darkNotifier.value;
-    return GoogleFonts.quicksandTextTheme(TextTheme(
-      headline1: GoogleFonts.quicksand(
-          fontSize: 72.0,
-          color: isDark ? Colors.white : Colors.black,
-          fontWeight: FontWeight.bold),
-      headline2: GoogleFonts.quicksand(
-          fontSize: 48.0, color: Colors.white, fontWeight: FontWeight.w500),
-      headline3: GoogleFonts.quicksand(
-          fontSize: 36.0,
-          color: isDark ? Colors.white : Colors.black,
-          fontWeight: FontWeight.w500),
-      headline4: GoogleFonts.quicksand(
-          fontSize: 22,
-          color: isDark ? Colors.white : Colors.black,
-          fontWeight: FontWeight.w300),
-      headline5: GoogleFonts.quicksand(
-          fontSize: 16.0, color: isDark ? Colors.white : Colors.black),
-      headline6: GoogleFonts.quicksand(
-          fontSize: 12.0,
-          color: isDark ? Colors.white : Colors.black,
-          fontWeight: FontWeight.w300),
-      caption: Theme.of(context)
-          .textTheme
-          .caption!
-          .copyWith(color: Colors.grey, fontSize: 12),
-      subtitle1: GoogleFonts.quicksand(
-          fontSize: 20,
-          color: isDark ? Colors.white : Colors.black,
-          fontWeight: FontWeight.w300),
-    ));
-  }
+  static TextTheme googleFontsTextTheme =
+      GoogleFonts.quicksandTextTheme(TextTheme(
+    headline1: GoogleFonts.quicksand(
+        fontSize: 72.0,
+        color: isDark ? Colors.white : Colors.black,
+        fontWeight: FontWeight.bold),
+    headline2: GoogleFonts.quicksand(
+        fontSize: 48.0, color: Colors.white, fontWeight: FontWeight.w500),
+    headline3: GoogleFonts.quicksand(
+        fontSize: 36.0,
+        color: isDark ? Colors.white : Colors.black,
+        fontWeight: FontWeight.w500),
+    headline4: GoogleFonts.quicksand(
+        fontSize: 22,
+        color: isDark ? Colors.white : Colors.black,
+        fontWeight: FontWeight.w300),
+    headline5: GoogleFonts.quicksand(
+        fontSize: 16.0, color: isDark ? Colors.white : Colors.black),
+    headline6: GoogleFonts.quicksand(
+        fontSize: 12.0,
+        color: isDark ? Colors.white : Colors.black,
+        fontWeight: FontWeight.w300),
+    caption: GoogleFonts.quicksand(color: Colors.grey, fontSize: 12),
+    subtitle1: GoogleFonts.quicksand(
+        fontSize: 20,
+        color: isDark ? Colors.white : Colors.black,
+        fontWeight: FontWeight.w300),
+  ));
 }

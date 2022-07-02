@@ -81,26 +81,9 @@ class _VocabAppState extends State<VocabApp> {
             return MaterialApp(
               title: '$APP_TITLE',
               debugShowCheckedModeBanner: !kDebugMode,
-              darkTheme: ThemeData.dark().copyWith(
-                appBarTheme: AppBarTheme(backgroundColor: Colors.grey[800]),
-                primaryColor: VocabTheme.primaryDark,
-                textTheme: VocabTheme.googleFontsTextTheme(context),
-              ),
-              color: VocabTheme.primaryColor,
-              theme: ThemeData(
-                primaryColor: VocabTheme.primaryColor,
-                appBarTheme: AppBarTheme(backgroundColor: Colors.white),
-                iconTheme: IconThemeData(
-                    color: darkNotifier.value
-                        ? Colors.white
-                        : VocabTheme.primaryColor),
-                textTheme: VocabTheme.googleFontsTextTheme(context),
-                cupertinoOverrideTheme: CupertinoThemeData(
-                  primaryColor: VocabTheme.primaryColor,
-                ),
-                textSelectionTheme: TextSelectionThemeData(
-                    cursorColor: VocabTheme.primaryColor),
-              ),
+              darkTheme: VocabTheme.darkThemeData,
+
+              theme: VocabTheme.lightThemeData,
               themeMode: VocabTheme.isDark ? ThemeMode.dark : ThemeMode.light,
               home: SplashScreen(),
             );
