@@ -6,14 +6,14 @@ import 'package:vocabhub/utils/utils.dart';
 
 const appBarDesktopHeight = 128.0;
 
-class AdaptiveNavbar extends StatefulWidget {
-  const AdaptiveNavbar({Key? key}) : super(key: key);
+class AdaptiveLayout extends StatefulWidget {
+  const AdaptiveLayout({Key? key}) : super(key: key);
 
   @override
-  State<AdaptiveNavbar> createState() => _AdaptiveNavbarState();
+  State<AdaptiveLayout> createState() => _AdaptiveLayoutState();
 }
 
-class _AdaptiveNavbarState extends State<AdaptiveNavbar> {
+class _AdaptiveLayoutState extends State<AdaptiveLayout> {
   List<NavbarItem> items = [
     NavbarItem(Icons.dashboard, 'Home', backgroundColor: colors[0]),
     NavbarItem(Icons.search, 'Search', backgroundColor: colors[1]),

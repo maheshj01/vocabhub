@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vocabhub/base_home.dart';
+import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/auth.dart';
@@ -33,7 +34,7 @@ class _AppSignInState extends State<AppSignIn> {
           if (isRegistered) {
             userProvider.user = user!;
             await Settings.setIsSignedIn(true, email: user!.email);
-            Navigate().pushAndPopAll(context, AdaptiveNavbar(),
+            Navigate().pushAndPopAll(context, AdaptiveLayout(),
                 slideTransitionType: TransitionType.ttb);
           } else {
             logger.d('failed to sign in User');
@@ -45,7 +46,7 @@ class _AppSignInState extends State<AppSignIn> {
           logger.d('found existing user ${user!.email}');
           userProvider.user = user!;
           await Settings.setIsSignedIn(true, email: existingUser.email);
-          Navigate().pushAndPopAll(context, AdaptiveNavbar(),
+          Navigate().pushAndPopAll(context, AdaptiveLayout(),
               slideTransitionType: TransitionType.ttb);
           firebaseAnalytics.logSignIn(user!);
         }
@@ -84,10 +85,15 @@ class _AppSignInState extends State<AppSignIn> {
 
   @override
   Widget build(BuildContext context) {
+    SizeUtils.size = MediaQuery.of(context).size;
+
     Widget _heading(String text) {
       return Text(
         '$text',
-        style: Theme.of(context).textTheme.headline3!,
+        style: Theme.of(context)
+            .textTheme
+            .headline3!
+            .copyWith(color: Colors.white),
       );
     }
 
@@ -96,7 +102,7 @@ class _AppSignInState extends State<AppSignIn> {
           alignment: Alignment.center,
           child: VocabButton(
             width: 300,
-            leading: Image.asset('assets/google.png', height: 32),
+            leading: Image.asset('$GOOGLE_ASSET_PATH', height: 32),
             label: 'Sign In with Google',
             onTap: () => _handleSignIn(context),
             backgroundColor: Colors.white,
@@ -112,7 +118,7 @@ class _AppSignInState extends State<AppSignIn> {
             foregroundColor: Colors.white,
             label: 'Sign In as Guest',
             onTap: () {
-              Navigate().pushReplace(context, AdaptiveNavbar(),
+              Navigate().pushReplace(context, AdaptiveLayout(),
                   slideTransitionType: TransitionType.scale);
               Settings.setSkipCount = Settings.maxSkipCount;
             }, // _handleSignIn(context),
@@ -129,51 +135,80 @@ class _AppSignInState extends State<AppSignIn> {
                   AnimatedContainer(
                     width: SizeUtils.size.width / 2,
                     duration: Duration(seconds: 1),
-                    padding: EdgeInsets.symmetric(horizontal: 32),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _heading('Hi!'),
-                        _heading('Welcome Back.'),
-                      ],
+                    child: ImageBackground(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 32),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _heading('Hi!'),
+                            _heading('Welcome Back.'),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                   Expanded(
                     child: Container(
-                      color: VocabTheme.surfaceGrey,
+                      color: Colors.white,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Expanded(child: Container()),
+                          Spacer(),
                           _signInButton(),
                           SizedBox(
                             height: 20,
                           ),
                           _skipButton(),
-                          Expanded(child: Container()),
+                          Spacer()
                         ],
                       ),
                     ),
                   )
                 ],
               )
-            : Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                SizedBox(
-                  height: 200,
-                ),
-                _heading('Hi!'),
-                _heading('Welcome Back.'),
-                Expanded(child: Container()),
-                _signInButton(),
-                SizedBox(
-                  height: 20,
-                ),
-                _skipButton(),
-                Expanded(child: Container()),
-                SizedBox(
-                  height: 100,
-                )
-              ]));
+            : ImageBackground(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 200,
+                      ),
+                      // _heading('Hi!'),
+                      _heading('Welcome!'),
+                      Expanded(child: Container()),
+                      _signInButton(),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      _skipButton(),
+                      Expanded(child: Container()),
+                      SizedBox(
+                        height: 100,
+                      )
+                    ]),
+              ));
+  }
+}
+
+class ImageBackground extends StatelessWidget {
+  final Widget child;
+  final String? imageSrc;
+  const ImageBackground({Key? key, required this.child, this.imageSrc})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: Duration(seconds: 1),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(imageSrc ?? '$WALLPAPER_1'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: child,
+    );
   }
 }

@@ -3,6 +3,9 @@
 const String APP_TITLE = 'Vocabhub';
 const String GITHUB_ASSET_PATH = 'assets/github.png';
 const String GITHUB_WHITE_ASSET_PATH = 'assets/github_white.png';
+const String GOOGLE_ASSET_PATH = 'assets/google.png';
+const String WALLPAPER_1 = 'assets/wallpaper1.jpg';
+const String WALLPAPER_2 = 'assets/wallpaper2.jpg';
 
 final List<String> tips = [
   'Do you know you can search by synonyms?\n Try searching for "reduce"',

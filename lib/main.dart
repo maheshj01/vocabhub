@@ -1,12 +1,10 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:logger/logger.dart' as log;
@@ -82,7 +80,6 @@ class _VocabAppState extends State<VocabApp> {
               title: '$APP_TITLE',
               debugShowCheckedModeBanner: !kDebugMode,
               darkTheme: VocabTheme.darkThemeData,
-
               theme: VocabTheme.lightThemeData,
               themeMode: VocabTheme.isDark ? ThemeMode.dark : ThemeMode.light,
               home: SplashScreen(),
