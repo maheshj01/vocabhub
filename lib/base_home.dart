@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/navbar/navbar.dart';
+import 'package:vocabhub/services/appstate.dart';
+import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/utils.dart';
 
@@ -24,16 +26,23 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
   ];
 
   final Map<int, Map<String, Widget>> _routes = {
-    0: {
-      Dashboard.route: Dashboard(),
-    },
-    1: {
-      Search.route: Search(),
-    },
+    0: {Dashboard.route: Dashboard()},
+    1: {Search.route: Search()},
     2: {ExploreWords.route: ExploreWords()},
     3: {Notifications.route: Notifications()},
     4: {UserProfile.route: UserProfile()}
   };
+  SupaStore _store = SupaStore();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    AppStateWidget.of(context).getWords();
+  }
+
+
+
+  late AppState state;
 
   @override
   Widget build(BuildContext context) {

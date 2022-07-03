@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
@@ -54,7 +54,7 @@ class _WordTileState extends State<WordTile> {
   @override
   Widget build(BuildContext context) {
     bool isDark = darkNotifier.value;
-    final userProvider = Provider.of<UserModel>(context);
+    final userProvider =AppStateScope.of(context).user!;
 
     Color tileColor() {
       if (isDark) {

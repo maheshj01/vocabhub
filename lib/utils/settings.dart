@@ -89,6 +89,7 @@ class Settings extends ChangeNotifier {
     }
     await _sharedPreferences!.setBool('$signedInKey', status);
     await _sharedPreferences!.setString('$emailKey', email);
+        _instance.notify();
   }
 
   static set setSkipCount(int value) {

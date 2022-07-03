@@ -19,8 +19,10 @@ const Duration wordCountAnimationDuration = Duration(seconds: 3);
 const List<String> emails = ['maheshmn121@gmail.com'];
 
 /// TABLES
-const VOCAB_TABLE_NAME = 'vocabsheet';
-const USER_TABLE_NAME = 'users';
+// const VOCAB_TABLE_NAME = 'vocabsheet';
+// const USER_TABLE_NAME = 'users';
+const VOCAB_TABLE_NAME = 'vocabsheet_copy';
+const USER_TABLE_NAME = 'users_copy';
 
 /// VOCAB TABLE COLUMNS
 const WORD_COLUMN = 'word';

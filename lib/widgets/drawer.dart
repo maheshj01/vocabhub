@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
-import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/addword.dart';
+import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/navigator.dart';
@@ -77,7 +77,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
   @override
   Widget build(BuildContext context) {
     bool isDark = darkNotifier.value;
-    final userProvider = Provider.of<UserModel>(context);
+    final userProvider = AppStateScope.of(context).user!;
     Widget trailingIcon(IconData data) {
       return Icon(
         data,
@@ -94,42 +94,39 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             isDark ? null : BoxDecoration(gradient: VocabTheme.primaryGradient),
         child: Column(
           children: [
-            Consumer<UserModel>(
-                builder: (BuildContext _, UserModel? user, Widget? child) {
-              return Container(
-                padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                height: 150,
-                decoration: isDark
-                    ? null
-                    : BoxDecoration(gradient: VocabTheme.primaryGradient),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _avatar(user!),
-                    SizedBox(
-                      width: userProvider.isLoggedIn ? 20 : 30,
-                    ),
-                    Flexible(
-                      child: GestureDetector(
-                          onTap: () {
-                            if (!userProvider.isLoggedIn) {
-                              Navigate().popView(context);
-                              widget.onMenuTap?.call('Sign In');
-                            }
-                          },
-                          child: Text(
-                              userProvider.isLoggedIn
-                                  ? '${user.name}'
-                                  : 'Sign In',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline4!
-                                  .copyWith(fontWeight: FontWeight.w500))),
-                    ),
-                  ],
-                ),
-              );
-            }),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+              height: 150,
+              decoration: isDark
+                  ? null
+                  : BoxDecoration(gradient: VocabTheme.primaryGradient),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _avatar(userProvider),
+                  SizedBox(
+                    width: userProvider.isLoggedIn ? 20 : 30,
+                  ),
+                  Flexible(
+                    child: GestureDetector(
+                        onTap: () {
+                          if (!userProvider.isLoggedIn) {
+                            Navigate().popView(context);
+                            widget.onMenuTap?.call('Sign In');
+                          }
+                        },
+                        child: Text(
+                            userProvider.isLoggedIn
+                                ? '${userProvider.name}'
+                                : 'Sign In',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline4!
+                                .copyWith(fontWeight: FontWeight.w500))),
+                  ),
+                ],
+              ),
+            ),
             hLine(),
             ListTile(
               onTap: () {

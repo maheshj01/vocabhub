@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/analytics.dart';
+import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/auth.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/navigator.dart';
@@ -23,7 +23,7 @@ class _AppSignInState extends State<AppSignIn> {
   Authentication auth = Authentication();
 
   Future<void> _handleSignIn(BuildContext context) async {
-    final userProvider = Provider.of<UserModel>(context, listen: false);
+    final state = AppStateWidget.of(context);
     try {
       user = await auth.googleSignIn(context);
       if (user != null) {
@@ -32,7 +32,7 @@ class _AppSignInState extends State<AppSignIn> {
           logger.d('registering new user ${user!.email}');
           final isRegistered = await _register(user!);
           if (isRegistered) {
-            userProvider.user = user!;
+            state.setUser(user!);
             await Settings.setIsSignedIn(true, email: user!.email);
             Navigate().pushAndPopAll(context, AdaptiveLayout(),
                 slideTransitionType: TransitionType.ttb);
@@ -44,7 +44,7 @@ class _AppSignInState extends State<AppSignIn> {
           }
         } else {
           logger.d('found existing user ${user!.email}');
-          userProvider.user = user!;
+           state.setUser(user!);
           await Settings.setIsSignedIn(true, email: existingUser.email);
           Navigate().pushAndPopAll(context, AdaptiveLayout(),
               slideTransitionType: TransitionType.ttb);

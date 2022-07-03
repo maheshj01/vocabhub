@@ -2,13 +2,12 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/constants/strings.dart';
 import 'package:vocabhub/main.dart';
-import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
+import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -97,7 +96,7 @@ class _WordDetailState extends State<WordDetail>
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     bool isDark = darkNotifier.value;
-    final userProvider = Provider.of<UserModel>(context);
+     final userProvider =AppStateScope.of(context).user!;
 
     Color? textfieldBgColor(bool editMode) {
       if (editMode) {

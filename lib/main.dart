@@ -4,15 +4,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:logger/logger.dart' as log;
 import 'package:vocabhub/pages/splashscreen.dart';
 import 'package:vocabhub/services/analytics.dart';
+import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'constants/constants.dart';
-import 'models/user.dart';
 import 'utils/settings.dart';
 
 Future<void> main() async {
@@ -58,8 +57,8 @@ class _VocabAppState extends State<VocabApp> {
     super.dispose();
   }
 
-  static late bool isSignedIn;
-  static late int count;
+  late bool isSignedIn;
+  late int count;
 
   @override
   void initState() {
@@ -69,10 +68,7 @@ class _VocabAppState extends State<VocabApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<UserModel>(create: (context) => UserModel()),
-      ],
+    return AppStateWidget(
       child: AnimatedBuilder(
           animation: Settings(),
           builder: (BuildContext context, Widget? child) {

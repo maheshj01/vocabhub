@@ -38,7 +38,7 @@ class SupaStore {
 
   Future<List<Word>> findByWord(String word) async {
     if (word.isEmpty) {
-      return findAll();
+      return getAllWords();
     }
     final response = await _supabase
         .from(tableName)
@@ -70,7 +70,7 @@ class SupaStore {
   }
 
   /// ```Select * from words;```
-  Future<List<Word>> findAll() async {
+  Future<List<Word>> getAllWords() async {
     final response = await _supabase.from(tableName).select("*").execute();
     List<Word> words = [];
     if (response.status == 200) {

@@ -49,14 +49,6 @@ class Analytics {
     });
   }
 
-//   Future<void> logShare(String event) async
-//     await analytics.logShare(contentType: event);
-//   }
-
-//   Future<void> logViewItem(String event) async {
-//     await analytics.logViewItem(itemName: event);
-//   }
-
   Future<void> appOpen() async {
     await analytics.logAppOpen();
   }

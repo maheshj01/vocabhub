@@ -1,9 +1,9 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:vocabhub/base_home.dart';
-import 'package:vocabhub/models/user.dart';
+import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/login.dart';
+import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
@@ -19,7 +19,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
-    duration: const Duration(seconds: 2),
+    duration: const Duration(milliseconds: 1500),
     vsync: this,
   );
 
@@ -43,16 +43,19 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> handleNavigation() async {
-    final user = Provider.of<UserModel>(context, listen: false);
+    UserModel? user = AppStateScope.of(context).user;
     final bool signedIn = await Settings.isSignedIn;
     final String _email = await Settings.email;
     final int count = await Settings.skipCount + 1;
-    user.email = _email;
-    if (signedIn && _email.isNotEmpty) {
+    user?.email = _email;
+    if (user != null && signedIn && _email.isNotEmpty) {
       user.isLoggedIn = true;
       Navigate().push(context, AdaptiveLayout());
     } else {
-      user.isLoggedIn = false;
+      if (user == null) {
+        user = UserModel.init();
+        AppStateWidget.of(context).setUser(user);
+      }
       if (count % 3 != 0) {
         Settings.setSkipCount = count;
         Navigate().push(context, AdaptiveLayout());

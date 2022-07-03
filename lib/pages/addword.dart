@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/analytics.dart';
+import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
@@ -120,7 +120,7 @@ class _AddWordFormState extends State<AddWordForm> {
     exampleController.addListener(_rebuild);
     synonymController.addListener(_rebuild);
     mnemonicController.addListener(_rebuild);
-    userProvider = Provider.of<UserModel>(context, listen: false);
+    userProvider = AppStateScope.of(context).user!;
   }
 
   void _populateData() {

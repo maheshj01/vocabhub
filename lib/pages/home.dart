@@ -2,13 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
+import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/auth.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/circle_clipper.dart';
@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage>
         vsync: this,
         duration: Duration(
             milliseconds: (!SizeUtils.isMobile) ? 1000 : 800));
-    userProvider = Provider.of<UserModel>(context, listen: false);
+    userProvider = AppStateScope.of(context).user!;
     _animationController.forward();
     initWebState();
   }
@@ -197,9 +197,8 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   Widget _userAvatar() {
-    return Consumer<UserModel>(
-        builder: (BuildContext _, UserModel? user, Widget? child) {
-      if (user == null || user.email.isEmpty)
+    final user =  AppStateScope.of(context).user!;
+      if (user.email.isEmpty)
         return CircularAvatar(
           url: '$profileUrl',
           radius: 25,
@@ -212,7 +211,6 @@ class _MyHomePageState extends State<MyHomePage>
           onTap: null,
         );
       }
-    });
   }
 
   @override

@@ -23,6 +23,7 @@ class UserModel extends ChangeNotifier {
       this.accessToken,
       this.isLoggedIn = false,
       this.bookmarks = const []});
+
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
 
@@ -34,6 +35,18 @@ class UserModel extends ChangeNotifier {
         idToken: w.idToken,
         accessToken: w.accessToken,
         bookmarks: w.bookmarks);
+  }
+  factory UserModel.init() {
+    return UserModel(
+        name: '',
+        email: '',
+        avatarUrl: '',
+        idToken: '',
+        accessToken: '',
+        bookmarks: [],
+        isAdmin: false,
+        isLoggedIn: false);
+
   }
 
   /// TODO: add a method to convert a User to JSON object
