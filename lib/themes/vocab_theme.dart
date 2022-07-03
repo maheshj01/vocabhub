@@ -143,5 +143,7 @@ class VocabTheme {
         fontSize: 20,
         color: isDark ? Colors.white : Colors.black,
         fontWeight: FontWeight.w300),
+    subtitle2: GoogleFonts.quicksand(
+        fontSize: 16, color: Color(0XFF142D94), fontWeight: FontWeight.w300),
   ));
 }

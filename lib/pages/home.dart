@@ -22,7 +22,7 @@ import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/search.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
-import 'package:vocabhub/widgets/wordtile.dart';
+import 'package:vocabhub/widgets/word_list_tile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -57,8 +57,7 @@ class _MyHomePageState extends State<MyHomePage>
     logger.d(SizeUtils.size);
     _animationController = AnimationController(
         vsync: this,
-        duration: Duration(
-            milliseconds: (!SizeUtils.isMobile) ? 1000 : 800));
+        duration: Duration(milliseconds: (!SizeUtils.isMobile) ? 1000 : 800));
     userProvider = AppStateScope.of(context).user!;
     _animationController.forward();
     initWebState();
@@ -178,8 +177,7 @@ class _MyHomePageState extends State<MyHomePage>
                   },
             child: Padding(
               padding: EdgeInsets.symmetric(
-                  horizontal: SizeUtils.isTablet ? 18 : 24,
-                  vertical: 4),
+                  horizontal: SizeUtils.isTablet ? 18 : 24, vertical: 4),
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
                 child: Container(
@@ -197,20 +195,20 @@ class _MyHomePageState extends State<MyHomePage>
   }
 
   Widget _userAvatar() {
-    final user =  AppStateScope.of(context).user!;
-      if (user.email.isEmpty)
-        return CircularAvatar(
-          url: '$profileUrl',
-          radius: 25,
-        );
-      else {
-        return CircularAvatar(
-          name: getInitial('${user.name}'),
-          url: user.avatarUrl,
-          radius: 25,
-          onTap: null,
-        );
-      }
+    final user = AppStateScope.of(context).user!;
+    if (user.email.isEmpty)
+      return CircularAvatar(
+        url: '$profileUrl',
+        radius: 25,
+      );
+    else {
+      return CircularAvatar(
+        name: getInitial('${user.name}'),
+        url: user.avatarUrl,
+        radius: 25,
+        onTap: null,
+      );
+    }
   }
 
   @override
@@ -237,8 +235,7 @@ class _MyHomePageState extends State<MyHomePage>
                   : null,
               appBar: AppBar(
                 iconTheme: Theme.of(context).iconTheme,
-                centerTitle:
-                    SizeUtils.isMobile ? true : false,
+                centerTitle: SizeUtils.isMobile ? true : false,
                 title: Text('$APP_TITLE',
                     style: Theme.of(context).textTheme.headline4!.copyWith(
                         color: isDark ? Colors.white : VocabTheme.primaryColor,
@@ -425,17 +422,15 @@ class _WordsBuilderState extends State<WordsBuilder> {
                     child: GestureDetector(
                       onTap: () => FocusScope.of(context).unfocus(),
                       child: SmartRefresher(
-                        enablePullDown:
-                           !SizeUtils.isMobile? false : true,
+                        enablePullDown: !SizeUtils.isMobile ? false : true,
                         enablePullUp: false,
                         controller: _refreshController,
                         onRefresh: () => refresh(),
                         child: ListView.builder(
                             itemCount: value.length,
                             itemBuilder: (_, x) {
-                              return WordTile(
+                              return WordListTile(
                                   word: value[x],
-                                  isMobile: SizeUtils.isMobile,
                                   isSelected: selectedWord.toLowerCase() ==
                                       value[x].word.toLowerCase(),
                                   onSelect: (word) {

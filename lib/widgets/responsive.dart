@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:vocabhub/utils/size_utils.dart';
 
 class ResponsiveBuilder extends StatefulWidget {
-
   final WidgetBuilder desktopBuilder;
   final WidgetBuilder mobileBuilder;
 
@@ -17,12 +16,14 @@ class ResponsiveBuilder extends StatefulWidget {
 class _ResponsiveBuilderState extends State<ResponsiveBuilder> {
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
+    return Material(
+      child: LayoutBuilder(builder: (context, constraints) {
         SizeUtils.size = Size(constraints.maxWidth, constraints.maxHeight);
-      if (constraints.maxWidth > 600) {
-        return widget.desktopBuilder(context);
-      }
-      return widget.mobileBuilder(context);
-    });
+        if (constraints.maxWidth > 600) {
+          return widget.desktopBuilder(context);
+        }
+        return widget.mobileBuilder(context);
+      }),
+    );
   }
 }

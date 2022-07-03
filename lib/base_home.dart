@@ -37,10 +37,16 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    AppStateWidget.of(context).getWords();
+    getWords();
   }
 
-
+  Future<void> getWords() async {
+    final _store = SupaStore();
+    final words = await _store.getAllWords();
+    if (words != null && words.isNotEmpty) {
+      AppStateWidget.of(context).setWords(words);
+    }
+  }
 
   late AppState state;
 

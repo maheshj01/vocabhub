@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/models/models.dart';
-import 'package:vocabhub/services/services.dart';
 
 class AppState {
   final UserModel? user;
@@ -33,6 +32,8 @@ class AppStateScope extends InheritedWidget {
   }
 }
 
+/// this statefule widget is required to update the state of the AppstacteScope,
+/// since inherited widget is immutable
 class AppStateWidget extends StatefulWidget {
   const AppStateWidget({required this.child, Key? key}) : super(key: key);
 
@@ -60,16 +61,12 @@ class AppStateWidgetState extends State<AppStateWidget> {
   }
 
   void setUser(UserModel user) {
-      setState(() {
-        _data = _data.copyWith(
-          user: user,
-        );
-      });
-  }
-
-  Future<void> getWords() async {
-    final _store = SupaStore();
-    _data = _data.copyWith(words: await _store.getAllWords());
+    setState(() {
+      _data = _data.copyWith(
+        user: user,
+      );
+    });
+    print('user set');
   }
 
   @override

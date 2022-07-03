@@ -34,7 +34,7 @@ class Navigate<T> {
 
   Future<T?> pushAndPopAll(BuildContext context, Widget widget,
       {bool isRootNavigator = true,
-      TransitionType slideTransitionType = TransitionType.tr}) async {
+      TransitionType slideTransitionType = TransitionType.scale}) async {
     final T value = await Navigator.of(context, rootNavigator: isRootNavigator)
         .pushAndRemoveUntil(NavigateRoute(widget, type: slideTransitionType),
             (Route<dynamic> route) => false);
@@ -82,10 +82,7 @@ class NavigateRoute extends PageRouteBuilder {
                 Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
             if (type == TransitionType.scale) {
-              return FadeScaleTransition(
-                animation: animation,
-                child: child,
-              );
+              return child;
             }
 
             return SlideTransition(

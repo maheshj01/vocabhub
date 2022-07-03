@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-
+import 'package:vocabhub/widgets/responsive.dart';
 
 class Dashboard extends StatelessWidget {
   static String route = '/';
@@ -9,13 +8,14 @@ class Dashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: Text('Dashboard'),
-      ),
-    );
+        appBar: AppBar(),
+        body: ResponsiveBuilder(
+          desktopBuilder: (context) => DashboardDesktop(),
+          mobileBuilder: (context) => DashboardMobile(),
+        ));
   }
 }
+
 class DashboardMobile extends StatelessWidget {
   static String route = '/';
   const DashboardMobile({Key? key}) : super(key: key);
@@ -30,6 +30,7 @@ class DashboardMobile extends StatelessWidget {
     );
   }
 }
+
 class DashboardDesktop extends StatelessWidget {
   static String route = '/';
   const DashboardDesktop({Key? key}) : super(key: key);

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/constants/strings.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/appstate.dart';
@@ -92,11 +93,11 @@ class _WordDetailState extends State<WordDetail>
 
   late String meaning;
   late SupaStore supaStore;
+  UserModel userProvider = UserModel.init();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     bool isDark = darkNotifier.value;
-     final userProvider =AppStateScope.of(context).user!;
 
     Color? textfieldBgColor(bool editMode) {
       if (editMode) {
@@ -114,249 +115,256 @@ class _WordDetailState extends State<WordDetail>
       }
     }
 
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      userProvider = AppStateScope.of(context).user!;
+    });
+
     return widget.word == null
         ? EmptyWord()
-        : ListView(
-            children: [
-              SizedBox(
-                height: size.height / 5,
-              ),
-              userProvider.isLoggedIn && emails.contains(userProvider.email)
-                  ? Container(
-                      alignment: Alignment.topRight,
-                      padding: EdgeInsets.only(right: 16),
-                      child: IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () {
-                            Navigate().push(
-                                context,
-                                AddWordForm(
-                                  isEdit: true,
-                                  word: widget.word,
-                                ),
-                                slideTransitionType: TransitionType.btt);
-                          }))
-                  : SizedBox(),
-              Align(
-                alignment: Alignment.topCenter,
-                child: GestureDetector(
-                  onTap: () async {
-                    await Clipboard.setData(
-                        ClipboardData(text: "${widget.word!.word}"));
-                    showMessage(
-                        context, " copied ${widget.word!.word} to clipboard.");
-                  },
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: Text(
-                      widget.word!.word.capitalize(),
-                      style: Theme.of(context).textTheme.headline3!.copyWith(
-                          fontSize: size.height * 0.06,
-                          color: isDark ? Colors.white : Colors.black),
+        : Material(
+            child: ListView(
+              children: [
+                SizedBox(
+                  height: size.height / 5,
+                ),
+                userProvider.isLoggedIn && emails.contains(userProvider.email)
+                    ? Container(
+                        alignment: Alignment.topRight,
+                        padding: EdgeInsets.only(right: 16),
+                        child: IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              Navigate().push(
+                                  context,
+                                  AddWordForm(
+                                    isEdit: true,
+                                    word: widget.word,
+                                  ),
+                                  slideTransitionType: TransitionType.btt);
+                            }))
+                    : SizedBox(),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: GestureDetector(
+                    onTap: () async {
+                      await Clipboard.setData(
+                          ClipboardData(text: "${widget.word!.word}"));
+                      showMessage(context,
+                          " copied ${widget.word!.word} to clipboard.");
+                    },
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: Text(
+                        widget.word!.word.capitalize(),
+                        style: Theme.of(context).textTheme.headline3!.copyWith(
+                            fontSize: size.height * 0.06,
+                            color: isDark ? Colors.white : Colors.black),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              SynonymsList(
-                synonyms: widget.word!.synonyms,
-              ),
-              SizedBox(
-                height: 50,
-              ),
-              AnimatedBuilder(
-                  animation: _animation,
-                  builder: (BuildContext _, Widget? child) {
-                    meaning =
-                        widget.word!.meaning.substring(0, _animation.value);
-                    return Container(
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: SelectableText(meaning,
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1!
-                              .copyWith(
-                                  color: isDark ? Colors.white : Colors.black)),
-                    );
-                  }),
-              // ValueListenableBuilder<bool>(
-              //     valueListenable: editModeNotifier,
-              //     builder:
-              //         (BuildContext context, bool editMode, Widget? child) {
-              //       return GestureDetector(
-              //         onTap: () {
-              //           editModeNotifier.value = true;
-              //         },
-              //         child: AnimatedBuilder(
-              //           animation: _animation,
-              //           builder: (BuildContext _, Widget? child) {
-              //             meaning = widget.word!.meaning
-              //                 .substring(0, _animation.value);
-              //             textEditingController.text = meaning;
-              //             return Column(
-              //               children: [
-              //                 AnimatedContainer(
-              //                   curve: Curves.easeIn,
-              //                   padding: const EdgeInsets.all(16.0),
-              //                   duration: Duration(seconds: 1),
-              //                   margin: EdgeInsets.symmetric(
-              //                       horizontal: (size.width > MOBILE_WIDTH &&
-              //                               size.width < TABLET_WIDTH)
-              //                           ? 24.0
-              //                           : 48.0),
-              //                   decoration: BoxDecoration(
-              //                       boxShadow: editMode
-              //                           ? [
-              //                               BoxShadow(
-              //                                 color: isDark
-              //                                     ? primaryDark
-              //                                     : Colors.grey[100]!,
-              //                                 // .withOpacity(0.2),
-              //                                 offset: Offset(-6.0, -6.0),
-              //                                 blurRadius: 16.0,
-              //                               ),
-              //                               BoxShadow(
-              //                                 color: isDark
-              //                                     ? Colors.black
-              //                                         .withOpacity(0.2)
-              //                                     : Colors.black
-              //                                         .withOpacity(0.1),
-              //                                 offset: Offset(6.0, 6.0),
-              //                                 blurRadius: 16.0,
-              //                               ),
-              //                             ]
-              //                           : null,
-              //                       color: textfieldBgColor(editMode),
-              //                       borderRadius: BorderRadius.circular(
-              //                           editMode ? 12 : 0)),
-              //                   child: StatefulBuilder(
-              //                     builder: (_, state) => TextField(
-              //                         controller: textEditingController,
-              //                         readOnly: !editMode,
-              //                         maxLines: 5,
-              //                         textAlign: TextAlign.center,
-              //                         autofocus: false,
-              //                         onChanged: (x) {
-              //                           state(() {
-              //                             edited = x;
-              //                           });
-              //                         },
-              //                         onTap: () {
-              //                           editModeNotifier.value = true;
-              //                         },
-              //                         decoration: InputDecoration(
-              //                             hintText: length > 0
-              //                                 ? null
-              //                                 : "Add a meaning",
-              //                             hintStyle: TextStyle(
-              //                                 fontSize: 18,
-              //                                 color: Colors.grey),
-              //                             focusedBorder: InputBorder.none,
-              //                             border: InputBorder.none),
-              //                         style: Theme.of(context)
-              //                             .textTheme
-              //                             .subtitle1!
-              //                             .copyWith(
-              //                                 color: isDark
-              //                                     ? Colors.white
-              //                                     : Colors.black)),
-              //                   ),
-              //                 ),
-              //                 hasError
-              //                     ? Text(
-              //                         "Meaning cannot be empty",
-              //                         style: TextStyle(color: Colors.red),
-              //                       )
-              //                     : Container(),
-              //                 SizedBox(
-              //                   height: 20,
-              //                 ),
-              //                 AnimatedAlign(
-              //                   alignment: editMode
-              //                       ? Alignment(0.0, 0.0)
-              //                       : Alignment(1.2, 0.0),
-              //                   duration: Duration(milliseconds: 400),
-              //                   child: AnimatedOpacity(
-              //                       duration: Duration(seconds: 1),
-              //                       opacity: editMode ? 1.0 : 0.0,
-              //                       child: Container(
-              //                         width: 100,
-              //                         height: 40,
-              //                         child: ElevatedButton(
-              //                           style: ButtonStyle(
-              //                               backgroundColor:
-              //                                   MaterialStateProperty
-              //                                       .all<Color>(!isDark
-              //                                           ? primaryColor
-              //                                           : secondaryDark)),
-              //                           child: Text('Save'),
-              //                           onPressed: editMode
-              //                               ? () {
-              //                                   final text =
-              //                                       textEditingController
-              //                                           .text;
-              //                                   if (text.isNotEmpty) {
-              //                                     setState(() {
-              //                                       hasError = false;
-              //                                     });
-              //                                     editModeNotifier.value =
-              //                                         false;
-              //                                     unfocus();
-              //                                     if (edited != meaning &&
-              //                                         _animationController
-              //                                                 .status ==
-              //                                             AnimationStatus
-              //                                                 .completed) {
-              //                                       length = edited.length;
-              //                                       _tween.end = length;
-              //                                       updateMeaning();
-              //                                     }
-              //                                   } else {
-              //                                     setState(() {
-              //                                       hasError = true;
-              //                                     });
-              //                                     editModeNotifier.value =
-              //                                         true;
-              //                                   }
-              //                                 }
-              //                               : null,
-              //                         ),
-              //                       )),
-              //                 ),
-              //               ],
-              //             );
-              //           },
-              //         ),
-              //       );
-              //     }),
-              SizedBox(
-                height: 48,
-              ),
-              Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ExampleBuilder(
-                    examples: (widget.word!.examples == null ||
-                            widget.word!.examples!.isEmpty)
-                        ? []
-                        : widget.word!.examples,
-                    word: widget.word!.word,
-                  )),
-              Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: MnemonnicBuilder(
-                    mnemonics: (widget.word!.mnemonics == null ||
-                            widget.word!.mnemonics!.isEmpty)
-                        ? []
-                        : widget.word!.mnemonics,
-                    word: widget.word!.word,
-                  )),
-              SizedBox(
-                height: 100,
-              ),
-            ],
+                SizedBox(
+                  height: 20,
+                ),
+                SynonymsList(
+                  synonyms: widget.word!.synonyms,
+                ),
+                SizedBox(
+                  height: 50,
+                ),
+                AnimatedBuilder(
+                    animation: _animation,
+                    builder: (BuildContext _, Widget? child) {
+                      meaning =
+                          widget.word!.meaning.substring(0, _animation.value);
+                      return Container(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: SelectableText(meaning,
+                            style: Theme.of(context)
+                                .textTheme
+                                .subtitle1!
+                                .copyWith(
+                                    color:
+                                        isDark ? Colors.white : Colors.black)),
+                      );
+                    }),
+                // ValueListenableBuilder<bool>(
+                //     valueListenable: editModeNotifier,
+                //     builder:
+                //         (BuildContext context, bool editMode, Widget? child) {
+                //       return GestureDetector(
+                //         onTap: () {
+                //           editModeNotifier.value = true;
+                //         },
+                //         child: AnimatedBuilder(
+                //           animation: _animation,
+                //           builder: (BuildContext _, Widget? child) {
+                //             meaning = widget.word!.meaning
+                //                 .substring(0, _animation.value);
+                //             textEditingController.text = meaning;
+                //             return Column(
+                //               children: [
+                //                 AnimatedContainer(
+                //                   curve: Curves.easeIn,
+                //                   padding: const EdgeInsets.all(16.0),
+                //                   duration: Duration(seconds: 1),
+                //                   margin: EdgeInsets.symmetric(
+                //                       horizontal: (size.width > MOBILE_WIDTH &&
+                //                               size.width < TABLET_WIDTH)
+                //                           ? 24.0
+                //                           : 48.0),
+                //                   decoration: BoxDecoration(
+                //                       boxShadow: editMode
+                //                           ? [
+                //                               BoxShadow(
+                //                                 color: isDark
+                //                                     ? primaryDark
+                //                                     : Colors.grey[100]!,
+                //                                 // .withOpacity(0.2),
+                //                                 offset: Offset(-6.0, -6.0),
+                //                                 blurRadius: 16.0,
+                //                               ),
+                //                               BoxShadow(
+                //                                 color: isDark
+                //                                     ? Colors.black
+                //                                         .withOpacity(0.2)
+                //                                     : Colors.black
+                //                                         .withOpacity(0.1),
+                //                                 offset: Offset(6.0, 6.0),
+                //                                 blurRadius: 16.0,
+                //                               ),
+                //                             ]
+                //                           : null,
+                //                       color: textfieldBgColor(editMode),
+                //                       borderRadius: BorderRadius.circular(
+                //                           editMode ? 12 : 0)),
+                //                   child: StatefulBuilder(
+                //                     builder: (_, state) => TextField(
+                //                         controller: textEditingController,
+                //                         readOnly: !editMode,
+                //                         maxLines: 5,
+                //                         textAlign: TextAlign.center,
+                //                         autofocus: false,
+                //                         onChanged: (x) {
+                //                           state(() {
+                //                             edited = x;
+                //                           });
+                //                         },
+                //                         onTap: () {
+                //                           editModeNotifier.value = true;
+                //                         },
+                //                         decoration: InputDecoration(
+                //                             hintText: length > 0
+                //                                 ? null
+                //                                 : "Add a meaning",
+                //                             hintStyle: TextStyle(
+                //                                 fontSize: 18,
+                //                                 color: Colors.grey),
+                //                             focusedBorder: InputBorder.none,
+                //                             border: InputBorder.none),
+                //                         style: Theme.of(context)
+                //                             .textTheme
+                //                             .subtitle1!
+                //                             .copyWith(
+                //                                 color: isDark
+                //                                     ? Colors.white
+                //                                     : Colors.black)),
+                //                   ),
+                //                 ),
+                //                 hasError
+                //                     ? Text(
+                //                         "Meaning cannot be empty",
+                //                         style: TextStyle(color: Colors.red),
+                //                       )
+                //                     : Container(),
+                //                 SizedBox(
+                //                   height: 20,
+                //                 ),
+                //                 AnimatedAlign(
+                //                   alignment: editMode
+                //                       ? Alignment(0.0, 0.0)
+                //                       : Alignment(1.2, 0.0),
+                //                   duration: Duration(milliseconds: 400),
+                //                   child: AnimatedOpacity(
+                //                       duration: Duration(seconds: 1),
+                //                       opacity: editMode ? 1.0 : 0.0,
+                //                       child: Container(
+                //                         width: 100,
+                //                         height: 40,
+                //                         child: ElevatedButton(
+                //                           style: ButtonStyle(
+                //                               backgroundColor:
+                //                                   MaterialStateProperty
+                //                                       .all<Color>(!isDark
+                //                                           ? primaryColor
+                //                                           : secondaryDark)),
+                //                           child: Text('Save'),
+                //                           onPressed: editMode
+                //                               ? () {
+                //                                   final text =
+                //                                       textEditingController
+                //                                           .text;
+                //                                   if (text.isNotEmpty) {
+                //                                     setState(() {
+                //                                       hasError = false;
+                //                                     });
+                //                                     editModeNotifier.value =
+                //                                         false;
+                //                                     unfocus();
+                //                                     if (edited != meaning &&
+                //                                         _animationController
+                //                                                 .status ==
+                //                                             AnimationStatus
+                //                                                 .completed) {
+                //                                       length = edited.length;
+                //                                       _tween.end = length;
+                //                                       updateMeaning();
+                //                                     }
+                //                                   } else {
+                //                                     setState(() {
+                //                                       hasError = true;
+                //                                     });
+                //                                     editModeNotifier.value =
+                //                                         true;
+                //                                   }
+                //                                 }
+                //                               : null,
+                //                         ),
+                //                       )),
+                //                 ),
+                //               ],
+                //             );
+                //           },
+                //         ),
+                //       );
+                //     }),
+                SizedBox(
+                  height: 48,
+                ),
+                Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ExampleBuilder(
+                      examples: (widget.word!.examples == null ||
+                              widget.word!.examples!.isEmpty)
+                          ? []
+                          : widget.word!.examples,
+                      word: widget.word!.word,
+                    )),
+                Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: MnemonnicBuilder(
+                      mnemonics: (widget.word!.mnemonics == null ||
+                              widget.word!.mnemonics!.isEmpty)
+                          ? []
+                          : widget.word!.mnemonics,
+                      word: widget.word!.word,
+                    )),
+                SizedBox(
+                  height: 100,
+                ),
+              ],
+            ),
           );
   }
 }

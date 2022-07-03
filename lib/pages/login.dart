@@ -46,8 +46,7 @@ class _AppSignInState extends State<AppSignIn> {
           logger.d('found existing user ${user!.email}');
            state.setUser(user!);
           await Settings.setIsSignedIn(true, email: existingUser.email);
-          Navigate().pushAndPopAll(context, AdaptiveLayout(),
-              slideTransitionType: TransitionType.ttb);
+          Navigate().pushAndPopAll(context, AdaptiveLayout());
           firebaseAnalytics.logSignIn(user!);
         }
       } else {
