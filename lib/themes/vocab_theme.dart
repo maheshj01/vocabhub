@@ -49,7 +49,7 @@ class VocabTheme {
 
   static ThemeData _themeData(ColorScheme colorScheme, Color focusColor) {
     return ThemeData(
-      useMaterial3: true,
+      useMaterial3: false,
       colorScheme: colorScheme,
       textTheme: googleFontsTextTheme,
       // Matches manifest.json colors and background color.

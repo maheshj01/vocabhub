@@ -116,7 +116,7 @@ class _AppSignInState extends State<AppSignIn> {
             width: 300,
             backgroundColor: VocabTheme.primaryColor,
             foregroundColor: Colors.white,
-            label: 'Sign In as Guest',
+            label: 'Continue as a Guest',
             onTap: () {
               Navigate().pushReplace(context, AdaptiveLayout(),
                   slideTransitionType: TransitionType.scale);
