@@ -44,18 +44,19 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> handleNavigation() async {
     UserModel? user = AppStateScope.of(context).user;
-    final bool signedIn = await Settings.isSignedIn;
     final String _email = await Settings.email;
     final int count = await Settings.skipCount + 1;
     if (user == null) {
       user = UserModel.init();
-      AppStateWidget.of(context).setUser(user);
     }
     user.email = _email;
-    if (signedIn && _email.isNotEmpty) {
+    if (_email.isNotEmpty) {
       user.isLoggedIn = true;
+      AppStateWidget.of(context).setUser(user);
       Navigate().push(context, AdaptiveLayout());
     } else {
+      user.isLoggedIn = false;
+      AppStateWidget.of(context).setUser(user);
       if (count % 3 != 0) {
         Settings.setSkipCount = count;
         Navigate().push(context, AdaptiveLayout());

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/models/models.dart';
+import 'package:vocabhub/services/userstore.dart';
 
 class AppState {
   final UserModel? user;
@@ -49,7 +50,7 @@ class AppStateWidget extends StatefulWidget {
 
 class AppStateWidgetState extends State<AppStateWidget> {
   AppState _data = AppState();
-
+  final _userStore = UserStore();
   void setWords(List<Word> words) {
     if (words != _data.words) {
       setState(() {
@@ -66,7 +67,6 @@ class AppStateWidgetState extends State<AppStateWidget> {
         user: user,
       );
     });
-    print('user set');
   }
 
   @override

@@ -75,20 +75,6 @@ class UserStore {
     return resp;
   }
 
-  Future<PostgrestResponse> updateWord({
-    required String id,
-    required Word word,
-  }) async {
-    final Map<String, dynamic> json = word.toJson();
-    final response = await _supabase
-        .from(_tableName)
-        .update(json)
-        .eq("$ID_COLUMN", "$id")
-        .execute();
-    logger.i(response.toJson());
-    return response;
-  }
-
   Future<PostgrestResponse> updateMeaning({
     required String id,
     required Word word,
@@ -112,4 +98,37 @@ class UserStore {
     logger.i(response.toJson());
     return response;
   }
+
+  Future<ResponseObject> updateLogin(
+      {required String email, bool isLoggedIn = false}) async {
+    try {
+      final response = await _supabase
+          .from(_tableName)
+          .update({"$USER_LOGGEDIN_COLUMN": isLoggedIn})
+          .eq('$USER_EMAIL_COLUMN', email)
+          .execute();
+
+      if (response.status == 200) {
+        return ResponseObject(Status.success.name,
+            UserModel.fromJson((response.data as List).first), Status.success);
+      } else {
+        logger.d('existing user not found');
+        return ResponseObject(Status.notfound.name,
+            UserModel.fromJson(response.data), Status.notfound);
+      }
+    } catch (_) {
+      logger.e(_);
+      return ResponseObject(_.toString(), UserModel.init(), Status.error);
+    }
+  }
+}
+
+enum Status { success, notfound, error }
+
+class ResponseObject {
+  final String message;
+  final Object data;
+  final Status status;
+
+  ResponseObject(this.message, this.data, this.status);
 }

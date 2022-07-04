@@ -38,3 +38,4 @@ const USER_NAME_COLUMN = 'name';
 const USER_EMAIL_COLUMN = 'email';
 const USER_BOOKMARKS_COLUMN = 'bookmarks';
 const USER_CREATED_AT_COLUMN = 'created_at';
+const USER_LOGGEDIN_COLUMN = 'isLoggedIn';

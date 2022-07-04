@@ -10,6 +10,7 @@ import 'package:logger/logger.dart' as log;
 import 'package:vocabhub/pages/splashscreen.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
+import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'constants/constants.dart';
 import 'utils/settings.dart';
@@ -41,9 +42,13 @@ class VocabApp extends StatefulWidget {
 class _VocabAppState extends State<VocabApp> {
   Future<void> initatializeApp() async {
     firebaseAnalytics = Analytics();
-    isSignedIn = await Settings.isSignedIn;
-    count = await Settings.skipCount;
     firebaseAnalytics.appOpen();
+    final email = await Settings.email;
+    if (email.isNotEmpty) {
+      final response =
+          await UserStore().updateLogin(email: email, isLoggedIn: true);
+      print(response.status);
+    }
   }
 
   late Analytics firebaseAnalytics;
@@ -56,9 +61,6 @@ class _VocabAppState extends State<VocabApp> {
     logger.close();
     super.dispose();
   }
-
-  late bool isSignedIn;
-  late int count;
 
   @override
   void initState() {

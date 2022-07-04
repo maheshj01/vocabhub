@@ -32,10 +32,8 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     3: {Notifications.route: Notifications()},
     4: {UserProfile.route: UserProfile()}
   };
-  SupaStore _store = SupaStore();
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getWords();
   }
@@ -43,9 +41,13 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
   Future<void> getWords() async {
     final _store = SupaStore();
     final words = await _store.getAllWords();
-    if (words != null && words.isNotEmpty) {
+    if (words.isNotEmpty) {
       AppStateWidget.of(context).setWords(words);
     }
+  }
+
+  Future<void> silentLogin()async{
+    /// TODO UPDATE LOGIN STATE IN BACKEND AND LOCALLY
   }
 
   late AppState state;

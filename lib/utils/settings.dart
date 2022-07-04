@@ -67,13 +67,13 @@ class Settings extends ChangeNotifier {
     _sharedPreferences!.setBool('$signedInKey', value);
   }
 
-  static FutureOr<bool> get isSignedIn async {
-    if (_sharedPreferences == null) {
-      _sharedPreferences = await SharedPreferences.getInstance();
-    }
-    final _isSignedIn = _sharedPreferences!.getBool('$signedInKey') ?? false;
-    return _isSignedIn;
-  }
+  // static FutureOr<bool> get isSignedIn async {
+  //   if (_sharedPreferences == null) {
+  //     _sharedPreferences = await SharedPreferences.getInstance();
+  //   }
+  //   final _isSignedIn = _sharedPreferences!.getBool('$signedInKey') ?? false;
+  //   return _isSignedIn;
+  // }
 
   static FutureOr<String> get email async {
     if (_sharedPreferences == null) {
