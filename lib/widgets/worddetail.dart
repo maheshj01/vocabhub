@@ -123,10 +123,11 @@ class _WordDetailState extends State<WordDetail>
     return widget.word == null
         ? EmptyWord()
         : Material(
+            color: Theme.of(context).colorScheme.surface,
             child: ListView(
               children: [
                 SizedBox(
-                  height: size.height / 5,
+                  height: size.height / (SizeUtils.isMobile ? 8 : 5),
                 ),
                 userProvider.isLoggedIn && emails.contains(userProvider.email)
                     ? Container(

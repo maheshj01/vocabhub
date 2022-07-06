@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/services/appstate.dart';
-import 'package:vocabhub/utils/navigator.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
+import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/search.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -30,6 +31,12 @@ class _SearchState extends State<Search> {
 
   final DraggableScrollableController _draggableScrollableController =
       DraggableScrollableController();
+
+  void _scrollSheetToSize({double size = 0.6}) {
+    _draggableScrollableController.animateTo(size,
+        duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+  }
+
   @override
   Widget build(BuildContext context) {
     final words = AppStateScope.of(context).words;
@@ -55,7 +62,9 @@ class _SearchState extends State<Search> {
             );
           }, mobileBuilder: (BuildContext context) {
             return Stack(
+              fit: StackFit.expand,
               children: [
+                /// todo: hide sheet on interacting with word detail
                 WordDetail(word: words[selectedIndex]),
                 DraggableScrollableSheet(
                     maxChildSize: 0.6,
@@ -63,21 +72,23 @@ class _SearchState extends State<Search> {
                     controller: _draggableScrollableController,
                     expand: true,
                     builder: ((context, scrollController) {
-                      return Card(
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: 16.0.allRadius,
+                            boxShadow: [VocabTheme.secondaryShadow]),
                         child: WordList(
                           onFocus: () {
-                            _draggableScrollableController.animateTo(0.6,
-                                duration: Duration(milliseconds: 300),
-                                curve: Curves.easeIn);
+                            _scrollSheetToSize(size: 0.6);
+                            print('focus search');
                           },
                           controller: scrollController,
                           onSelected: (word) {
                             setState(() {
                               selectedIndex = words.indexOf(word);
                             });
-                            _draggableScrollableController.animateTo(0.2,
-                                duration: Duration(milliseconds: 300),
-                                curve: Curves.easeIn);
+                            _scrollSheetToSize(size: 0.2);
                           },
                         ),
                       );
@@ -136,11 +147,13 @@ class _WordListState extends State<WordList> {
     _words = AppStateScope.of(context).words!;
     wordsNotifier.value = _words;
 
+    /// todo: sheet shuld be draggable on dragging the  top edge of the sheet
     return ValueListenableBuilder<List<Word>>(
         valueListenable: wordsNotifier,
         builder: (BuildContext context, List<Word> value, Widget? child) {
           return Column(
             children: [
+              SizedBox(height: 8),
               SearchBuilder(
                 ontap: () => widget.onFocus!(),
                 onChanged: (x) {

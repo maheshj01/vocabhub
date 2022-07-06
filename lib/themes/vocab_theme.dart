@@ -16,7 +16,8 @@ class VocabTheme {
   static Color navbarSurfaceGrey = Color(0xffF2F4F7);
   static Color? surfaceGreen = Colors.green[50];
   static Color? surfaceGrey = Colors.grey[850];
-  static Color? errorColor = Colors.red;
+  static Color errorColor = Colors.red;
+  static Color lightblue = Color(0XFF142D94);
 
   static Color color1 = Color(0xff1D976C);
   static Color color2 = Color(0xff93F9B9);
@@ -49,6 +50,11 @@ class VocabTheme {
 
   static BoxShadow primaryShadow = BoxShadow(
     color: Colors.black.withOpacity(0.1),
+    blurRadius: 10,
+    offset: Offset(0, 5),
+  );
+  static BoxShadow secondaryShadow = BoxShadow(
+    color: Colors.black.withOpacity(0.2),
     blurRadius: 10,
     offset: Offset(0, 5),
   );
@@ -150,6 +156,6 @@ class VocabTheme {
         color: isDark ? Colors.white : Colors.black,
         fontWeight: FontWeight.w300),
     subtitle2: GoogleFonts.quicksand(
-        fontSize: 16, color: Color(0XFF142D94), fontWeight: FontWeight.w300),
+        fontSize: 16, color: lightblue, fontWeight: FontWeight.w300),
   ));
 }

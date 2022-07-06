@@ -1,4 +1,3 @@
-import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 
 enum TransitionType { ltr, rtl, ttb, btt, bl, br, tl, tr, scale }
@@ -8,7 +7,7 @@ class Navigate<T> {
   Future<T?> pushReplace(BuildContext context, Widget widget,
       {bool isDialog = false,
       bool isRootNavigator = true,
-      TransitionType slideTransitionType = TransitionType.tr}) async {
+      TransitionType slideTransitionType = TransitionType.scale}) async {
     final T value = await Navigator.of(context, rootNavigator: isRootNavigator)
         .pushReplacement(NavigateRoute(widget, type: slideTransitionType));
     return value;

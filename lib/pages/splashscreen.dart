@@ -53,15 +53,15 @@ class _SplashScreenState extends State<SplashScreen>
     if (_email.isNotEmpty) {
       user.isLoggedIn = true;
       AppStateWidget.of(context).setUser(user);
-      Navigate().push(context, AdaptiveLayout());
+      Navigate().pushReplace(context, AdaptiveLayout());
     } else {
       user.isLoggedIn = false;
       AppStateWidget.of(context).setUser(user);
       if (count % 3 != 0) {
         Settings.setSkipCount = count;
-        Navigate().push(context, AdaptiveLayout());
+        Navigate().pushReplace(context, AdaptiveLayout());
       } else {
-        Navigate().push(context, AppSignIn());
+        Navigate().pushReplace(context, AppSignIn());
       }
     }
   }

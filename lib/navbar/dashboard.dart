@@ -7,12 +7,11 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(),
-        body: ResponsiveBuilder(
-          desktopBuilder: (context) => DashboardDesktop(),
-          mobileBuilder: (context) => DashboardMobile(),
-        ));
+    return Material(
+        child: ResponsiveBuilder(
+      desktopBuilder: (context) => DashboardDesktop(),
+      mobileBuilder: (context) => DashboardMobile(),
+    ));
   }
 }
 
