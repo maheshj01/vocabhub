@@ -85,8 +85,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
       );
     }
 
-    bool isAdmin =
-        (userProvider.isLoggedIn && emails.contains(userProvider.email));
+    bool isAdmin = (userProvider.isLoggedIn && userProvider.isAdmin);
 
     return Drawer(
       child: Container(
@@ -144,7 +143,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             ListTile(
               onTap: () {
                 Navigate().popView(context);
-                Navigate().push(context, AddWordForm(),
+                Navigate.push(context, AddWordForm(),
                     slideTransitionType: TransitionType.btt);
               },
               trailing: trailingIcon(

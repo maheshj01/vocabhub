@@ -92,6 +92,7 @@ class _SearchState extends State<Search> {
                           },
                           controller: scrollController,
                           onSelected: (word) {
+                            removeFocus(context);
                             setState(() {
                               selectedIndex = words.indexOf(word);
                             });

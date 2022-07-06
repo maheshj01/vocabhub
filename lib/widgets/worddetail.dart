@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/constants/strings.dart';
 import 'package:vocabhub/main.dart';
@@ -124,16 +125,18 @@ class _WordDetailState extends State<WordDetail>
             child: ListView(
               children: [
                 SizedBox(
-                  height: size.height / (SizeUtils.isMobile ? 8 : 5),
+                  height: SizeUtils.isMobile ? 24 : (size.height / 5),
                 ),
-                userProvider.isLoggedIn && emails.contains(userProvider.email)
+                userProvider.isLoggedIn && userProvider.isAdmin
                     ? Container(
                         alignment: Alignment.topRight,
                         padding: EdgeInsets.only(right: 16),
                         child: IconButton(
-                            icon: Icon(Icons.edit),
+                            icon: Icon(
+                              Icons.edit,
+                            ),
                             onPressed: () {
-                              Navigate().push(
+                              Navigate.push(
                                   context,
                                   AddWordForm(
                                     isEdit: true,
@@ -180,164 +183,14 @@ class _WordDetailState extends State<WordDetail>
                         alignment: Alignment.center,
                         padding: EdgeInsets.symmetric(horizontal: 16),
                         child: SelectableText(meaning,
-                            style: Theme.of(context)
-                                .textTheme
-                                .subtitle1!
-                                .copyWith(
-                                    color:
-                                        isDark ? Colors.white : Colors.black)),
+                            textAlign: TextAlign.center,
+                            style:
+                                Theme.of(context).textTheme.headline4!.copyWith(
+                                        fontFamily: GoogleFonts.inter(
+                                      fontWeight: FontWeight.w400,
+                                    ).fontFamily)),
                       );
                     }),
-                // ValueListenableBuilder<bool>(
-                //     valueListenable: editModeNotifier,
-                //     builder:
-                //         (BuildContext context, bool editMode, Widget? child) {
-                //       return GestureDetector(
-                //         onTap: () {
-                //           editModeNotifier.value = true;
-                //         },
-                //         child: AnimatedBuilder(
-                //           animation: _animation,
-                //           builder: (BuildContext _, Widget? child) {
-                //             meaning = widget.word!.meaning
-                //                 .substring(0, _animation.value);
-                //             textEditingController.text = meaning;
-                //             return Column(
-                //               children: [
-                //                 AnimatedContainer(
-                //                   curve: Curves.easeIn,
-                //                   padding: const EdgeInsets.all(16.0),
-                //                   duration: Duration(seconds: 1),
-                //                   margin: EdgeInsets.symmetric(
-                //                       horizontal: (size.width > MOBILE_WIDTH &&
-                //                               size.width < TABLET_WIDTH)
-                //                           ? 24.0
-                //                           : 48.0),
-                //                   decoration: BoxDecoration(
-                //                       boxShadow: editMode
-                //                           ? [
-                //                               BoxShadow(
-                //                                 color: isDark
-                //                                     ? primaryDark
-                //                                     : Colors.grey[100]!,
-                //                                 // .withOpacity(0.2),
-                //                                 offset: Offset(-6.0, -6.0),
-                //                                 blurRadius: 16.0,
-                //                               ),
-                //                               BoxShadow(
-                //                                 color: isDark
-                //                                     ? Colors.black
-                //                                         .withOpacity(0.2)
-                //                                     : Colors.black
-                //                                         .withOpacity(0.1),
-                //                                 offset: Offset(6.0, 6.0),
-                //                                 blurRadius: 16.0,
-                //                               ),
-                //                             ]
-                //                           : null,
-                //                       color: textfieldBgColor(editMode),
-                //                       borderRadius: BorderRadius.circular(
-                //                           editMode ? 12 : 0)),
-                //                   child: StatefulBuilder(
-                //                     builder: (_, state) => TextField(
-                //                         controller: textEditingController,
-                //                         readOnly: !editMode,
-                //                         maxLines: 5,
-                //                         textAlign: TextAlign.center,
-                //                         autofocus: false,
-                //                         onChanged: (x) {
-                //                           state(() {
-                //                             edited = x;
-                //                           });
-                //                         },
-                //                         onTap: () {
-                //                           editModeNotifier.value = true;
-                //                         },
-                //                         decoration: InputDecoration(
-                //                             hintText: length > 0
-                //                                 ? null
-                //                                 : "Add a meaning",
-                //                             hintStyle: TextStyle(
-                //                                 fontSize: 18,
-                //                                 color: Colors.grey),
-                //                             focusedBorder: InputBorder.none,
-                //                             border: InputBorder.none),
-                //                         style: Theme.of(context)
-                //                             .textTheme
-                //                             .subtitle1!
-                //                             .copyWith(
-                //                                 color: isDark
-                //                                     ? Colors.white
-                //                                     : Colors.black)),
-                //                   ),
-                //                 ),
-                //                 hasError
-                //                     ? Text(
-                //                         "Meaning cannot be empty",
-                //                         style: TextStyle(color: Colors.red),
-                //                       )
-                //                     : Container(),
-                //                 SizedBox(
-                //                   height: 20,
-                //                 ),
-                //                 AnimatedAlign(
-                //                   alignment: editMode
-                //                       ? Alignment(0.0, 0.0)
-                //                       : Alignment(1.2, 0.0),
-                //                   duration: Duration(milliseconds: 400),
-                //                   child: AnimatedOpacity(
-                //                       duration: Duration(seconds: 1),
-                //                       opacity: editMode ? 1.0 : 0.0,
-                //                       child: Container(
-                //                         width: 100,
-                //                         height: 40,
-                //                         child: ElevatedButton(
-                //                           style: ButtonStyle(
-                //                               backgroundColor:
-                //                                   MaterialStateProperty
-                //                                       .all<Color>(!isDark
-                //                                           ? primaryColor
-                //                                           : secondaryDark)),
-                //                           child: Text('Save'),
-                //                           onPressed: editMode
-                //                               ? () {
-                //                                   final text =
-                //                                       textEditingController
-                //                                           .text;
-                //                                   if (text.isNotEmpty) {
-                //                                     setState(() {
-                //                                       hasError = false;
-                //                                     });
-                //                                     editModeNotifier.value =
-                //                                         false;
-                //                                     unfocus();
-                //                                     if (edited != meaning &&
-                //                                         _animationController
-                //                                                 .status ==
-                //                                             AnimationStatus
-                //                                                 .completed) {
-                //                                       length = edited.length;
-                //                                       _tween.end = length;
-                //                                       updateMeaning();
-                //                                     }
-                //                                   } else {
-                //                                     setState(() {
-                //                                       hasError = true;
-                //                                     });
-                //                                     editModeNotifier.value =
-                //                                         true;
-                //                                   }
-                //                                 }
-                //                               : null,
-                //                         ),
-                //                       )),
-                //                 ),
-                //               ],
-                //             );
-                //           },
-                //         ),
-                //       );
-                //     }),
                 SizedBox(
                   height: 48,
                 ),

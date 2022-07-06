@@ -13,13 +13,13 @@ class Navigate<T> {
     return value;
   }
 
-  Future<T?> push(BuildContext context, Widget widget,
+  static Future<void> push(BuildContext context, Widget widget,
       {bool isDialog = false,
       bool isRootNavigator = true,
       TransitionType slideTransitionType = TransitionType.scale}) async {
-    final T value = await Navigator.of(context, rootNavigator: isRootNavigator)
+    final  value = await Navigator.of(context, rootNavigator: isRootNavigator)
         .push(NavigateRoute(widget, type: slideTransitionType));
-    return value;
+    // return value;
   }
 
 // pop all Routes except first

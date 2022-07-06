@@ -78,7 +78,7 @@ class VocabTheme {
           ),
           unselectedLabelTextStyle: googleFontsTextTheme.headline6,
           indicatorColor: colorScheme.primary),
-      iconTheme: IconThemeData(color: colorScheme.onPrimary),
+      iconTheme: IconThemeData(color: colorScheme.primary),
       canvasColor: colorScheme.background,
       scaffoldBackgroundColor: colorScheme.background,
       highlightColor: Colors.transparent,

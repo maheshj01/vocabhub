@@ -83,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage>
     }
     if (userProvider.isLoggedIn) {
       logger.d('loggedIn user = ${userProvider.email}');
-      if (emails.contains(userProvider.email)) {
+      if (userProvider.isAdmin) {
         actions = popupMenu['admin']!;
       } else {
         actions = popupMenu['signout']!;
@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   Future<void> _onMenuSelect(String text) async {
     if (text.toLowerCase() == 'add word') {
-      await Navigate().push(context, AddWordForm(),
+      await Navigate.push(context, AddWordForm(),
           slideTransitionType: TransitionType.btt);
     } else if (text.toLowerCase() == 'sign out') {
       final isSignedOut = await Authentication().googleSignOut(context);

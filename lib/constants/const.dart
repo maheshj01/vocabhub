@@ -16,8 +16,6 @@ const PRIVACY_POLICY = 'https://maheshmnj.github.io/privacy';
 const String profileUrl = 'assets/profile.png';
 const Duration wordCountAnimationDuration = Duration(seconds: 3);
 
-const List<String> emails = ['maheshmn121@gmail.com'];
-
 /// TABLES
 // const VOCAB_TABLE_NAME = 'vocabsheet';
 // const USER_TABLE_NAME = 'users';

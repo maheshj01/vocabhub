@@ -56,7 +56,7 @@ class UserProfileMobile extends StatelessWidget {
             child: user == null || !user.isLoggedIn
                 ? VocabButton(
                     onTap: () {
-                      Navigate().push(context, AppSignIn());
+                      Navigate.push(context, AppSignIn());
                     },
                     label: 'Sign In')
                 : Column(
