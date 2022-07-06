@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
@@ -33,8 +34,10 @@ class _SearchState extends State<Search> {
       DraggableScrollableController();
 
   void _scrollSheetToSize({double size = 0.6}) {
-    _draggableScrollableController.animateTo(size,
-        duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+    SchedulerBinding.instance.addPostFrameCallback((x) {
+      _draggableScrollableController.animateTo(size,
+          duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+    });
   }
 
   @override
@@ -64,8 +67,13 @@ class _SearchState extends State<Search> {
             return Stack(
               fit: StackFit.expand,
               children: [
-                /// todo: hide sheet on interacting with word detail
-                WordDetail(word: words[selectedIndex]),
+                GestureDetector(
+                  onTapDown: (x) {
+                    removeFocus(context);
+                    _scrollSheetToSize(size: 0.2);
+                  },
+                  child: WordDetail(word: words[selectedIndex]),
+                ),
                 DraggableScrollableSheet(
                     maxChildSize: 0.6,
                     minChildSize: 0.2,
@@ -81,7 +89,6 @@ class _SearchState extends State<Search> {
                         child: WordList(
                           onFocus: () {
                             _scrollSheetToSize(size: 0.6);
-                            print('focus search');
                           },
                           controller: scrollController,
                           onSelected: (word) {
@@ -191,5 +198,19 @@ class _WordListState extends State<WordList> {
             ],
           );
         });
+  }
+}
+
+class MyBackgroundWidget extends StatelessWidget {
+  final int index;
+  const MyBackgroundWidget({Key? key, required this.index}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (int i = 0; i < 20; i++) Text('selected $index'),
+      ],
+    );
   }
 }

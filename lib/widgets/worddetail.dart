@@ -82,7 +82,6 @@ class _WordDetailState extends State<WordDetail>
     } else {
       _animationController.duration = Duration(seconds: 3);
     }
-    unfocus();
     _tween.end = length;
     if (widget.word?.word != selectedWord) {
       _animationController.reset();
@@ -92,8 +91,6 @@ class _WordDetailState extends State<WordDetail>
       selectedWord = widget.word!.word;
     }
   }
-
-  void unfocus() => FocusScope.of(context).unfocus();
 
   late String meaning;
   late SupaStore supaStore;
