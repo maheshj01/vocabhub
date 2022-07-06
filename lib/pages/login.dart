@@ -47,7 +47,7 @@ class _AppSignInState extends State<AppSignIn> {
           await Settings.setIsSignedIn(true, email: existingUser.email);
           await UserStore()
               .updateLogin(email: existingUser.email, isLoggedIn: true);
-          state.setUser(existingUser);
+          state.setUser(existingUser.copyWith(isLoggedIn: true));
           Navigate().pushAndPopAll(context, AdaptiveLayout());
           firebaseAnalytics.logSignIn(user!);
         }

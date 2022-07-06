@@ -27,6 +27,7 @@ class UserModel extends ChangeNotifier {
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
 
+  /// todo: add created at parameter
   factory UserModel.copyWith(UserModel w) {
     return UserModel(
         name: w.name,
@@ -34,8 +35,32 @@ class UserModel extends ChangeNotifier {
         avatarUrl: w.avatarUrl,
         idToken: w.idToken,
         accessToken: w.accessToken,
+        isAdmin: w.isAdmin,
+        isLoggedIn: w.isLoggedIn,
         bookmarks: w.bookmarks);
   }
+
+  UserModel copyWith({
+    String? name,
+    String? email,
+    String? avatarUrl,
+    String? idToken,
+    String? accessToken,
+    bool? isAdmin,
+    bool? isLoggedIn,
+    List<Word>? bookmarks,
+  }) {
+    return UserModel(
+        name: name ?? this.name,
+        email: email ?? this.email,
+        avatarUrl: avatarUrl ?? this.avatarUrl,
+        idToken: idToken ?? this.idToken,
+        accessToken: accessToken ?? this.accessToken,
+        isAdmin: isAdmin ?? this.isAdmin,
+        isLoggedIn: isLoggedIn ?? this.isLoggedIn,
+        bookmarks: bookmarks ?? this.bookmarks);
+  }
+
   factory UserModel.init() {
     return UserModel(
         name: '',

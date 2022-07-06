@@ -26,7 +26,7 @@ class UserStore {
           .execute();
       if (response.status == 200) {
         final user = UserModel.fromJson((response.data as List).first);
-        if (user.email == 'maheshmn121@gmail.com') user.isAdmin = true;
+        // if (user.email == 'maheshmn121@gmail.com') user.isAdmin = true;
         return user;
       } else {
         logger.d('existing user not found');

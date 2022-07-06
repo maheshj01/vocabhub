@@ -46,9 +46,15 @@ class _UserProfileState extends State<UserProfile> {
   }
 }
 
-class UserProfileMobile extends StatelessWidget {
+class UserProfileMobile extends StatefulWidget {
   const UserProfileMobile({Key? key}) : super(key: key);
 
+  @override
+  State<UserProfileMobile> createState() => _UserProfileMobileState();
+}
+
+class _UserProfileMobileState extends State<UserProfileMobile> {
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
@@ -110,8 +116,15 @@ class UserProfileMobile extends StatelessWidget {
                         Spacer(),
                         VocabButton(
                           label: 'Sign Out',
-                          onTap: () {
-                            Settings.clear();
+                          height: 50,
+                          isLoading: isLoading,
+                          onTap: () async {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            await Settings.clear();
+                            await UserStore().updateLogin(
+                                email: user.email, isLoggedIn: false);
                             Navigate().pushAndPopAll(context, AppSignIn());
                           },
                         )
