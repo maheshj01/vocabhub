@@ -26,6 +26,7 @@ class CircularAvatar extends StatelessWidget {
       child: CircleAvatar(
           radius: radius,
           foregroundColor: Colors.white,
+          backgroundColor: Colors.grey,
           backgroundImage: url == null ? null : getImageProvider(url!),
           child: url == null
               ? Text(name!,

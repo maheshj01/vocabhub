@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/userstore.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/navigator.dart';
-import 'package:vocabhub/utils/settings.dart';
+import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
+import 'package:vocabhub/widgets/circle_avatar.dart';
+import 'package:vocabhub/widgets/icon.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 
 class UserProfile extends StatefulWidget {
@@ -16,7 +20,6 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
-
   @override
   void initState() {
     super.initState();
@@ -34,6 +37,7 @@ class _UserProfileState extends State<UserProfile> {
       }
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
@@ -49,9 +53,6 @@ class UserProfileMobile extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Profile'),
-        ),
         body: Center(
             child: user == null || !user.isLoggedIn
                 ? VocabButton(
@@ -59,21 +60,63 @@ class UserProfileMobile extends StatelessWidget {
                       Navigate.push(context, AppSignIn());
                     },
                     label: 'Sign In')
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Welcome ${user.name}'),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      VocabButton(
-                        label: 'Sign Out',
-                        onTap: () {
-                          Settings.clear();
-                          Navigate().pushAndPopAll(context, AppSignIn());
-                        },
-                      )
-                    ],
+                : Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: kBottomNavigationBarHeight * 1.2),
+                    child: Column(
+                      children: [
+                        Stack(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: CircleAvatar(
+                                  radius: 46,
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.2),
+                                  child: CircularAvatar(
+                                    url: '${user.avatarUrl}',
+                                    radius: 40,
+                                  )),
+                            ),
+                            Positioned(
+                                right: 8,
+                                bottom: 16,
+                                child: VHIcon(
+                                  Icons.edit,
+                                  size: 30,
+                                  onTap: () {
+                                    print('tapped icon');
+                                  },
+                                ))
+                          ],
+                        ),
+                        Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child:
+                                Text(!user.isAdmin ? ' User 🔒' : 'Admin 🔑')),
+                        Text(
+                          '${user.name}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline4!
+                              .copyWith(
+                                  fontSize: 32, fontWeight: FontWeight.w500),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Spacer(),
+                        VocabButton(
+                          label: 'Sign Out',
+                          onTap: () {
+                            Settings.clear();
+                            Navigate().pushAndPopAll(context, AppSignIn());
+                          },
+                        )
+                      ],
+                    ),
                   )));
   }
 }
