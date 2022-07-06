@@ -5,8 +5,9 @@ import 'package:vocabhub/themes/vocab_theme.dart';
 
 class SearchBuilder extends StatefulWidget {
   final Function(String) onChanged;
-
-  const SearchBuilder({Key? key, required this.onChanged}) : super(key: key);
+  final Function? ontap;
+  const SearchBuilder({Key? key, required this.onChanged, this.ontap})
+      : super(key: key);
 
   @override
   _SearchBuilderState createState() => _SearchBuilderState();
@@ -29,6 +30,7 @@ class _SearchBuilderState extends State<SearchBuilder> {
         child: TextField(
           controller: searchController,
           autofocus: false,
+          onTap: () => widget.ontap!(),
           decoration: InputDecoration(
               filled: true,
               border: InputBorder.none,

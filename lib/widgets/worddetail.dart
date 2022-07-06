@@ -54,6 +54,9 @@ class _WordDetailState extends State<WordDetail>
       // _animationController.reset();
       // }
     });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      userProvider = AppStateScope.of(context).user!;
+    });
   }
 
   int length = 0;
@@ -95,6 +98,7 @@ class _WordDetailState extends State<WordDetail>
   late String meaning;
   late SupaStore supaStore;
   UserModel userProvider = UserModel.init();
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -116,10 +120,6 @@ class _WordDetailState extends State<WordDetail>
       }
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      userProvider = AppStateScope.of(context).user!;
-    });
-
     return widget.word == null
         ? EmptyWord()
         : Material(
@@ -127,10 +127,6 @@ class _WordDetailState extends State<WordDetail>
               children: [
                 SizedBox(
                   height: size.height / 5,
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: SizeUtils.isMobile ? BackButton() : SizedBox(),
                 ),
                 userProvider.isLoggedIn && emails.contains(userProvider.email)
                     ? Container(
@@ -366,7 +362,7 @@ class _WordDetailState extends State<WordDetail>
                       word: widget.word!.word,
                     )),
                 SizedBox(
-                  height: 100,
+                  height: 200,
                 ),
               ],
             ),
