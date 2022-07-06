@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:vocabhub/constants/const.dart';
 
 extension StringExtension on String {
   String capitalize() {
@@ -10,6 +12,31 @@ extension StringExtension on String {
   String initals() {
     /// Returns the first letter of each word in the string.
     return this.split(' ').map((e) => e.capitalize().substring(0, 1)).join();
+  }
+}
+
+extension DateHelper on DateTime {
+  String formatDate() {
+    final now = DateTime.now();
+    final differenceInDays = getDifferenceInDaysWithNow();
+
+    if (isSameDate(now)) {
+      return 'Today';
+    } else if (differenceInDays == 1) {
+      return 'Yesterday';
+    } else {
+      final formatter = DateFormat(dateFormatter);
+      return formatter.format(this);
+    }
+  }
+
+  bool isSameDate(DateTime other) {
+    return year == other.year && month == other.month && day == other.day;
+  }
+
+  int getDifferenceInDaysWithNow() {
+    final now = DateTime.now();
+    return now.difference(this).inDays;
   }
 }
 

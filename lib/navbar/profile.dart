@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/userstore.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
@@ -102,6 +100,24 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                             padding: const EdgeInsets.all(8.0),
                             child:
                                 Text(!user.isAdmin ? ' User 🔒' : 'Admin 🔑')),
+                        RichText(
+                            text: TextSpan(children: [
+                          TextSpan(
+                              text: 'Joined on ',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle2!
+                                  .copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12)),
+                          TextSpan(
+                            text: user.created_at!.formatDate(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .subtitle2!
+                                .copyWith(fontWeight: FontWeight.w600),
+                          ),
+                        ])),
                         Text(
                           '${user.name}',
                           style: Theme.of(context)

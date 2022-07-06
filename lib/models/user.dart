@@ -13,6 +13,8 @@ class UserModel extends ChangeNotifier {
   String? avatarUrl;
   bool isLoggedIn;
   bool isAdmin;
+  String username;
+  DateTime? created_at;
 
   UserModel(
       {this.name = '',
@@ -21,6 +23,8 @@ class UserModel extends ChangeNotifier {
       this.idToken,
       this.isAdmin = false,
       this.accessToken,
+      this.username = '',
+      this.created_at,
       this.isLoggedIn = false,
       this.bookmarks = const []});
 
@@ -36,6 +40,8 @@ class UserModel extends ChangeNotifier {
         idToken: w.idToken,
         accessToken: w.accessToken,
         isAdmin: w.isAdmin,
+        username: w.username,
+        created_at: w.created_at,
         isLoggedIn: w.isLoggedIn,
         bookmarks: w.bookmarks);
   }
@@ -48,6 +54,8 @@ class UserModel extends ChangeNotifier {
     String? accessToken,
     bool? isAdmin,
     bool? isLoggedIn,
+    String? username,
+    DateTime? created_at,
     List<Word>? bookmarks,
   }) {
     return UserModel(
@@ -57,6 +65,8 @@ class UserModel extends ChangeNotifier {
         idToken: idToken ?? this.idToken,
         accessToken: accessToken ?? this.accessToken,
         isAdmin: isAdmin ?? this.isAdmin,
+        username: username ?? this.username,
+        created_at: created_at ?? this.created_at,
         isLoggedIn: isLoggedIn ?? this.isLoggedIn,
         bookmarks: bookmarks ?? this.bookmarks);
   }
@@ -71,7 +81,6 @@ class UserModel extends ChangeNotifier {
         bookmarks: [],
         isAdmin: false,
         isLoggedIn: false);
-
   }
 
   /// TODO: add a method to convert a User to JSON object
