@@ -54,54 +54,47 @@ class _WordListTileState extends State<WordListTile> {
       }
     }
 
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: InkWell(
-        onTap: () => widget.onSelect!(widget.word),
-        child: Container(
-          height: 80,
-          width: 250,
-          decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: BorderRadius.circular(8.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: Offset(0, 5),
+      child: Container(
+        decoration: BoxDecoration(boxShadow: [VocabTheme.primaryShadow]),
+        height: 80,
+        width: 220,
+        child: Material(
+          borderRadius: 8.0.allRadius,
+          color: Theme.of(context).colorScheme.surface,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8.0),
+            onTap: () => widget.onSelect!(widget.word),
+            focusColor: colorScheme.primary.withOpacity(0.2),
+            splashColor: colorScheme.primary.withOpacity(0.2),
+            hoverColor: colorScheme.primary.withOpacity(0.2),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 16,
                 ),
-              ]),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 16,
-              ),
-              CircleAvatar(
-                child: Text(
-                  widget.word.word.initals(),
-                  style: Theme.of(context).textTheme.headline4,
+                Flexible(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.word.word.trim(),
+                        style: Theme.of(context).textTheme.headline4,
+                      ),
+                      Text(
+                        widget.word.meaning,
+                        style: Theme.of(context).textTheme.subtitle2,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(
-                width: 32,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Text(
-                    widget.word.word.trim(),
-                    style: Theme.of(context).textTheme.headline4,
-                  ),
-                  Text(
-                    widget.word.synonyms != null
-                        ? widget.word.synonyms!.join(', ')
-                        : '',
-                    style: Theme.of(context).textTheme.subtitle2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

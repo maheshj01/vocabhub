@@ -7,6 +7,8 @@ class SizeUtils {
   // Specifies the width above kDesktopBreakPoint is a Desktop
   static const kDesktopBreakPoint = 1024;
 
+  static const kExtendedDesktopBreakPoint = 1200;
+
   /// screen size
   static Size _size = Size.zero;
 
@@ -16,11 +18,12 @@ class SizeUtils {
     _size = value;
   }
 
-  static bool get isDesktop=>
-    _size.width > kDesktopBreakPoint;
+  static bool get isDesktop => _size.width > kDesktopBreakPoint;
 
-  static bool get isTablet=> _size.width > kTabletBreakPoint && _size.width < kDesktopBreakPoint;
+  static bool get isExtendedDesktop => _size.width > kExtendedDesktopBreakPoint;
 
+  static bool get isTablet =>
+      _size.width > kTabletBreakPoint && _size.width < kDesktopBreakPoint;
 
-  static bool get isMobile =>_size.width < kTabletBreakPoint;
+  static bool get isMobile => _size.width < kTabletBreakPoint;
 }

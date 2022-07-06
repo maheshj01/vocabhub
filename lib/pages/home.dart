@@ -392,11 +392,6 @@ class _WordsBuilderState extends State<WordsBuilder> {
               child: Column(
                 children: [
                   SearchBuilder(
-                    onShuffle: () {
-                      final wordList = listNotifier.value;
-                      wordList!.shuffle(Random());
-                      setState(() {});
-                    },
                     onChanged: (x) {
                       if (x.isEmpty) {
                         listNotifier.value = supaStoreWords;

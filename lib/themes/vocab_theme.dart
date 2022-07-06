@@ -47,6 +47,12 @@ class VocabTheme {
       _themeData(lightColorScheme, _lightFocusColor);
   static ThemeData darkThemeData = _themeData(darkColorScheme, _darkFocusColor);
 
+  static BoxShadow primaryShadow = BoxShadow(
+    color: Colors.black.withOpacity(0.1),
+    blurRadius: 10,
+    offset: Offset(0, 5),
+  );
+
   static ThemeData _themeData(ColorScheme colorScheme, Color focusColor) {
     return ThemeData(
       useMaterial3: false,
@@ -131,7 +137,7 @@ class VocabTheme {
     headline4: GoogleFonts.quicksand(
         fontSize: 22,
         color: isDark ? Colors.white : Colors.black,
-        fontWeight: FontWeight.w300),
+        fontWeight: FontWeight.w400),
     headline5: GoogleFonts.quicksand(
         fontSize: 16.0, color: isDark ? Colors.white : Colors.black),
     headline6: GoogleFonts.quicksand(

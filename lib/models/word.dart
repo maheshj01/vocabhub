@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 part 'word.g.dart';
+
 ///
 ///
 /// define a schema for your class and annotate
@@ -26,9 +27,24 @@ class Word {
       this.examples = const []});
   factory Word.fromJson(Map<String, dynamic> json) => _$WordFromJson(json);
 
-  factory Word.copyWith(Word w) {
-    return Word(w.id, w.word, w.meaning,
-        examples: w.examples, note: w.note, synonyms: w.synonyms);
+  Word copyWith({
+    String? id,
+    String? word,
+    String? meaning,
+    List<String>? synonyms,
+    List<String>? examples,
+    List<String>? mnemonics,
+    String? note,
+  }) {
+    return Word(
+      id ?? this.id,
+      word ?? this.word,
+      meaning ?? this.meaning,
+      examples: examples ?? this.examples,
+      synonyms: synonyms ?? this.synonyms,
+      mnemonics: mnemonics ?? this.mnemonics,
+      note: note ?? this.note,
+    );
   }
 
   @override

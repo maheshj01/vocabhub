@@ -30,7 +30,6 @@ class _SearchState extends State<Search> {
                 children: [
                   Flexible(
                     child: WordList(
-                      words: words,
                       onSelected: (word) {
                         setState(() {
                           selectedWord = word;
@@ -46,7 +45,6 @@ class _SearchState extends State<Search> {
               );
             },
             mobileBuilder: (BuildContext context) => WordList(
-                  words: words,
                   onSelected: (word) {
                     selectedIndex = words.indexOf(word);
                     Navigate().push(context, WordDetail(word: word));
@@ -56,11 +54,9 @@ class _SearchState extends State<Search> {
 }
 
 class WordList extends StatefulWidget {
-  final List<Word> words;
   final Function(Word) onSelected;
 
-  WordList({Key? key, required this.words, required this.onSelected})
-      : super(key: key);
+  WordList({Key? key, required this.onSelected}) : super(key: key);
 
   @override
   State<WordList> createState() => _WordListState();
@@ -69,7 +65,6 @@ class WordList extends StatefulWidget {
 class _WordListState extends State<WordList> {
   @override
   void initState() {
-    _words = widget.words;
     super.initState();
   }
 
@@ -87,40 +82,59 @@ class _WordListState extends State<WordList> {
   }
 
   List<Word> _words = [];
+  final ValueNotifier<List<Word>> wordsNotifier = ValueNotifier<List<Word>>([]);
+
+  @override
+  void dispose() {
+    wordsNotifier.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = AppStateWidget.of(context);
-    return Column(
-      children: [
-        SearchBuilder(
-          onShuffle: () {},
-          onChanged: (x) {
-            if (x.isEmpty) {
-              state.setWords(_words);
-              return;
-            }
-            List<Word> result = [];
-            _words.forEach((element) {
-              if (element.word.toLowerCase().contains(x.toLowerCase()) ||
-                  element.meaning.toLowerCase().contains(x.toLowerCase()) ||
-                  isInSynonym(x, element.synonyms)) {
-                result.add(element);
-              }
-            });
-            state.setWords(result);
-          },
-        ),
-        Expanded(
-          child: ListView.builder(
-              itemCount: widget.words.length,
-              itemBuilder: (context, index) {
-                return WordListTile(
-                  word: widget.words[index],
-                  onSelect: (x) => widget.onSelected(widget.words[index]),
-                );
-              }),
-        ),
-      ],
-    );
+    _words = AppStateScope.of(context).words!;
+
+    return ValueListenableBuilder<List<Word>>(
+        valueListenable: wordsNotifier,
+        builder: (BuildContext context, List<Word> value, Widget? child) {
+          return Column(
+            children: [
+              SearchBuilder(
+                onChanged: (x) {
+                  if (x.isEmpty) {
+                    wordsNotifier.value = _words;
+                    state.setWords(_words);
+                    return;
+                  }
+                  List<Word> result = [];
+                  _words.forEach((element) {
+                    if (element.word.toLowerCase().contains(x.toLowerCase()) ||
+                        element.meaning
+                            .toLowerCase()
+                            .contains(x.toLowerCase()) ||
+                        isInSynonym(x, element.synonyms)) {
+                      result.add(element);
+                    }
+                  });
+                  wordsNotifier.value = result;
+                },
+              ),
+              Expanded(
+                  child: value.isEmpty
+                      ? EmptyWord()
+                      : ListView.builder(
+                          itemCount: value.length,
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          controller: ScrollController(),
+                          itemBuilder: (context, index) {
+                            return WordListTile(
+                              word: value[index],
+                              onSelect: (x) => widget.onSelected(value[index]),
+                            );
+                          })),
+            ],
+          );
+        });
   }
 }

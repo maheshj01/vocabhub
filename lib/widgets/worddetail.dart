@@ -11,6 +11,7 @@ import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/supastore.dart';
 import 'package:vocabhub/utils/navigator.dart';
+import 'package:vocabhub/utils/size_utils.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
@@ -126,6 +127,10 @@ class _WordDetailState extends State<WordDetail>
               children: [
                 SizedBox(
                   height: size.height / 5,
+                ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: SizeUtils.isMobile ? BackButton() : SizedBox(),
                 ),
                 userProvider.isLoggedIn && emails.contains(userProvider.email)
                     ? Container(

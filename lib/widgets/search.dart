@@ -5,11 +5,8 @@ import 'package:vocabhub/themes/vocab_theme.dart';
 
 class SearchBuilder extends StatefulWidget {
   final Function(String) onChanged;
-  final Function() onShuffle;
 
-  const SearchBuilder(
-      {Key? key, required this.onChanged, required this.onShuffle})
-      : super(key: key);
+  const SearchBuilder({Key? key, required this.onChanged}) : super(key: key);
 
   @override
   _SearchBuilderState createState() => _SearchBuilderState();
@@ -33,23 +30,21 @@ class _SearchBuilderState extends State<SearchBuilder> {
           controller: searchController,
           autofocus: false,
           decoration: InputDecoration(
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(
-                    color: isDark ? Colors.white : VocabTheme.primaryColor),
-              ),
+              filled: true,
+              border: InputBorder.none,
+              focusedBorder: OutlineInputBorder(),
+              hintStyle: TextStyle(color: Colors.black),
               suffixIcon: IconButton(
                   tooltip:
                       searchController.text.isNotEmpty ? 'clear' : 'shuffle',
-                  icon: Icon(
-                      searchController.text.isNotEmpty
-                          ? Icons.clear
-                          : Icons.shuffle,
-                      color: isDark ? Colors.white : VocabTheme.primaryColor),
+                  icon: searchController.text.isNotEmpty
+                      ? Icon(Icons.clear,
+                          color:
+                              isDark ? Colors.white : VocabTheme.primaryColor)
+                      : SizedBox.shrink(),
                   onPressed: () {
                     if (searchController.text.isNotEmpty) {
                       searchController.clear();
-                    } else {
-                      widget.onShuffle();
                     }
                   }),
               hintText: "Search "),

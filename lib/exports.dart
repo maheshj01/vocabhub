@@ -20,6 +20,6 @@ export 'constants/constants.dart';
 
 /// EXPORT SERVICES ABOVE THIS LINE
 
-/** BLOC */
+/** utils*/
 
-/// EXPORT BLOC files ABOVE THIS LINE
+export 'utils/utils.dart';

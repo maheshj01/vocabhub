@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
+import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/navbar.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
@@ -42,11 +43,33 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     final _store = SupaStore();
     final words = await _store.getAllWords();
     if (words.isNotEmpty) {
+      // updateWord(words);
       AppStateWidget.of(context).setWords(words);
     }
   }
 
-  Future<void> silentLogin()async{
+  updateWord(List<Word> words) {
+    words.forEach((word) {
+      print('\nBEFORE ${word.word} ${word.synonyms}');
+      print('\nAFTERr ${word.word.trim()} ${word.synonyms}');
+      // if (word.synonyms != null) {
+      //   word.synonyms!.forEach((syn) {
+      //     synonyms.add(syn.trim().replaceAll('\n', ''));
+      //   });
+      //   final _updatedWord = word.copyWith(synonyms: synonyms);
+      //   print(
+      //       '\n AFTERsynonyms of ${_updatedWord.word} ${_updatedWord.synonyms}');
+      //   // _store.updateWord(id: word.id, word: _updatedWord);
+      // } else {
+      //   final _updatedWord = word.copyWith(synonyms: synonyms);
+      //   print(
+      //       '\n AFTER null synonyms of ${_updatedWord.word} ${_updatedWord.synonyms}');
+      //   // _store.updateWord(id: word.id, word: _updatedWord);
+      // }
+    });
+  }
+
+  Future<void> silentLogin() async {
     /// TODO UPDATE LOGIN STATE IN BACKEND AND LOCALLY
   }
 
@@ -67,7 +90,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
       destinationAnimationDuration: 600,
       decoration: NavbarDecoration(
           backgroundColor: VocabTheme.navigationBarColor,
-          isExtended: SizeUtils.isDesktop,
+          isExtended: SizeUtils.isExtendedDesktop,
           navbarType: BottomNavigationBarType.fixed),
       destinations: [
         for (int i = 0; i < items.length; i++)
