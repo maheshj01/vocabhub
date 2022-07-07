@@ -79,6 +79,8 @@ class UserModel extends ChangeNotifier {
         idToken: '',
         accessToken: '',
         bookmarks: [],
+        created_at: DateTime.now(),
+        username: '',
         isAdmin: false,
         isLoggedIn: false);
   }

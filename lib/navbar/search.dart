@@ -50,6 +50,7 @@ class _SearchState extends State<Search> {
               children: [
                 Flexible(
                   child: WordList(
+                    controller: ScrollController(),
                     onSelected: (word) {
                       setState(() {
                         selectedWord = word;
@@ -163,7 +164,11 @@ class _WordListState extends State<WordList> {
             children: [
               SizedBox(height: 8),
               SearchBuilder(
-                ontap: () => widget.onFocus!(),
+                ontap: () {
+                  if (widget.onFocus != null) {
+                    widget.onFocus!();
+                  }
+                },
                 onChanged: (x) {
                   if (x.isEmpty) {
                     wordsNotifier.value = _words;

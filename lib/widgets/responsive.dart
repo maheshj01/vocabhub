@@ -19,7 +19,7 @@ class _ResponsiveBuilderState extends State<ResponsiveBuilder> {
     return Material(
       child: LayoutBuilder(builder: (context, constraints) {
         SizeUtils.size = Size(constraints.maxWidth, constraints.maxHeight);
-        if (constraints.maxWidth > 600) {
+        if (!SizeUtils.isMobile) {
           return widget.desktopBuilder(context);
         }
         return widget.mobileBuilder(context);
