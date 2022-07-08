@@ -34,7 +34,7 @@ class _SearchState extends State<Search> {
       DraggableScrollableController();
 
   void _scrollSheetToSize({double size = 0.6}) {
-    SchedulerBinding.instance.addPostFrameCallback((x) {
+    SchedulerBinding.instance!.addPostFrameCallback((x) {
       _draggableScrollableController.animateTo(size,
           duration: Duration(milliseconds: 300), curve: Curves.easeIn);
     });
@@ -71,6 +71,7 @@ class _SearchState extends State<Search> {
                 GestureDetector(
                   onTapDown: (x) {
                     removeFocus(context);
+                    if (_draggableScrollableController.size == 0.2) return;
                     _scrollSheetToSize(size: 0.2);
                   },
                   child: WordDetail(word: words[selectedIndex]),

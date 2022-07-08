@@ -1,3 +1,5 @@
-- [] SignedIn User's state should update
-- [] Remove '\n' from synonyms using Edit Page
+- [X] SignedIn User's state should update
+- [X] Remove '\n' from synonyms using Edit Page
 - [] Slide Animation on Explore and Detail Page
+- [] Add word edit history table
+- [] Based on above contribution assign reputation points to user

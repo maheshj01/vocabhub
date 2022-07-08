@@ -55,7 +55,7 @@ class _WordDetailState extends State<WordDetail>
       // _animationController.reset();
       // }
     });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       userProvider = AppStateScope.of(context).user!;
     });
   }
@@ -122,7 +122,8 @@ class _WordDetailState extends State<WordDetail>
         ? EmptyWord()
         : Material(
             color: Theme.of(context).colorScheme.surface,
-            child: ListView(
+            child: Column(
+              // shrinkWrap: true,
               children: [
                 SizedBox(
                   height: SizeUtils.isMobile ? 24 : (size.height / 5),

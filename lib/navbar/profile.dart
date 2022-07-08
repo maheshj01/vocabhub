@@ -39,7 +39,7 @@ class _UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
-        desktopBuilder: (context) => UserProfileDesktop(),
+        desktopBuilder: (context) => UserProfileMobile(),
         mobileBuilder: (context) => UserProfileMobile());
   }
 }

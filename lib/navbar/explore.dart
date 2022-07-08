@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/widgets/responsive.dart';
+import 'package:vocabhub/widgets/worddetail.dart';
 
 class ExploreWords extends StatefulWidget {
   static const String route = '/';
@@ -28,18 +30,22 @@ class ExploreWordsMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Explore Mobile'),
+    final words = AppStateScope.of(context).words;
+    if (words == null || words.isEmpty) return SizedBox.shrink();
+    return Material(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          PageView.builder(
+              itemCount: words.length,
+              scrollBehavior: MaterialScrollBehavior(),
+              physics: ClampingScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              itemBuilder: (context, index) {
+                return WordDetail(word: words[index]);
+              }),
+        ],
       ),
-      body: ListView.builder(
-          padding: EdgeInsets.zero,
-          itemCount: 20,
-          itemBuilder: (BuildContext context, int x) {
-            return ListTile(
-              title: Text('item $x'),
-            );
-          }),
     );
   }
 }
