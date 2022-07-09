@@ -133,7 +133,7 @@ class VocabTheme {
     headline1: GoogleFonts.quicksand(
         fontSize: 72.0,
         color: isDark ? Colors.white : Colors.black,
-        fontWeight: FontWeight.bold),
+        fontWeight: FontWeight.w500),
     headline2: GoogleFonts.quicksand(
         fontSize: 48.0, color: Colors.white, fontWeight: FontWeight.w500),
     headline3: GoogleFonts.quicksand(

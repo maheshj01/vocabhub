@@ -38,3 +38,7 @@ const USER_BOOKMARKS_COLUMN = 'bookmarks';
 const USER_CREATED_AT_COLUMN = 'created_at';
 const USER_LOGGEDIN_COLUMN = 'isLoggedIn';
 const String dateFormatter = 'MMMM dd, y';
+
+enum WordUpdate { pending, approved, rejected }
+
+enum WordState { known, unknown, unanswered }

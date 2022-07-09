@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/widgets.dart';

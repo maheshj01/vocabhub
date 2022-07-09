@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/supastore.dart';
-import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 
 import 'package:vocabhub/utils/navigator.dart';
@@ -18,6 +16,7 @@ import 'package:vocabhub/widgets/widgets.dart';
 class AddWordForm extends StatefulWidget {
   final bool isEdit;
   final Word? word;
+  static const route  = '/addword';
 
   const AddWordForm({Key? key, this.isEdit = false, this.word})
       : super(key: key);

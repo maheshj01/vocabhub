@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
-import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/navbar.dart';
+import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
@@ -28,7 +28,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
 
   final Map<int, Map<String, Widget>> _routes = {
     0: {Dashboard.route: Dashboard()},
-    1: {Search.route: Search()},
+    1: {Search.route: Search(), AddWordForm.route: AddWordForm()},
     2: {ExploreWords.route: ExploreWords()},
     3: {Notifications.route: Notifications()},
     4: {UserProfile.route: UserProfile()}
@@ -43,31 +43,30 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     final _store = SupaStore();
     final words = await _store.getAllWords();
     if (words.isNotEmpty) {
-      // updateWord(words);
       AppStateWidget.of(context).setWords(words);
     }
   }
 
-  updateWord(List<Word> words) {
-    words.forEach((word) {
-      print('\nBEFORE ${word.word} ${word.synonyms}');
-      print('\nAFTERr ${word.word.trim()} ${word.synonyms}');
-      // if (word.synonyms != null) {
-      //   word.synonyms!.forEach((syn) {
-      //     synonyms.add(syn.trim().replaceAll('\n', ''));
-      //   });
-      //   final _updatedWord = word.copyWith(synonyms: synonyms);
-      //   print(
-      //       '\n AFTERsynonyms of ${_updatedWord.word} ${_updatedWord.synonyms}');
-      //   // _store.updateWord(id: word.id, word: _updatedWord);
-      // } else {
-      //   final _updatedWord = word.copyWith(synonyms: synonyms);
-      //   print(
-      //       '\n AFTER null synonyms of ${_updatedWord.word} ${_updatedWord.synonyms}');
-      //   // _store.updateWord(id: word.id, word: _updatedWord);
-      // }
-    });
-  }
+  // updateWord(List<Word> words) {
+  //   words.forEach((word) {
+  //     print('\nBEFORE ${word.word} ${word.synonyms}');
+  //     print('\nAFTERr ${word.word.trim()} ${word.synonyms}');
+  // if (word.synonyms != null) {
+  //   word.synonyms!.forEach((syn) {
+  //     synonyms.add(syn.trim().replaceAll('\n', ''));
+  //   });
+  //   final _updatedWord = word.copyWith(synonyms: synonyms);
+  //   print(
+  //       '\n AFTERsynonyms of ${_updatedWord.word} ${_updatedWord.synonyms}');
+  //   // _store.updateWord(id: word.id, word: _updatedWord);
+  // } else {
+  //   final _updatedWord = word.copyWith(synonyms: synonyms);
+  //   print(
+  //       '\n AFTER null synonyms of ${_updatedWord.word} ${_updatedWord.synonyms}');
+  //   // _store.updateWord(id: word.id, word: _updatedWord);
+  // }
+  // });
+  // }
 
   Future<void> silentLogin() async {
     /// TODO UPDATE LOGIN STATE IN BACKEND AND LOCALLY
