@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/navbar/notifications.dart';
+import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 
@@ -24,20 +25,24 @@ class DashboardMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = AppStateScope.of(context).user;
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Dashboard',
         ),
         actions: [
-          IconButton(
-              onPressed: () {
-                navigate(context, Notifications.route, isRootNavigator: false);
-              },
-              icon: Icon(
-                Icons.notifications_on,
-                color: VocabTheme.primaryColor,
-              )),
+          user!.isLoggedIn
+              ? IconButton(
+                  onPressed: () {
+                    navigate(context, Notifications.route,
+                        isRootNavigator: false);
+                  },
+                  icon: Icon(
+                    Icons.notifications_on,
+                    color: VocabTheme.primaryColor,
+                  ))
+              : SizedBox(),
         ],
       ),
       body: Center(

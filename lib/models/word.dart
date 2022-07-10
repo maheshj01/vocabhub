@@ -17,25 +17,25 @@ class Word {
   List<String>? synonyms;
   List<String>? examples;
   List<String>? mnemonics;
-  final String? note;
+  DateTime? created_at;
 
   Word(this.id, this.word, this.meaning,
       {this.synonyms = const [],
       // this.antonyms = const [],
       this.mnemonics,
-      this.note,
+      this.created_at,
       this.examples = const []});
   factory Word.fromJson(Map<String, dynamic> json) => _$WordFromJson(json);
 
-  Word copyWith({
-    String? id,
-    String? word,
-    String? meaning,
-    List<String>? synonyms,
-    List<String>? examples,
-    List<String>? mnemonics,
-    String? note,
-  }) {
+  Word copyWith(
+      {String? id,
+      String? word,
+      String? meaning,
+      List<String>? synonyms,
+      List<String>? examples,
+      List<String>? mnemonics,
+      String? note,
+      DateTime? created_at}) {
     return Word(
       id ?? this.id,
       word ?? this.word,
@@ -43,7 +43,7 @@ class Word {
       examples: examples ?? this.examples,
       synonyms: synonyms ?? this.synonyms,
       mnemonics: mnemonics ?? this.mnemonics,
-      note: note ?? this.note,
+      created_at: created_at ?? this.created_at,
     );
   }
 
@@ -57,8 +57,8 @@ class Word {
           meaning == other.meaning &&
           synonyms == other.synonyms &&
           examples == other.examples &&
-          mnemonics == other.mnemonics &&
-          note == other.note;
+          created_at == other.created_at &&
+          mnemonics == other.mnemonics;
 
   @override
   int get hashCode => id.hashCode ^ word.hashCode;

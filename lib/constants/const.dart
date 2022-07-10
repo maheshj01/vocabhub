@@ -43,7 +43,6 @@ const USER_BOOKMARKS_COLUMN = 'bookmarks';
 const USER_CREATED_AT_COLUMN = 'created_at';
 const USER_LOGGEDIN_COLUMN = 'isLoggedIn';
 
-
 /// EDIT HISTORY TABLE COLUMNS
 const EDIT_ID_COLUMN = 'id';
 const EDIT_USER_ID_COLUMN = 'user_id';

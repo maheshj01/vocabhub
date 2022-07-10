@@ -16,7 +16,7 @@ import 'package:vocabhub/widgets/widgets.dart';
 class AddWordForm extends StatefulWidget {
   final bool isEdit;
   final Word? word;
-  static const route  = '/addword';
+  static const route = '/addword';
 
   const AddWordForm({Key? key, this.isEdit = false, this.word})
       : super(key: key);
@@ -61,7 +61,7 @@ class _AddWordFormState extends State<AddWordForm> {
 
         final response = await supaStore.addWord(wordObject);
         if (response.didSucced) {
-          firebaseAnalytics.logWordAdd(wordObject, userProvider.email);
+          firebaseAnalytics.logWordAdd(wordObject, userProvider!.email);
           showMessage(context, 'Congrats! You just added $word to vocabhub',
               onClosed: () {
             List<Word?>? newList = listNotifier.value;
@@ -119,7 +119,6 @@ class _AddWordFormState extends State<AddWordForm> {
     exampleController.addListener(_rebuild);
     synonymController.addListener(_rebuild);
     mnemonicController.addListener(_rebuild);
-    userProvider = AppStateScope.of(context).user!;
   }
 
   void _populateData() {
@@ -210,7 +209,7 @@ class _AddWordFormState extends State<AddWordForm> {
       final response = await supaStore.updateWord(id: id, word: word);
       stopCircularIndicator(context);
       if (response.status == 200) {
-        firebaseAnalytics.logWordEdit(word, userProvider.email);
+        firebaseAnalytics.logWordEdit(word, userProvider!.email);
         showMessage(context, "The word \"${word.word}\" is updated.",
             onClosed: () => Navigate().popView(context));
       } else {
@@ -230,7 +229,7 @@ class _AddWordFormState extends State<AddWordForm> {
       final response = await supaStore.deleteById(id);
       stopCircularIndicator(context);
       if (response.status == 200) {
-        firebaseAnalytics.logWordDelete(widget.word!, userProvider.email);
+        firebaseAnalytics.logWordDelete(widget.word!, userProvider!.email);
         showMessage(
             context, "The word \"${widget.word!.word}\" has been deleted.",
             onClosed: () => Navigate().popView(context));
@@ -278,11 +277,12 @@ class _AddWordFormState extends State<AddWordForm> {
   late FocusNode wordFocus;
   late FocusNode meaningFocus;
   late String _title;
-  late UserModel userProvider;
+  UserModel? userProvider;
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     bool isDark = darkNotifier.value;
+
     Widget synonymChip(String synonym, Function onDeleted) {
       return InputChip(
         label: Text(
@@ -300,30 +300,19 @@ class _AddWordFormState extends State<AddWordForm> {
       );
     }
 
+    userProvider = AppStateScope.of(context).user!;
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          title: Text('Edit Word'),
+        ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListView(
             children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 16.0, top: 16),
-                  child: IconButton(
-                      onPressed: () => Navigate().popView(context),
-                      icon: Icon(Icons.clear, size: 32)),
-                ),
-              ),
-              Center(
-                child: Text('$_title',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline3!
-                        .copyWith(fontWeight: FontWeight.w500)),
-              ),
               SizedBox(
                 height: 25,
               ),
@@ -576,7 +565,7 @@ class _AddWordFormState extends State<AddWordForm> {
                 child: SizedBox(
                   height: 40,
                   width: 150,
-                  child: widget.isEdit && userProvider.isAdmin
+                  child: widget.isEdit && userProvider!.isAdmin
                       ? TextButton(
                           onPressed: _showAlert,
                           child: Text(
@@ -632,6 +621,7 @@ class VocabField extends StatefulWidget {
 class VocabFieldState extends State<VocabField> {
   @override
   Widget build(BuildContext context) {
+    final style = Theme.of(context).textTheme.headline4;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
@@ -648,13 +638,11 @@ class VocabFieldState extends State<VocabField> {
               decoration: InputDecoration(
                   hintText: widget.hint,
                   counterText: '',
-                  hintStyle: Theme.of(context)
-                      .textTheme
-                      .headline4!
-                      .copyWith(fontSize: widget.fontSize),
+                  hintStyle: style!
+                      .copyWith(fontSize: widget.fontSize, color: Colors.grey),
                   focusedBorder: InputBorder.none,
                   border: InputBorder.none),
-              style: Theme.of(context).textTheme.headline4!.copyWith(
+              style: style.copyWith(
                   fontWeight: FontWeight.bold, fontSize: widget.fontSize)),
         ],
       ),

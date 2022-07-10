@@ -101,22 +101,6 @@ class _WordDetailState extends State<WordDetail>
     Size size = MediaQuery.of(context).size;
     bool isDark = darkNotifier.value;
 
-    Color? textfieldBgColor(bool editMode) {
-      if (editMode) {
-        if (isDark) {
-          return Colors.grey;
-        } else {
-          return Colors.grey[100];
-        }
-      } else {
-        if (isDark) {
-          return Colors.transparent;
-        } else {
-          return Colors.white12;
-        }
-      }
-    }
-
     return widget.word == null
         ? EmptyWord()
         : Material(
