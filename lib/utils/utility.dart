@@ -6,13 +6,21 @@ import 'package:url_launcher/url_launcher.dart';
 void showMessage(BuildContext context, String message,
     {Duration duration = const Duration(seconds: 2),
     bool isRoot = false,
+    double bottom: 0,
     void Function()? onPressed,
     void Function()? onClosed}) {
   ScaffoldMessenger.of(context)
       .showSnackBar(
         SnackBar(
-          content: Text('$message'),
+          content: Text(
+            '$message',
+            style: Theme.of(context)
+                .textTheme
+                .headline5!
+                .copyWith(color: Colors.white),
+          ),
           duration: duration,
+          margin: EdgeInsets.only(bottom: bottom),
           action: onPressed == null
               ? null
               : SnackBarAction(
@@ -23,6 +31,10 @@ void showMessage(BuildContext context, String message,
       )
       .closed
       .whenComplete(() => onClosed == null ? null : onClosed());
+}
+
+void hideMessage(context) {
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
 }
 
 /// TODO: Add canLaunch condition back when this issue is fixed https://github.com/flutter/flutter/issues/74557

@@ -143,6 +143,9 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                 email: user.email, isLoggedIn: false);
                             Navigate().pushAndPopAll(context, AppSignIn());
                           },
+                        ),
+                        SizedBox(
+                          height: kBottomNavigationBarHeight,
                         )
                       ],
                     ),

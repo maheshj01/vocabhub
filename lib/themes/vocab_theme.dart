@@ -16,6 +16,7 @@ class VocabTheme {
   static Color navbarSurfaceGrey = Color(0xffF2F4F7);
   static Color? surfaceGreen = Colors.green[50];
   static Color? surfaceGrey = Colors.grey[850];
+  static Color? background = Color(0XFFF8F8F8);
   static Color errorColor = Colors.red;
   static Color lightblue = Color(0XFF142D94);
 
@@ -69,7 +70,7 @@ class VocabTheme {
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.background,
         elevation: 3.5,
-        iconTheme: IconThemeData(color: colorScheme.primary),
+        iconTheme: IconThemeData(color: Color(0XFFB7B7B7)),
       ),
       navigationRailTheme: NavigationRailThemeData(
           backgroundColor: colorScheme.surface,
@@ -102,7 +103,7 @@ class VocabTheme {
     primaryContainer: const Color(0xFF117378),
     secondary: const Color(0xFFEFF3F3),
     secondaryContainer: const Color(0xFFFAFBFB),
-    background: Color(0XFFE5E5E5),
+    background: background!,
     surface: const Color(0XFFFFFFFF),
     onBackground: Colors.black,
     error: Colors.red,

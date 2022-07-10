@@ -33,3 +33,6 @@ Map<String, List<String>> popupMenu = {
     'Sign Out'
   ],
 };
+
+const String unKnownWord = 'We will try out best to help you master this word';
+const String knownWord = 'We will try not to show that word again';

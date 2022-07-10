@@ -16,7 +16,6 @@ import 'package:vocabhub/utils/size_utils.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
-import 'package:vocabhub/widgets/mnemonicbuilder.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/utils/extensions.dart';
@@ -121,9 +120,7 @@ class _WordDetailState extends State<WordDetail>
     return widget.word == null
         ? EmptyWord()
         : Material(
-            color: Theme.of(context).colorScheme.surface,
             child: Column(
-              // shrinkWrap: true,
               children: [
                 SizedBox(
                   height: SizeUtils.isMobile ? 24 : (size.height / 5),
@@ -157,11 +154,20 @@ class _WordDetailState extends State<WordDetail>
                     },
                     child: MouseRegion(
                       cursor: SystemMouseCursors.click,
-                      child: Text(
-                        widget.word!.word.capitalize(),
-                        style: Theme.of(context).textTheme.headline3!.copyWith(
-                            fontSize: size.height * 0.06,
-                            color: isDark ? Colors.white : Colors.black),
+                      child: FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                          child: Text(
+                            widget.word!.word.capitalize(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline2!
+                                .copyWith(
+                                    color:
+                                        isDark ? Colors.white : Colors.black),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -197,7 +203,8 @@ class _WordDetailState extends State<WordDetail>
                 ),
                 Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: ExampleBuilder(
+                    child: ExampleListBuilder(
+                      title: 'Usage',
                       examples: (widget.word!.examples == null ||
                               widget.word!.examples!.isEmpty)
                           ? []
@@ -206,8 +213,9 @@ class _WordDetailState extends State<WordDetail>
                     )),
                 Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: MnemonnicBuilder(
-                      mnemonics: (widget.word!.mnemonics == null ||
+                    child: ExampleListBuilder(
+                      title: 'Mnemonics',
+                      examples: (widget.word!.mnemonics == null ||
                               widget.word!.mnemonics!.isEmpty)
                           ? []
                           : widget.word!.mnemonics,

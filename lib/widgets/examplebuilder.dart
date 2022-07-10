@@ -1,42 +1,57 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/main.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
-class ExampleBuilder extends StatefulWidget {
+class ExampleListBuilder extends StatefulWidget {
   final List<String>? examples;
   final String word;
-  const ExampleBuilder({Key? key, required this.examples, required this.word})
+  final String title;
+  const ExampleListBuilder(
+      {Key? key,
+      required this.title,
+      required this.examples,
+      required this.word})
       : super(key: key);
 
   @override
-  _ExampleBuilderState createState() => _ExampleBuilderState();
+  _ExampleListBuilderState createState() => _ExampleListBuilderState();
 }
 
-class _ExampleBuilderState extends State<ExampleBuilder> {
+class _ExampleListBuilderState extends State<ExampleListBuilder> {
+  Widget title(String title) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Text(
+          '$title',
+          style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: SizeUtils.isMobile ? 18 : 24),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    bool isMobile =SizeUtils.isMobile;
-    bool isDark = darkNotifier.value;
     return widget.examples!.isEmpty
-        ? Container()
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Example',
-                style: Theme.of(context).textTheme.headline4!.copyWith(
-                    fontSize: isMobile ? 18 : 24,
-                    color: isDark ? Colors.white : Colors.black),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              ...[
-                for (int i = 0; i < widget.examples!.length; i++)
-                  buildExample(widget.examples![i], widget.word)
-              ]
-            ],
+        ? SizedBox.shrink()
+        : Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ...[
+                  title(widget.title),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  for (int i = 0; i < widget.examples!.length; i++)
+                    buildExample(widget.examples![i], widget.word)
+                ]
+              ],
+            ),
           );
   }
 }

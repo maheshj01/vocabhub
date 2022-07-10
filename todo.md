@@ -1,5 +1,8 @@
 - [X] SignedIn User's state should update
 - [X] Remove '\n' from synonyms using Edit Page
-- [] Slide Animation on Explore and Detail Page
+- [X] BottomnNavigation background color as per UI
+- [] Edit a word and add to edit history table
 - [] Add word edit history table
+- [] Show contribution on profile page
 - [] Based on above contribution assign reputation points to user
+- [] Slide Animation on Explore and Detail Page
