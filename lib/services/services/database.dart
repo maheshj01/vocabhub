@@ -60,9 +60,9 @@ class DatabaseService {
   static Future<PostgrestResponse> updateColumn(
       {required String searchColumn,
       required String searchValue,
-      required dynamic columnValue,
       required String columnName,
-      String tableName = '$VOCAB_TABLE_NAME'}) async {
+      required dynamic columnValue,
+      required String tableName}) async {
     final response = await _supabase
         .from(tableName)
         .update({columnName: columnValue})

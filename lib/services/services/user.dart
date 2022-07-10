@@ -85,7 +85,8 @@ class UserService {
           searchColumn: USER_EMAIL_COLUMN,
           searchValue: email,
           columnValue: isLoggedIn,
-          columnName: USER_LOGGEDIN_COLUMN);
+          columnName: USER_LOGGEDIN_COLUMN,
+          tableName: _tableName);
 
       if (response.status == 200) {
         return ResponseObject(Status.success.name,
