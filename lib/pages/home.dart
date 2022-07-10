@@ -344,14 +344,14 @@ class _WordsBuilderState extends State<WordsBuilder> {
   Future<void> getWords() async {
     await Future.delayed(Duration.zero);
     showCircularIndicator(context);
-    supaStoreWords = await supaStore.findByWord("");
+    supaStoreWords = await supaStore.getAllApprovedWords();
     stopCircularIndicator(context);
     listNotifier.value = supaStoreWords;
     totalNotifier.value = supaStoreWords.length;
   }
 
   Future<void> refresh() async {
-    supaStoreWords = await supaStore.findByWord("");
+    supaStoreWords = await supaStore.getAllApprovedWords();
     listNotifier.value = supaStoreWords;
     totalNotifier.value = supaStoreWords.length;
     _refreshController.refreshCompleted();

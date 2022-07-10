@@ -1,40 +1,35 @@
 import 'package:supabase/supabase.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/models.dart';
+import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/utils/secrets.dart';
 import '../services.dart';
 
 class UserService {
   static String _tableName = '$USER_TABLE_NAME';
   final SupabaseClient _supabase = SupabaseClient("$CONFIG_URL", "$APIkey");
+
   Future<PostgrestResponse> findById(String id) async {
-    final response = await _supabase
-        .from(_tableName)
-        .select()
-        .eq('$ID_COLUMN', id)
-        .single()
-        .execute();
+    final response = await DatabaseService.findSingleRowByColumnValue(id,
+        columnName: ID_COLUMN, tableName: _tableName);
     return response;
   }
 
-  Future<UserModel?> findByEmail({required String email}) async {
+  Future<UserModel> findByEmail({required String email}) async {
     try {
-      final response = await _supabase
-          .from(_tableName)
-          .select("*")
-          .eq('$USER_EMAIL_COLUMN', email)
-          .execute();
+      final response = await DatabaseService.findSingleRowByColumnValue(email,
+          columnName: USER_EMAIL_COLUMN, tableName: _tableName);
+
       if (response.status == 200) {
-        final user = UserModel.fromJson((response.data as List).first);
-        // if (user.email == 'maheshmn121@gmail.com') user.isAdmin = true;
+        final user = UserModel.fromJson(response.data);
         return user;
       } else {
         logger.d('existing user not found');
-        return null;
+        return UserModel.init();
       }
     } catch (_) {
       logger.e(_);
-      return null;
+      return UserModel.init();
     }
   }
 
@@ -42,7 +37,7 @@ class UserService {
   Future<List<User>> findAllUsers() async {
     List<User> users = [];
     try {
-      final response = await _supabase.from(_tableName).select("*").execute();
+      final response = await DatabaseService.findAll(tableName: _tableName);
       if (response.status == 200) {
         users = (response.data as List).map((e) => User.fromJson(e)).toList();
       }
@@ -59,7 +54,8 @@ class UserService {
     final resp = Response(didSucced: false, message: "Failed");
     final json = user.toJson();
     try {
-      final response = await VocabStoreService().insert(json, table: USER_TABLE_NAME);
+      final response =
+          await DatabaseService.insertIntoTable(json, table: USER_TABLE_NAME);
       if (response.status == 201) {
         resp.didSucced = true;
         resp.message = 'Success';
@@ -75,38 +71,21 @@ class UserService {
     return resp;
   }
 
-  Future<PostgrestResponse> updateMeaning({
-    required String id,
-    required Word word,
-  }) async {
-    final response = await _supabase
-        .from(_tableName)
-        .update({"$MEANING_COLUMN": word.meaning})
-        .eq("$ID_COLUMN", "$id")
-        .execute();
-    logger.i(response.toJson());
-    return response;
-  }
-
   Future<PostgrestResponse> deleteById(String id) async {
     logger.i(_tableName);
-    final response = await _supabase
-        .from(_tableName)
-        .delete()
-        .eq('$ID_COLUMN', id)
-        .execute();
-    logger.i(response.toJson());
+    final response =
+        await DatabaseService.deleteRow(ID_COLUMN, tableName: _tableName);
     return response;
   }
 
   Future<ResponseObject> updateLogin(
       {required String email, bool isLoggedIn = false}) async {
     try {
-      final response = await _supabase
-          .from(_tableName)
-          .update({"$USER_LOGGEDIN_COLUMN": isLoggedIn})
-          .eq('$USER_EMAIL_COLUMN', email)
-          .execute();
+      final response = await DatabaseService.updateColumn(
+          searchColumn: USER_EMAIL_COLUMN,
+          searchValue: email,
+          columnValue: isLoggedIn,
+          columnName: USER_LOGGEDIN_COLUMN);
 
       if (response.status == 200) {
         return ResponseObject(Status.success.name,
@@ -121,14 +100,4 @@ class UserService {
       return ResponseObject(_.toString(), UserModel.init(), Status.error);
     }
   }
-}
-
-enum Status { success, notfound, error }
-
-class ResponseObject {
-  final String message;
-  final Object data;
-  final Status status;
-
-  ResponseObject(this.message, this.data, this.status);
 }

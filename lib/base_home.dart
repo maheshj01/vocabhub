@@ -45,7 +45,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
 
   Future<void> getWords() async {
     final _store = VocabStoreService();
-    final words = await _store.getAllWords();
+    final words = await _store.getAllApprovedWords();
     if (words.isNotEmpty) {
       AppStateWidget.of(context).setWords(words);
       // updateWord(words);
@@ -99,7 +99,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
               if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {
                 pageController.animateTo(200,
                     duration: Duration(milliseconds: 600),
-                    curve: Curves.bounceInOut);
+                    curve: Curves.easeIn);
                 animatePageOnce = true;
               }
             });

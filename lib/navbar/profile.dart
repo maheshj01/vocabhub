@@ -30,7 +30,7 @@ class _UserProfileState extends State<UserProfile> {
     final userState = AppStateScope.of(context).user;
     if (userState!.isLoggedIn) {
       final user = await _userStore.findByEmail(email: userState.email);
-      if (user != null && user.email.isNotEmpty) {
+      if (user.email.isNotEmpty) {
         AppStateWidget.of(context).setUser(user);
       }
     }

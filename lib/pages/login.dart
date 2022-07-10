@@ -27,8 +27,9 @@ class _AppSignInState extends State<AppSignIn> {
     try {
       user = await auth.googleSignIn(context);
       if (user != null) {
-        final existingUser = await UserService().findByEmail(email: user!.email);
-        if (existingUser == null) {
+        final existingUser =
+            await UserService().findByEmail(email: user!.email);
+        if (existingUser.email.isNotEmpty) {
           logger.d('registering new user ${user!.email}');
           final isRegistered = await _register(user!);
           if (isRegistered) {

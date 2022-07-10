@@ -1,5 +1,8 @@
 library services;
 
-export 'services/vocabstore.dart';
+export 'package:vocabhub/main.dart';
+
+export 'services/authentication.dart';
+export 'services/edit_history.dart';
 export 'services/user.dart';
-export '../main.dart';
+export 'services/vocabstore.dart';
