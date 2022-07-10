@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
-import 'package:vocabhub/services/userstore.dart';
+import 'package:vocabhub/services/services/user.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
@@ -26,7 +26,7 @@ class _UserProfileState extends State<UserProfile> {
 
   Future<void> getUser() async {
     await Duration.zero;
-    final _userStore = UserStore();
+    final _userStore = UserService();
     final userState = AppStateScope.of(context).user;
     if (userState!.isLoggedIn) {
       final user = await _userStore.findByEmail(email: userState.email);
@@ -139,7 +139,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                               isLoading = true;
                             });
                             await Settings.clear();
-                            await UserStore().updateLogin(
+                            await UserService().updateLogin(
                                 email: user.email, isLoggedIn: false);
                             Navigate().pushAndPopAll(context, AppSignIn());
                           },

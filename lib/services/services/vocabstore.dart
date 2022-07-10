@@ -19,9 +19,8 @@ class Response {
       {required this.didSucced, required this.message, this.status, this.data});
 }
 
-// TODO: this class should be a private class around which other
-// TODO: wrappers must be defined
-class SupaStore {
+/// Global Vocabulary table's api.
+class VocabStoreService {
   static String tableName = '$VOCAB_TABLE_NAME';
   final _logger = log.Logger();
   final SupabaseClient _supabase = SupabaseClient("$CONFIG_URL", "$APIkey");

@@ -5,7 +5,7 @@ import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
-import 'package:vocabhub/services/supastore.dart';
+import 'package:vocabhub/services/services/vocabstore.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 
 import 'package:vocabhub/utils/navigator.dart';
@@ -27,7 +27,7 @@ class AddWordForm extends StatefulWidget {
 
 class _AddWordFormState extends State<AddWordForm> {
   late Size size;
-  SupaStore supaStore = SupaStore();
+  VocabStoreService supaStore = VocabStoreService();
 
   late TextEditingController wordController;
   late TextEditingController meaningController;

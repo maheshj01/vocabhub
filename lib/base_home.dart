@@ -44,7 +44,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
   }
 
   Future<void> getWords() async {
-    final _store = SupaStore();
+    final _store = VocabStoreService();
     final words = await _store.getAllWords();
     if (words.isNotEmpty) {
       AppStateWidget.of(context).setWords(words);

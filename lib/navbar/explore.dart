@@ -133,7 +133,7 @@ class _ExploreWordState extends State<ExploreWord>
     } else {
       _animationController.duration = Duration(seconds: 3);
     }
-    supaStore = SupaStore();
+    supaStore = VocabStoreService();
     _tween = IntTween(begin: 0, end: length);
     _animation = _tween.animate(_animationController);
     _animationController.addStatusListener((status) {
@@ -154,7 +154,7 @@ class _ExploreWordState extends State<ExploreWord>
   }
 
   late String meaning;
-  late SupaStore supaStore;
+  late VocabStoreService supaStore;
   int upperIndex = 0;
   int lowerIndex = 0;
   bool reveal = false;
@@ -192,7 +192,7 @@ class _ExploreWordState extends State<ExploreWord>
                   ),
                 ),
                 SizedBox(
-                  height: 16,
+                  height: 8,
                 ),
                 userProvider.isLoggedIn && !reveal
                     ? IconButton(
@@ -208,7 +208,7 @@ class _ExploreWordState extends State<ExploreWord>
                           reveal ? Icons.visibility : Icons.visibility_off,
                         ),
                       )
-                    : SizedBox(),
+                    : SizedBox.shrink(),
                 AnimatedOpacity(
                   opacity: reveal ? 1 : 0,
                   duration: Duration(milliseconds: 500),

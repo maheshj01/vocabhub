@@ -46,7 +46,7 @@ class _VocabAppState extends State<VocabApp> {
     final email = await Settings.email;
     if (email.isNotEmpty) {
       final response =
-          await UserStore().updateLogin(email: email, isLoggedIn: true);
+          await UserService().updateLogin(email: email, isLoggedIn: true);
       print(response.status);
     }
   }

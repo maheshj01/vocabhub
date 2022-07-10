@@ -63,7 +63,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
 
   Future<void> downloadFile() async {
     try {
-      final success = await SupaStore().downloadFile();
+      final success = await VocabStoreService().downloadFile();
       if (success) {
         showMessage(context, 'Downloaded successfully!');
       } else {

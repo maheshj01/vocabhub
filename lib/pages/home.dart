@@ -9,7 +9,7 @@ import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
-import 'package:vocabhub/services/auth.dart';
+import 'package:vocabhub/services/services/authentication.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/circle_clipper.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage>
   Future<void> getUser() async {
     if (userProvider.isLoggedIn) {
       final existingUser =
-          await UserStore().findByEmail(email: userProvider.email);
+          await UserService().findByEmail(email: userProvider.email);
       userProvider.user = existingUser;
     }
   }
@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage>
   Future<void> downloadFile() async {
     try {
       showCircularIndicator(context);
-      final success = await SupaStore().downloadFile();
+      final success = await VocabStoreService().downloadFile();
       if (success) {
         showMessage(context, 'Downloaded successfully!');
       } else {
@@ -114,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage>
       await Navigate.push(context, AddWordForm(),
           slideTransitionType: TransitionType.btt);
     } else if (text.toLowerCase() == 'sign out') {
-      final isSignedOut = await Authentication().googleSignOut(context);
+      final isSignedOut = await AuthenticationService().googleSignOut(context);
       showCircularIndicator(context);
       if (isSignedOut) {
         Settings.setIsSignedIn(false, email: '');
@@ -153,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage>
     }
   }
 
-  SupaStore supaStore = SupaStore();
+  VocabStoreService supaStore = VocabStoreService();
   late AnimationController _animationController;
   late Analytics firebaseAnalytics;
   late SharedPreferences sharedPreferences;
@@ -333,7 +333,7 @@ class WordsBuilder extends StatefulWidget {
 }
 
 class _WordsBuilderState extends State<WordsBuilder> {
-  SupaStore supaStore = SupaStore();
+  VocabStoreService supaStore = VocabStoreService();
 
   @override
   void initState() {

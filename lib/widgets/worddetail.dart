@@ -10,7 +10,7 @@ import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/appstate.dart';
-import 'package:vocabhub/services/supastore.dart';
+import 'package:vocabhub/services/services/vocabstore.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/size_utils.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -46,7 +46,7 @@ class _WordDetailState extends State<WordDetail>
       meaning = widget.word!.meaning;
       length = widget.word!.meaning.length;
     }
-    supaStore = SupaStore();
+    supaStore = VocabStoreService();
     _tween = IntTween(begin: 0, end: length);
     _animation = _tween.animate(_animationController);
     _animationController.addStatusListener((status) {
@@ -93,7 +93,7 @@ class _WordDetailState extends State<WordDetail>
   }
 
   late String meaning;
-  late SupaStore supaStore;
+  late VocabStoreService supaStore;
   UserModel userProvider = UserModel.init();
 
   @override

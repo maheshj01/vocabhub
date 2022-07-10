@@ -1,5 +1,5 @@
 library services;
 
-export 'supastore.dart';
-export 'userstore.dart';
+export 'services/vocabstore.dart';
+export 'services/user.dart';
 export '../main.dart';

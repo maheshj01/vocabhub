@@ -4,7 +4,7 @@ import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
-import 'package:vocabhub/services/auth.dart';
+import 'package:vocabhub/services/services/authentication.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
@@ -20,14 +20,14 @@ class AppSignIn extends StatefulWidget {
 }
 
 class _AppSignInState extends State<AppSignIn> {
-  Authentication auth = Authentication();
+  AuthenticationService auth = AuthenticationService();
 
   Future<void> _handleSignIn(BuildContext context) async {
     final state = AppStateWidget.of(context);
     try {
       user = await auth.googleSignIn(context);
       if (user != null) {
-        final existingUser = await UserStore().findByEmail(email: user!.email);
+        final existingUser = await UserService().findByEmail(email: user!.email);
         if (existingUser == null) {
           logger.d('registering new user ${user!.email}');
           final isRegistered = await _register(user!);
@@ -45,7 +45,7 @@ class _AppSignInState extends State<AppSignIn> {
         } else {
           logger.d('found existing user ${user!.email}');
           await Settings.setIsSignedIn(true, email: existingUser.email);
-          await UserStore()
+          await UserService()
               .updateLogin(email: existingUser.email, isLoggedIn: true);
           state.setUser(existingUser.copyWith(isLoggedIn: true));
           Navigate().pushAndPopAll(context, AdaptiveLayout());
@@ -62,7 +62,7 @@ class _AppSignInState extends State<AppSignIn> {
 
   Future<bool> _register(UserModel newUser) async {
     try {
-      final resp = await UserStore().registerUser(newUser);
+      final resp = await UserService().registerUser(newUser);
       if (resp.didSucced) {
         firebaseAnalytics.logNewUser(newUser);
         return true;

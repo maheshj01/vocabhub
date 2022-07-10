@@ -2,9 +2,9 @@ import 'package:supabase/supabase.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/utils/secrets.dart';
-import 'services.dart';
+import '../services.dart';
 
-class UserStore {
+class UserService {
   static String _tableName = '$USER_TABLE_NAME';
   final SupabaseClient _supabase = SupabaseClient("$CONFIG_URL", "$APIkey");
   Future<PostgrestResponse> findById(String id) async {
@@ -59,7 +59,7 @@ class UserStore {
     final resp = Response(didSucced: false, message: "Failed");
     final json = user.toJson();
     try {
-      final response = await SupaStore().insert(json, table: USER_TABLE_NAME);
+      final response = await VocabStoreService().insert(json, table: USER_TABLE_NAME);
       if (response.status == 201) {
         resp.didSucced = true;
         resp.message = 'Success';
