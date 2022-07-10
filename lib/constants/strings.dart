@@ -36,3 +36,4 @@ Map<String, List<String>> popupMenu = {
 
 const String unKnownWord = 'We will try out best to help you master this word';
 const String knownWord = 'We will try not to show that word again';
+const String signInFailure = 'failed to sign in User, please try again later';

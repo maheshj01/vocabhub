@@ -46,7 +46,7 @@ class _VocabButtonState extends State<VocabButton> {
               (states) => widget.foregroundColor),
           backgroundColor: MaterialStateColor.resolveWith(
               (states) => widget.backgroundColor)),
-      onPressed: widget.onTap,
+      onPressed: widget.isLoading ? null : widget.onTap,
       child: widget.isLoading
           ? CircularProgressIndicator()
           : Row(

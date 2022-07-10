@@ -69,6 +69,7 @@ class VocabTheme {
       primaryColor: const Color(0xFF030303),
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.background,
+        titleTextStyle: googleFontsTextTheme.headline4,
         elevation: 3.5,
         iconTheme: IconThemeData(color: Color(0XFFB7B7B7)),
       ),

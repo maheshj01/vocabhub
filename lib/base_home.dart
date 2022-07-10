@@ -19,24 +19,6 @@ class AdaptiveLayout extends StatefulWidget {
 }
 
 class _AdaptiveLayoutState extends State<AdaptiveLayout> {
-  List<NavbarItem> items = [
-    NavbarItem(Icons.dashboard, 'Home'),
-    NavbarItem(Icons.search, 'Search'),
-    NavbarItem(Icons.explore, 'Explore'),
-    NavbarItem(
-      Icons.notifications_active_sharp,
-      'Notifications',
-    ),
-    NavbarItem(Icons.person, 'Me'),
-  ];
-
-  final Map<int, Map<String, Widget>> _routes = {
-    0: {Dashboard.route: Dashboard()},
-    1: {Search.route: Search(), AddWordForm.route: AddWordForm()},
-    2: {ExploreWords.route: ExploreWords()},
-    3: {Notifications.route: Notifications()},
-    4: {UserProfile.route: UserProfile()}
-  };
   @override
   void initState() {
     super.initState();
@@ -80,6 +62,22 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
   @override
   Widget build(BuildContext context) {
     SizeUtils.size = MediaQuery.of(context).size;
+    List<NavbarItem> items = [
+      NavbarItem(Icons.dashboard, 'Dashboard'),
+      NavbarItem(Icons.search, 'Search'),
+      NavbarItem(Icons.explore, 'Explore'),
+      NavbarItem(Icons.person, 'Me'),
+    ];
+
+    final Map<int, Map<String, Widget>> _routes = {
+      0: {
+        Dashboard.route: Dashboard(),
+        Notifications.route: Notifications(),
+      },
+      1: {Search.route: Search(), AddWordForm.route: AddWordForm()},
+      2: {ExploreWords.route: ExploreWords()},
+      3: {UserProfile.route: UserProfile()}
+    };
     return NavbarRouter(
       errorBuilder: (context) {
         return const Center(child: Text('Error 404'));
@@ -92,7 +90,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
       destinationAnimationDuration: 600,
       onChanged: (x) {
         /// Simulate DragGesture on pageView
-        if (EXPLORE_INDEX == 2 && !animatePageOnce) {
+        if (EXPLORE_INDEX == x && !animatePageOnce) {
           print('index change = ${pageController.hasClients}');
           if (pageController.hasClients) {
             Future.delayed(Duration(seconds: 3), () {

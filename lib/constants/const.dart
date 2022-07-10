@@ -73,5 +73,4 @@ enum Status { success, notfound, error }
 const int HOME_INDEX = 0;
 const int SEARCH_INDEX = 1;
 const int EXPLORE_INDEX = 2;
-const int NOTIFICATIONS_INDEX = 3;
-const int PROFILE_INDEX = 4;
+const int PROFILE_INDEX = 3;

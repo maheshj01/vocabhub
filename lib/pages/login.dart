@@ -27,9 +27,8 @@ class _AppSignInState extends State<AppSignIn> {
     try {
       user = await auth.googleSignIn(context);
       if (user != null) {
-        final existingUser =
-            await UserService().findByEmail(email: user!.email);
-        if (existingUser.email.isNotEmpty) {
+        final existingUser = await UserService.findByEmail(email: user!.email);
+        if (existingUser.email.isEmpty) {
           logger.d('registering new user ${user!.email}');
           final isRegistered = await _register(user!);
           if (isRegistered) {
@@ -38,9 +37,9 @@ class _AppSignInState extends State<AppSignIn> {
             Navigate().pushAndPopAll(context, AdaptiveLayout(),
                 slideTransitionType: TransitionType.ttb);
           } else {
-            logger.d('failed to sign in User');
+            logger.d('$signInFailure');
             await Settings.setIsSignedIn(false, email: existingUser!.email);
-            showMessage(context, 'User Not registered');
+            showMessage(context, '$signInFailure');
             throw 'failed to register new user';
           }
         } else {

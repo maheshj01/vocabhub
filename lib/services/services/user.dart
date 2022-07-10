@@ -15,7 +15,7 @@ class UserService {
     return response;
   }
 
-  Future<UserModel> findByEmail({required String email}) async {
+  static Future<UserModel> findByEmail({required String email}) async {
     try {
       final response = await DatabaseService.findSingleRowByColumnValue(email,
           columnName: USER_EMAIL_COLUMN, tableName: _tableName);

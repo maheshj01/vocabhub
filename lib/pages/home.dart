@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage>
   Future<void> getUser() async {
     if (userProvider.isLoggedIn) {
       final existingUser =
-          await UserService().findByEmail(email: userProvider.email);
+          await UserService.findByEmail(email: userProvider.email);
       userProvider.user = existingUser;
     }
   }
