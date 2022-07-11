@@ -27,7 +27,7 @@ class SynonymsList extends StatelessWidget {
               runSpacing: 5,
               spacing: 10,
               children: List.generate(synonyms!.length, (index) {
-                String synonym = synonyms![index].capitalize();
+                String synonym = synonyms![index].capitalize()!;
                 return MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: GestureDetector(

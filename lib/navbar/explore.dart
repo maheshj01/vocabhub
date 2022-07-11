@@ -184,7 +184,7 @@ class _ExploreWordState extends State<ExploreWord>
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 32.0),
                       child: Text(
-                        widget.word!.word.capitalize(),
+                        widget.word!.word.capitalize()!,
                         style: textTheme.headline2!.copyWith(
                             color: isDark ? Colors.white : Colors.black),
                       ),

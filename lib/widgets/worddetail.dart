@@ -54,7 +54,7 @@ class _WordDetailState extends State<WordDetail>
       // _animationController.reset();
       // }
     });
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       userProvider = AppStateScope.of(context).user!;
     });
   }
@@ -143,7 +143,7 @@ class _WordDetailState extends State<WordDetail>
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32.0),
                           child: Text(
-                            widget.word!.word.capitalize(),
+                            widget.word!.word.capitalize()!,
                             style: Theme.of(context)
                                 .textTheme
                                 .headline2!
