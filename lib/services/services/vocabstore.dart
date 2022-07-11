@@ -23,7 +23,7 @@ class Response {
 /// Global Vocabulary table's api.
 class VocabStoreService {
   static String tableName = '$VOCAB_TABLE_NAME';
-  final _logger = log.Logger();
+  static final _logger = log.Logger();
   final SupabaseClient _supabase = SupabaseClient("$CONFIG_URL", "$APIkey");
 
   Future<PostgrestResponse> findById(String id) async {
@@ -50,7 +50,7 @@ class VocabStoreService {
   //   return words;
   // }
 
-  Future<Response> addWord(Word word) async {
+  static Future<Response> addWord(Word word) async {
     final json = word.toJson();
     final vocabresponse = Response(didSucced: false, message: "Failed");
     try {
@@ -114,7 +114,7 @@ class VocabStoreService {
     }
   }
 
-  Future<PostgrestResponse> updateWord({
+  static Future<PostgrestResponse> updateWord({
     required String id,
     required Word word,
   }) async {
@@ -140,7 +140,7 @@ class VocabStoreService {
     return response;
   }
 
-  Future<PostgrestResponse> deleteById(String id) async {
+  static Future<PostgrestResponse> deleteById(String id) async {
     _logger.i(tableName);
     final response = await DatabaseService.deleteRow(id,
         tableName: tableName, columnName: ID_COLUMN);

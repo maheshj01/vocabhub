@@ -25,6 +25,7 @@ class Word {
       this.mnemonics,
       this.created_at,
       this.examples = const []});
+
   factory Word.fromJson(Map<String, dynamic> json) => _$WordFromJson(json);
 
   Word copyWith(
@@ -34,7 +35,6 @@ class Word {
       List<String>? synonyms,
       List<String>? examples,
       List<String>? mnemonics,
-      String? note,
       DateTime? created_at}) {
     return Word(
       id ?? this.id,
