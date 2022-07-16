@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/word.dart';
 part 'history.g.dart';
 
@@ -61,19 +62,22 @@ class EditHistory {
       examples: examples!.isEmpty ? this.examples : examples,
       mnemonics: mnemonics!.isEmpty ? this.mnemonics : mnemonics,
       created_at: created_at ?? this.created_at,
-      state: state!,
+      state: state ?? this.state,
     );
   }
 
-  // factory EditHistory.fromWord(Word word) {
-  //   return EditHistory(
-  //     word: word,
-  //     created_at: this.created_at,
-  //     state: this.state,
-  //     user_email: user_email,
-  //     word_id: word.id,
-  //   );
-  // }
+  factory EditHistory.fromWord(Word word, String email) {
+    return EditHistory(
+      word: word.word,
+      created_at: word.created_at,
+      user_email: email,
+      meaning: word.meaning,
+      examples: word.examples,
+      mnemonics: word.mnemonics,
+      synonyms: word.synonyms,
+      word_id: word.id,
+    );
+  }
 
   @override
   bool operator ==(Object other) =>

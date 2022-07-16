@@ -109,7 +109,7 @@ class _WordDetailState extends State<WordDetail>
                 SizedBox(
                   height: SizeUtils.isMobile ? 24 : (size.height / 5),
                 ),
-                userProvider.isLoggedIn && userProvider.isAdmin
+                userProvider.isLoggedIn
                     ? Container(
                         alignment: Alignment.topRight,
                         padding: EdgeInsets.only(right: 16),
@@ -124,7 +124,7 @@ class _WordDetailState extends State<WordDetail>
                                     isEdit: true,
                                     word: widget.word,
                                   ),
-                                  slideTransitionType: TransitionType.btt);
+                                  slideTransitionType: TransitionType.scale);
                             }))
                     : SizedBox(),
                 Align(

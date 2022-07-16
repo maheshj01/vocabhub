@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/history.dart';
@@ -48,7 +49,7 @@ class _AddWordFormState extends State<AddWordForm> {
           isDisabled = true;
         });
         Word wordObject = Word(
-          '',
+          Uuid().v1(),
           newWord,
           meaning,
         );
@@ -73,6 +74,7 @@ class _AddWordFormState extends State<AddWordForm> {
             error = 'Failed to add $word';
             _errorNotifier.value = true;
           });
+          stopCircularIndicator(context);
         }
       } else {
         stopCircularIndicator(context);
@@ -174,45 +176,47 @@ class _AddWordFormState extends State<AddWordForm> {
 
   /// Edit mode
   Future<void> updateWord() async {
-    // showCircularIndicator(context);
+    showCircularIndicator(context);
     String id = widget.word!.id;
     final newWord = wordController.text.trim();
     final meaning = meaningController.text.trim();
-    if (newWord.isNotEmpty && meaning.isNotEmpty) {
-      setState(() {
-        isDisabled = true;
-      });
-      // TODO: to be removed in a future release
-      editedWord = editedWord.copyWith(word: newWord, meaning: meaning);
-      if (widget.word != editedWord) {
-        // final response = await EditHistoryService.insertHistory(
-        //     editedWord, userProvider!.email);
-        print('word has been modified');
+    try {
+      if (newWord.isNotEmpty && meaning.isNotEmpty) {
         setState(() {
-          isDisabled = false;
+          isDisabled = true;
         });
-        showMessage(context, "The word \"${editedWord.word}\" is updated.",
-            onClosed: () => Navigate().popView(context));
-      } else {
-        print('word has not been modified');
+        editedWord = editedWord.copyWith(word: newWord, meaning: meaning);
+        final history = EditHistory.fromWord(editedWord, userProvider!.email);
+        if (widget.word != editedWord) {
+          final response = await EditHistoryService.insertHistory(history);
+          if (response.didSucced) {
+            final pendingWord = response.data;
+            showMessage(
+                context,
+                duration: Duration(seconds: 3),
+                "Your edit is under review, We will notifiy you once there is an update",
+                onClosed: () {
+              stopCircularIndicator(context);
+              Navigate().popView(context);
+            });
+          }
+          setState(() {
+            isDisabled = false;
+          });
+        } else {
+          showMessage(context, "No changes to update", onClosed: () {});
+        }
       }
-      // stopCircularIndicator(context);
-      //   if (response.status == 200) {
-      //     firebaseAnalytics.logWordEdit(word, userProvider!.email);
-      //     showMessage(context, "The word \"${word.word}\" is updated.",
-      //         onClosed: () => Navigate().popView(context));
-      //   } else {
-      //     print('failed to update ${response.error!.message}');
-      //   }
-      // } else {
-      //   stopCircularIndicator(context);
-      //   error = 'word or meaning cannot be empty!';
-      //   _errorNotifier.value = true;
-      // }
-
+      stopCircularIndicator(context);
       setState(() {
         isDisabled = false;
       });
+    } catch (_) {
+      stopCircularIndicator(context);
+      setState(() {
+        isDisabled = false;
+      });
+      showMessage(context, "Failed to edit word", onClosed: () {});
     }
   }
 
@@ -334,8 +338,6 @@ class _AddWordFormState extends State<AddWordForm> {
                 children: List.generate(editedWord.synonyms!.length, (index) {
                   return synonymChip(editedWord.synonyms![index], () {
                     editedWord.synonyms!.remove(editedWord.synonyms![index]);
-                    print(editedWord.synonyms);
-                    print(widget.word!.synonyms);
                     setState(() {});
                   });
                 }),
@@ -369,7 +371,11 @@ class _AddWordFormState extends State<AddWordForm> {
                                           synonymController.text;
                                       if (word.isNotEmpty) {
                                         if (newSynonym.isNotEmpty) {
-                                          editedWord.synonyms!.add(newSynonym);
+                                          editedWord = editedWord.copyWith(
+                                              synonyms: [
+                                                ...editedWord.synonyms!,
+                                                newSynonym
+                                              ]);
                                         }
                                       } else {
                                         showMessage(context,
@@ -435,7 +441,11 @@ class _AddWordFormState extends State<AddWordForm> {
                                     onPressed: () {
                                       String text = exampleController.text;
                                       if (word.isNotEmpty) {
-                                        editedWord.examples!.add(text);
+                                        editedWord = editedWord.copyWith(
+                                            examples: [
+                                              ...editedWord.examples!,
+                                              text
+                                            ]);
                                         exampleController.clear();
                                       } else {
                                         showMessage(
@@ -500,8 +510,12 @@ class _AddWordFormState extends State<AddWordForm> {
                                 child: IconButton(
                                     onPressed: () {
                                       String text = mnemonicController.text;
-                                      if (word.isNotEmpty) {
-                                        editedWord.mnemonics!.add(text);
+                                      if (text.isNotEmpty) {
+                                        editedWord = editedWord.copyWith(
+                                            mnemonics: [
+                                              ...editedWord.mnemonics!,
+                                              text
+                                            ]);
                                         mnemonicController.clear();
                                       } else {
                                         showMessage(

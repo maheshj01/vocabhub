@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:supabase/supabase.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/history.dart';
-import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:logger/logger.dart' as log;
 
@@ -39,26 +39,21 @@ class EditHistoryService {
   /// Add a history entry for the word
   /// This is called when the user requests a edit to the VocabTable
   /// The edit state is pending (default) on insert
-  static Future<Response> insertHistory(
-      EditHistory history, String email) async {
+  static Future<Response> insertHistory(EditHistory history) async {
     final vocabresponse = Response(didSucced: false, message: "Failed");
     final data = history.toJson();
-    // data.addAll({
-    //   'user_email': email,
-    //   'state': 'pending',
-    // });
-    print(data);
-    // final response =
-    //     await DatabaseService.insertIntoTable(data, table: _tableName);
-    // vocabresponse.status = response.status;
-    // if (response.status == 201) {
-    //   vocabresponse.didSucced = true;
-    //   vocabresponse.message = 'Success';
-    //   final word = Word.fromJson(response.data[0]);
-    //   vocabresponse.data = word;
-    // } else {
-    //   vocabresponse.message = response.error!.message;
-    // }
+    data['edit_id'] = Uuid().v1();
+    final response =
+        await DatabaseService.insertIntoTable(data, table: _tableName);
+    vocabresponse.status = response.status;
+    if (response.status == 201) {
+      vocabresponse.didSucced = true;
+      vocabresponse.message = 'Success';
+      vocabresponse.data =
+          history.copyWith(edit_id: response.data[0]['edit_id']);
+    } else {
+      vocabresponse.message = response.error!.message;
+    }
     return vocabresponse;
   }
 }

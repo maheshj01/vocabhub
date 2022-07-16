@@ -4,6 +4,7 @@ import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/extensions.dart';
+import 'package:vocabhub/utils/size_utils.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/search.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -34,11 +35,15 @@ class _SearchState extends State<Search> {
       DraggableScrollableController();
 
   void _scrollSheetToSize({double size = 0.6}) {
-    SchedulerBinding.instance.addPostFrameCallback((x) {
-      _draggableScrollableController.animateTo(size,
-          duration: Duration(milliseconds: 300), curve: Curves.easeIn);
-    });
+    if (_draggableScrollableController.isAttached) {
+      SchedulerBinding.instance.addPostFrameCallback((x) {
+        _draggableScrollableController.animateTo(size,
+            duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+      });
+    }
   }
+
+  bool expand = true;
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +79,10 @@ class _SearchState extends State<Search> {
                     if (_draggableScrollableController.size == 0.2) return;
                     _scrollSheetToSize(size: 0.2);
                   },
-                  child: WordDetail(word: words[selectedIndex]),
+                  child: SizedBox(
+                      height: SizeUtils.size.height * 0.6,
+                      child: SingleChildScrollView(
+                          child: WordDetail(word: words[selectedIndex]))),
                 ),
                 DraggableScrollableSheet(
                     maxChildSize: 0.6,
@@ -93,12 +101,19 @@ class _SearchState extends State<Search> {
                             _scrollSheetToSize(size: 0.6);
                           },
                           controller: scrollController,
+                          isExpanded: expand,
+                          onExpanded: () {
+                            setState(() {
+                              expand = !expand;
+                            });
+                            _scrollSheetToSize(size: expand ? 0.6 : 0.2);
+                          },
                           onSelected: (word) {
                             removeFocus(context);
                             setState(() {
                               selectedIndex = words.indexOf(word);
                             });
-                            _scrollSheetToSize(size: 0.2);
+                            // _scrollSheetToSize(size: 0.2);
                           },
                         ),
                       );
@@ -113,8 +128,16 @@ class WordList extends StatefulWidget {
   final Function(Word) onSelected;
   ScrollController? controller;
   final Function? onFocus;
+  final bool? isExpanded;
+  final Function? onExpanded;
 
-  WordList({Key? key, required this.onSelected, this.controller, this.onFocus})
+  WordList(
+      {Key? key,
+      required this.onSelected,
+      this.controller,
+      this.onFocus,
+      this.onExpanded,
+      this.isExpanded})
       : super(key: key);
 
   @override
@@ -127,6 +150,10 @@ class _WordListState extends State<WordList> {
     wordsNotifier = ValueNotifier<List<Word>>([]);
     widget.controller ??= ScrollController();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _words = AppStateScope.of(context).words!;
+      wordsNotifier.value = _words;
+    });
   }
 
   bool isInSynonym(String query, List<String>? synonyms) {
@@ -154,8 +181,6 @@ class _WordListState extends State<WordList> {
   @override
   Widget build(BuildContext context) {
     final state = AppStateWidget.of(context);
-    _words = AppStateScope.of(context).words!;
-    wordsNotifier.value = _words;
 
     /// todo: sheet shuld be draggable on dragging the  top edge of the sheet
     return ValueListenableBuilder<List<Word>>(
@@ -164,30 +189,54 @@ class _WordListState extends State<WordList> {
           return Column(
             children: [
               SizedBox(height: 8),
-              SearchBuilder(
-                ontap: () {
-                  if (widget.onFocus != null) {
-                    widget.onFocus!();
-                  }
-                },
-                onChanged: (x) {
-                  if (x.isEmpty) {
-                    wordsNotifier.value = _words;
-                    state.setWords(_words);
-                    return;
-                  }
-                  List<Word> result = [];
-                  _words.forEach((element) {
-                    if (element.word.toLowerCase().contains(x.toLowerCase()) ||
-                        element.meaning
-                            .toLowerCase()
-                            .contains(x.toLowerCase()) ||
-                        isInSynonym(x, element.synonyms)) {
-                      result.add(element);
-                    }
-                  });
-                  wordsNotifier.value = result;
-                },
+              Row(
+                children: [
+                  Expanded(
+                    child: SearchBuilder(
+                      ontap: () {
+                        if (widget.onFocus != null) {
+                          widget.onFocus!();
+                        }
+                      },
+                      onChanged: (x) {
+                        _words = AppStateScope.of(context).words!;
+                        wordsNotifier.value = _words;
+                        if (x.isEmpty) {
+                          wordsNotifier.value = _words;
+                          state.setWords(_words);
+                          return;
+                        }
+                        List<Word> result = [];
+                        _words.forEach((element) {
+                          if (element.word
+                                  .toLowerCase()
+                                  .contains(x.toLowerCase()) ||
+                              element.meaning
+                                  .toLowerCase()
+                                  .contains(x.toLowerCase()) ||
+                              isInSynonym(x, element.synonyms)) {
+                            result.add(element);
+                          }
+                        });
+                        wordsNotifier.value = result;
+                      },
+                    ),
+                  ),
+                  widget.isExpanded == null
+                      ? SizedBox()
+                      : IconButton(
+                          onPressed: () {
+                            if (widget.onExpanded != null) {
+                              widget.onExpanded!();
+                            }
+                          },
+                          icon: Icon(
+                            widget.isExpanded == true
+                                ? Icons.keyboard_arrow_down
+                                : Icons.keyboard_arrow_up,
+                            size: 30,
+                          ))
+                ],
               ),
               Expanded(
                   child: value.isEmpty

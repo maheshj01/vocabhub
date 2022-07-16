@@ -52,8 +52,10 @@ class VocabStoreService {
         final word = Word.fromJson(response.data[0]);
         vocabresponse.data = word;
       }
+      vocabresponse.status = response.status;
+      vocabresponse.message = response.error!.message;
     } catch (_) {
-      throw "Failed to add word";
+      throw "Failed to add word,error:$_";
     }
     return vocabresponse;
   }
