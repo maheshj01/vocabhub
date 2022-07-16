@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
+import 'package:vocabhub/services/services/authentication.dart';
 import 'package:vocabhub/services/services/user.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utils.dart';
@@ -102,7 +103,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                         RichText(
                             text: TextSpan(children: [
                           TextSpan(
-                              text: 'Joined on ',
+                              text: 'Joined ',
                               style: Theme.of(context)
                                   .textTheme
                                   .subtitle2!
@@ -138,11 +139,33 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                               isLoading = true;
                             });
                             await Settings.clear();
-                            await UserService().updateLogin(
+                            await AuthenticationService.updateLogin(
                                 email: user.email, isLoggedIn: false);
                             Navigate().pushAndPopAll(context, AppSignIn());
                           },
                         ),
+                        // SizedBox(
+                        //   height: 50,
+                        // ),
+                        // VocabButton(
+                        //   label: 'Delete user',
+                        //   height: 50,
+                        //   width: 150,
+                        //   isLoading: isLoading,
+                        //   onTap: () async {
+                        //     setState(() {
+                        //       isLoading = true;
+                        //     });
+                        //     final response =
+                        //         await UserService.deleteById(user.email);
+                        //     if (response.status == 200) {
+                        //       Navigate().pushAndPopAll(context, AppSignIn());
+                        //     }
+                        //     setState(() {
+                        //       isLoading = false;
+                        //     });
+                        //   },
+                        // ),
                         SizedBox(
                           height: kBottomNavigationBarHeight,
                         )

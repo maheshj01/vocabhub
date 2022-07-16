@@ -96,3 +96,14 @@ class ResponseObject {
 
   ResponseObject(this.message, this.data, this.status);
 }
+
+
+class Response {
+  bool didSucced;
+  String message;
+  int? status;
+  Object? data;
+
+  Response(
+      {required this.didSucced, required this.message, this.status, this.data});
+}

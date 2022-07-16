@@ -37,7 +37,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
   updateWord(List<Word> words) {
     words.forEach((word) {
       print('\nBEFORE\n${word.meaning}');
-      if (word.meaning != null && word.meaning.isNotEmpty) {
+      if (word.meaning.isNotEmpty) {
         // word.synonyms!.forEach((syn) {
         //   synonyms.add(syn.trim().replaceAll('\n', ''));
         // });

@@ -15,8 +15,9 @@ Word _$WordFromJson(Map<String, dynamic> json) => Word(
               .toList() ??
           const [],
       mnemonics: (json['mnemonics'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
       created_at: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),

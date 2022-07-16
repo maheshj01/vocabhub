@@ -10,16 +10,6 @@ import 'package:vocabhub/utils/secrets.dart';
 import 'package:vocabhub/platform/mobile.dart'
     if (dart.library.html) 'package:vocabhub/platform/web.dart' as platformOnly;
 
-class Response {
-  bool didSucced;
-  String message;
-  int? status;
-  Object? data;
-
-  Response(
-      {required this.didSucced, required this.message, this.status, this.data});
-}
-
 /// Global Vocabulary table's api.
 class VocabStoreService {
   static String tableName = '$VOCAB_TABLE_NAME';

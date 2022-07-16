@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
-import 'package:vocabhub/services/services/authentication.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/circle_clipper.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';

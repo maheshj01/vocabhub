@@ -49,8 +49,8 @@ class _VocabButtonState extends State<VocabButton> {
       onPressed: widget.isLoading ? null : widget.onTap,
       child: widget.isLoading
           ? CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(widget.foregroundColor),
-          )
+              valueColor: AlwaysStoppedAnimation<Color>(widget.foregroundColor),
+            )
           : Row(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,

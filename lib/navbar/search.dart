@@ -34,7 +34,7 @@ class _SearchState extends State<Search> {
       DraggableScrollableController();
 
   void _scrollSheetToSize({double size = 0.6}) {
-    SchedulerBinding.instance!.addPostFrameCallback((x) {
+    SchedulerBinding.instance.addPostFrameCallback((x) {
       _draggableScrollableController.animateTo(size,
           duration: Duration(milliseconds: 300), curve: Curves.easeIn);
     });

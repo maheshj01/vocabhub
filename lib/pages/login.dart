@@ -4,7 +4,6 @@ import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
-import 'package:vocabhub/services/services/authentication.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
@@ -25,58 +24,59 @@ class _AppSignInState extends State<AppSignIn> {
   Future<void> _handleSignIn(BuildContext context) async {
     final state = AppStateWidget.of(context);
     try {
+      loadingNotifier.value = true;
       user = await auth.googleSignIn(context);
       if (user != null) {
         final existingUser = await UserService.findByEmail(email: user!.email);
         if (existingUser.email.isEmpty) {
           logger.d('registering new user ${user!.email}');
-          final isRegistered = await _register(user!);
-          if (isRegistered) {
-            state.setUser(user!);
-            await Settings.setIsSignedIn(true, email: user!.email);
+          final resp = await AuthenticationService.registerUser(user!);
+          if (resp.didSucced) {
+            final user = UserModel.fromJson((resp.data as List<dynamic>)[0]);
+            state.setUser(user.copyWith(isLoggedIn: true));
+            loadingNotifier.value = false;
             Navigate().pushAndPopAll(context, AdaptiveLayout(),
                 slideTransitionType: TransitionType.ttb);
+            await Settings.setIsSignedIn(true, email: user.email);
+            firebaseAnalytics.logNewUser(user);
           } else {
             logger.d('$signInFailure');
-            await Settings.setIsSignedIn(false, email: existingUser!.email);
+            await Settings.setIsSignedIn(false, email: existingUser.email);
             showMessage(context, '$signInFailure');
+            loadingNotifier.value = false;
             throw 'failed to register new user';
           }
         } else {
           logger.d('found existing user ${user!.email}');
           await Settings.setIsSignedIn(true, email: existingUser.email);
-          await UserService()
-              .updateLogin(email: existingUser.email, isLoggedIn: true);
+          await AuthenticationService.updateLogin(
+              email: existingUser.email, isLoggedIn: true);
           state.setUser(existingUser.copyWith(isLoggedIn: true));
+          loadingNotifier.value = false;
           Navigate().pushAndPopAll(context, AdaptiveLayout());
           firebaseAnalytics.logSignIn(user!);
         }
       } else {
-        throw 'User null';
+        showMessage(context, '$signInFailure');
+        loadingNotifier.value = false;
+        throw 'failed to register new user';
       }
     } catch (error) {
+      showMessage(context, error.toString());
+      loadingNotifier.value = false;
       logger.e(error);
       await Settings.setIsSignedIn(false);
     }
   }
 
-  Future<bool> _register(UserModel newUser) async {
-    try {
-      final resp = await UserService().registerUser(newUser);
-      if (resp.didSucced) {
-        firebaseAnalytics.logNewUser(newUser);
-        return true;
-      } else
-        return false;
-    } catch (error) {
-      print(error);
-      await Settings.setIsSignedIn(false);
-      return false;
-    }
-  }
-
   UserModel? user;
   late Analytics firebaseAnalytics;
+  final ValueNotifier<bool> loadingNotifier = ValueNotifier<bool>(false);
+  @override
+  void dispose() {
+    loadingNotifier.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -98,18 +98,6 @@ class _AppSignInState extends State<AppSignIn> {
       );
     }
 
-    Widget _signInButton() {
-      return Align(
-          alignment: Alignment.center,
-          child: VocabButton(
-            width: 300,
-            leading: Image.asset('$GOOGLE_ASSET_PATH', height: 32),
-            label: 'Sign In with Google',
-            onTap: () => _handleSignIn(context),
-            backgroundColor: Colors.white,
-          ));
-    }
-
     Widget _skipButton() {
       return Align(
           alignment: Alignment.center,
@@ -126,70 +114,90 @@ class _AppSignInState extends State<AppSignIn> {
           ));
     }
 
-    return Scaffold(
-        backgroundColor: darkNotifier.value
-            ? VocabTheme.surfaceGrey
-            : VocabTheme.surfaceGreen,
-        body: !SizeUtils.isMobile
-            ? Row(
-                children: [
-                  AnimatedContainer(
-                    width: SizeUtils.size.width / 2,
-                    duration: Duration(seconds: 1),
-                    child: ImageBackground(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 32),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _heading('Hi!'),
-                            _heading('Welcome Back.'),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      color: Colors.white,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+    return ValueListenableBuilder<bool>(
+        valueListenable: loadingNotifier,
+        builder: (BuildContext context, bool isLoading, Widget? child) {
+          Widget _signInButton() {
+            return Align(
+                alignment: Alignment.center,
+                child: VocabButton(
+                  width: 300,
+                  leading: Image.asset('$GOOGLE_ASSET_PATH', height: 32),
+                  label: 'Sign In with Google',
+                  isLoading: isLoading,
+                  onTap: () => _handleSignIn(context),
+                  backgroundColor: Colors.white,
+                ));
+          }
+
+          return IgnorePointer(
+            ignoring: isLoading,
+            child: Scaffold(
+                backgroundColor: darkNotifier.value
+                    ? VocabTheme.surfaceGrey
+                    : VocabTheme.surfaceGreen,
+                body: !SizeUtils.isMobile
+                    ? Row(
                         children: [
-                          Spacer(),
-                          _signInButton(),
-                          SizedBox(
-                            height: 20,
+                          AnimatedContainer(
+                            width: SizeUtils.size.width / 2,
+                            duration: Duration(seconds: 1),
+                            child: ImageBackground(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 32),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _heading('Hi!'),
+                                    _heading('Welcome Back.'),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
-                          _skipButton(),
-                          Spacer()
+                          Expanded(
+                            child: Container(
+                              color: Colors.white,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Spacer(),
+                                  _signInButton(),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  _skipButton(),
+                                  Spacer()
+                                ],
+                              ),
+                            ),
+                          )
                         ],
-                      ),
-                    ),
-                  )
-                ],
-              )
-            : ImageBackground(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: 200,
-                      ),
-                      // _heading('Hi!'),
-                      _heading('Welcome!'),
-                      Expanded(child: Container()),
-                      _signInButton(),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      _skipButton(),
-                      Expanded(child: Container()),
-                      SizedBox(
-                        height: 100,
                       )
-                    ]),
-              ));
+                    : ImageBackground(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: 200,
+                              ),
+                              // _heading('Hi!'),
+                              _heading('Welcome!'),
+                              Expanded(child: Container()),
+                              _signInButton(),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              _skipButton(),
+                              Expanded(child: Container()),
+                              SizedBox(
+                                height: 100,
+                              )
+                            ]),
+                      )),
+          );
+        });
   }
 }
 

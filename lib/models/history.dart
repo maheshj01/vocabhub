@@ -13,56 +13,83 @@ part 'history.g.dart';
 
 @JsonSerializable()
 class EditHistory {
-  final String id;
-  String user_id;
+  final String? edit_id;
+  String user_email;
   String word_id;
-  Word word;
-  WordEditState state;
+  String word;
+  String meaning;
+  List<String>? synonyms;
+  List<String>? examples;
+  List<String>? mnemonics;
   DateTime? created_at;
+  WordEditState state;
 
   EditHistory(
-      {required this.id,
+      {this.edit_id,
+      required this.word_id,
+      required this.user_email,
       required this.word,
-      required this.created_at,
-      required this.state,
-      required this.user_id,
-      required this.word_id});
+      required this.meaning,
+      this.state = WordEditState.pending,
+      this.created_at,
+      this.synonyms = const [],
+      this.examples = const [],
+      this.mnemonics = const []});
 
   factory EditHistory.fromJson(Map<String, dynamic> json) =>
       _$EditHistoryFromJson(json);
 
   EditHistory copyWith({
-    String? id,
-    Word? word,
+    String? edit_id,
+    String? user_email,
+    String? word_id,
+    String? word,
+    String? meaning,
+    List<String>? synonyms = const [],
+    List<String>? examples = const [],
+    List<String>? mnemonics = const [],
     DateTime? created_at,
     WordEditState? state,
-    String? user_id,
-    String? word_id,
   }) {
     return EditHistory(
-        id: id ?? this.id,
-        word: word ?? this.word,
-        created_at: created_at ?? this.created_at,
-        state: state ?? this.state,
-        user_id: user_id ?? this.user_id,
-        word_id: word_id ?? this.word_id);
+      edit_id: edit_id ?? this.edit_id,
+      user_email: user_email ?? this.user_email,
+      word_id: word_id ?? this.word_id,
+      word: word ?? this.word,
+      meaning: meaning ?? this.meaning,
+      synonyms: synonyms!.isEmpty ? this.synonyms : synonyms,
+      examples: examples!.isEmpty ? this.examples : examples,
+      mnemonics: mnemonics!.isEmpty ? this.mnemonics : mnemonics,
+      created_at: created_at ?? this.created_at,
+      state: state!,
+    );
   }
+
+  // factory EditHistory.fromWord(Word word) {
+  //   return EditHistory(
+  //     word: word,
+  //     created_at: this.created_at,
+  //     state: this.state,
+  //     user_email: user_email,
+  //     word_id: word.id,
+  //   );
+  // }
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is EditHistory &&
           runtimeType == other.runtimeType &&
-          id == other.id &&
+          edit_id == other.edit_id &&
           word == other.word &&
           word == other.word &&
           created_at == other.created_at &&
           state == other.state &&
-          user_id == other.user_id &&
+          user_email == other.user_email &&
           word_id == other.word_id;
 
   @override
-  int get hashCode => id.hashCode ^ word.hashCode;
+  int get hashCode => edit_id.hashCode ^ word.hashCode;
 
   Map<String, dynamic> toJson() => _$EditHistoryToJson(this);
 }

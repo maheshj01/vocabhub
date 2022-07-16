@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/models/history.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
+import 'package:vocabhub/services/services/edit_history.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 
@@ -44,22 +47,16 @@ class _AddWordFormState extends State<AddWordForm> {
         setState(() {
           isDisabled = true;
         });
-        final wordObject = Word(
+        Word wordObject = Word(
           '',
           newWord,
           meaning,
         );
-        if (_examples.isNotEmpty) {
-          wordObject.examples = _examples;
-        }
-        if (_synonyms.isNotEmpty) {
-          wordObject.synonyms = _synonyms;
-        }
-        if (_mnemonics.isNotEmpty) {
-          wordObject.mnemonics = _mnemonics;
-        }
-
-        final response = await supaStore.addWord(wordObject);
+        wordObject = wordObject.copyWith(
+            examples: editedWord.examples,
+            synonyms: editedWord.synonyms,
+            mnemonics: editedWord.mnemonics);
+        final response = await VocabStoreService.addWord(wordObject);
         if (response.didSucced) {
           firebaseAnalytics.logWordAdd(wordObject, userProvider!.email);
           showMessage(context, 'Congrats! You just added $word to vocabhub',
@@ -122,17 +119,9 @@ class _AddWordFormState extends State<AddWordForm> {
   }
 
   void _populateData() {
-    wordController.text = widget.word!.word;
-    meaningController.text = widget.word!.meaning;
-    if (widget.word!.synonyms != null && widget.word!.synonyms!.isNotEmpty) {
-      _synonyms = widget.word!.synonyms!;
-    }
-    if (widget.word!.examples != null && widget.word!.examples!.isNotEmpty) {
-      _examples = widget.word!.examples!;
-    }
-    if (widget.word!.mnemonics != null && widget.word!.mnemonics!.isNotEmpty) {
-      _mnemonics = widget.word!.mnemonics!;
-    }
+    editedWord = widget.word!.deepCopy();
+    wordController.text = editedWord.word;
+    meaningController.text = editedWord.meaning;
   }
 
   void _rebuild() {
@@ -185,40 +174,45 @@ class _AddWordFormState extends State<AddWordForm> {
 
   /// Edit mode
   Future<void> updateWord() async {
-    showCircularIndicator(context);
+    // showCircularIndicator(context);
     String id = widget.word!.id;
-    Word word = widget.word!;
-    final newWord = wordController.text;
-    final meaning = meaningController.text;
+    final newWord = wordController.text.trim();
+    final meaning = meaningController.text.trim();
     if (newWord.isNotEmpty && meaning.isNotEmpty) {
       setState(() {
         isDisabled = true;
       });
       // TODO: to be removed in a future release
-      word.word = newWord;
-      word.meaning = meaning;
-      if (_examples.isNotEmpty) {
-        word.examples = _examples;
-      }
-      if (_synonyms.isNotEmpty) {
-        word.synonyms = _synonyms;
-      }
-      if (_mnemonics.isNotEmpty) {
-        word.mnemonics = _mnemonics;
-      }
-      final response = await supaStore.updateWord(id: id, word: word);
-      stopCircularIndicator(context);
-      if (response.status == 200) {
-        firebaseAnalytics.logWordEdit(word, userProvider!.email);
-        showMessage(context, "The word \"${word.word}\" is updated.",
+      editedWord = editedWord.copyWith(word: newWord, meaning: meaning);
+      if (widget.word != editedWord) {
+        // final response = await EditHistoryService.insertHistory(
+        //     editedWord, userProvider!.email);
+        print('word has been modified');
+        setState(() {
+          isDisabled = false;
+        });
+        showMessage(context, "The word \"${editedWord.word}\" is updated.",
             onClosed: () => Navigate().popView(context));
       } else {
-        print('failed to update ${response.error!.message}');
+        print('word has not been modified');
       }
-    } else {
-      stopCircularIndicator(context);
-      error = 'word or meaning cannot be empty!';
-      _errorNotifier.value = true;
+      // stopCircularIndicator(context);
+      //   if (response.status == 200) {
+      //     firebaseAnalytics.logWordEdit(word, userProvider!.email);
+      //     showMessage(context, "The word \"${word.word}\" is updated.",
+      //         onClosed: () => Navigate().popView(context));
+      //   } else {
+      //     print('failed to update ${response.error!.message}');
+      //   }
+      // } else {
+      //   stopCircularIndicator(context);
+      //   error = 'word or meaning cannot be empty!';
+      //   _errorNotifier.value = true;
+      // }
+
+      setState(() {
+        isDisabled = false;
+      });
     }
   }
 
@@ -226,7 +220,7 @@ class _AddWordFormState extends State<AddWordForm> {
     if (widget.isEdit) {
       showCircularIndicator(context);
       String id = widget.word!.id;
-      final response = await supaStore.deleteById(id);
+      final response = await VocabStoreService.deleteById(id);
       stopCircularIndicator(context);
       if (response.status == 200) {
         firebaseAnalytics.logWordDelete(widget.word!, userProvider!.email);
@@ -267,13 +261,8 @@ class _AddWordFormState extends State<AddWordForm> {
 
   bool isDisabled = false;
   String word = '';
-  List<String> _examples = [];
-  List<String> _synonyms = [];
-  List<String> _mnemonics = [];
-  int maxExampleCount = 3;
-  int maxSynonymCount = 5;
-  int maxMnemonicCount = 5;
   String error = '';
+  Word editedWord = Word('', '', '');
   late FocusNode wordFocus;
   late FocusNode meaningFocus;
   late String _title;
@@ -342,14 +331,16 @@ class _AddWordFormState extends State<AddWordForm> {
                 alignment: WrapAlignment.center,
                 spacing: 8,
                 runSpacing: 2,
-                children: List.generate(_synonyms.length, (index) {
-                  return synonymChip(_synonyms[index], () {
-                    _synonyms.remove(_synonyms[index]);
+                children: List.generate(editedWord.synonyms!.length, (index) {
+                  return synonymChip(editedWord.synonyms![index], () {
+                    editedWord.synonyms!.remove(editedWord.synonyms![index]);
+                    print(editedWord.synonyms);
+                    print(widget.word!.synonyms);
                     setState(() {});
                   });
                 }),
               ),
-              _synonyms.length == maxSynonymCount
+              editedWord.synonyms!.length == maxSynonymCount
                   ? Container()
                   : Row(
                       mainAxisSize: MainAxisSize.min,
@@ -378,7 +369,7 @@ class _AddWordFormState extends State<AddWordForm> {
                                           synonymController.text;
                                       if (word.isNotEmpty) {
                                         if (newSynonym.isNotEmpty) {
-                                          _synonyms.add(newSynonym);
+                                          editedWord.synonyms!.add(newSynonym);
                                         }
                                       } else {
                                         showMessage(context,
@@ -397,7 +388,7 @@ class _AddWordFormState extends State<AddWordForm> {
               SizedBox(
                 height: 30,
               ),
-              ...List.generate(_examples.length, (index) {
+              ...List.generate(editedWord.examples!.length, (index) {
                 return Container(
                   margin: EdgeInsets.symmetric(
                       horizontal: SizeUtils.isMobile ? 16 : 24.0),
@@ -405,10 +396,13 @@ class _AddWordFormState extends State<AddWordForm> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Expanded(child: buildExample(_examples[index], word)),
+                      Expanded(
+                          child:
+                              buildExample(editedWord.examples![index], word)),
                       GestureDetector(
                           onTap: () {
-                            _examples.remove(_examples.elementAt(index));
+                            editedWord.examples!
+                                .remove(editedWord.examples!.elementAt(index));
                             setState(() {});
                           },
                           child: Padding(
@@ -420,7 +414,7 @@ class _AddWordFormState extends State<AddWordForm> {
                   ),
                 );
               }),
-              _examples.length < maxExampleCount
+              editedWord.examples!.length < maxExampleCount
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -441,7 +435,7 @@ class _AddWordFormState extends State<AddWordForm> {
                                     onPressed: () {
                                       String text = exampleController.text;
                                       if (word.isNotEmpty) {
-                                        _examples.add(text);
+                                        editedWord.examples!.add(text);
                                         exampleController.clear();
                                       } else {
                                         showMessage(
@@ -457,7 +451,7 @@ class _AddWordFormState extends State<AddWordForm> {
                       ],
                     )
                   : Container(),
-              ...List.generate(_mnemonics.length, (index) {
+              ...List.generate(editedWord.mnemonics!.length, (index) {
                 return Container(
                   margin: EdgeInsets.symmetric(
                       horizontal: SizeUtils.isMobile ? 16 : 24.0),
@@ -465,10 +459,13 @@ class _AddWordFormState extends State<AddWordForm> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Expanded(child: buildExample(_mnemonics[index], word)),
+                      Expanded(
+                          child:
+                              buildExample(editedWord.mnemonics![index], word)),
                       GestureDetector(
                           onTap: () {
-                            _mnemonics.remove(_mnemonics.elementAt(index));
+                            editedWord.mnemonics!
+                                .remove(editedWord.mnemonics!.elementAt(index));
                             setState(() {});
                           },
                           child: Padding(
@@ -483,7 +480,7 @@ class _AddWordFormState extends State<AddWordForm> {
               SizedBox(
                 height: 24,
               ),
-              _mnemonics.length < maxMnemonicCount
+              editedWord.mnemonics!.length < maxMnemonicCount
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -504,7 +501,7 @@ class _AddWordFormState extends State<AddWordForm> {
                                     onPressed: () {
                                       String text = mnemonicController.text;
                                       if (word.isNotEmpty) {
-                                        _mnemonics.add(text);
+                                        editedWord.mnemonics!.add(text);
                                         mnemonicController.clear();
                                       } else {
                                         showMessage(

@@ -4,6 +4,7 @@ import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/user.dart';
+import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
@@ -15,13 +16,35 @@ class AuthenticationService {
     ],
   );
 
-  static String tableName = '$USER_TABLE_NAME';
+  static String _tableName = '$USER_TABLE_NAME';
+
+  static Future<Response> registerUser(UserModel user) async {
+    final resp = Response(didSucced: false, message: "Failed");
+    final json = user.toJson();
+    json['created_at'] = DateTime.now().toIso8601String();
+    json['isLoggedIn'] = true;
+    try {
+      final response =
+          await DatabaseService.insertIntoTable(json, table: USER_TABLE_NAME);
+      if (response.status == 201) {
+        resp.didSucced = true;
+        resp.message = 'Success';
+        resp.data = response.data;
+      } else {
+        logger.e('error caught');
+        throw "Failed to register new user";
+      }
+    } catch (_) {
+      logger.e('error caught $_');
+      throw "Failed to register new user";
+    }
+    return resp;
+  }
 
   Future<UserModel?> googleSignIn(BuildContext context,
       {bool isLogin = true, bool socialSignUp = false}) async {
     UserModel? user;
     try {
-      showCircularIndicator(context);
       await _googleSignIn.signOut();
       final result = await _googleSignIn.signIn();
       final googleKey = await result!.authentication;
@@ -33,10 +56,8 @@ class AuthenticationService {
           avatarUrl: _googleSignIn.currentUser!.photoUrl,
           idToken: idToken,
           accessToken: accessToken);
-      stopCircularIndicator(context);
     } catch (error) {
       logger.e(error);
-      stopCircularIndicator(context);
       showMessage(context, 'Failed to signIn');
       throw 'Failed to signIn';
     }
@@ -46,17 +67,35 @@ class AuthenticationService {
   Future<bool> googleSignOut(BuildContext context) async {
     try {
       await _googleSignIn.disconnect();
-      // if (await _googleSignIn.isSignedIn()) {
-      //   _googleSignIn.signOut();
-      //   return false;
-      // } else {
-      //   return true;
-      // }
       return true;
     } catch (err) {
       logger.e(err);
       showMessage(context, 'Failed to signout!');
       return false;
+    }
+  }
+
+  static Future<ResponseObject> updateLogin(
+      {required String email, bool isLoggedIn = false}) async {
+    try {
+      final response = await DatabaseService.updateColumn(
+          searchColumn: USER_EMAIL_COLUMN,
+          searchValue: email,
+          columnValue: isLoggedIn,
+          columnName: USER_LOGGEDIN_COLUMN,
+          tableName: _tableName);
+
+      if (response.status == 200) {
+        return ResponseObject(Status.success.name,
+            UserModel.fromJson((response.data as List).first), Status.success);
+      } else {
+        logger.d('existing user not found');
+        return ResponseObject(Status.notfound.name,
+            UserModel.fromJson(response.data), Status.notfound);
+      }
+    } catch (_) {
+      logger.e(_);
+      return ResponseObject(_.toString(), UserModel.init(), Status.error);
     }
   }
 }

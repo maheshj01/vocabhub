@@ -73,3 +73,7 @@ const int HOME_INDEX = 0;
 const int SEARCH_INDEX = 1;
 const int EXPLORE_INDEX = 2;
 const int PROFILE_INDEX = 3;
+
+int maxExampleCount = 3;
+int maxSynonymCount = 5;
+int maxMnemonicCount = 5;
