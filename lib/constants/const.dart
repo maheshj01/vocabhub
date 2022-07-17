@@ -50,22 +50,30 @@ const EDIT_WORD_ID_COLUMN = 'word_id';
 
 const String dateFormatter = 'MMMM dd, y';
 
-enum WordEditState {
+enum EditState {
   approved('approved'),
   rejected('rejected'),
-  pending('pending');
+  pending('pending'),
+  recall('recall');
 
   final String state;
-  const WordEditState(this.state);
+  const EditState(this.state);
 
   String toName() => "$state";
 }
 
-enum VocabTableUpdateState { approved, add, delete }
-
 enum WordState { known, unknown, unanswered }
 
-enum EditState { approved, rejected, pending }
+enum EditType {
+  /// request to add a new word
+  add,
+
+  /// request to edit an existing word
+  edit,
+
+  /// request to delete an existing word
+  delete,
+}
 
 enum Status { success, notfound, error }
 

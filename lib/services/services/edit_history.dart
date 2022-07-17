@@ -4,6 +4,8 @@ import 'package:supabase/supabase.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/history.dart';
+import 'package:vocabhub/models/notification.dart';
+import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:logger/logger.dart' as log;
 
@@ -43,6 +45,7 @@ class EditHistoryService {
     final vocabresponse = Response(didSucced: false, message: "Failed");
     final data = history.toJson();
     data['edit_id'] = Uuid().v1();
+    data['created_at'] = DateTime.now().toIso8601String();
     final response =
         await DatabaseService.insertIntoTable(data, table: _tableName);
     vocabresponse.status = response.status;
@@ -55,5 +58,45 @@ class EditHistoryService {
       vocabresponse.message = response.error!.message;
     }
     return vocabresponse;
+  }
+
+  /// get edits made by user to show under notifications
+  ///
+  static Future<Response> getUserEdits(UserModel user) async {
+    final resp = Response(didSucced: false, message: "Failed");
+
+    PostgrestResponse response;
+
+    if (!user.isAdmin) {
+      response = await DatabaseService.findRowsByInnerJoinOnColumnValue(
+          '$USER_EMAIL_COLUMN', '${user.email}',
+          table1: _tableName, table2: USER_TABLE_NAME);
+      if (response.status == 200) {
+        final data = (response.data as List)
+            .map((e) => NotificationModel.fromJson(e))
+            .toList();
+        resp.didSucced = true;
+        resp.message = 'Success';
+        resp.data = data;
+      } else {
+        resp.message = response.error!.message;
+      }
+    } else {
+      response = await DatabaseService.findRowByColumnValue(
+        '$USER_EMAIL_COLUMN',
+        tableName: _tableName,
+      );
+      if (response.status == 200) {
+        final data = (response.data as List)
+            .map((e) => NotificationModel.fromJson(e))
+            .toList();
+        resp.didSucced = true;
+        resp.message = 'Success';
+        resp.data = data;
+      } else {
+        resp.message = response.error!.message;
+      }
+    }
+    return resp;
   }
 }

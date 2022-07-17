@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/constants.dart';
@@ -342,14 +341,14 @@ class _WordsBuilderState extends State<WordsBuilder> {
   Future<void> getWords() async {
     await Future.delayed(Duration.zero);
     showCircularIndicator(context);
-    supaStoreWords = await supaStore.getAllApprovedWords();
+    supaStoreWords = await supaStore.getAllWords();
     stopCircularIndicator(context);
     listNotifier.value = supaStoreWords;
     totalNotifier.value = supaStoreWords.length;
   }
 
   Future<void> refresh() async {
-    supaStoreWords = await supaStore.getAllApprovedWords();
+    supaStoreWords = await supaStore.getAllWords();
     listNotifier.value = supaStoreWords;
     totalNotifier.value = supaStoreWords.length;
     _refreshController.refreshCompleted();

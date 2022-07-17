@@ -62,21 +62,21 @@ class VocabStoreService {
 
   /// ```Select * from words Where state = 'approved';```
   ///
-  Future<List<Word>> getAllApprovedWords({bool sort = true}) async {
-    final response = await _supabase
-        .from(tableName)
-        .select("*")
-        .eq('state', 'approved')
-        .execute();
-    List<Word> words = [];
-    if (response.status == 200) {
-      words = (response.data as List).map((e) => Word.fromJson(e)).toList();
-      if (sort) {
-        words.sort((a, b) => a.word.compareTo(b.word));
-      }
-    }
-    return words;
-  }
+  // Future<List<Word>> getAllApprovedWords({bool sort = true}) async {
+  //   final response = await _supabase
+  //       .from(tableName)
+  //       .select("*")
+  //       .eq('state', 'approved')
+  //       .execute();
+  //   List<Word> words = [];
+  //   if (response.status == 200) {
+  //     words = (response.data as List).map((e) => Word.fromJson(e)).toList();
+  //     if (sort) {
+  //       words.sort((a, b) => a.word.compareTo(b.word));
+  //     }
+  //   }
+  //   return words;
+  // }
 
   /// ```Select * from words```
 

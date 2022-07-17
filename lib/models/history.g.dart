@@ -9,11 +9,13 @@ part of 'history.dart';
 EditHistory _$EditHistoryFromJson(Map<String, dynamic> json) => EditHistory(
       edit_id: json['edit_id'] as String?,
       word_id: json['word_id'] as String,
-      user_email: json['user_email'] as String,
+      email: json['email'] as String,
       word: json['word'] as String,
       meaning: json['meaning'] as String,
-      state: $enumDecodeNullable(_$WordEditStateEnumMap, json['state']) ??
-          WordEditState.pending,
+      state: $enumDecodeNullable(_$EditStateEnumMap, json['state']) ??
+          EditState.pending,
+      edit_type: $enumDecodeNullable(_$EditTypeEnumMap, json['edit_type']) ??
+          EditType.edit,
       created_at: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
@@ -34,7 +36,7 @@ EditHistory _$EditHistoryFromJson(Map<String, dynamic> json) => EditHistory(
 Map<String, dynamic> _$EditHistoryToJson(EditHistory instance) =>
     <String, dynamic>{
       'edit_id': instance.edit_id,
-      'user_email': instance.user_email,
+      'email': instance.email,
       'word_id': instance.word_id,
       'word': instance.word,
       'meaning': instance.meaning,
@@ -42,11 +44,19 @@ Map<String, dynamic> _$EditHistoryToJson(EditHistory instance) =>
       'examples': instance.examples,
       'mnemonics': instance.mnemonics,
       'created_at': instance.created_at?.toIso8601String(),
-      'state': _$WordEditStateEnumMap[instance.state]!,
+      'state': _$EditStateEnumMap[instance.state],
+      'edit_type': _$EditTypeEnumMap[instance.edit_type],
     };
 
-const _$WordEditStateEnumMap = {
-  WordEditState.approved: 'approved',
-  WordEditState.rejected: 'rejected',
-  WordEditState.pending: 'pending',
+const _$EditStateEnumMap = {
+  EditState.approved: 'approved',
+  EditState.rejected: 'rejected',
+  EditState.pending: 'pending',
+  EditState.recall: 'recall',
+};
+
+const _$EditTypeEnumMap = {
+  EditType.add: 'add',
+  EditType.edit: 'edit',
+  EditType.delete: 'delete',
 };

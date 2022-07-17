@@ -20,6 +20,12 @@ class VocabTheme {
   static Color errorColor = Colors.red;
   static Color lightblue = Color(0XFF142D94);
 
+  /// notification states color
+    static Color approvedColor = Color(0xffD6F1E4);
+    static Color rejectedColor = Color(0xffFFD2C8);
+    static Color pendingColor = Color(0xffE2EBF9);
+    static Color recallColor = Color(0xffF2F2F2);
+
   static Color color1 = Color(0xff1D976C);
   static Color color2 = Color(0xff93F9B9);
   static LinearGradient primaryGradient = LinearGradient(

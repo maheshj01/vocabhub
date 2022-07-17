@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:vocabhub/constants/const.dart';
-import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/word.dart';
 part 'history.g.dart';
 
@@ -15,7 +14,7 @@ part 'history.g.dart';
 @JsonSerializable()
 class EditHistory {
   final String? edit_id;
-  String user_email;
+  String email;
   String word_id;
   String word;
   String meaning;
@@ -23,15 +22,17 @@ class EditHistory {
   List<String>? examples;
   List<String>? mnemonics;
   DateTime? created_at;
-  WordEditState state;
+  EditState? state;
+  EditType? edit_type;
 
   EditHistory(
       {this.edit_id,
       required this.word_id,
-      required this.user_email,
+      required this.email,
       required this.word,
       required this.meaning,
-      this.state = WordEditState.pending,
+      this.state = EditState.pending,
+      this.edit_type = EditType.edit,
       this.created_at,
       this.synonyms = const [],
       this.examples = const [],
@@ -50,11 +51,12 @@ class EditHistory {
     List<String>? examples = const [],
     List<String>? mnemonics = const [],
     DateTime? created_at,
-    WordEditState? state,
+    EditState? state,
+    EditType? edit_type,
   }) {
     return EditHistory(
       edit_id: edit_id ?? this.edit_id,
-      user_email: user_email ?? this.user_email,
+      email: user_email ?? this.email,
       word_id: word_id ?? this.word_id,
       word: word ?? this.word,
       meaning: meaning ?? this.meaning,
@@ -63,6 +65,7 @@ class EditHistory {
       mnemonics: mnemonics!.isEmpty ? this.mnemonics : mnemonics,
       created_at: created_at ?? this.created_at,
       state: state ?? this.state,
+      edit_type: edit_type ?? this.edit_type,
     );
   }
 
@@ -70,7 +73,7 @@ class EditHistory {
     return EditHistory(
       word: word.word,
       created_at: word.created_at,
-      user_email: email,
+      email: email,
       meaning: word.meaning,
       examples: word.examples,
       mnemonics: word.mnemonics,
@@ -89,8 +92,9 @@ class EditHistory {
           word == other.word &&
           created_at == other.created_at &&
           state == other.state &&
-          user_email == other.user_email &&
-          word_id == other.word_id;
+          email == other.email &&
+          word_id == other.word_id &&
+          edit_type == other.edit_type;
 
   @override
   int get hashCode => edit_id.hashCode ^ word.hashCode;

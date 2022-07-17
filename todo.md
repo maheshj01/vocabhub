@@ -1,15 +1,31 @@
+### TODO
+
 - [X] SignedIn User's state should update
 - [X] Remove '\n' from synonyms using Edit Page
 - [X] BottomnNavigation background color as per UI
 - [X] Edit a word and add to edit history table
+
+
 - [] Before adding to history check if duplicate edit exists
-- [] Add word edit history table
-- [] Show contribution on profile page
-- [] Slide Animation on Explore and Detail Page
 
+### Notifications
+- [] A user should see his edit/add requests and status under notifications
+- [] A admin should be able to see all the requests and approve/reject them
+- [] When admin taps on the request it should show a page with differences in current word and the edit request
 
+### Dashboard 
+- [X] Slide Animation on Explore Page
+- [] A word of the day card should be shown on Dashboard
+- [] A word of the day should be updated when the first user comes online in the server timezone
+- [] Mastered words should be visible on Dashboard
+- [] User should be able to update the status of mastered words
 
-
-### Long Term plan (p5)
+### explore page
+- [] Explore should fetch words in pagination from by querying 20 words at a time
+- [] The words fetched should be the one not known by user
+- [] If user is not logged In, user can simply swipe all words and a login prompt should be shown on every 5th or 10th word.
+- 
+### User Contributions
 
 - [] Based on above contribution assign reputation points to user
+- [] Show contribution on profile page

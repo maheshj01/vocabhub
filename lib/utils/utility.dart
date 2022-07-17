@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/models/history.dart';
 
 /// shows a snackbar message
 void showMessage(BuildContext context, String message,
@@ -109,3 +111,16 @@ Widget _buildNewTransition(
 // bool isDisplaySmallDesktop(BuildContext context) {
 //   return getWindowType(context) == AdaptiveWindowType.xsmall;
 // }
+
+String editTypeToNotification(EditHistory history) {
+  String filter =
+      '${history.state == EditState.pending ? 'under review' : history.state!.toName()}';
+  if (history.edit_type == EditType.add) {
+    return 'Request to add ${history.word} is $filter';
+  } else if (history.edit_type == EditType.delete) {
+    return 'Request to delete ${history.word} is $filter';
+  } else if (history.edit_type == EditType.edit) {
+    return 'Request to update ${history.word} is $filter';
+  }
+  return '';
+}

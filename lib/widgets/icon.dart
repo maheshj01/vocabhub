@@ -8,11 +8,13 @@ class VHIcon extends StatelessWidget {
   final IconData iconData;
   final double size;
   final Function? onTap;
+  final BoxBorder? border;
   const VHIcon(this.iconData,
       {Key? key,
       this.size = 32,
       this.backgroundColor,
       this.onTap,
+      this.border,
       this.splashColor,
       this.iconColor})
       : super(key: key);
@@ -22,7 +24,7 @@ class VHIcon extends StatelessWidget {
     return Container(
       height: size,
       width: size,
-      decoration: BoxDecoration(shape: BoxShape.circle),
+      decoration: BoxDecoration(border: border, shape: BoxShape.circle),
       child: Material(
         color: backgroundColor ?? Theme.of(context).colorScheme.primary,
         borderRadius: (size * 2.0).allRadius,

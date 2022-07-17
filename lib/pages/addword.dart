@@ -57,14 +57,15 @@ class _AddWordFormState extends State<AddWordForm> {
             examples: editedWord.examples,
             synonyms: editedWord.synonyms,
             mnemonics: editedWord.mnemonics);
-        final response = await VocabStoreService.addWord(wordObject);
+        var history = EditHistory.fromWord(wordObject, userProvider!.email);
+        history = history.copyWith(
+          edit_type: EditType.add,
+        );
+        final response = await EditHistoryService.insertHistory(history);
         if (response.didSucced) {
           firebaseAnalytics.logWordAdd(wordObject, userProvider!.email);
-          showMessage(context, 'Congrats! You just added $word to vocabhub',
-              onClosed: () {
-            List<Word?>? newList = listNotifier.value;
-            newList!.add(response.data as Word);
-            totalNotifier.value = newList.length;
+          showMessage(context, 'Congrats! Your new word $word is under review!',
+              duration: Duration(seconds: 3), onClosed: () {
             stopCircularIndicator(context);
             Navigate().popView(context);
           });
@@ -186,7 +187,8 @@ class _AddWordFormState extends State<AddWordForm> {
           isDisabled = true;
         });
         editedWord = editedWord.copyWith(word: newWord, meaning: meaning);
-        final history = EditHistory.fromWord(editedWord, userProvider!.email);
+        var history = EditHistory.fromWord(editedWord, userProvider!.email);
+        history = history.copyWith(edit_type: EditType.edit);
         if (widget.word != editedWord) {
           final response = await EditHistoryService.insertHistory(history);
           if (response.didSucced) {
@@ -204,13 +206,13 @@ class _AddWordFormState extends State<AddWordForm> {
             isDisabled = false;
           });
         } else {
+          stopCircularIndicator(context);
+          setState(() {
+            isDisabled = false;
+          });
           showMessage(context, "No changes to update", onClosed: () {});
         }
       }
-      stopCircularIndicator(context);
-      setState(() {
-        isDisabled = false;
-      });
     } catch (_) {
       stopCircularIndicator(context);
       setState(() {

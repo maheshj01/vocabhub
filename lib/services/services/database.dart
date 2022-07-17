@@ -16,6 +16,20 @@ class DatabaseService {
     return response;
   }
 
+  /// fetches all
+  static Future<PostgrestResponse> findRowsByInnerJoinOnColumnValue(
+      String innerJoinColumn, String value,
+      {String table1 = '$EDIT_HISTORY_TABLE',
+      String table2 = '$USER_TABLE_NAME'}) async {
+    final response = await _supabase
+        .from('$table1')
+        .select('*, $table2!inner(*)')
+        // .eq('$table2.$innerJoinColumn', '$value')
+        .execute();
+
+    return response;
+  }
+
   static Future<PostgrestResponse> findAll(
       {String tableName = '$VOCAB_TABLE_NAME'}) async {
     final response = await _supabase.from(tableName).select().execute();
@@ -96,7 +110,6 @@ class ResponseObject {
 
   ResponseObject(this.message, this.data, this.status);
 }
-
 
 class Response {
   bool didSucced;

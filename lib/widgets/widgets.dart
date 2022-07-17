@@ -47,17 +47,18 @@ Widget vLine({Color? color}) {
   );
 }
 
-SelectableText buildExample(String example, String word) {
+SelectableText buildExample(String example, String word, {TextStyle? style}) {
   final textSpans = [TextSpan(text: ' - ')];
   final iterable = example
       .split(' ')
       .toList()
       .map((e) => TextSpan(
           text: e + ' ',
-          style: TextStyle(
-              fontWeight: (e.toLowerCase().contains(word.toLowerCase()))
-                  ? FontWeight.bold
-                  : FontWeight.normal)))
+          style: style ??
+              TextStyle(
+                  fontWeight: (e.toLowerCase().contains(word.toLowerCase()))
+                      ? FontWeight.bold
+                      : FontWeight.normal)))
       .toList();
   textSpans.addAll(iterable);
   textSpans.add(TextSpan(text: '\n'));

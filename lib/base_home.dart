@@ -7,6 +7,7 @@ import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
+import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utils.dart';
 
 const appBarDesktopHeight = 128.0;
@@ -27,7 +28,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
 
   Future<void> getWords() async {
     final _store = VocabStoreService();
-    final words = await _store.getAllApprovedWords();
+    final words = await _store.getAllWords();
     if (words.isNotEmpty) {
       AppStateWidget.of(context).setWords(words);
       // updateWord(words);
@@ -78,53 +79,65 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
       2: {ExploreWords.route: ExploreWords()},
       3: {UserProfile.route: UserProfile()}
     };
-    return NavbarRouter(
-      errorBuilder: (context) {
-        return const Center(child: Text('Error 404'));
-      },
-      onBackButtonPressed: (isExiting) {
-        return isExiting;
-      },
-      isDesktop: !SizeUtils.isMobile,
-      destinationAnimationCurve: Curves.fastOutSlowIn,
-      destinationAnimationDuration: 600,
-      onChanged: (x) {
-        /// Simulate DragGesture on pageView
-        if (EXPLORE_INDEX == x && !animatePageOnce) {
-          print('index change = ${pageController.hasClients}');
-          if (pageController.hasClients) {
-            Future.delayed(Duration(seconds: 3), () {
-              if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {
-                pageController.animateTo(200,
-                    duration: Duration(milliseconds: 600),
-                    curve: Curves.easeIn);
-                animatePageOnce = true;
-              }
-            });
-          }
-        }
-      },
-      decoration: NavbarDecoration(
-          backgroundColor: VocabTheme.navigationBarColor,
-          isExtended: SizeUtils.isExtendedDesktop,
-          // showUnselectedLabels: false,
-          selectedLabelTextStyle: TextStyle(fontSize: 12),
-          unselectedLabelTextStyle: TextStyle(fontSize: 10),
-          navbarType: BottomNavigationBarType.fixed),
-      destinations: [
-        for (int i = 0; i < items.length; i++)
-          DestinationRouter(
-            navbarItem: items[i],
-            destinations: [
-              for (int j = 0; j < _routes[i]!.keys.length; j++)
-                Destination(
-                  route: _routes[i]!.keys.elementAt(j),
-                  widget: _routes[i]!.values.elementAt(j),
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            Navigate.push(
+                context,
+                AddWordForm(
+                  isEdit: false,
                 ),
-            ],
-            initialRoute: _routes[i]!.keys.elementAt(0),
-          ),
-      ],
+                slideTransitionType: TransitionType.scale);
+          }),
+      body: NavbarRouter(
+        errorBuilder: (context) {
+          return const Center(child: Text('Error 404'));
+        },
+        onBackButtonPressed: (isExiting) {
+          return isExiting;
+        },
+        isDesktop: !SizeUtils.isMobile,
+        destinationAnimationCurve: Curves.fastOutSlowIn,
+        destinationAnimationDuration: 600,
+        onChanged: (x) {
+          /// Simulate DragGesture on pageView
+          if (EXPLORE_INDEX == x && !animatePageOnce) {
+            print('index change = ${pageController.hasClients}');
+            if (pageController.hasClients) {
+              Future.delayed(Duration(seconds: 3), () {
+                if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {
+                  pageController.animateTo(200,
+                      duration: Duration(milliseconds: 600),
+                      curve: Curves.easeIn);
+                  animatePageOnce = true;
+                }
+              });
+            }
+          }
+        },
+        decoration: NavbarDecoration(
+            backgroundColor: VocabTheme.navigationBarColor,
+            isExtended: SizeUtils.isExtendedDesktop,
+            // showUnselectedLabels: false,
+            selectedLabelTextStyle: TextStyle(fontSize: 12),
+            unselectedLabelTextStyle: TextStyle(fontSize: 10),
+            navbarType: BottomNavigationBarType.fixed),
+        destinations: [
+          for (int i = 0; i < items.length; i++)
+            DestinationRouter(
+              navbarItem: items[i],
+              destinations: [
+                for (int j = 0; j < _routes[i]!.keys.length; j++)
+                  Destination(
+                    route: _routes[i]!.keys.elementAt(j),
+                    widget: _routes[i]!.values.elementAt(j),
+                  ),
+              ],
+              initialRoute: _routes[i]!.keys.elementAt(0),
+            ),
+        ],
+      ),
     );
   }
 }
