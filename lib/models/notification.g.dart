@@ -8,7 +8,8 @@ part of 'notification.dart';
 
 NotificationModel _$NotificationModelFromJson(Map<String, dynamic> json) =>
     NotificationModel(
-      UserModel.fromJson(json['$USER_TABLE_NAME'] as Map<String, dynamic>),
+      UserModel.fromJson(
+          json['$USER_TABLE_NAME'] ??= json as Map<String, dynamic>),
       EditHistory.fromJson(json),
     );
 

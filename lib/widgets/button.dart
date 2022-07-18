@@ -9,6 +9,7 @@ class VocabButton extends StatefulWidget {
       required this.label,
       this.height = 55.0,
       this.width,
+      this.fontSize,
       this.isLoading = false,
       this.leading})
       : super(key: key);
@@ -25,6 +26,8 @@ class VocabButton extends StatefulWidget {
   final Color foregroundColor;
 
   final double height;
+
+  final double? fontSize;
 
   final double? width;
   final bool isLoading;
@@ -61,6 +64,7 @@ class _VocabButtonState extends State<VocabButton> {
                   '${widget.label}',
                   style: Theme.of(context).textTheme.headline4!.copyWith(
                       fontWeight: FontWeight.bold,
+                      fontSize: widget.fontSize,
                       color: widget.foregroundColor),
                 ),
               ],

@@ -6,7 +6,10 @@ import 'package:vocabhub/models/notification.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/edit_history.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
+import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
+import 'package:vocabhub/widgets/button.dart';
+import 'package:vocabhub/widgets/circle_avatar.dart';
 import 'package:vocabhub/widgets/icon.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
@@ -32,8 +35,30 @@ class _NotificationsState extends State<Notifications> {
   Future<void> getNotifications() async {
     final resp = await EditHistoryService.getUserEdits(user!);
     if (resp.didSucced && resp.data != null) {
-      historyNotifier.value = resp.data as List<NotificationModel>;
-    } else {}
+      final data = resp.data as List<NotificationModel>;
+      // data.sort((a, b) => b.edit.created_at!.compareTo(a.edit.created_at!));
+      historyNotifier.value = data;
+    } else {
+      showMessage(context, 'failed to get notifications');
+    }
+  }
+
+  Future<void> cancelRequest(String editId) async {
+    showCircularIndicator(context);
+    final resp = await EditHistoryService.cancelRequest(editId);
+    if (resp.didSucced) {
+      getNotifications();
+    } else {
+      showMessage(
+        context,
+        'Failed to cancel request',
+      );
+    }
+    _stopLoading();
+  }
+
+  void _stopLoading() {
+    Navigate().popView(context);
   }
 
   ValueNotifier<List<NotificationModel>?> historyNotifier =
@@ -64,7 +89,7 @@ class _NotificationsState extends State<Notifications> {
               if (value == null || user == null) {
                 return LoadingWidget();
               }
-
+              // TODO: Toggle isAdmin
               if (user!.isAdmin) {
                 return ListView.builder(
                     padding:
@@ -72,14 +97,35 @@ class _NotificationsState extends State<Notifications> {
                     itemBuilder: (context, index) {
                       final edit = value[index].edit;
                       final user = value[index].user;
-                      return AdminNotificationTile(
-                        edit: edit,
-                        onAction: (approved) {
-                          if (approved) {
-                          } else {}
-                        },
-                        onTap: () {},
-                      );
+                      bool isAdminEdit = edit.email == user.email;
+                      return Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                            boxShadow: [VocabTheme.notificationCardShadow],
+                          ),
+                          margin:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: EdgeInsets.symmetric(vertical: 4),
+                          child: isAdminEdit
+                              ? UserNotificationTile(
+                                  edit: edit,
+                                  user: user,
+                                  onCancel: () async {
+                                    cancelRequest(edit.edit_id!);
+                                    print('request has been cancelled');
+                                  },
+                                )
+                              : AdminNotificationTile(
+                                  edit: edit,
+                                  user: user,
+                                  onAction: (approved) {
+                                    if (approved) {
+                                    } else {}
+                                  },
+                                  onTap: () {},
+                                ));
                     },
                     itemCount: value.length);
               }
@@ -89,22 +135,21 @@ class _NotificationsState extends State<Notifications> {
                     final edit = value[index].edit;
                     final user = value[index].user;
                     return Container(
-                      height: 85,
+                      height: 100,
                       decoration: BoxDecoration(
                         color: stateToNotificationCardColor(edit.state!),
                         borderRadius: BorderRadius.circular(4),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 4.0,
-                              spreadRadius: 0,
-                              offset: Offset(0, 4))
-                        ],
+                        boxShadow: [VocabTheme.notificationCardShadow],
                       ),
                       margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: EdgeInsets.symmetric(vertical: 4),
                       child: UserNotificationTile(
                         edit: edit,
                         user: user,
+                        onCancel: () async {
+                          cancelRequest(edit.edit_id!);
+                          print('request has been cancelled');
+                        },
                       ),
                     );
                   },
@@ -116,29 +161,17 @@ class _NotificationsState extends State<Notifications> {
 class UserNotificationTile extends StatelessWidget {
   final EditHistory edit;
   final UserModel user;
-  const UserNotificationTile({Key? key, required this.edit, required this.user})
+  final Function? onCancel;
+
+  const UserNotificationTile(
+      {Key? key, required this.edit, required this.user, this.onCancel})
       : super(key: key);
-  RichText buildNotification(String notification, String word,
-      {TextStyle? style}) {
-    final List<InlineSpan>? textSpans = [];
-    final iterable = notification.split(' ').toList().map((e) {
-      final isMatched = e.toLowerCase().contains(word.toLowerCase());
-      return TextSpan(
-          text: e + ' ',
-          style: TextStyle(
-              fontSize: 16,
-              color: Colors.black,
-              fontWeight: isMatched ? FontWeight.bold : FontWeight.w500));
-    }).toList();
-    textSpans!.addAll(iterable);
-    return RichText(text: TextSpan(text: '', children: textSpans));
-  }
 
   @override
   Widget build(BuildContext context) {
     final iconColor = stateToIconColor(edit.state!);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
           VHIcon(
@@ -152,29 +185,47 @@ class UserNotificationTile extends StatelessWidget {
             width: 8,
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  buildNotification(
-                    editTypeToNotification(edit),
-                    edit.word,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: buildNotification(
+                      editTypeToNotification(edit, user),
+                      edit.word,
+                    ),
                   ),
-                  Row(
+                ),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(
-                        edit.word,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      Text(edit.created_at!.formatDate(),
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle2!
+                              .copyWith(
+                                  fontSize: 12, fontWeight: FontWeight.w600)),
+                      edit.state == EditState.pending
+                          ? VocabButton(
+                              onTap: () {
+                                onCancel!();
+                              },
+                              label: 'Cancel',
+                              width: 100,
+                              height: 30,
+                              fontSize: 16,
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.red,
+                            )
+                          : SizedBox.shrink()
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
@@ -187,17 +238,84 @@ class AdminNotificationTile extends StatelessWidget {
   final Function(bool) onAction;
   final Function? onTap;
   final EditHistory edit;
+  final UserModel user;
   const AdminNotificationTile(
-      {super.key, required this.edit, required this.onAction, this.onTap});
+      {super.key,
+      required this.edit,
+      required this.onAction,
+      required this.user,
+      this.onTap});
+
+  Widget circle({Color color = Colors.red, double size = 16}) {
+    return Container(
+        height: size,
+        width: size,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(color: color, shape: BoxShape.circle));
+  }
 
   @override
   Widget build(BuildContext context) {
     /// Approve or reject card
-    return Card(
-      child: ListTile(
-        title: Text('Word'),
-        subtitle: Text('Meaning'),
-        trailing: Text('State'),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          CircularAvatar(
+            url: user.avatarUrl,
+            name: user.name,
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: buildNotification(
+                      editTypeToNotification(edit, user),
+                      edit.word,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(edit.created_at!.formatDate(),
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle2!
+                              .copyWith(
+                                  fontSize: 12, fontWeight: FontWeight.w600)),
+                      Container(
+                        width: 100,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            circle(
+                                color: stateToIconColor(edit.state!), size: 12),
+                            SizedBox(
+                              width: 6,
+                            ),
+                            Text(
+                              edit.state!.toName().capitalize()!,
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -83,3 +83,19 @@ Widget storeRedirect(BuildContext context,
         child: Image.asset('$assetUrl', height: 50)),
   );
 }
+
+ RichText buildNotification(String notification, String word,
+      {TextStyle? style}) {
+    final List<InlineSpan>? textSpans = [];
+    final iterable = notification.split(' ').toList().map((e) {
+      final isMatched = e.toLowerCase().contains(word.toLowerCase());
+      return TextSpan(
+          text: e + ' ',
+          style: TextStyle(
+              fontSize: 16,
+              color: Colors.black,
+              fontWeight: isMatched ? FontWeight.bold : FontWeight.w400));
+    }).toList();
+    textSpans!.addAll(iterable);
+    return RichText(text: TextSpan(text: '', children: textSpans));
+  }

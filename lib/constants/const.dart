@@ -44,7 +44,7 @@ const USER_CREATED_AT_COLUMN = 'created_at';
 const USER_LOGGEDIN_COLUMN = 'isLoggedIn';
 
 /// EDIT HISTORY TABLE COLUMNS
-const EDIT_ID_COLUMN = 'id';
+const EDIT_ID_COLUMN = 'edit_id';
 const EDIT_USER_ID_COLUMN = 'user_id';
 const EDIT_WORD_ID_COLUMN = 'word_id';
 
@@ -54,7 +54,7 @@ enum EditState {
   approved('approved'),
   rejected('rejected'),
   pending('pending'),
-  recall('recall');
+  cancelled('cancelled');
 
   final String state;
   const EditState(this.state);

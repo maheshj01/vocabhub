@@ -52,7 +52,7 @@ const _$EditStateEnumMap = {
   EditState.approved: 'approved',
   EditState.rejected: 'rejected',
   EditState.pending: 'pending',
-  EditState.recall: 'recall',
+  EditState.cancelled: 'cancelled',
 };
 
 const _$EditTypeEnumMap = {

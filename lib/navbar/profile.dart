@@ -133,6 +133,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                         VocabButton(
                           label: 'Sign Out',
                           height: 50,
+                          width: 140,
                           isLoading: isLoading,
                           onTap: () async {
                             setState(() {

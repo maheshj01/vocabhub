@@ -24,7 +24,7 @@ class DatabaseService {
     final response = await _supabase
         .from('$table1')
         .select('*, $table2!inner(*)')
-        // .eq('$table2.$innerJoinColumn', '$value')
+        .eq('$table2.$innerJoinColumn', '$value')
         .execute();
 
     return response;
@@ -55,15 +55,17 @@ class DatabaseService {
     return response;
   }
 
+  /// updates a row in the table
+  ///
   static Future<PostgrestResponse> updateRow(
-      {required String columnValue,
+      {required String rowValue,
       required Map<String, dynamic> data,
       String columnName = '$ID_COLUMN',
       String tableName = '$VOCAB_TABLE_NAME'}) async {
     final response = await _supabase
         .from(tableName)
         .update(data)
-        .eq("$columnName", "$columnValue")
+        .eq("$columnName", "$rowValue")
         .execute();
     return response;
   }

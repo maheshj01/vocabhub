@@ -1,10 +1,15 @@
+Toggle is Admin 
+
+// lib/services/services/edit_history.dart
+// lib/navbar/notifications.dart
+// lib/utils/utility.dart
 ### TODO
 
 - [X] SignedIn User's state should update
 - [X] Remove '\n' from synonyms using Edit Page
 - [X] BottomnNavigation background color as per UI
 - [X] Edit a word and add to edit history table
-
+- [] Ensure the fonts are consistent across the app
 
 - [] Before adding to history check if duplicate edit exists
 

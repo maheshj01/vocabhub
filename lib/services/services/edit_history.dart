@@ -31,9 +31,9 @@ class EditHistoryService {
   static Future<PostgrestResponse> updateRowState(
       String id, EditState state) async {
     final response = await DatabaseService.updateRow(
-        columnValue: id,
+        rowValue: id,
         data: {'state': '${state.name}'},
-        columnName: '$ID_COLUMN',
+        columnName: '$EDIT_ID_COLUMN',
         tableName: _tableName);
     return response;
   }
@@ -66,8 +66,8 @@ class EditHistoryService {
     final resp = Response(didSucced: false, message: "Failed");
 
     PostgrestResponse response;
-
-    if (!user.isAdmin) {
+    // TODO: Toggle isAdmin
+    if (user.isAdmin) {
       response = await DatabaseService.findRowsByInnerJoinOnColumnValue(
           '$USER_EMAIL_COLUMN', '${user.email}',
           table1: _tableName, table2: USER_TABLE_NAME);
@@ -83,7 +83,8 @@ class EditHistoryService {
       }
     } else {
       response = await DatabaseService.findRowByColumnValue(
-        '$USER_EMAIL_COLUMN',
+        user.email,
+        columnName: '$USER_EMAIL_COLUMN',
         tableName: _tableName,
       );
       if (response.status == 200) {
@@ -96,6 +97,21 @@ class EditHistoryService {
       } else {
         resp.message = response.error!.message;
       }
+    }
+    return resp;
+  }
+
+  /// cancel the request from user
+
+  static Future<Response> cancelRequest(String editId) async {
+    final resp = Response(didSucced: false, message: "Failed");
+    final response = await updateRowState(editId, EditState.cancelled);
+    resp.status = response.status;
+    if (response.status == 200) {
+      resp.didSucced = true;
+      resp.message = 'Success';
+    } else {
+      resp.message = response.error!.message;
     }
     return resp;
   }

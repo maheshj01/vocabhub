@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/history.dart';
+import 'package:vocabhub/models/user.dart';
 
 /// shows a snackbar message
 void showMessage(BuildContext context, String message,
@@ -112,15 +113,26 @@ Widget _buildNewTransition(
 //   return getWindowType(context) == AdaptiveWindowType.xsmall;
 // }
 
-String editTypeToNotification(EditHistory history) {
-  String filter =
+// TODO: Toggle isAdmin
+String editTypeToNotification(EditHistory history, UserModel user) {
+  bool isAdmin = user.isAdmin;
+  bool adminRequest = user.email == history.email;
+  String statefilter =
       '${history.state == EditState.pending ? 'under review' : history.state!.toName()}';
+  String userFilter = isAdmin
+      ? adminRequest
+          ? 'You Requested'
+          : '${user.name} Requested'
+      : 'Request';
+
+  /// TODO: handle adminRequest
+  /// and separate notification generator for admin and user
   if (history.edit_type == EditType.add) {
-    return 'Request to add ${history.word} is $filter';
+    return '$userFilter to add ${history.word} ${isAdmin ? '' : statefilter}';
   } else if (history.edit_type == EditType.delete) {
-    return 'Request to delete ${history.word} is $filter';
+    return '$userFilter to delete ${history.word} ${isAdmin ? '' : statefilter}';
   } else if (history.edit_type == EditType.edit) {
-    return 'Request to update ${history.word} is $filter';
+    return '$userFilter to update ${history.word} ${isAdmin ? '' : statefilter}';
   }
   return '';
 }
