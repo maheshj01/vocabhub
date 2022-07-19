@@ -78,6 +78,7 @@ class _NotificationsState extends State<Notifications> {
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
+          centerTitle: false,
           title: Text(
             'Notifications',
           ),

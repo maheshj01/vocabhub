@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
+import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/navbar/notifications.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
@@ -59,9 +60,27 @@ class DashboardDesktop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: Text('Dashboard Desktop'),
+      body: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              children: [
+                Center(
+                  child: Text('Dashboard Desktop'),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+              height: SizeUtils.size.height * 0.5,
+              width: 400,
+              child: Column(
+                children: [
+                  Expanded(child: Notifications()),
+                ],
+              ))
+        ],
       ),
     );
   }
