@@ -96,36 +96,25 @@ class _NotificationsState extends State<Notifications> {
                         EdgeInsets.only(bottom: kBottomNavigationBarHeight),
                     itemBuilder: (context, index) {
                       final edit = value[index].edit;
-                      final user = value[index].user;
-                      bool isAdminEdit = edit.email == user.email;
-                      return Container(
-                          height: 100,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(4),
-                            boxShadow: [VocabTheme.notificationCardShadow],
-                          ),
-                          margin:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          padding: EdgeInsets.symmetric(vertical: 4),
-                          child: isAdminEdit
-                              ? UserNotificationTile(
-                                  edit: edit,
-                                  user: user,
-                                  onCancel: () async {
-                                    cancelRequest(edit.edit_id!);
-                                    print('request has been cancelled');
-                                  },
-                                )
-                              : AdminNotificationTile(
-                                  edit: edit,
-                                  user: user,
-                                  onAction: (approved) {
-                                    if (approved) {
-                                    } else {}
-                                  },
-                                  onTap: () {},
-                                ));
+                      final editor = value[index].user;
+                      return editor.isAdmin
+                          ? UserNotificationTile(
+                              edit: edit,
+                              user: editor,
+                              onCancel: () async {
+                                cancelRequest(edit.edit_id!);
+                                print('request has been cancelled');
+                              },
+                            )
+                          : AdminNotificationTile(
+                              edit: edit,
+                              user: editor,
+                              onAction: (approved) {
+                                if (approved) {
+                                } else {}
+                              },
+                              onTap: () {},
+                            );
                     },
                     itemCount: value.length);
               }
@@ -133,24 +122,14 @@ class _NotificationsState extends State<Notifications> {
                   padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight),
                   itemBuilder: (context, index) {
                     final edit = value[index].edit;
-                    final user = value[index].user;
-                    return Container(
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: stateToNotificationCardColor(edit.state!),
-                        borderRadius: BorderRadius.circular(4),
-                        boxShadow: [VocabTheme.notificationCardShadow],
-                      ),
-                      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      padding: EdgeInsets.symmetric(vertical: 4),
-                      child: UserNotificationTile(
-                        edit: edit,
-                        user: user,
-                        onCancel: () async {
-                          cancelRequest(edit.edit_id!);
-                          print('request has been cancelled');
-                        },
-                      ),
+                    final editUser = value[index].user;
+                    return UserNotificationTile(
+                      edit: edit,
+                      user: editUser,
+                      onCancel: () async {
+                        cancelRequest(edit.edit_id!);
+                        print('request has been cancelled');
+                      },
                     );
                   },
                   itemCount: value.length);
@@ -170,65 +149,75 @@ class UserNotificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iconColor = stateToIconColor(edit.state!);
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          VHIcon(
-            stateToNotificationIconData(edit.state!),
-            size: 58,
-            iconColor: iconColor,
-            border: Border.all(color: iconColor, width: 2),
-            backgroundColor: Colors.transparent,
-          ),
-          SizedBox(
-            width: 8,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: buildNotification(
-                      editTypeToNotification(edit, user),
-                      edit.word,
+    return Container(
+      height: 100,
+      decoration: BoxDecoration(
+        color: stateToNotificationCardColor(edit.state!),
+        borderRadius: BorderRadius.circular(4),
+        boxShadow: [VocabTheme.notificationCardShadow],
+      ),
+      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: 4),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            VHIcon(
+              stateToNotificationIconData(edit.state!),
+              size: 58,
+              iconColor: iconColor,
+              border: Border.all(color: iconColor, width: 2),
+              backgroundColor: Colors.transparent,
+            ),
+            SizedBox(
+              width: 8,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: buildNotification(
+                        editTypeToUserNotification(edit, user),
+                        edit.word,
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(edit.created_at!.formatDate(),
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle2!
-                              .copyWith(
-                                  fontSize: 12, fontWeight: FontWeight.w600)),
-                      edit.state == EditState.pending
-                          ? VocabButton(
-                              onTap: () {
-                                onCancel!();
-                              },
-                              label: 'Cancel',
-                              width: 100,
-                              height: 30,
-                              fontSize: 16,
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.red,
-                            )
-                          : SizedBox.shrink()
-                    ],
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(edit.created_at!.formatDate(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .subtitle2!
+                                .copyWith(
+                                    fontSize: 12, fontWeight: FontWeight.w600)),
+                        edit.state == EditState.pending
+                            ? VocabButton(
+                                onTap: () {
+                                  onCancel!();
+                                },
+                                label: 'Cancel',
+                                width: 100,
+                                height: 30,
+                                fontSize: 16,
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.red,
+                              )
+                            : SizedBox.shrink()
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -257,65 +246,75 @@ class AdminNotificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     /// Approve or reject card
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          CircularAvatar(
-            url: user.avatarUrl,
-            name: user.name,
-          ),
-          SizedBox(
-            width: 8,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: buildNotification(
-                      editTypeToNotification(edit, user),
-                      edit.word,
+    return Container(
+      height: 100,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        boxShadow: [VocabTheme.notificationCardShadow],
+      ),
+      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: 4),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            CircularAvatar(
+              url: user.avatarUrl,
+              name: user.name,
+            ),
+            SizedBox(
+              width: 8,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Align(
+                      child: buildNotification(
+                        editTypeToAdminNotification(edit, user),
+                        edit.word,
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(edit.created_at!.formatDate(),
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle2!
-                              .copyWith(
-                                  fontSize: 12, fontWeight: FontWeight.w600)),
-                      Container(
-                        width: 100,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            circle(
-                                color: stateToIconColor(edit.state!), size: 12),
-                            SizedBox(
-                              width: 6,
-                            ),
-                            Text(
-                              edit.state!.toName().capitalize()!,
-                            )
-                          ],
-                        ),
-                      )
-                    ],
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(edit.created_at!.formatDate(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .subtitle2!
+                                .copyWith(
+                                    fontSize: 12, fontWeight: FontWeight.w600)),
+                        Container(
+                          width: 100,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              circle(
+                                  color: stateToIconColor(edit.state!),
+                                  size: 12),
+                              SizedBox(
+                                width: 6,
+                              ),
+                              Text(
+                                edit.state!.toName().capitalize()!,
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

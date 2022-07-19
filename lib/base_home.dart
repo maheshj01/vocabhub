@@ -80,16 +80,21 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
       3: {UserProfile.route: UserProfile()}
     };
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            Navigate.push(
-                context,
-                AddWordForm(
-                  isEdit: false,
-                ),
-                slideTransitionType: TransitionType.scale);
-          }),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(
+          bottom: kBottomNavigationBarHeight * 0.7,
+        ),
+        child: FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () {
+              Navigate.push(
+                  context,
+                  AddWordForm(
+                    isEdit: false,
+                  ),
+                  slideTransitionType: TransitionType.scale);
+            }),
+      ),
       body: NavbarRouter(
         errorBuilder: (context) {
           return const Center(child: Text('Error 404'));

@@ -114,25 +114,35 @@ Widget _buildNewTransition(
 // }
 
 // TODO: Toggle isAdmin
-String editTypeToNotification(EditHistory history, UserModel user) {
-  bool isAdmin = user.isAdmin;
-  bool adminRequest = user.email == history.email;
+String editTypeToUserNotification(EditHistory history, UserModel editor) {
   String statefilter =
       '${history.state == EditState.pending ? 'under review' : history.state!.toName()}';
-  String userFilter = isAdmin
-      ? adminRequest
-          ? 'You Requested'
-          : '${user.name} Requested'
-      : 'Request';
+
+  if (history.edit_type == EditType.add) {
+    return 'Request to add ${history.word} $statefilter';
+  } else if (history.edit_type == EditType.delete) {
+    return 'Request to delete ${history.word} $statefilter';
+  } else if (history.edit_type == EditType.edit) {
+    return 'Request to update ${history.word} $statefilter';
+  }
+  return '';
+}
+
+String editTypeToAdminNotification(EditHistory history, UserModel editor) {
+  bool adminRequest = editor.isAdmin;
+  String statefilter =
+      '${history.state == EditState.pending ? 'under review' : history.state!.toName()}';
+  String userFilter =
+      adminRequest ? 'You Requested' : '${editor.name} Requested';
 
   /// TODO: handle adminRequest
   /// and separate notification generator for admin and user
   if (history.edit_type == EditType.add) {
-    return '$userFilter to add ${history.word} ${isAdmin ? '' : statefilter}';
+    return '$userFilter to add ${history.word}';
   } else if (history.edit_type == EditType.delete) {
-    return '$userFilter to delete ${history.word} ${isAdmin ? '' : statefilter}';
+    return '$userFilter to delete ${history.word}';
   } else if (history.edit_type == EditType.edit) {
-    return '$userFilter to update ${history.word} ${isAdmin ? '' : statefilter}';
+    return '$userFilter to update ${history.word}';
   }
   return '';
 }

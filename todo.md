@@ -16,7 +16,7 @@ Toggle is Admin
 ### Notifications
 - [] A user should see his edit/add requests and status under notifications
 - [] A admin should be able to see all the requests and approve/reject them
-- [] When admin taps on the request it should show a page with differences in current word and the edit request
+- [] Edit visualizer: When admin taps on the request it should show a page with differences in current word and the edit request
 
 ### Dashboard 
 - [X] Slide Animation on Explore Page

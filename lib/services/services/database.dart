@@ -24,7 +24,7 @@ class DatabaseService {
     final response = await _supabase
         .from('$table1')
         .select('*, $table2!inner(*)')
-        .eq('$table2.$innerJoinColumn', '$value')
+        // .eq('$table2.$innerJoinColumn', '$value')
         .execute();
 
     return response;
