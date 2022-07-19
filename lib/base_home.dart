@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/word.dart';
@@ -56,10 +57,25 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     /// TODO UPDATE LOGIN STATE IN BACKEND AND LOCALLY
   }
 
+  void showToast() {
+    Fluttertoast.showToast(
+        msg: "Press back button to exit",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        textColor: Colors.white,
+        fontSize: 12.0);
+  }
+
+  void hideToast() {
+    Fluttertoast.cancel();
+  }
+
   late AppState state;
 
   bool animatePageOnce = false;
-
+  DateTime oldTime = DateTime.now();
+  DateTime newTime = DateTime.now();
   @override
   Widget build(BuildContext context) {
     SizeUtils.size = MediaQuery.of(context).size;
@@ -100,7 +116,20 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
           return const Center(child: Text('Error 404'));
         },
         onBackButtonPressed: (isExiting) {
-          return isExiting;
+          if (isExiting) {
+            newTime = DateTime.now();
+            int difference = newTime.difference(oldTime).inMilliseconds;
+            oldTime = newTime;
+            if (difference < 1000) {
+              hideToast();
+              return isExiting;
+            } else {
+              showToast();
+              return false;
+            }
+          } else {
+            return isExiting;
+          }
         },
         isDesktop: !SizeUtils.isMobile,
         destinationAnimationCurve: Curves.fastOutSlowIn,
