@@ -4,6 +4,7 @@ import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
+import 'package:vocabhub/services/services/word_state_service.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -262,7 +263,9 @@ class _ExploreWordState extends State<ExploreWord>
                         ),
                         userProvider.isLoggedIn
                             ? WordMasteredPreference(
-                                onChanged: (state) {
+                                onChanged: (state) async {
+                                  final wordId = widget.word!.id;
+                                  final userEmail = userProvider.email;
                                   String message = '';
                                   if (state) {
                                     wordState = WordState.known;
@@ -272,8 +275,13 @@ class _ExploreWordState extends State<ExploreWord>
                                     message = unKnownWord;
                                   }
                                   setState(() {});
-                                  showMessage(context, message,
-                                      bottom: kBottomNavigationBarHeight * 1.1);
+                                  final resp = await WordStateService
+                                      .storeWordPreference(
+                                          wordId, userEmail, wordState);
+                                  if (resp.didSucced) {
+                                    print(resp.data);
+                                    showToast(message);
+                                  }
                                 },
                                 value: wordState,
                               )

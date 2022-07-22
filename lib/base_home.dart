@@ -9,6 +9,7 @@ import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/navigator.dart';
+import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 
 const appBarDesktopHeight = 128.0;
@@ -55,20 +56,6 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
 
   Future<void> silentLogin() async {
     /// TODO UPDATE LOGIN STATE IN BACKEND AND LOCALLY
-  }
-
-  void showToast() {
-    Fluttertoast.showToast(
-        msg: "Press back button to exit",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        textColor: Colors.white,
-        fontSize: 12.0);
-  }
-
-  void hideToast() {
-    Fluttertoast.cancel();
   }
 
   late AppState state;
@@ -124,7 +111,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
               hideToast();
               return isExiting;
             } else {
-              showToast();
+              showToast('Press back button to exit');
               return false;
             }
           } else {

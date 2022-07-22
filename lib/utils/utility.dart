@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/history.dart';
@@ -38,6 +39,20 @@ void showMessage(BuildContext context, String message,
 
 void hideMessage(context) {
   ScaffoldMessenger.of(context).hideCurrentSnackBar();
+}
+
+void showToast(String message) {
+  Fluttertoast.showToast(
+      msg: "$message",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      textColor: Colors.white,
+      fontSize: 12.0);
+}
+
+void hideToast() {
+  Fluttertoast.cancel();
 }
 
 /// TODO: Add canLaunch condition back when this issue is fixed https://github.com/flutter/flutter/issues/74557

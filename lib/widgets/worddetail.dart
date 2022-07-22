@@ -54,9 +54,6 @@ class _WordDetailState extends State<WordDetail>
       // _animationController.reset();
       // }
     });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      userProvider = AppStateScope.of(context).user!;
-    });
   }
 
   int length = 0;
@@ -100,7 +97,7 @@ class _WordDetailState extends State<WordDetail>
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     bool isDark = darkNotifier.value;
-
+    userProvider = AppStateScope.of(context).user!;
     return widget.word == null
         ? EmptyWord()
         : Material(

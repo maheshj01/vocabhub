@@ -23,7 +23,7 @@ const Duration wordCountAnimationDuration = Duration(seconds: 3);
 const VOCAB_TABLE_NAME = 'vocabsheet_copy';
 const USER_TABLE_NAME = 'users_test';
 const EDIT_HISTORY_TABLE = 'edit_history';
-const MASTERED_TABLE_NAME = 'mastered_words';
+const WORD_STATE_TABLE_NAME = 'word_state';
 
 /// VOCAB TABLE COLUMNS
 const WORD_COLUMN = 'word';

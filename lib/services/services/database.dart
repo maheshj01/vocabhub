@@ -55,6 +55,19 @@ class DatabaseService {
     return response;
   }
 
+  /// Upsert will update the data if it exists, otherwise it will insert it.
+  /// conflict column refers to the columns which should be unique across all the rows
+  /// it is responsible to determine whether insert or update is called.
+  static Future<PostgrestResponse> upsertIntoTable(Map<String, dynamic> data,
+      {String table = '$VOCAB_TABLE_NAME',
+      String conflictColumn = '$ID_COLUMN'}) async {
+    final response = await _supabase
+        .from(table)
+        .upsert(data, onConflict: '$conflictColumn')
+        .execute();
+    return response;
+  }
+
   /// updates a row in the table
   ///
   static Future<PostgrestResponse> updateRow(

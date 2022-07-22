@@ -22,7 +22,7 @@ class EditHistoryService {
   static Future<PostgrestResponse> findEditById(String id,
       {String columnName = ID_COLUMN}) async {
     final response =
-        await DatabaseService.findRowByColumnValue(id, columnName: columnName);
+        await DatabaseService.findRowByColumnValue(id, columnName: columnName,tableName: _tableName);
     return response;
   }
 
