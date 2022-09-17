@@ -3,6 +3,7 @@ import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/authentication.dart';
 import 'package:vocabhub/services/services/user.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
@@ -66,9 +67,25 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                     label: 'Sign In')
                 : Padding(
                     padding: const EdgeInsets.symmetric(
-                        vertical: kBottomNavigationBarHeight * 1.2),
+                        vertical: kBottomNavigationBarHeight * 1.1),
                     child: Column(
                       children: [
+                        // TODO: implement dark theme
+                        // Container(
+                        //     alignment: Alignment.topRight,
+                        //     padding: EdgeInsets.only(right: 16),
+                        //     child: IconButton(
+                        //       onPressed: () {
+                        //         if (VocabTheme.isDark) {
+                        //           Settings.setTheme(ThemeMode.light);
+                        //         } else {
+                        //           Settings.setTheme(ThemeMode.dark);
+                        //         }
+                        //       },
+                        //       icon: VocabTheme.isDark
+                        //           ? const Icon(Icons.light_mode)
+                        //           : const Icon(Icons.dark_mode),
+                        //     )),
                         Stack(
                           children: [
                             Padding(

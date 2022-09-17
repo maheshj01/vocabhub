@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 
 class Settings extends ChangeNotifier {
@@ -97,21 +99,28 @@ class Settings extends ChangeNotifier {
     _sharedPreferences!.setInt('$skipCountKey', value);
   }
 
-  static void addRecent(String value) async {
-    final List<String> recentList = await recents;
-    recentList.add(value);
-    await _sharedPreferences!.setStringList('$recentKey', recentList);
+  static void addRecent(Word word) async {
+    final List<Word> recentList = await recents;
+    recentList.add(word);
+    final stringData = jsonEncode(recentList);
+    await _sharedPreferences!.setString(recentKey, stringData);
   }
 
-  static Future<void> removeRecent(String value) async {
-    final List<String> recentList = await recents;
+  static Future<void> removeRecent(Word value) async {
+    final List<Word> recentList = await recents;
     recentList.remove(value);
-    await _sharedPreferences!.setStringList('$recentKey', recentList);
+    final stringData = jsonEncode(recentList);
+    await _sharedPreferences!.setString(recentKey, stringData);
   }
 
-  static Future<List<String>> get recents async {
-    final recentList = _sharedPreferences!.getStringList('$recentKey') ?? [];
-    return recentList;
+  static Future<List<Word>> get recents async {
+    final recentList = _sharedPreferences!.getString('$recentKey') ?? '[]';
+    final List<Word> recentWords = [];
+    final words = jsonDecode(recentList);
+    for (final word in words) {
+      recentWords.add(Word.fromJson(word));
+    }
+    return recentWords;
   }
 
   static FutureOr<int> get skipCount async {

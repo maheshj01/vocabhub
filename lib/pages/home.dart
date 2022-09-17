@@ -308,7 +308,7 @@ class _MyHomePageState extends State<MyHomePage>
                       flex: 8,
                       child: !SizeUtils.isMobile
                           ? WordDetail(
-                              word: selected,
+                              word: selected!,
                             )
                           : WordsBuilder()),
                 ],

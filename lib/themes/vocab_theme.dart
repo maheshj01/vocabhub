@@ -82,8 +82,8 @@ class VocabTheme {
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.background,
         titleTextStyle: googleFontsTextTheme.headline4,
-        elevation: 3.5,
-        iconTheme: IconThemeData(color: Color(0XFFB7B7B7)),
+        elevation: 2.2,
+        iconTheme: IconThemeData(color: primaryColor),
       ),
       navigationRailTheme: NavigationRailThemeData(
           backgroundColor: colorScheme.surface,
@@ -149,7 +149,9 @@ class VocabTheme {
         color: isDark ? Colors.white : Colors.black,
         fontWeight: FontWeight.w500),
     headline2: GoogleFonts.quicksand(
-        fontSize: 48.0, color: Colors.white, fontWeight: FontWeight.w500),
+        fontSize: 48.0,
+        color: isDark ? Colors.white : Colors.black,
+        fontWeight: FontWeight.w500),
     headline3: GoogleFonts.quicksand(
         fontSize: 36.0,
         color: isDark ? Colors.white : Colors.black,

@@ -543,7 +543,7 @@ class _AddWordFormState extends State<AddWordForm> {
                     width: 100,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          primary:
+                          backgroundColor:
                               isDark ? Colors.teal : VocabTheme.primaryColor,
                         ),
                         onPressed: isDisabled

@@ -10,7 +10,7 @@ Toggle is Admin
 - [X] BottomnNavigation background color as per UI
 - [X] Edit a word and add to edit history table
 - [] Ensure the fonts are consistent across the app
-
+- [] Dark theme for the app
 - [] Before adding to history check if duplicate edit exists
 
 ### Notifications
@@ -25,11 +25,15 @@ Toggle is Admin
 - [] Mastered words should be visible on Dashboard
 - [] User should be able to update the status of mastered words
 
+
+### Word Detail Page
+- [] implement meaning animation
 ### Search
 - [] Redesign Search
 - [] Going to search tab should have a dummy search bar
 - [] Initial content will be some random words and popular words on platform
 - [] Tapping on search bar should show recent searches and execute search
+- [] Search should be intelligent to allow searchign by word, meaning, synonyms, antonyms, etc
 ### explore page
 - [] Explore should fetch words in pagination from by querying 20 words at a time.(Configurable)
 - [] The words fetched should be the one not known by user

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/constants/strings.dart';
 import 'package:vocabhub/main.dart';
@@ -11,11 +12,13 @@ import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/size_utils.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
+import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/utils/extensions.dart';
@@ -23,18 +26,167 @@ import 'package:vocabhub/utils/extensions.dart';
 import 'wordscount.dart';
 
 class WordDetail extends StatefulWidget {
-  final Word? word;
-  const WordDetail({Key? key, this.word}) : super(key: key);
+  final Word word;
+  const WordDetail({Key? key, required this.word}) : super(key: key);
 
   @override
-  _WordDetailState createState() => _WordDetailState();
+  State<WordDetail> createState() => _WordDetailState();
 }
 
-class _WordDetailState extends State<WordDetail>
+class _WordDetailState extends State<WordDetail> {
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(desktopBuilder: (context) {
+      return WordDetailDesktop(
+        word: widget.word,
+      );
+    }, mobileBuilder: (BuildContext context) {
+      return WordDetailMobile(
+        word: widget.word,
+      );
+    });
+  }
+}
+
+class WordDetailMobile extends StatefulWidget {
+  final Word? word;
+  const WordDetailMobile({Key? key, required this.word}) : super(key: key);
+
+  @override
+  State<WordDetailMobile> createState() => _WordDetailMobileState();
+}
+
+class _WordDetailMobileState extends State<WordDetailMobile> {
+  String selectedWord = '';
+  int length = 0;
+  late String meaning;
+  late VocabStoreService supaStore;
+  UserModel userProvider = UserModel.init();
+
+  @override
+  Widget build(BuildContext context) {
+    final userProvider = AppStateScope.of(context).user!;
+    return Scaffold(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.share,
+              ),
+              onPressed: () {
+                String message = buildShareMessage(widget.word!);
+                Share.share(message);
+              })
+        ],
+      ),
+      body: Column(children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.bottomRight,
+                child: userProvider.isLoggedIn
+                    ? IconButton(
+                        icon: Icon(
+                          Icons.edit,
+                        ),
+                        onPressed: () {
+                          Navigate.push(
+                              context,
+                              AddWordForm(
+                                isEdit: true,
+                                word: widget.word,
+                              ),
+                              slideTransitionType: TransitionType.scale);
+                        })
+                    : SizedBox(),
+              ),
+              Align(
+                alignment: Alignment.topCenter,
+                child: GestureDetector(
+                  onTap: () async {
+                    await Clipboard.setData(
+                        ClipboardData(text: "${widget.word!.word}"));
+                    showMessage(
+                        context, " copied ${widget.word!.word} to clipboard.");
+                  },
+                  child: FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                      child: Text(widget.word!.word.capitalize()!,
+                          style: VocabTheme.googleFontsTextTheme.headline2!),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SynonymsList(
+          synonyms: widget.word!.synonyms,
+        ),
+        SizedBox(
+          height: 50,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            widget.word!.meaning,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headline4!.copyWith(
+                color: Colors.black,
+                fontFamily: GoogleFonts.inter(
+                  fontWeight: FontWeight.w400,
+                ).fontFamily),
+          ),
+        ),
+        SizedBox(
+          height: 48,
+        ),
+        Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ExampleListBuilder(
+              title: 'Usage',
+              examples: (widget.word!.examples == null ||
+                      widget.word!.examples!.isEmpty)
+                  ? []
+                  : widget.word!.examples,
+              word: widget.word!.word,
+            )),
+        Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ExampleListBuilder(
+              title: 'Mnemonics',
+              examples: (widget.word!.mnemonics == null ||
+                      widget.word!.mnemonics!.isEmpty)
+                  ? []
+                  : widget.word!.mnemonics,
+              word: widget.word!.word,
+            )),
+      ]),
+    );
+  }
+}
+
+class WordDetailDesktop extends StatefulWidget {
+  final Word? word;
+
+  WordDetailDesktop({
+    Key? key,
+    this.word,
+  }) : super(key: key);
+
+  @override
+  _WordDetailDesktopState createState() => _WordDetailDesktopState();
+}
+
+class _WordDetailDesktopState extends State<WordDetailDesktop>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
   late Animation<int> _animation;
   late Tween<int> _tween;
+  late AnimationController _animationController;
   @override
   void initState() {
     super.initState();
@@ -66,7 +218,7 @@ class _WordDetailState extends State<WordDetail>
   }
 
   @override
-  void didUpdateWidget(covariant WordDetail oldWidget) {
+  void didUpdateWidget(covariant WordDetailDesktop oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.word != null) {
       setState(() {

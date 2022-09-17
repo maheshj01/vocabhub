@@ -171,7 +171,7 @@ class SearchView extends StatefulWidget {
 }
 
 class _SearchViewState extends State<SearchView> {
-  final searchNotifier = ValueNotifier<List<String>?>(null);
+  final searchNotifier = ValueNotifier<List<Word>?>(null);
 
   @override
   void initState() {
@@ -199,10 +199,10 @@ class _SearchViewState extends State<SearchView> {
     }
     final results = await VocabStoreService.searchWord(query);
 
-    searchNotifier.value = results
-        .where((element) => element.word.toLowerCase().contains(query))
-        .map((e) => e.word)
-        .toList();
+    searchNotifier.value = results;
+    // .where((element) => element.word.toLowerCase().contains(query))
+    // .map((e) => e)
+    // .toList();
   }
 
   List<Word> words = [];
@@ -233,9 +233,9 @@ class _SearchViewState extends State<SearchView> {
               ],
             ),
             Expanded(
-                child: ValueListenableBuilder<List<String>?>(
+                child: ValueListenableBuilder<List<Word>?>(
                     valueListenable: searchNotifier,
-                    builder: (BuildContext context, List<String>? history,
+                    builder: (BuildContext context, List<Word>? history,
                         Widget? child) {
                       if (history == null) {
                         return LoadingWidget(
@@ -266,10 +266,15 @@ class _SearchViewState extends State<SearchView> {
                                 itemBuilder: (context, index) {
                                   return ListTile(
                                     onTap: () {
-
+                                      Navigate.push(
+                                          context,
+                                          WordDetail(
+                                            word: history[index],
+                                          ),
+                                          isRootNavigator: false);
                                     },
                                     subtitle: SizedBox(),
-                                    title: Text('${history[index]}'),
+                                    title: Text('${history[index].word}'),
                                     trailing: GestureDetector(
                                         onTap: () async {
                                           await Settings.removeRecent(
@@ -289,6 +294,7 @@ class _SearchViewState extends State<SearchView> {
                             child: Text('No results found'),
                           );
                         }
+
                         /// search list
                         return ListView.builder(
                           padding: EdgeInsets.zero,
@@ -296,10 +302,15 @@ class _SearchViewState extends State<SearchView> {
                             return ListTile(
                               onTap: () {
                                 Settings.addRecent(history[index]);
-                                Navigate.push(context, WordDetail(), isRootNavigator: false);
+                                Navigate.push(
+                                    context,
+                                    WordDetail(
+                                      word: history[index],
+                                    ),
+                                    isRootNavigator: false);
                               },
                               subtitle: SizedBox(),
-                              title: Text('${history[index]}'),
+                              title: Text('${history[index].word}'),
                             );
                           },
                           itemCount: history.length,

@@ -5,12 +5,13 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/history.dart';
 import 'package:vocabhub/models/user.dart';
+import 'package:vocabhub/models/word.dart';
 
 /// shows a snackbar message
 void showMessage(BuildContext context, String message,
     {Duration duration = const Duration(seconds: 2),
     bool isRoot = false,
-    double bottom: 0,
+    double bottom = 0,
     void Function()? onPressed,
     void Function()? onClosed}) {
   ScaffoldMessenger.of(context)
@@ -81,6 +82,15 @@ String getInitial(String text) {
 
 double diagonal(Size size) {
   return pow(pow(size.width, 2) + pow(size.width, 2), 0.5) as double;
+}
+
+String buildShareMessage(Word word) {
+  return '''
+  I just learned this word on VocabHub: ${word.word}
+  Meaning: ${word.meaning}
+
+  You can learn too by downloading the VocabHub app at: $PLAY_STORE_URL
+  ''';
 }
 
 // void _openCustomDialog(BuildContext context) {
