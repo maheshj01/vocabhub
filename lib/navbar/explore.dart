@@ -346,7 +346,7 @@ class _WordMasteredPreferenceState extends State<WordMasteredPreference> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Do you now know this word?',
+            Text('Do you know this word?',
                 style: Theme.of(context).textTheme.headline4!.copyWith(
                       fontFamily: GoogleFonts.inter(
                         fontWeight: FontWeight.w200,

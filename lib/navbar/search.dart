@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:vocabhub/models/models.dart';
+import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/services/appstate.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
-import 'package:vocabhub/utils/extensions.dart';
-import 'package:vocabhub/utils/size_utils.dart';
+import 'package:vocabhub/services/services.dart';
+import 'package:vocabhub/utils/navigator.dart';
+import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/search.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -35,12 +36,12 @@ class _SearchState extends State<Search> {
       DraggableScrollableController();
 
   void _scrollSheetToSize({double size = 0.6}) {
-    if (_draggableScrollableController.isAttached) {
-      SchedulerBinding.instance.addPostFrameCallback((x) {
-        _draggableScrollableController.animateTo(size,
-            duration: Duration(milliseconds: 300), curve: Curves.easeIn);
-      });
-    }
+    // if (_draggableScrollableController.isAttached) {
+    SchedulerBinding.instance.addPostFrameCallback((x) {
+      _draggableScrollableController.animateTo(size,
+          duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+    });
+    // }
   }
 
   bool expand = true;
@@ -70,57 +71,245 @@ class _SearchState extends State<Search> {
               ],
             );
           }, mobileBuilder: (BuildContext context) {
-            return Stack(
-              fit: StackFit.expand,
-              children: [
-                GestureDetector(
-                  onTapDown: (x) {
-                    removeFocus(context);
-                    if (_draggableScrollableController.size == 0.2) return;
-                    _scrollSheetToSize(size: 0.2);
-                  },
-                  child: SizedBox(
-                      height: SizeUtils.size.height * 0.6,
-                      child: SingleChildScrollView(
-                          child: WordDetail(word: words[selectedIndex]))),
-                ),
-                DraggableScrollableSheet(
-                    maxChildSize: 0.6,
-                    minChildSize: 0.2,
-                    controller: _draggableScrollableController,
-                    expand: true,
-                    builder: ((context, scrollController) {
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: 16.0.allRadius,
-                            boxShadow: [VocabTheme.secondaryShadow]),
-                        child: WordList(
-                          onFocus: () {
-                            _scrollSheetToSize(size: 0.6);
-                          },
-                          controller: scrollController,
-                          isExpanded: expand,
-                          onExpanded: () {
-                            setState(() {
-                              expand = !expand;
-                            });
-                            _scrollSheetToSize(size: expand ? 0.6 : 0.2);
-                          },
-                          onSelected: (word) {
-                            removeFocus(context);
-                            setState(() {
-                              selectedIndex = words.indexOf(word);
-                            });
-                            // _scrollSheetToSize(size: 0.2);
-                          },
-                        ),
-                      );
-                    }))
-              ],
-            );
+            return MobileView();
+            //   Stack(
+            //     fit: StackFit.expand,
+            //     children: [
+            //       GestureDetector(
+            //         onTapDown: (x) {
+            //           removeFocus(context);
+            //           if (_draggableScrollableController.size == 0.2) return;
+            //           _scrollSheetToSize(size: 0.2);
+            //         },
+            //         child: SizedBox(
+            //             height: SizeUtils.size.height * 0.6,
+            //             child: SingleChildScrollView(
+            //                 child: WordDetail(word: words[selectedIndex]))),
+            //       ),
+            //       DraggableScrollableSheet(
+            //           maxChildSize: 0.6,
+            //           minChildSize: 0.2,
+            //           controller: _draggableScrollableController,
+            //           expand: true,
+            //           builder: ((context, scrollController) {
+            //             return Container(
+            //               margin: const EdgeInsets.symmetric(horizontal: 8.0),
+            //               decoration: BoxDecoration(
+            //                   color: Colors.white,
+            //                   borderRadius: 16.0.allRadius,
+            //                   boxShadow: [VocabTheme.secondaryShadow]),
+            //               child: WordList(
+            //                 onFocus: () {
+            //                   _scrollSheetToSize(size: 0.6);
+            //                 },
+            //                 controller: scrollController,
+            //                 isExpanded: expand,
+            //                 onExpanded: () {
+            //                   setState(() {
+            //                     expand = !expand;
+            //                   });
+            //                   _scrollSheetToSize(size: expand ? 0.6 : 0.2);
+            //                 },
+            //                 onSelected: (word) {
+            //                   removeFocus(context);
+            //                   setState(() {
+            //                     selectedIndex = words.indexOf(word);
+            //                   });
+            //                   // _scrollSheetToSize(size: 0.2);
+            //                 },
+            //               ),
+            //             );
+            //           }))
+            //     ],
+            //   );
           });
+  }
+}
+
+class MobileView extends StatefulWidget {
+  const MobileView({super.key});
+
+  @override
+  State<MobileView> createState() => _MobileViewState();
+}
+
+class _MobileViewState extends State<MobileView> {
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Column(
+        children: [
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: SearchBuilder(
+              ontap: () {
+                Navigate.push(context, SearchView(), isRootNavigator: false);
+              },
+              readOnly: true,
+              onChanged: (x) {},
+            ),
+          ),
+          Expanded(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [Container(), Text('show some popular words')],
+          ))
+        ],
+      ),
+    );
+  }
+}
+
+class SearchView extends StatefulWidget {
+  static String route = '/searchview';
+
+  const SearchView({Key? key}) : super(key: key);
+
+  @override
+  State<SearchView> createState() => _SearchViewState();
+}
+
+class _SearchViewState extends State<SearchView> {
+  final searchNotifier = ValueNotifier<List<String>?>(null);
+
+  @override
+  void initState() {
+    super.initState();
+    showRecents();
+  }
+
+  Future<void> showRecents() async {
+    // searchNotifier.value = null;
+    final recents = await Settings.recents;
+    searchNotifier.value = recents;
+  }
+
+  Future<void> search(String query) async {
+    if (query.isEmpty) {
+      searchNotifier.value = null;
+      showRecents();
+      return;
+    }
+
+    /// show loading when query changes
+    if (oldQuery != query) {
+      searchNotifier.value = null;
+      oldQuery = query;
+    }
+    final results = await VocabStoreService.searchWord(query);
+
+    searchNotifier.value = results
+        .where((element) => element.word.toLowerCase().contains(query))
+        .map((e) => e.word)
+        .toList();
+  }
+
+  List<Word> words = [];
+  String oldQuery = '';
+  @override
+  Widget build(BuildContext context) {
+    words = AppStateScope.of(context).words!;
+    return Material(
+      child: SafeArea(
+        child: Column(
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                BackButton(),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: SearchBuilder(
+                        ontap: () {},
+                        autoFocus: true,
+                        onChanged: (query) {
+                          setState(() {});
+                          return search(query);
+                        }),
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+                child: ValueListenableBuilder<List<String>?>(
+                    valueListenable: searchNotifier,
+                    builder: (BuildContext context, List<String>? history,
+                        Widget? child) {
+                      if (history == null) {
+                        return LoadingWidget(
+                          color: Colors.red,
+                        );
+                      } else if (searchController.text.isEmpty) {
+                        // show Recent Suggestions
+                        return Column(
+                          children: [
+                            SizedBox(
+                              child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text('Recent'),
+                                  )),
+                            ),
+                            if (history.isEmpty)
+                              Expanded(
+                                child: Center(
+                                  child: Text('No recent searches'),
+                                ),
+                              )
+                            else
+                              Expanded(
+                                  child: ListView.builder(
+                                padding: EdgeInsets.zero,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    onTap: () {
+
+                                    },
+                                    subtitle: SizedBox(),
+                                    title: Text('${history[index]}'),
+                                    trailing: GestureDetector(
+                                        onTap: () async {
+                                          await Settings.removeRecent(
+                                              history[index]);
+                                          showRecents();
+                                        },
+                                        child: Icon(Icons.close, size: 16)),
+                                  );
+                                },
+                                itemCount: history.length,
+                              ))
+                          ],
+                        );
+                      } else {
+                        if (history.isEmpty) {
+                          return Center(
+                            child: Text('No results found'),
+                          );
+                        }
+                        /// search list
+                        return ListView.builder(
+                          padding: EdgeInsets.zero,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              onTap: () {
+                                Settings.addRecent(history[index]);
+                                Navigate.push(context, WordDetail(), isRootNavigator: false);
+                              },
+                              subtitle: SizedBox(),
+                              title: Text('${history[index]}'),
+                            );
+                          },
+                          itemCount: history.length,
+                        );
+                      }
+                    }))
+          ],
+        ),
+      ),
+    );
   }
 }
 

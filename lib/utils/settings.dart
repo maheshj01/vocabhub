@@ -20,6 +20,7 @@ class Settings extends ChangeNotifier {
   static const emailKey = 'emailKey';
   static const skipCountKey = 'skipCount';
   static const darkKey = 'isDark';
+  static const recentKey = 'recent';
 
   static const maxSkipCount = 3;
 
@@ -89,11 +90,28 @@ class Settings extends ChangeNotifier {
     }
     await _sharedPreferences!.setBool('$signedInKey', status);
     await _sharedPreferences!.setString('$emailKey', email);
-        _instance.notify();
+    _instance.notify();
   }
 
   static set setSkipCount(int value) {
     _sharedPreferences!.setInt('$skipCountKey', value);
+  }
+
+  static void addRecent(String value) async {
+    final List<String> recentList = await recents;
+    recentList.add(value);
+    await _sharedPreferences!.setStringList('$recentKey', recentList);
+  }
+
+  static Future<void> removeRecent(String value) async {
+    final List<String> recentList = await recents;
+    recentList.remove(value);
+    await _sharedPreferences!.setStringList('$recentKey', recentList);
+  }
+
+  static Future<List<String>> get recents async {
+    final recentList = _sharedPreferences!.getStringList('$recentKey') ?? [];
+    return recentList;
   }
 
   static FutureOr<int> get skipCount async {

@@ -23,12 +23,14 @@ void stopCircularIndicator(BuildContext context) {
 }
 
 class LoadingWidget extends StatelessWidget {
+  final Color? color;
+  const LoadingWidget({Key? key, this.color}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Center(
         child: CircularProgressIndicator(
             valueColor: new AlwaysStoppedAnimation<Color>(
-      VocabTheme.primaryColor,
+      color ?? VocabTheme.primaryColor,
     )));
   }
 }
@@ -84,18 +86,18 @@ Widget storeRedirect(BuildContext context,
   );
 }
 
- RichText buildNotification(String notification, String word,
-      {TextStyle? style}) {
-    final List<InlineSpan>? textSpans = [];
-    final iterable = notification.split(' ').toList().map((e) {
-      final isMatched = e.toLowerCase().contains(word.toLowerCase());
-      return TextSpan(
-          text: e + ' ',
-          style: TextStyle(
-              fontSize: 16,
-              color: Colors.black,
-              fontWeight: isMatched ? FontWeight.bold : FontWeight.w400));
-    }).toList();
-    textSpans!.addAll(iterable);
-    return RichText(text: TextSpan(text: '', children: textSpans));
-  }
+RichText buildNotification(String notification, String word,
+    {TextStyle? style}) {
+  final List<InlineSpan>? textSpans = [];
+  final iterable = notification.split(' ').toList().map((e) {
+    final isMatched = e.toLowerCase().contains(word.toLowerCase());
+    return TextSpan(
+        text: e + ' ',
+        style: TextStyle(
+            fontSize: 16,
+            color: Colors.black,
+            fontWeight: isMatched ? FontWeight.bold : FontWeight.w400));
+  }).toList();
+  textSpans!.addAll(iterable);
+  return RichText(text: TextSpan(text: '', children: textSpans));
+}

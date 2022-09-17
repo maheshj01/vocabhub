@@ -6,7 +6,18 @@ import 'package:vocabhub/themes/vocab_theme.dart';
 class SearchBuilder extends StatefulWidget {
   final Function(String) onChanged;
   final Function? ontap;
-  SearchBuilder({Key? key, required this.onChanged, this.ontap})
+  final bool readOnly;
+  final bool autoFocus;
+  final Widget suffixIcon;
+  final TextEditingController? controller;
+  SearchBuilder(
+      {Key? key,
+      required this.onChanged,
+      this.ontap,
+      this.controller,
+      this.autoFocus = false,
+      this.suffixIcon = const SizedBox.shrink(),
+      this.readOnly = false})
       : super(key: key);
 
   @override
@@ -17,9 +28,15 @@ class _SearchBuilderState extends State<SearchBuilder> {
   @override
   void initState() {
     super.initState();
+    searchController = TextEditingController();
     searchController.addListener(() {
       widget.onChanged(searchController.text);
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -27,10 +44,10 @@ class _SearchBuilderState extends State<SearchBuilder> {
     bool isDark = darkNotifier.value;
     return Container(
         height: 60,
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: TextField(
+          readOnly: widget.readOnly,
           controller: searchController,
-          autofocus: false,
+          autofocus: widget.autoFocus,
           onTap: () => widget.ontap!(),
           cursorHeight: 24,
           textAlignVertical: TextAlignVertical.center,
@@ -46,6 +63,7 @@ class _SearchBuilderState extends State<SearchBuilder> {
                           .primary
                           .withOpacity(0.2))),
               hintStyle: TextStyle(color: Colors.black),
+              prefixIcon: Icon(Icons.search),
               suffixIcon: IconButton(
                   tooltip:
                       searchController.text.isNotEmpty ? 'clear' : 'shuffle',

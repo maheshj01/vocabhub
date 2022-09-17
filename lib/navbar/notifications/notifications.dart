@@ -24,7 +24,6 @@ class Notifications extends StatefulWidget {
 class _NotificationsState extends State<Notifications> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       user = AppStateScope.of(context).user!;
@@ -114,7 +113,9 @@ class _NotificationsState extends State<Notifications> {
                                 if (approved) {
                                 } else {}
                               },
-                              onTap: () {},
+                              onTap: () {
+                                print('admin tapped');
+                              },
                             );
                     },
                     itemCount: value.length);

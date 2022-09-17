@@ -92,6 +92,18 @@ class VocabStoreService {
     return words;
   }
 
+   static Future<List<Word>> searchWord(String query,{bool sort = false}) async {
+    final response = await DatabaseService.findRowsContaining(query, columnName: WORD_COLUMN, tableName: tableName);
+    List<Word> words = [];
+    if (response.status == 200) {
+      words = (response.data as List).map((e) => Word.fromJson(e)).toList();
+      if (sort) {
+        words.sort((a, b) => a.word.compareTo(b.word));
+      }
+    }
+    return words;
+  }
+
   Future<bool> downloadFile() async {
     try {
       final response = await _supabase.from(tableName).select("*").execute();

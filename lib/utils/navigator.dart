@@ -17,7 +17,7 @@ class Navigate<T> {
       {bool isDialog = false,
       bool isRootNavigator = true,
       TransitionType slideTransitionType = TransitionType.scale}) async {
-    final  value = await Navigator.of(context, rootNavigator: isRootNavigator)
+    final value = await Navigator.of(context, rootNavigator: isRootNavigator)
         .push(NavigateRoute(widget, type: slideTransitionType));
     // return value;
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
-import 'package:vocabhub/navbar/notifications.dart';
+import 'package:vocabhub/navbar/notifications/notifications.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/widgets/responsive.dart';

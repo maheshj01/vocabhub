@@ -16,6 +16,17 @@ class DatabaseService {
     return response;
   }
 
+  static Future<PostgrestResponse> findRowsContaining(String columnValue,
+      {String columnName = '$ID_COLUMN',
+      String tableName = '$VOCAB_TABLE_NAME'}) async {
+    final response = await _supabase
+        .from(tableName)
+        .select()
+        .ilike('$columnName', "%$columnValue%")
+        .execute();
+    return response;
+  }
+
   /// fetches all
   static Future<PostgrestResponse> findRowsByInnerJoinOnColumnValue(
       String innerJoinColumn, String value,

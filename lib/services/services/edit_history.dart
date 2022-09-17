@@ -21,8 +21,8 @@ class EditHistoryService {
   /// for user the notifications will be of state (pending)
   static Future<PostgrestResponse> findEditById(String id,
       {String columnName = ID_COLUMN}) async {
-    final response =
-        await DatabaseService.findRowByColumnValue(id, columnName: columnName,tableName: _tableName);
+    final response = await DatabaseService.findRowByColumnValue(id,
+        columnName: columnName, tableName: _tableName);
     return response;
   }
 

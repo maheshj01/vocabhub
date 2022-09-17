@@ -78,11 +78,16 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
         Dashboard.route: Dashboard(),
         Notifications.route: Notifications(),
       },
-      1: {Search.route: Search(), AddWordForm.route: AddWordForm()},
+      1: {
+        Search.route: Search(),
+        AddWordForm.route: AddWordForm(),
+        SearchView.route: SearchView(),
+      },
       2: {ExploreWords.route: ExploreWords()},
       3: {UserProfile.route: UserProfile()}
     };
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(
           bottom: kBottomNavigationBarHeight * 0.7,

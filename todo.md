@@ -25,11 +25,15 @@ Toggle is Admin
 - [] Mastered words should be visible on Dashboard
 - [] User should be able to update the status of mastered words
 
+### Search
+- [] Redesign Search
+- [] Going to search tab should have a dummy search bar
+- [] Initial content will be some random words and popular words on platform
+- [] Tapping on search bar should show recent searches and execute search
 ### explore page
 - [] Explore should fetch words in pagination from by querying 20 words at a time.(Configurable)
 - [] The words fetched should be the one not known by user
 - [] If user is not logged In, user can simply swipe all words and a login prompt should be shown on every 5th or 10th word.
-- 
 ### User Contributions
 
 - [] Based on above contribution assign reputation points to user
