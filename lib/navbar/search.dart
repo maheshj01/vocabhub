@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:uuid/uuid.dart';
 import 'package:vocabhub/models/models.dart';
+import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utils.dart';
+import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/search.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -205,6 +208,9 @@ class _SearchViewState extends State<SearchView> {
     // .toList();
   }
 
+  /// creates a new word and adds it to the database
+  /// 
+
   List<Word> words = [];
   String oldQuery = '';
   @override
@@ -290,11 +296,30 @@ class _SearchViewState extends State<SearchView> {
                         );
                       } else {
                         if (history.isEmpty) {
+                          final searchTerm = searchController.text;
                           return Center(
-                            child: Text('No results found'),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('"$searchTerm" not found'),
+                                SizedBox(
+                                  height: 100,
+                                ),
+                                VocabButton(
+                                    width: 200,
+                                    onTap: () {
+                                      Navigate.push(
+                                          context,
+                                          AddWordForm(
+                                            isEdit: false,
+                                          ),
+                                          isRootNavigator: true);
+                                    },
+                                    label: "Add new Word?")
+                              ],
+                            ),
                           );
                         }
-
                         /// search list
                         return ListView.builder(
                           padding: EdgeInsets.zero,

@@ -97,7 +97,7 @@ class _NotificationsState extends State<Notifications> {
                     itemBuilder: (context, index) {
                       final edit = value[index].edit;
                       final editor = value[index].user;
-                      return editor.isAdmin
+                      return !user!.isAdmin
                           ? UserNotificationTile(
                               edit: edit,
                               user: editor,

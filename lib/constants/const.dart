@@ -24,6 +24,7 @@ const VOCAB_TABLE_NAME = 'vocabsheet_copy';
 const USER_TABLE_NAME = 'users_test';
 const EDIT_HISTORY_TABLE = 'edit_history';
 const WORD_STATE_TABLE_NAME = 'word_state';
+const WORD_OF_THE_DAY_TABLE_NAME = 'word_of_the_day';
 
 /// VOCAB TABLE COLUMNS
 const WORD_COLUMN = 'word';

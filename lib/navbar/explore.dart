@@ -236,8 +236,8 @@ class _ExploreWordState extends State<ExploreWord>
                                   .substring(0, _animation.value);
                               return Container(
                                 alignment: Alignment.center,
-                                margin: EdgeInsets.symmetric(vertical: 24),
-                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                margin: 24.0.verticalPadding,
+                                padding: 16.0.horizontalPadding,
                                 child: SelectableText(meaning,
                                     textAlign: TextAlign.center,
                                     style: Theme.of(context)

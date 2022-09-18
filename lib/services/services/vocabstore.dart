@@ -80,7 +80,7 @@ class VocabStoreService {
 
   /// ```Select * from words```
 
-  Future<List<Word>> getAllWords({bool sort = false}) async {
+  static Future<List<Word>> getAllWords({bool sort = false}) async {
     final response = await DatabaseService.findAll(tableName: tableName);
     List<Word> words = [];
     if (response.status == 200) {
@@ -92,8 +92,27 @@ class VocabStoreService {
     return words;
   }
 
-   static Future<List<Word>> searchWord(String query,{bool sort = false}) async {
-    final response = await DatabaseService.findRowsContaining(query, columnName: WORD_COLUMN, tableName: tableName);
+  static Future<Word> getLastUpdatedRecord() async {
+    final response = await DatabaseService.findRecentlyUpdatedRow(
+        'created_at', '',
+        table1: WORD_OF_THE_DAY_TABLE_NAME,
+        table2: VOCAB_TABLE_NAME,
+        ascending: false);
+    if (response.status == 200) {
+      Word lastWordOfTheDay =
+          Word.fromJson(response.data[0]['vocabsheet_copy']);
+      lastWordOfTheDay.created_at =
+          DateTime.parse(response.data[0]['created_at']);
+      return lastWordOfTheDay;
+    } else {
+      throw "Failed to get last updated record";
+    }
+  }
+
+  static Future<List<Word>> searchWord(String query,
+      {bool sort = false}) async {
+    final response = await DatabaseService.findRowsContaining(query,
+        columnName: WORD_COLUMN, tableName: tableName);
     List<Word> words = [];
     if (response.status == 200) {
       words = (response.data as List).map((e) => Word.fromJson(e)).toList();

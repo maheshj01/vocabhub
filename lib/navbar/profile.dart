@@ -101,7 +101,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                         Stack(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.all(16.0),
+                              padding: 16.0.allPadding,
                               child: CircleAvatar(
                                   radius: 46,
                                   backgroundColor: Theme.of(context)
@@ -126,7 +126,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                           ],
                         ),
                         Padding(
-                            padding: const EdgeInsets.all(8.0),
+                            padding:8.0.allPadding,
                             child:
                                 Text(!user.isAdmin ? ' User 🔒' : 'Admin 🔑')),
                         RichText(

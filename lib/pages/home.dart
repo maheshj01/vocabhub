@@ -330,7 +330,6 @@ class WordsBuilder extends StatefulWidget {
 }
 
 class _WordsBuilderState extends State<WordsBuilder> {
-  VocabStoreService supaStore = VocabStoreService();
 
   @override
   void initState() {
@@ -341,14 +340,14 @@ class _WordsBuilderState extends State<WordsBuilder> {
   Future<void> getWords() async {
     await Future.delayed(Duration.zero);
     showCircularIndicator(context);
-    supaStoreWords = await supaStore.getAllWords();
+    supaStoreWords = await VocabStoreService.getAllWords();
     stopCircularIndicator(context);
     listNotifier.value = supaStoreWords;
     totalNotifier.value = supaStoreWords.length;
   }
 
   Future<void> refresh() async {
-    supaStoreWords = await supaStore.getAllWords();
+    supaStoreWords = await VocabStoreService.getAllWords();
     listNotifier.value = supaStoreWords;
     totalNotifier.value = supaStoreWords.length;
     _refreshController.refreshCompleted();

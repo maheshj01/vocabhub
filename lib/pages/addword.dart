@@ -302,7 +302,7 @@ class _AddWordFormState extends State<AddWordForm> {
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
-          title: Text('Edit Word'),
+          title: Text(widget.isEdit ? 'Edit Word' : 'Add word'),
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),

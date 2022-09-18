@@ -77,3 +77,71 @@ extension ContainerBorderRadius on double {
   BorderRadiusGeometry get topRightBottomLeftRadius => BorderRadius.only(
       topRight: Radius.circular(this), bottomLeft: Radius.circular(this));
 }
+
+extension ContainerPadding on double {
+  EdgeInsetsGeometry get allPadding => EdgeInsets.all(this);
+
+  EdgeInsetsGeometry get topPadding => EdgeInsets.only(top: this);
+
+  EdgeInsetsGeometry get bottomPadding => EdgeInsets.only(bottom: this);
+
+  EdgeInsetsGeometry get leftPadding => EdgeInsets.only(left: this);
+
+  EdgeInsetsGeometry get rightPadding => EdgeInsets.only(right: this);
+
+  EdgeInsetsGeometry get verticalPadding =>
+      EdgeInsets.symmetric(vertical: this);
+
+  EdgeInsetsGeometry get horizontalPadding =>
+      EdgeInsets.symmetric(horizontal: this);
+}
+
+extension RoundedShape on double {
+  ShapeBorder get rounded =>
+      RoundedRectangleBorder(borderRadius: BorderRadius.circular(this));
+
+  ShapeBorder get roundedTop => RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(this), topRight: Radius.circular(this)));
+
+  ShapeBorder get roundedBottom => RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(this),
+          bottomRight: Radius.circular(this)));
+
+  ShapeBorder get roundedLeft => RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(this), bottomLeft: Radius.circular(this)));
+
+  ShapeBorder get roundedRight => RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+          topRight: Radius.circular(this), bottomRight: Radius.circular(this)));
+
+  ShapeBorder get roundedTopLeft => RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(topLeft: Radius.circular(this)));
+
+  ShapeBorder get roundedTopRight => RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(topRight: Radius.circular(this)));
+
+  ShapeBorder get roundedBottomLeft => RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(this)));
+
+  ShapeBorder get roundedBottomRight => RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(bottomRight: Radius.circular(this)));
+
+  ShapeBorder get roundedTopBottom => RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(
+          top: Radius.circular(this), bottom: Radius.circular(this)));
+
+  ShapeBorder get roundedLeftRight => RoundedRectangleBorder(
+      borderRadius: BorderRadius.horizontal(
+          left: Radius.circular(this), right: Radius.circular(this)));
+
+  ShapeBorder get roundedTopLeftBottomRight => RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(this), bottomRight: Radius.circular(this)));
+
+  ShapeBorder get roundedTopRightBottomLeft => RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+          topRight: Radius.circular(this), bottomLeft: Radius.circular(this)));
+}

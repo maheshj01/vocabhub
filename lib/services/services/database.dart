@@ -31,11 +31,12 @@ class DatabaseService {
   static Future<PostgrestResponse> findRowsByInnerJoinOnColumnValue(
       String innerJoinColumn, String value,
       {String table1 = '$EDIT_HISTORY_TABLE',
+      bool ascending = false,
       String table2 = '$USER_TABLE_NAME'}) async {
     final response = await _supabase
         .from('$table1')
         .select('*, $table2!inner(*)')
-        .order('created_at', ascending: false)
+        .order('created_at', ascending: ascending)
         // .eq('$table2.$innerJoinColumn', '$value')
         .execute();
 
@@ -45,6 +46,19 @@ class DatabaseService {
   static Future<PostgrestResponse> findAll(
       {String tableName = '$VOCAB_TABLE_NAME'}) async {
     final response = await _supabase.from(tableName).select().execute();
+    return response;
+  }
+
+  static Future<PostgrestResponse> findRecentlyUpdatedRow(
+      String innerJoinColumn, String value,
+      {String table1 = '$EDIT_HISTORY_TABLE',
+      bool ascending = false,
+      String table2 = '$USER_TABLE_NAME'}) async {
+    final response = await _supabase
+        .from('$table1')
+        .select('*, $table2!inner(*)')
+        .order('created_at', ascending: ascending)
+        .execute();
     return response;
   }
 
