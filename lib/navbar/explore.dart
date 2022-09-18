@@ -160,10 +160,16 @@ class _ExploreWordState extends State<ExploreWord>
   int lowerIndex = 0;
   bool reveal = false;
   WordState wordState = WordState.unanswered;
+  List<Color> backgrounds = [
+    Color(0xff989E9C),
+    Color(0xffDFD3BB),
+    Color(0xffB9B49E),
+    Color(0xff72858C),
+    Color(0xff30414B),
+  ];
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    bool isDark = darkNotifier.value;
+    // Size size = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
     final userProvider = AppStateScope.of(context).user!;
 
@@ -174,26 +180,25 @@ class _ExploreWordState extends State<ExploreWord>
     return widget.word == null
         ? EmptyWord()
         : Scaffold(
+            // backgroundColor: backgrounds[Random().nextInt(backgrounds.length)],
             body: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment:
+                  !reveal ? MainAxisAlignment.center : MainAxisAlignment.start,
               children: [
-                SizedBox(height: kToolbarHeight),
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                      child: Text(
-                        widget.word!.word.capitalize()!,
-                        style: textTheme.headline2!.copyWith(
-                            color: isDark ? Colors.white : Colors.black),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: kToolbarHeight, bottom: 12),
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                        child: Text(widget.word!.word.capitalize()!,
+                            style: textTheme.headline2!),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 8,
                 ),
                 userProvider.isLoggedIn && !reveal
                     ? IconButton(
@@ -221,6 +226,7 @@ class _ExploreWordState extends State<ExploreWord>
                           padding: const EdgeInsets.symmetric(vertical: 16.0),
                           child: SynonymsList(
                             synonyms: widget.word!.synonyms,
+                            emptyHeight: 0,
                           ),
                         ),
                         AnimatedBuilder(
@@ -230,6 +236,7 @@ class _ExploreWordState extends State<ExploreWord>
                                   .substring(0, _animation.value);
                               return Container(
                                 alignment: Alignment.center,
+                                margin: EdgeInsets.symmetric(vertical: 24),
                                 padding: EdgeInsets.symmetric(horizontal: 16),
                                 child: SelectableText(meaning,
                                     textAlign: TextAlign.center,
@@ -242,9 +249,6 @@ class _ExploreWordState extends State<ExploreWord>
                                         ).fontFamily)),
                               );
                             }),
-                        SizedBox(
-                          height: 24,
-                        ),
                         ExampleListBuilder(
                           title: 'Usage',
                           examples: (widget.word!.examples == null ||
@@ -260,6 +264,9 @@ class _ExploreWordState extends State<ExploreWord>
                               ? []
                               : widget.word!.mnemonics,
                           word: widget.word!.word,
+                        ),
+                        SizedBox(
+                          height: 48,
                         ),
                         userProvider.isLoggedIn
                             ? WordMasteredPreference(
@@ -286,9 +293,6 @@ class _ExploreWordState extends State<ExploreWord>
                                 value: wordState,
                               )
                             : SizedBox.shrink(),
-                        // SizedBox(
-                        //   height: 200,
-                        // ),
                       ],
                     ),
                   ),

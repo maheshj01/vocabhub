@@ -52,8 +52,10 @@ const String dateFormatter = 'MMMM dd, y';
 
 enum EditState {
   approved('approved'),
+  /// Admin has rejected the request
   rejected('rejected'),
   pending('pending'),
+  /// user can cancel the edit request
   cancelled('cancelled');
 
   final String state;

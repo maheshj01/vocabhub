@@ -35,6 +35,7 @@ class DatabaseService {
     final response = await _supabase
         .from('$table1')
         .select('*, $table2!inner(*)')
+        .order('created_at', ascending: false)
         // .eq('$table2.$innerJoinColumn', '$value')
         .execute();
 

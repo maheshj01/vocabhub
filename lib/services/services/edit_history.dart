@@ -103,9 +103,10 @@ class EditHistoryService {
 
   /// cancel the request from user
 
-  static Future<Response> cancelRequest(String editId) async {
+  static Future<Response> updateRequest(String editId,
+      {EditState state = EditState.cancelled}) async {
     final resp = Response(didSucced: false, message: "Failed");
-    final response = await updateRowState(editId, EditState.cancelled);
+    final response = await updateRowState(editId, state);
     resp.status = response.status;
     if (response.status == 200) {
       resp.didSucced = true;

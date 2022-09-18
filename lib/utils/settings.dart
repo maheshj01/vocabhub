@@ -101,9 +101,12 @@ class Settings extends ChangeNotifier {
 
   static void addRecent(Word word) async {
     final List<Word> recentList = await recents;
-    recentList.add(word);
-    final stringData = jsonEncode(recentList);
-    await _sharedPreferences!.setString(recentKey, stringData);
+    if (!recentList.contains(word)) {
+      final stringData = jsonEncode(recentList);
+      await _sharedPreferences!.setString(recentKey, stringData);
+    } else {
+      print('already added');
+    }
   }
 
   static Future<void> removeRecent(Word value) async {

@@ -42,9 +42,9 @@ class _NotificationsState extends State<Notifications> {
     }
   }
 
-  Future<void> cancelRequest(String editId) async {
+  Future<void> updateRequest(String editId, EditState state) async {
     showCircularIndicator(context);
-    final resp = await EditHistoryService.cancelRequest(editId);
+    final resp = await EditHistoryService.updateRequest(editId, state: state);
     if (resp.didSucced) {
       getNotifications();
     } else {
@@ -101,8 +101,9 @@ class _NotificationsState extends State<Notifications> {
                           ? UserNotificationTile(
                               edit: edit,
                               user: editor,
-                              onCancel: () async {
-                                cancelRequest(edit.edit_id!);
+                              onCancel: () {
+                                updateRequest(
+                                    edit.edit_id!, EditState.cancelled);
                                 print('request has been cancelled');
                               },
                             )
@@ -111,7 +112,14 @@ class _NotificationsState extends State<Notifications> {
                               user: editor,
                               onAction: (approved) {
                                 if (approved) {
-                                } else {}
+                                  updateRequest(
+                                      edit.edit_id!, EditState.approved);
+                                  print('request has been approved');
+                                } else {
+                                  updateRequest(
+                                      edit.edit_id!, EditState.rejected);
+                                  print('request has been rejected');
+                                }
                               },
                               onTap: () {
                                 print('admin tapped');
@@ -129,7 +137,7 @@ class _NotificationsState extends State<Notifications> {
                       edit: edit,
                       user: editUser,
                       onCancel: () async {
-                        cancelRequest(edit.edit_id!);
+                        updateRequest(edit.edit_id!, EditState.cancelled);
                         print('request has been cancelled');
                       },
                     );
@@ -249,7 +257,7 @@ class AdminNotificationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     /// Approve or reject card
     return Container(
-      height: 100,
+      height: 120,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
@@ -308,7 +316,31 @@ class AdminNotificationTile extends StatelessWidget {
                               )
                             ],
                           ),
-                        )
+                        ),
+                        if (edit.state == EditState.pending)
+                          Row(
+                            children: [
+                              VHIcon(Icons.close,
+                                  size: 36,
+                                  backgroundColor: Colors.white,
+                                  border:
+                                      Border.all(color: Colors.red, width: 2),
+                                  iconColor: Colors.red, onTap: () {
+                                onAction(false);
+                              }),
+                              SizedBox(
+                                width: 16,
+                              ),
+                              VHIcon(Icons.check,
+                                  size: 36,
+                                  backgroundColor: Colors.white,
+                                  border:
+                                      Border.all(color: Colors.green, width: 2),
+                                  iconColor: Colors.green, onTap: () {
+                                onAction(true);
+                              }),
+                            ],
+                          )
                       ],
                     ),
                   ),

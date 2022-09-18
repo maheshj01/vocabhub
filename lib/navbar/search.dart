@@ -215,12 +215,12 @@ class _SearchViewState extends State<SearchView> {
         child: Column(
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 BackButton(),
                 Expanded(
                   child: Container(
-                    padding: const EdgeInsets.only(right: 16.0),
+                    padding: const EdgeInsets.only(right: 16.0, top: 8.0),
                     child: SearchBuilder(
                         ontap: () {},
                         autoFocus: true,

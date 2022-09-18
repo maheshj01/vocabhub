@@ -79,93 +79,95 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
               })
         ],
       ),
-      body: Column(children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.bottomRight,
-                child: userProvider.isLoggedIn
-                    ? IconButton(
-                        icon: Icon(
-                          Icons.edit,
-                        ),
-                        onPressed: () {
-                          Navigate.push(
-                              context,
-                              AddWordForm(
-                                isEdit: true,
-                                word: widget.word,
-                              ),
-                              slideTransitionType: TransitionType.scale);
-                        })
-                    : SizedBox(),
-              ),
-              Align(
-                alignment: Alignment.topCenter,
-                child: GestureDetector(
-                  onTap: () async {
-                    await Clipboard.setData(
-                        ClipboardData(text: "${widget.word!.word}"));
-                    showMessage(
-                        context, " copied ${widget.word!.word} to clipboard.");
-                  },
-                  child: FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                      child: Text(widget.word!.word.capitalize()!,
-                          style: VocabTheme.googleFontsTextTheme.headline2!),
+      body: SingleChildScrollView(
+        child: Column(children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: userProvider.isLoggedIn
+                      ? IconButton(
+                          icon: Icon(
+                            Icons.edit,
+                          ),
+                          onPressed: () {
+                            Navigate.push(
+                                context,
+                                AddWordForm(
+                                  isEdit: true,
+                                  word: widget.word,
+                                ),
+                                slideTransitionType: TransitionType.scale);
+                          })
+                      : SizedBox(),
+                ),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: GestureDetector(
+                    onTap: () async {
+                      await Clipboard.setData(
+                          ClipboardData(text: "${widget.word!.word}"));
+                      showMessage(context,
+                          " copied ${widget.word!.word} to clipboard.");
+                    },
+                    child: FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                        child: Text(widget.word!.word.capitalize()!,
+                            style: VocabTheme.googleFontsTextTheme.headline2!),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        SynonymsList(
-          synonyms: widget.word!.synonyms,
-        ),
-        SizedBox(
-          height: 50,
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            widget.word!.meaning,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headline4!.copyWith(
-                color: Colors.black,
-                fontFamily: GoogleFonts.inter(
-                  fontWeight: FontWeight.w400,
-                ).fontFamily),
+          SynonymsList(
+            synonyms: widget.word!.synonyms,
           ),
-        ),
-        SizedBox(
-          height: 48,
-        ),
-        Padding(
+          SizedBox(
+            height: 50,
+          ),
+          Padding(
             padding: const EdgeInsets.all(16.0),
-            child: ExampleListBuilder(
-              title: 'Usage',
-              examples: (widget.word!.examples == null ||
-                      widget.word!.examples!.isEmpty)
-                  ? []
-                  : widget.word!.examples,
-              word: widget.word!.word,
-            )),
-        Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ExampleListBuilder(
-              title: 'Mnemonics',
-              examples: (widget.word!.mnemonics == null ||
-                      widget.word!.mnemonics!.isEmpty)
-                  ? []
-                  : widget.word!.mnemonics,
-              word: widget.word!.word,
-            )),
-      ]),
+            child: Text(
+              widget.word!.meaning,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline4!.copyWith(
+                  color: Colors.black,
+                  fontFamily: GoogleFonts.inter(
+                    fontWeight: FontWeight.w400,
+                  ).fontFamily),
+            ),
+          ),
+          SizedBox(
+            height: 48,
+          ),
+          Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ExampleListBuilder(
+                title: 'Usage',
+                examples: (widget.word!.examples == null ||
+                        widget.word!.examples!.isEmpty)
+                    ? []
+                    : widget.word!.examples,
+                word: widget.word!.word,
+              )),
+          Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ExampleListBuilder(
+                title: 'Mnemonics',
+                examples: (widget.word!.mnemonics == null ||
+                        widget.word!.mnemonics!.isEmpty)
+                    ? []
+                    : widget.word!.mnemonics,
+                word: widget.word!.word,
+              )),
+        ]),
+      ),
     );
   }
 }

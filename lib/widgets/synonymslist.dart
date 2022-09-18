@@ -8,16 +8,18 @@ import 'package:vocabhub/utils/size_utils.dart';
 
 class SynonymsList extends StatelessWidget {
   final List<String>? synonyms;
+  final double emptyHeight;
   SynonymsList({
     Key? key,
+    this.emptyHeight = 20,
     this.synonyms,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    // Size size = MediaQuery.of(context).size;
     return (synonyms == null || synonyms!.isEmpty)
-        ? SizedBox(height: 20)
+        ? SizedBox(height: emptyHeight)
         : Container(
             alignment: Alignment.center,
             padding: EdgeInsets.symmetric(

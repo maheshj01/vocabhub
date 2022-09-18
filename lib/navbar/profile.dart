@@ -57,6 +57,18 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
   @override
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
+
+    Widget heading(String title) {
+      return Container(
+        alignment: Alignment.centerLeft,
+        padding: EdgeInsets.only(left: 16),
+        child: Text('$title!',
+            style: Theme.of(context)
+                .textTheme
+                .subtitle2!
+                .copyWith(fontWeight: FontWeight.w600)),
+      );
+    }
     return Scaffold(
         body: Center(
             child: user == null || !user.isLoggedIn
@@ -137,6 +149,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                         ])),
                         Text(
                           '${user.name}',
+                          textAlign: TextAlign.center,
                           style: Theme.of(context)
                               .textTheme
                               .headline4!
@@ -146,6 +159,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                         SizedBox(
                           height: 20,
                         ),
+                        heading('Contributions'),
                         Spacer(),
                         VocabButton(
                           label: 'Sign Out',
