@@ -1,0 +1,14 @@
+{
+  "files.autoSaveDelay": 3000,
+  "dart.flutterSdkPath": "/Users/mahesh/Documents/flutter",
+  "files.exclude": {
+    //  "build":true,
+     "test":true,
+  //    ".vscode":false,
+  //    ".*":true,
+     "web":false,
+     "build": false,
+     "windows":true,
+     "macos":false,
+ },
+}

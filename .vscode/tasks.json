@@ -1,0 +1,52 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "flutter",
+			"command": "flutter",
+			"group": "none",
+			"args": [
+				"clean"
+			],
+			"label": "flutter: flutter clean",
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
+			"problemMatcher": []
+		},
+		{
+			"type": "flutter",
+			"command": "flutter",
+			"group": "build",
+			"dependsOn": [
+				"flutter: flutter clean"
+			],
+			"args": [
+				"pub",
+				"get"
+			],
+			"label": "flutter: flutter pub get",
+			"detail": "",
+			"runOptions": {
+				"runOn": "folderOpen"
+			}
+		},
+		{
+			"type": "flutter",
+			"command": "flutter",
+			"dependsOn" : [
+				"flutter: flutter pub get"
+			],
+			"args": [
+				"build",
+				"web"
+			],
+			"group": "build",
+			"label": "flutter: flutter build web",
+			"detail": "",
+			"runOptions": {
+				"runOn": "folderOpen"
+			}
+		},
+	]
+}

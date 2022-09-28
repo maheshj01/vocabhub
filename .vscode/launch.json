@@ -1,0 +1,25 @@
+{
+    "configurations": [
+    
+        {
+            "name": "Web debug",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "debug",
+            "args": [
+                "-d", "chrome","--web-port", "63133"
+            ]
+        },
+        {
+            "name": "Web release",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "flutterMode": "release",
+            "args": [
+                "-d", "chrome","--web-port", "63133"
+            ]
+        },
+    ]
+}
