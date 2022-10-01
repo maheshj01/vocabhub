@@ -58,6 +58,16 @@ class DatabaseService {
     return response;
   }
 
+  /// ```
+  /// final response = await _supabase
+  ///      .from('$table1')
+  ///      .select('*, $table2!inner(*)')
+  ///      .eq('$table2.$innerJoinColumn1', '$value1')
+  ///      .eq('$table2.$innerJoinColumn2', '$value2')
+  ///      .order('created_at', ascending: ascending)
+  ///      .execute();
+  ///  return response;
+  /// ```
   static Future<PostgrestResponse> findRowsByInnerJoinOn2ColumnValue(
       String innerJoinColumn1,
       String value1,
@@ -76,9 +86,37 @@ class DatabaseService {
     return response;
   }
 
+  // static Future<PostgrestResponse> exploreWords(
+  //     // String innerJoinColumn1,
+  //     //       String value1, String innerJoinColumn2, String value2,
+  //     //       {String table1 = '$EDIT_HISTORY_TABLE',
+  //     //       String table2 = '$USER_TABLE_NAME'}
+
+  //     ) async {
+  //   final response = await _supabase
+  //       .from('$VOCAB_TABLE_NAME')
+  //       .select()
+  //       .select('*, $WORD_STATE_TABLE_NAME!inner(*)')
+  //       // .eq('$table2.$innerJoinColumn1', '$value1')
+  //       // .eq('state', 'known')
+  //       // .order('created_at', ascending: ascending)
+  //       .execute();
+  //   return response;
+  // }
+
   static Future<PostgrestResponse> findAll(
       {String tableName = '$VOCAB_TABLE_NAME'}) async {
     final response = await _supabase.from(tableName).select().execute();
+    return response;
+  }
+
+  static Future<PostgrestResponse> findLimitedWords(
+      {String tableName = '$VOCAB_TABLE_NAME', int page = 0}) async {
+    final response = await _supabase
+        .from(tableName)
+        .select()
+        .range(page * 20, (page + 1) * 20)
+        .execute();
     return response;
   }
 

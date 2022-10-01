@@ -13,31 +13,107 @@ import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
 
-class ExploreWords extends StatefulWidget {
+class ExploreWords extends StatelessWidget {
   static const String route = '/';
   const ExploreWords({Key? key}) : super(key: key);
 
   @override
-  State<ExploreWords> createState() => _ExploreWordsState();
-}
-
-class _ExploreWordsState extends State<ExploreWords> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
-        desktopBuilder: (context) => ExploreWordsMobile(),
+        desktopBuilder: (context) => ExploreWordsDesktop(),
         mobileBuilder: (context) => ExploreWordsMobile());
   }
 }
 
-class ExploreWordsMobile extends StatelessWidget {
+class ExploreWordsMobile extends StatefulWidget {
   const ExploreWordsMobile({Key? key}) : super(key: key);
 
+  @override
+  State<ExploreWordsMobile> createState() => _ExploreWordsMobileState();
+}
+
+class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => exploreWords());
+  }
+
+  Future<void> exploreWords() async {
+    loadingNotifier.value = true;
+    final user = AppStateScope.of(context).user;
+    final newWords =
+        await VocabStoreService.exploreWords(user!.email, page: page);
+    words!.addAll(newWords);
+    max = words!.length;
+    print('words length = ${words!.length}');
+    loadingNotifier.value = false;
+  }
+
+  int page = 0;
+  int max = 0;
+  List<Word>? words = [];
+  bool isFetching = false;
+
+  ValueNotifier<bool> loadingNotifier = ValueNotifier<bool>(false);
+
+  @override
+  void dispose() {
+    super.dispose();
+    loadingNotifier.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+        valueListenable: loadingNotifier,
+        builder: (BuildContext context, bool isLoading, Widget? child) {
+          if (words == null || words!.isEmpty) return SizedBox.shrink();
+          return Material(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                PageView.builder(
+                    itemCount: words!.length,
+                    controller: pageController,
+                    scrollBehavior: MaterialScrollBehavior(),
+                    onPageChanged: (x) {
+                      print('max = $max, x = $x');
+                      if (x > max - 5) {
+                        page++;
+                        print('fetching at $x');
+                        exploreWords();
+                      }
+                      hideMessage(context);
+                    },
+                    physics: ClampingScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (context, index) {
+                      return ExploreWord(word: words![index], index: index);
+                    }),
+                isLoading
+                    ? Positioned(
+                        bottom: kBottomNavigationBarHeight + 50,
+                        left: 120,
+                        child: Text('Fetching more words'))
+                    : SizedBox.shrink()
+              ],
+            ),
+          );
+        });
+  }
+}
+
+PageController pageController = PageController();
+
+class ExploreWordsDesktop extends StatefulWidget {
+  ExploreWordsDesktop({Key? key}) : super(key: key);
+
+  @override
+  State<ExploreWordsDesktop> createState() => _ExploreWordsDesktopState();
+}
+
+class _ExploreWordsDesktopState extends State<ExploreWordsDesktop> {
   @override
   Widget build(BuildContext context) {
     final words = AppStateScope.of(context).words;
@@ -50,56 +126,19 @@ class ExploreWordsMobile extends StatelessWidget {
               itemCount: words.length,
               controller: pageController,
               scrollBehavior: MaterialScrollBehavior(),
+              physics: ClampingScrollPhysics(),
               onPageChanged: (x) {
                 hideMessage(context);
               },
-              physics: ClampingScrollPhysics(),
-              scrollDirection: Axis.vertical,
+              scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
-                return ExploreWord(word: words[index], index: index);
+                return WordDetail(word: words[index]);
               }),
         ],
       ),
     );
   }
 }
-
-PageController pageController = PageController();
-
-// class ExploreWordsDesktop extends StatefulWidget {
-//   ExploreWordsDesktop({Key? key}) : super(key: key);
-
-//   @override
-//   State<ExploreWordsDesktop> createState() => _ExploreWordsDesktopState();
-// }
-
-// class _ExploreWordsDesktopState extends State<ExploreWordsDesktop> {
-//   @override
-//   Widget build(BuildContext context) {
-//     final words = AppStateScope.of(context).words;
-//     if (words == null || words.isEmpty) return SizedBox.shrink();
-//     print('pageController has clients = ${pageController.hasClients}');
-//     return Material(
-//       child: Stack(
-//         fit: StackFit.expand,
-//         children: [
-//           PageView.builder(
-//               itemCount: words.length,
-//               controller: pageController,
-//               scrollBehavior: MaterialScrollBehavior(),
-//               physics: ClampingScrollPhysics(),
-//               onPageChanged: (x) {
-//                 hideMessage(context);
-//               },
-//               scrollDirection: Axis.horizontal,
-//               itemBuilder: (context, index) {
-//                 return WordDetail(word: words[index]);
-//               }),
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 class ExploreWord extends StatefulWidget {
   final Word? word;
