@@ -130,6 +130,7 @@ class DashboardMobile extends StatelessWidget {
               ),
               WoDCard(
                 word: word,
+                color: Colors.green.shade300,
                 onTap: () {
                   Navigate.push(context, WordDetail(word: word));
                 },
@@ -141,11 +142,16 @@ class DashboardMobile extends StatelessWidget {
               !user.isLoggedIn
                   ? SizedBox.shrink()
                   : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Padding(
+                          padding: 12.0.verticalPadding,
+                          child: heading('Progress'),
+                        ),
                         WoDCard(
                           word: word,
                           height: 180,
-                          color: Colors.blue.shade400,
+                          color: Colors.amberAccent.shade400,
                           onTap: () {
                             Navigate.push(
                                 context,
@@ -162,7 +168,8 @@ class DashboardMobile extends StatelessWidget {
                         WoDCard(
                           word: word,
                           height: 180,
-                          color: Colors.blue.shade400,
+                          // color: Colors.blue.shade400,
+                          image: 'assets/dart.jpg',
                           onTap: () {
                             Navigate.push(
                                 context,
@@ -192,6 +199,7 @@ class WoDCard extends StatelessWidget {
   final Color? color;
   final Function? onTap;
   final double? height;
+  final String? image;
 
   const WoDCard(
       {super.key,
@@ -199,6 +207,7 @@ class WoDCard extends StatelessWidget {
       this.height,
       required this.title,
       this.color,
+      this.image,
       this.onTap});
 
   @override
@@ -207,7 +216,7 @@ class WoDCard extends StatelessWidget {
     return Card(
       elevation: 2.0,
       shape: 16.0.rounded,
-      color: this.color ?? Colors.green.shade300,
+      color: this.color,
       child: InkWell(
         onTap: () {
           if (onTap != null) {
@@ -218,8 +227,13 @@ class WoDCard extends StatelessWidget {
           height: height ?? size.height / 3,
           width: size.width,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
+              borderRadius: BorderRadius.circular(16.0),
+              image: image != null
+                  ? DecorationImage(
+                      fit: BoxFit.fill,
+                      opacity: 0.7,
+                      image: AssetImage('assets/dart.jpg'))
+                  : null),
           child: Align(
               alignment: Alignment.center,
               child: Text(

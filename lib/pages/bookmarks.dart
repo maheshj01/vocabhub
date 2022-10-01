@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
@@ -6,6 +7,7 @@ import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
+import 'package:vocabhub/widgets/worddetail.dart';
 
 class BookmarksPage extends StatefulWidget {
   final bool isBookMark;
@@ -62,43 +64,63 @@ class _BookmarksMobileState extends State<_BookmarksMobile> {
   @override
   Widget build(BuildContext context) {
     String title = widget.isBookMark ? 'Bookmarks' : 'Mastered words';
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('$title'),
-        ),
-        body: ValueListenableBuilder(
-          valueListenable: _bookmarksNotifier,
-          builder: (_, List<Word>? value, Widget? child) {
-            if (value == null) {
-              return LoadingWidget();
-            }
-            if (value.isEmpty) {
-              return Center(
+    return ValueListenableBuilder(
+        valueListenable: _bookmarksNotifier,
+        builder: (_, List<Word>? value, Widget? child) {
+          if (value == null) {
+            return LoadingWidget();
+          }
+          if (value.isEmpty) {
+            return Scaffold(
+              appBar: AppBar(
+                title: Text('$title'),
+              ),
+              body: Center(
                 child: Text('No ${title.toLowerCase()} to show'),
-              );
-            }
-            return ListView.builder(
-              itemCount: value.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(value[index].word),
-                  trailing: IconButton(
-                    icon: Icon(
-                      Icons.bookmark,
-                      color: VocabTheme.primaryColor,
-                    ),
-                    onPressed: () async {
-                      await VocabStoreService.removeBookmark(value[index].id,
-                          isBookmark: widget.isBookMark);
-                      getBookmarks();
-                      showMessage(context, '$title removed');
-                    },
-                  ),
-                );
-              },
+              ),
             );
-          },
-        ));
+          }
+          return Scaffold(
+              appBar: AppBar(
+                title: Text('${value.length} $title'),
+              ),
+              body: ListView.builder(
+                itemCount: value.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 4.0),
+                    child: OpenContainer(
+                        openBuilder:
+                            (BuildContext context, VoidCallback openContainer) {
+                          return WordDetail(word: value[index]);
+                        },
+                        tappable: true,
+                        transitionType: ContainerTransitionType.fadeThrough,
+                        closedBuilder:
+                            (BuildContext context, VoidCallback openContainer) {
+                          return ListTile(
+                            minVerticalPadding: 24,
+                            title: Text(value[index].word),
+                            trailing: IconButton(
+                              icon: Icon(
+                                Icons.bookmark,
+                                color: VocabTheme.primaryColor,
+                              ),
+                              onPressed: () async {
+                                await VocabStoreService.removeBookmark(
+                                    value[index].id,
+                                    isBookmark: widget.isBookMark);
+                                getBookmarks();
+                                showMessage(context, '$title removed');
+                              },
+                            ),
+                          );
+                        }),
+                  );
+                },
+              ));
+        });
   }
 }
 

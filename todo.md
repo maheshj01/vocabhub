@@ -32,8 +32,9 @@ Toggle is Admin
 - [X] Slide Animation on Explore Page
 - [X] A word of the day card should be shown on Dashboard
 - [T] A word of the day should be updated when the first user comes online in the server timezone.
-- [ ] Mastered/Bookmarked words should be visible on Dashboard.
-- [ ] User should be able to update the status of mastered words.
+- [X] Mastered/Bookmarked words should be visible on Dashboard.
+- [X] User should be able to update the status of mastered/bookmarked words.
+
 ### Word Detail Page
 
 - [ ] implement meaning animation

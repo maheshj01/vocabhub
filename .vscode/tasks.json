@@ -55,7 +55,6 @@
 				"flutter: flutter pub get "
 			],
 			"args": [
-				"build",
 				"run"
 			],
 			"group": "build",

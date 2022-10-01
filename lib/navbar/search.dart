@@ -1,6 +1,6 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:uuid/uuid.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/home.dart';
@@ -261,27 +261,34 @@ class _SearchViewState extends State<SearchView> {
                             else
                               Expanded(
                                   child: ListView.builder(
-                                padding: EdgeInsets.zero,
+                                padding:
+                                    kBottomNavigationBarHeight.bottomPadding,
                                 itemBuilder: (context, index) {
-                                  return ListTile(
-                                    onTap: () {
-                                      Navigate.push(
-                                          context,
-                                          WordDetail(
-                                            word: history[index],
-                                          ),
-                                          isRootNavigator: false);
-                                    },
-                                    subtitle: SizedBox(),
-                                    title: Text('${history[index].word}'),
-                                    trailing: GestureDetector(
-                                        onTap: () async {
-                                          await Settings.removeRecent(
-                                              history[index]);
-                                          showRecents();
-                                        },
-                                        child: Icon(Icons.close, size: 16)),
-                                  );
+                                  return OpenContainer(
+                                      openBuilder: (BuildContext context,
+                                          VoidCallback openContainer) {
+                                        return WordDetail(
+                                          word: history[index],
+                                        );
+                                      },
+                                      tappable: true,
+                                      transitionType:
+                                          ContainerTransitionType.fadeThrough,
+                                      closedBuilder: (BuildContext context,
+                                          VoidCallback openContainer) {
+                                        return ListTile(
+                                          subtitle: SizedBox(),
+                                          title: Text('${history[index].word}'),
+                                          trailing: GestureDetector(
+                                              onTap: () async {
+                                                await Settings.removeRecent(
+                                                    history[index]);
+                                                showRecents();
+                                              },
+                                              child:
+                                                  Icon(Icons.close, size: 16)),
+                                        );
+                                      });
                                 },
                                 itemCount: history.length,
                               ))
@@ -313,25 +320,52 @@ class _SearchViewState extends State<SearchView> {
                             ),
                           );
                         }
+
                         /// search list
-                        return ListView.builder(
-                          padding: EdgeInsets.zero,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              onTap: () {
-                                Settings.addRecent(history[index]);
-                                Navigate.push(
-                                    context,
-                                    WordDetail(
-                                      word: history[index],
-                                    ),
-                                    isRootNavigator: false);
-                              },
-                              subtitle: SizedBox(),
-                              title: Text('${history[index].word}'),
-                            );
-                          },
-                          itemCount: history.length,
+                        return Column(
+                          children: [
+                            SizedBox(
+                              child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                        'Search Results: ${history.length}'),
+                                  )),
+                            ),
+                            Expanded(
+                              child: ListView.builder(
+                                padding:
+                                    kBottomNavigationBarHeight.bottomPadding,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4.0),
+                                    child: OpenContainer(
+                                        openBuilder: (BuildContext context,
+                                            VoidCallback openContainer) {
+                                          Settings.addRecent(history[index]);
+                                          return WordDetail(
+                                            word: history[index],
+                                          );
+                                        },
+                                        tappable: true,
+                                        transitionType:
+                                            ContainerTransitionType.fadeThrough,
+                                        closedBuilder: (BuildContext context,
+                                            VoidCallback openContainer) {
+                                          return ListTile(
+                                            minVerticalPadding: 24,
+                                            title:
+                                                Text('${history[index].word}'),
+                                          );
+                                        }),
+                                  );
+                                },
+                                itemCount: history.length,
+                              ),
+                            ),
+                          ],
                         );
                       }
                     }))
@@ -400,7 +434,7 @@ class _WordListState extends State<WordList> {
   Widget build(BuildContext context) {
     final state = AppStateWidget.of(context);
 
-    /// todo: sheet shuld be draggable on dragging the  top edge of the sheet
+    /// todo: sheet should be draggable on dragging the  top edge of the sheet
     return ValueListenableBuilder<List<Word>>(
         valueListenable: wordsNotifier,
         builder: (BuildContext context, List<Word> value, Widget? child) {
