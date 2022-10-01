@@ -34,14 +34,12 @@ class WordStateService {
     return response;
   }
 
-  /// Add a history entry for the word
-  /// This is called when the user requests a edit to the VocabTable
-  /// The edit state is pending (default) on insert
   static Future<Response> storeWordPreference(
       String wordId, String email, WordState state) async {
     final vocabresponse = Response(didSucced: false, message: "Failed");
     final Map<String, dynamic> data = {};
     data['word_id'] = wordId;
+    // data['id'] = '232234';
     data['email'] = email;
     data['created_at'] = DateTime.now().toIso8601String();
     data['state'] = state.name;

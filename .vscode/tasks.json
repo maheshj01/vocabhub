@@ -31,18 +31,35 @@
 				"runOn": "folderOpen"
 			}
 		},
+		// {
+		// 	"type": "flutter",
+		// 	"command": "flutter",
+		// 	"dependsOn" : [
+		// 		"flutter: flutter pub get"
+		// 	],
+		// 	"args": [
+		// 		"build",
+		// 		"web"
+		// 	],
+		// 	"group": "build",
+		// 	"label": "flutter: flutter build web",
+		// 	"detail": "",
+		// 	"runOptions": {
+		// 		"runOn": "folderOpen"
+		// 	}
+		// },
 		{
 			"type": "flutter",
 			"command": "flutter",
 			"dependsOn" : [
-				"flutter: flutter pub get"
+				"flutter: flutter pub get "
 			],
 			"args": [
 				"build",
-				"web"
+				"run"
 			],
 			"group": "build",
-			"label": "flutter: flutter build web",
+			"label": "flutter: flutter run",
 			"detail": "",
 			"runOptions": {
 				"runOn": "folderOpen"

@@ -286,7 +286,6 @@ class _ExploreWordState extends State<ExploreWord>
                                       .storeWordPreference(
                                           wordId, userEmail, wordState);
                                   if (resp.didSucced) {
-                                    print(resp.data);
                                     showToast(message);
                                   }
                                 },

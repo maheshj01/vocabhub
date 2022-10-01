@@ -92,6 +92,33 @@ class VocabStoreService {
     return words;
   }
 
+  static Future<List<Word>> getBookmarks(String email,
+      {bool isBookmark = true}) async {
+    final response = await DatabaseService.findRowsByInnerJoinOn2ColumnValue(
+      'email',
+      email,
+      'state',
+      isBookmark ? 'unknown' : 'known',
+      table1: '$VOCAB_TABLE_NAME',
+      table2: '$WORD_STATE_TABLE_NAME',
+    );
+    List<Word> words = [];
+    if (response.status == 200) {
+      words = (response.data as List).map((e) => Word.fromJson(e)).toList();
+    }
+    return words;
+  }
+
+  static removeBookmark(String id, {bool isBookmark = true}) async {
+    final response = await DatabaseService.updateColumn(
+        searchColumn: 'word_id',
+        searchValue: id,
+        columnName: 'state',
+        columnValue: isBookmark ? 'known' : 'unknown',
+        tableName: '$WORD_STATE_TABLE_NAME');
+    return response;
+  }
+
   static Future<Word> getLastUpdatedRecord() async {
     final response = await DatabaseService.findRecentlyUpdatedRow(
         'created_at', '',

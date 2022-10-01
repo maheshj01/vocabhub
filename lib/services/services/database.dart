@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase/supabase.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/utils/secrets.dart';
@@ -12,6 +13,20 @@ class DatabaseService {
         .from(tableName)
         .select()
         .eq('$columnName', columnValue)
+        .execute();
+    return response;
+  }
+
+  static Future<PostgrestResponse> findRowBy2ColumnValues(
+      String column1Value, String column2Value,
+      {String column1Name = '$ID_COLUMN',
+      String column2Name = '$USER_EMAIL_COLUMN',
+      String tableName = '$VOCAB_TABLE_NAME'}) async {
+    final response = await _supabase
+        .from(tableName)
+        .select()
+        .eq('$column1Name', column1Value)
+        .eq('$column2Name', column2Value)
         .execute();
     return response;
   }
@@ -40,6 +55,24 @@ class DatabaseService {
         // .eq('$table2.$innerJoinColumn', '$value')
         .execute();
 
+    return response;
+  }
+
+  static Future<PostgrestResponse> findRowsByInnerJoinOn2ColumnValue(
+      String innerJoinColumn1,
+      String value1,
+      String innerJoinColumn2,
+      String value2,
+      {String table1 = '$EDIT_HISTORY_TABLE',
+      bool ascending = false,
+      String table2 = '$USER_TABLE_NAME'}) async {
+    final response = await _supabase
+        .from('$table1')
+        .select('*, $table2!inner(*)')
+        .eq('$table2.$innerJoinColumn1', '$value1')
+        .eq('$table2.$innerJoinColumn2', '$value2')
+        // .order('created_at', ascending: ascending)
+        .execute();
     return response;
   }
 
@@ -89,8 +122,12 @@ class DatabaseService {
       String conflictColumn = '$ID_COLUMN'}) async {
     final response = await _supabase
         .from(table)
-        .upsert(data, onConflict: '$conflictColumn')
-        .execute();
+        .upsert(data, onConflict: 'id')
+        .execute()
+        .onError((error, stackTrace) {
+      print(error);
+      return PostgrestResponse();
+    });
     return response;
   }
 

@@ -330,7 +330,6 @@ class WordsBuilder extends StatefulWidget {
 }
 
 class _WordsBuilderState extends State<WordsBuilder> {
-
   @override
   void initState() {
     super.initState();
@@ -438,5 +437,23 @@ class _WordsBuilderState extends State<WordsBuilder> {
             ),
           );
         });
+  }
+}
+
+class WordsList extends StatefulWidget {
+  const WordsList({Key? key}) : super(key: key);
+
+  @override
+  State<WordsList> createState() => _WordsListState();
+}
+
+class _WordsListState extends State<WordsList> {
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: Container(
+        color: Colors.red,
+      ),
+    );
   }
 }

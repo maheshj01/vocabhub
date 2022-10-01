@@ -5,6 +5,7 @@ import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/notifications/notifications.dart';
+import 'package:vocabhub/pages/bookmarks.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
@@ -25,7 +26,6 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     publishWordOfTheDay();
   }
@@ -128,7 +128,56 @@ class DashboardMobile extends StatelessWidget {
                 padding: 16.0.verticalPadding,
                 child: heading('Word of the day'),
               ),
-              WoDCard(word: word)
+              WoDCard(
+                word: word,
+                onTap: () {
+                  Navigate.push(context, WordDetail(word: word));
+                },
+                title: '${word.word}',
+              ),
+              Padding(
+                padding: 6.0.verticalPadding,
+              ),
+              !user.isLoggedIn
+                  ? SizedBox.shrink()
+                  : Column(
+                      children: [
+                        WoDCard(
+                          word: word,
+                          height: 180,
+                          color: Colors.blue.shade400,
+                          onTap: () {
+                            Navigate.push(
+                                context,
+                                BookmarksPage(
+                                  isBookMark: true,
+                                  user: user,
+                                ));
+                          },
+                          title: 'Bookmarks',
+                        ),
+                        Padding(
+                          padding: 6.0.verticalPadding,
+                        ),
+                        WoDCard(
+                          word: word,
+                          height: 180,
+                          color: Colors.blue.shade400,
+                          onTap: () {
+                            Navigate.push(
+                                context,
+                                BookmarksPage(
+                                  isBookMark: false,
+                                  user: user,
+                                ));
+                          },
+                          title: 'Mastered Words',
+                        ),
+                      ],
+                    ),
+              SizedBox(
+                height: 100,
+              )
             ],
           ),
         ),
@@ -138,23 +187,35 @@ class DashboardMobile extends StatelessWidget {
 }
 
 class WoDCard extends StatelessWidget {
-  final Word word;
-  const WoDCard({Key? key, required this.word}) : super(key: key);
+  final Word? word;
+  final String title;
+  final Color? color;
+  final Function? onTap;
+  final double? height;
+
+  const WoDCard(
+      {super.key,
+      this.word,
+      this.height,
+      required this.title,
+      this.color,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     return Card(
       elevation: 2.0,
       shape: 16.0.rounded,
-      color: Colors.green.shade300,
+      color: this.color ?? Colors.green.shade300,
       child: InkWell(
         onTap: () {
-          Navigate.push(context, WordDetail(word: word));
+          if (onTap != null) {
+            onTap!();
+          }
         },
         child: Container(
-          height: size.height / 3,
+          height: height ?? size.height / 3,
           width: size.width,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.0),
@@ -162,7 +223,8 @@ class WoDCard extends StatelessWidget {
           child: Align(
               alignment: Alignment.center,
               child: Text(
-                '${word.word.capitalize()}',
+                '$title',
+                textAlign: TextAlign.center,
                 style: VocabTheme.googleFontsTextTheme.headline2,
               )),
         ),

@@ -201,15 +201,8 @@ class _SearchViewState extends State<SearchView> {
       oldQuery = query;
     }
     final results = await VocabStoreService.searchWord(query);
-
     searchNotifier.value = results;
-    // .where((element) => element.word.toLowerCase().contains(query))
-    // .map((e) => e)
-    // .toList();
   }
-
-  /// creates a new word and adds it to the database
-  /// 
 
   List<Word> words = [];
   String oldQuery = '';
