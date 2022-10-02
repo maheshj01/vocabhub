@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
@@ -90,94 +91,122 @@ class DashboardMobile extends StatelessWidget {
       return LoadingWidget();
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Dashboard',
-        ),
-        actions: [
-          user!.isLoggedIn
-              ? IconButton(
-                  onPressed: () {
-                    navigate(context, Notifications.route,
-                        isRootNavigator: false);
-                  },
-                  icon: Icon(
-                    Icons.notifications_on,
-                    color: VocabTheme.primaryColor,
-                  ))
-              : SizedBox.shrink(),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: 16.0.horizontalPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: 16.0.verticalPadding,
-                child: heading('Word of the day'),
+    return CustomScrollView(
+      slivers: <Widget>[
+        SliverAppBar(
+            pinned: false,
+            expandedHeight: 80.0,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                'Dashboard',
+                style: VocabTheme.googleFontsTextTheme.subtitle2!
+                    .copyWith(fontWeight: FontWeight.w700),
               ),
-              WoDCard(
-                word: word,
-                color: Colors.green.shade300,
-                onTap: () {
-                  Navigate.push(context, WordDetail(word: word));
-                },
-                title: '${word.word}',
-              ),
-              Padding(
-                padding: 6.0.verticalPadding,
-              ),
-              !user.isLoggedIn
-                  ? SizedBox.shrink()
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: 12.0.verticalPadding,
-                          child: heading('Progress'),
-                        ),
-                        WoDCard(
-                          word: word,
-                          height: 180,
-                          color: Colors.amberAccent.shade400,
-                          onTap: () {
-                            Navigate.push(
-                                context,
-                                BookmarksPage(
+            ),
+            actions: [
+              user!.isLoggedIn
+                  ? IconButton(
+                      onPressed: () {
+                        navigate(context, Notifications.route,
+                            isRootNavigator: false);
+                      },
+                      icon: Icon(
+                        Icons.notifications_on,
+                        color: VocabTheme.primaryColor,
+                      ))
+                  : SizedBox.shrink()
+            ]),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: 16.0.horizontalPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: 16.0.verticalPadding,
+                  child: heading('Word of the day'),
+                ),
+                OpenContainer<bool>(
+                    openBuilder:
+                        (BuildContext context, VoidCallback openContainer) {
+                      return WordDetail(word: word);
+                    },
+                    tappable: true,
+                    closedShape: 16.0.rounded,
+                    transitionType: ContainerTransitionType.fadeThrough,
+                    closedBuilder:
+                        (BuildContext context, VoidCallback openContainer) {
+                      return WoDCard(
+                        word: word,
+                        color: Colors.green.shade300,
+                        title: '${word.word}',
+                      );
+                    }),
+                Padding(
+                  padding: 6.0.verticalPadding,
+                ),
+                !user.isLoggedIn
+                    ? SizedBox.shrink()
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: 12.0.verticalPadding,
+                            child: heading('Progress'),
+                          ),
+                          OpenContainer<bool>(
+                              openBuilder: (BuildContext context,
+                                  VoidCallback openContainer) {
+                                return BookmarksPage(
                                   isBookMark: true,
                                   user: user,
-                                ));
-                          },
-                          title: 'Bookmarks',
-                        ),
-                        Padding(
-                          padding: 6.0.verticalPadding,
-                        ),
-                        WoDCard(
-                          word: word,
-                          height: 180,
-                          // color: Colors.blue.shade400,
-                          image: 'assets/dart.jpg',
-                          onTap: () {
-                            Navigate.push(
-                                context,
-                                BookmarksPage(
+                                );
+                              },
+                              closedShape: 16.0.rounded,
+                              tappable: true,
+                              transitionType:
+                                  ContainerTransitionType.fadeThrough,
+                              closedBuilder: (BuildContext context,
+                                  VoidCallback openContainer) {
+                                return WoDCard(
+                                  word: word,
+                                  height: 180,
+                                  color: Colors.amberAccent.shade400,
+                                  title: 'Bookmarks',
+                                );
+                              }),
+                          Padding(
+                            padding: 6.0.verticalPadding,
+                          ),
+                          OpenContainer<bool>(
+                              openBuilder: (BuildContext context,
+                                  VoidCallback openContainer) {
+                                return BookmarksPage(
                                   isBookMark: false,
                                   user: user,
-                                ));
-                          },
-                          title: 'Mastered Words',
-                        ),
-                      ],
-                    ),
-              100.0.vSpacer()
-            ],
+                                );
+                              },
+                              tappable: true,
+                              closedShape: 16.0.rounded,
+                              transitionType:
+                                  ContainerTransitionType.fadeThrough,
+                              closedBuilder: (BuildContext context,
+                                  VoidCallback openContainer) {
+                                return WoDCard(
+                                  word: word,
+                                  height: 180,
+                                  image: 'assets/dart.jpg',
+                                  title: 'Mastered Words',
+                                );
+                              })
+                        ],
+                      ),
+                100.0.vSpacer()
+              ],
+            ),
           ),
-        ),
-      ),
+        )
+      ],
     );
   }
 }
@@ -186,7 +215,6 @@ class WoDCard extends StatelessWidget {
   final Word? word;
   final String title;
   final Color? color;
-  final Function? onTap;
   final double? height;
   final String? image;
 
@@ -196,42 +224,30 @@ class WoDCard extends StatelessWidget {
       this.height,
       required this.title,
       this.color,
-      this.image,
-      this.onTap});
+      this.image});
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Card(
-      elevation: 2.0,
-      shape: 16.0.rounded,
-      color: this.color,
-      child: InkWell(
-        onTap: () {
-          if (onTap != null) {
-            onTap!();
-          }
-        },
-        child: Container(
-          height: height ?? size.height / 3,
-          width: size.width,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16.0),
-              image: image != null
-                  ? DecorationImage(
-                      fit: BoxFit.fill,
-                      opacity: 0.7,
-                      image: AssetImage('assets/dart.jpg'))
-                  : null),
-          child: Align(
-              alignment: Alignment.center,
-              child: Text(
-                '$title',
-                textAlign: TextAlign.center,
-                style: VocabTheme.googleFontsTextTheme.headline2,
-              )),
-        ),
-      ),
+    return Container(
+      height: height ?? size.height / 3,
+      width: size.width,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.0),
+          color: this.color,
+          image: image != null
+              ? DecorationImage(
+                  fit: BoxFit.fill,
+                  opacity: 0.7,
+                  image: AssetImage('assets/dart.jpg'))
+              : null),
+      child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            '$title',
+            textAlign: TextAlign.center,
+            style: VocabTheme.googleFontsTextTheme.headline2,
+          )),
     );
   }
 }

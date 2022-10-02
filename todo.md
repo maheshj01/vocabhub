@@ -20,6 +20,15 @@ Toggle is Admin
 - [ ] Dark theme for the app.
 - [ ] Before adding to history check if duplicate edit exists.
 - [ ] Add a feature to notify app update.
+- [ ] Create onBoarding screens for app tour.
+- [ ] Create a reputation system for users.
+- [ ] Forum Tab to show edit and new word proposals user can only upvote or downvote the proposal.
+
+### Reputation
+
+- [ ] Add a new word +10 Reputation (on Approve of the word)
+- [ ] Make a successful edit +2
+
 
 ### Notifications
 
@@ -37,7 +46,7 @@ Toggle is Admin
 
 ### Word Detail Page
 
-- [ ] implement meaning animation
+- [ ] Add typewriter animation to meaning of the word.
 
 ### Search
 
@@ -49,15 +58,16 @@ Toggle is Admin
 
 ### explore page
 
-- [ ] Explore should fetch words in pagination from by querying 20 words at a time.(Configurable number)
-- [ ] Initially random 20 words will be fetched and then on scroll 20 more words will be fetched But the known words should not be repeated (Unknown status and random only).
+- [X] Explore should fetch words in pagination from by querying 20 words at a time.(Configurable number)
+- [X] Initially random 20 words will be fetched and then on scroll 20 more words will be fetched But the known words should not be repeated (Unknown status and random only).
 - [ ] If user is not logged In, user can simply swipe all words and a login prompt should be shown on every 5th or 10th word.
 - [ ] Scroll Animation should be shown only for the first time user visits the explore page.
 
 ### User Profile
 
-- [] User should be able to update his profile (username, profile picture)
-
+- [ ] User should be able to update his profile (username, profile picture)
+- [ ] User Profile should show his Reputation on the platform.
+- [ ] Add a LeaderBoard Redirecion from profile page.
 #### Contributions
 
 - [ ] Based on above contribution assign reputation points to user

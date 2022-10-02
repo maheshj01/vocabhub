@@ -64,62 +64,67 @@ class _BookmarksMobileState extends State<_BookmarksMobile> {
   @override
   Widget build(BuildContext context) {
     String title = widget.isBookMark ? 'Bookmarks' : 'Mastered words';
+
+    Widget _emptyWidget() {
+      return Center(
+        child: Text('No ${title.toLowerCase()} to show'),
+      );
+    }
+
     return ValueListenableBuilder(
         valueListenable: _bookmarksNotifier,
         builder: (_, List<Word>? value, Widget? child) {
           if (value == null) {
-            return LoadingWidget();
-          }
-          if (value.isEmpty) {
             return Scaffold(
-              appBar: AppBar(
-                title: Text('$title'),
-              ),
-              body: Center(
-                child: Text('No ${title.toLowerCase()} to show'),
-              ),
-            );
+                appBar: AppBar(title: Text('$title')), body: LoadingWidget());
           }
           return Scaffold(
               appBar: AppBar(
-                title: Text('${value.length} $title'),
+                title: value.isEmpty
+                    ? Text('$title')
+                    : Text('${value.length} $title'),
               ),
-              body: ListView.builder(
-                itemCount: value.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 4.0),
-                    child: OpenContainer(
-                        openBuilder:
-                            (BuildContext context, VoidCallback openContainer) {
-                          return WordDetail(word: value[index]);
-                        },
-                        tappable: true,
-                        transitionType: ContainerTransitionType.fadeThrough,
-                        closedBuilder:
-                            (BuildContext context, VoidCallback openContainer) {
-                          return ListTile(
-                            minVerticalPadding: 24,
-                            title: Text(value[index].word),
-                            trailing: IconButton(
-                              icon: Icon(
-                                Icons.bookmark,
-                                color: VocabTheme.primaryColor,
-                              ),
-                              onPressed: () async {
-                                await VocabStoreService.removeBookmark(
-                                    value[index].id,
-                                    isBookmark: widget.isBookMark);
-                                getBookmarks();
-                                showMessage(context, '$title removed');
+              body: value.isEmpty
+                  ? _emptyWidget()
+                  : ListView.builder(
+                      itemCount: value.length,
+                      padding: EdgeInsets.only(
+                          top: 16, bottom: kBottomNavigationBarHeight),
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4.0),
+                          child: OpenContainer(
+                              openBuilder: (BuildContext context,
+                                  VoidCallback openContainer) {
+                                return WordDetail(word: value[index]);
                               },
-                            ),
-                          );
-                        }),
-                  );
-                },
-              ));
+                              tappable: true,
+                              transitionType:
+                                  ContainerTransitionType.fadeThrough,
+                              closedBuilder: (BuildContext context,
+                                  VoidCallback openContainer) {
+                                return ListTile(
+                                  minVerticalPadding: 24,
+                                  title: Text(value[index].word),
+                                  trailing: IconButton(
+                                    icon: Icon(
+                                      Icons.bookmark,
+                                      color: VocabTheme.primaryColor,
+                                    ),
+                                    onPressed: () async {
+                                      await VocabStoreService.removeBookmark(
+                                          value[index].id,
+                                          isBookmark: widget.isBookMark);
+                                      getBookmarks();
+                                      showMessage(context, '$title removed');
+                                    },
+                                  ),
+                                );
+                              }),
+                        );
+                      },
+                    ));
         });
   }
 }
