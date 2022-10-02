@@ -89,7 +89,12 @@ class _NotificationsState extends State<Notifications> {
               if (value == null || user == null) {
                 return LoadingWidget();
               }
-              // TODO: Toggle isAdmin
+
+              if (value.isEmpty) {
+                return Center(
+                  child: Text('No notifications'),
+                );
+              }
               if (user!.isAdmin) {
                 return ListView.builder(
                     padding:

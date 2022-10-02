@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:navbar_router/navbar_router.dart';
@@ -91,20 +92,25 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
         padding: const EdgeInsets.only(
           bottom: kBottomNavigationBarHeight * 0.8,
         ),
-        child: FloatingActionButton(
-            child: Icon(
-              Icons.add,
-              semanticLabel: 'Add Word',
-              size: 32,
-              color: VocabTheme.primaryColor,
-            ),
-            onPressed: () {
-              Navigate.push(
-                  context,
-                  AddWordForm(
-                    isEdit: false,
-                  ),
-                  slideTransitionType: TransitionType.scale);
+        child: OpenContainer<bool>(
+            openBuilder: (BuildContext context, VoidCallback openContainer) {
+              return AddWordForm(
+                isEdit: false,
+              );
+            },
+            tappable: true,
+            closedShape: 32.0.rounded,
+            transitionType: ContainerTransitionType.fadeThrough,
+            closedBuilder: (BuildContext context, VoidCallback openContainer) {
+              return FloatingActionButton(
+                child: Icon(
+                  Icons.add,
+                  semanticLabel: 'Add Word',
+                  size: 32,
+                  color: VocabTheme.primaryColor,
+                ),
+                onPressed: null,
+              );
             }),
       ),
       body: NavbarRouter(

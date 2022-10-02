@@ -101,6 +101,31 @@ class EditHistoryService {
     return resp;
   }
 
+  static Future<Response> getUserContributions(UserModel user) async {
+    final resp = Response(didSucced: false, message: "Failed");
+
+    PostgrestResponse response;
+    // TODO: Toggle isAdmin
+    response = await DatabaseService.findRowByColumnValue(
+      '${user.email}',
+      // 'approved',
+      columnName: '$USER_EMAIL_COLUMN',
+      // column2Name: '$STATE_COLUMN',
+      tableName: _tableName,
+    );
+    if (response.status == 200) {
+      final data = (response.data as List)
+          .map((e) => NotificationModel.fromJson(e))
+          .toList();
+      resp.didSucced = true;
+      resp.message = 'Success';
+      resp.data = data;
+    } else {
+      resp.message = response.error!.message;
+    }
+    return resp;
+  }
+
   /// cancel the request from user
 
   static Future<Response> updateRequest(String editId,

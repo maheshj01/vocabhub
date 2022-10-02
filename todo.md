@@ -16,19 +16,19 @@ Toggle is Admin
 - [X] Remove '\n' from synonyms using Edit Page.
 - [X] BottomnNavigation background color as per UI.
 - [X] Edit a word and add to edit history table.
+- [ ] Create onBoarding screens for app tour.
+- [ ] Before adding to history check if duplicate edit exists.
 - [ ] Ensure the fonts are consistent across the app.
 - [ ] Dark theme for the app.
-- [ ] Before adding to history check if duplicate edit exists.
 - [ ] Add a feature to notify app update.
-- [ ] Create onBoarding screens for app tour.
 - [ ] Create a reputation system for users.
 - [ ] Forum Tab to show edit and new word proposals user can only upvote or downvote the proposal.
-
+- Add a about section for the app
+- [ ] Add deeplinking to specific word from share feature
 ### Reputation
 
 - [ ] Add a new word +10 Reputation (on Approve of the word)
 - [ ] Make a successful edit +2
-
 
 ### Notifications
 
@@ -72,3 +72,11 @@ Toggle is Admin
 
 - [ ] Based on above contribution assign reputation points to user
 - [ ] Show contributions on profile page
+
+
+
+### Questions to Ponder
+- User makes same requests multiple times, should we allow that?
+- User tries adding a existing word.
+- Multiple users try adding same word. (Two requests pending for same word)
+- Two edit requests pending for same word.

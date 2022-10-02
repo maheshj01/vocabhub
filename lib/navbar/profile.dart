@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/notification.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
@@ -59,14 +60,18 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
   Future<void> getEditStats() async {
     await Duration.zero;
     final user = AppStateScope.of(context).user;
-    final resp = await EditHistoryService.getUserEdits(user!);
+    final resp = await EditHistoryService.getUserContributions(user!);
     if (resp.didSucced && resp.data != null) {
       final editHistory = resp.data as List<NotificationModel>;
       editHistory.forEach((history) {
-        if (history.edit.edit_type == 'add') {
-          stats[0]++;
-        } else {
-          stats[1]++;
+        if (history.edit.state == EditState.approved) {
+          if (history.edit.edit_type == EditType.add) {
+            stats[0]++;
+          } else if (history.edit.edit_type == EditType.edit) {
+            stats[1]++;
+          }
+        } else if (history.edit.state == EditState.pending) {
+          stats[2]++;
         }
       });
     }
@@ -95,11 +100,13 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
 
     return Scaffold(
         body: user == null || !user.isLoggedIn
-            ? VocabButton(
-                onTap: () {
-                  Navigate.push(context, AppSignIn());
-                },
-                label: 'Sign In')
+            ? Center(
+                child: VocabButton(
+                    onTap: () {
+                      Navigate.push(context, AppSignIn());
+                    },
+                    label: 'Sign In'),
+              )
             : Padding(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 8.0,
@@ -186,7 +193,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                               ])),
                               16.0.vSpacer(),
                               Text(
-                                '${user.name}',
+                                '${user.name.capitalize()}',
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context)
                                     .textTheme
@@ -204,7 +211,6 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                     Container(
                         alignment: Alignment.centerLeft,
                         child: heading('Contributions')),
-
                     16.0.vSpacer(),
 
                     /// rounded Container with border
@@ -241,7 +247,9 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                         Text(
                                           i == 0
                                               ? 'Words Added'
-                                              : 'Words Edited',
+                                              : i == 1
+                                                  ? 'Words Edited'
+                                                  : 'Under Review',
                                           style: Theme.of(context)
                                               .textTheme
                                               .subtitle2!

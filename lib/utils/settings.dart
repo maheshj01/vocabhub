@@ -102,6 +102,7 @@ class Settings extends ChangeNotifier {
   static void addRecent(Word word) async {
     final List<Word> recentList = await recents;
     if (!recentList.contains(word)) {
+      recentList.add(word);
       final stringData = jsonEncode(recentList);
       await _sharedPreferences!.setString(recentKey, stringData);
     } else {

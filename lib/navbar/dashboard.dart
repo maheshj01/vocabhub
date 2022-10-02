@@ -97,10 +97,15 @@ class DashboardMobile extends StatelessWidget {
             pinned: false,
             expandedHeight: 80.0,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                'Dashboard',
-                style: VocabTheme.googleFontsTextTheme.subtitle2!
-                    .copyWith(fontWeight: FontWeight.w700),
+              centerTitle: true,
+              background: Container(
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.only(left: 16, top: 16),
+                child: Text(
+                  'Dashboard',
+                  style: VocabTheme.googleFontsTextTheme.subtitle2!
+                      .copyWith(fontSize: 28, fontWeight: FontWeight.w700),
+                ),
               ),
             ),
             actions: [

@@ -154,14 +154,16 @@ class _MobileViewState extends State<MobileView> {
               onChanged: (x) {},
             ),
           ),
-          Padding(
-            padding: 8.0.horizontalPadding,
-            child: heading('New Words'),
-          ),
+          // Padding(
+          //   padding: 8.0.horizontalPadding,
+          //   child: heading('New Words'),
+          // ),
           Expanded(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [Text('show some popular words')],
+              child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [Text('Popular words\nComing soon!')],
+            ),
           ))
         ],
       ),
@@ -269,31 +271,35 @@ class _SearchViewState extends State<SearchView> {
                                 padding:
                                     kBottomNavigationBarHeight.bottomPadding,
                                 itemBuilder: (context, index) {
-                                  return OpenContainer(
-                                      openBuilder: (BuildContext context,
-                                          VoidCallback openContainer) {
-                                        return WordDetail(
-                                          word: history[index],
-                                        );
-                                      },
-                                      tappable: true,
-                                      transitionType:
-                                          ContainerTransitionType.fadeThrough,
-                                      closedBuilder: (BuildContext context,
-                                          VoidCallback openContainer) {
-                                        return ListTile(
-                                          subtitle: SizedBox.shrink(),
-                                          title: Text('${history[index].word}'),
-                                          trailing: GestureDetector(
-                                              onTap: () async {
-                                                await Settings.removeRecent(
-                                                    history[index]);
-                                                showRecents();
-                                              },
-                                              child:
-                                                  Icon(Icons.close, size: 16)),
-                                        );
-                                      });
+                                  return Padding(
+                                    padding: 1.0.verticalPadding,
+                                    child: OpenContainer(
+                                        openBuilder: (BuildContext context,
+                                            VoidCallback openContainer) {
+                                          return WordDetail(
+                                            word: history[index],
+                                          );
+                                        },
+                                        closedElevation: 0,
+                                        tappable: true,
+                                        transitionType:
+                                            ContainerTransitionType.fadeThrough,
+                                        closedBuilder: (BuildContext context,
+                                            VoidCallback openContainer) {
+                                          return ListTile(
+                                            title:
+                                                Text('${history[index].word}'),
+                                            trailing: GestureDetector(
+                                                onTap: () async {
+                                                  await Settings.removeRecent(
+                                                      history[index]);
+                                                  showRecents();
+                                                },
+                                                child: Icon(Icons.close,
+                                                    size: 16)),
+                                          );
+                                        }),
+                                  );
                                 },
                                 itemCount: history.length,
                               ))
@@ -343,7 +349,7 @@ class _SearchViewState extends State<SearchView> {
                                 itemBuilder: (context, index) {
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4.0),
+                                        horizontal: 8, vertical: 1.0),
                                     child: OpenContainer(
                                         openBuilder: (BuildContext context,
                                             VoidCallback openContainer) {
@@ -352,6 +358,7 @@ class _SearchViewState extends State<SearchView> {
                                             word: history[index],
                                           );
                                         },
+                                        closedElevation: 0,
                                         tappable: true,
                                         transitionType:
                                             ContainerTransitionType.fadeThrough,
