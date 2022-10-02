@@ -35,9 +35,9 @@ class LoadingWidget extends StatelessWidget {
   }
 }
 
-Widget hLine({Color? color}) {
+Widget hLine({Color? color, double height = 0.4}) {
   return Container(
-    height: 0.4,
+    height: height,
     color: color ?? Colors.grey.withOpacity(0.5),
   );
 }
@@ -100,4 +100,15 @@ RichText buildNotification(String notification, String word,
   }).toList();
   textSpans!.addAll(iterable);
   return RichText(text: TextSpan(text: '', children: textSpans));
+}
+
+Widget heading(String title) {
+  return Text(
+    title,
+    style: TextStyle(
+      fontSize: 20,
+      color: VocabTheme.lightblue,
+      fontWeight: FontWeight.w600,
+    ),
+  );
 }

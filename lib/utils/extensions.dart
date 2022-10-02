@@ -145,3 +145,9 @@ extension RoundedShape on double {
       borderRadius: BorderRadius.only(
           topRight: Radius.circular(this), bottomLeft: Radius.circular(this)));
 }
+
+extension SizedBoxSpacer on double {
+  SizedBox vSpacer() => SizedBox(height: this);
+
+  SizedBox hSpacer() => SizedBox(width: this);
+}

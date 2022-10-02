@@ -46,7 +46,6 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
         await VocabStoreService.exploreWords(user!.email, page: page);
     words!.addAll(newWords);
     max = words!.length;
-    print('words length = ${words!.length}');
     loadingNotifier.value = false;
   }
 
@@ -78,10 +77,8 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
                     controller: pageController,
                     scrollBehavior: MaterialScrollBehavior(),
                     onPageChanged: (x) {
-                      print('max = $max, x = $x');
                       if (x > max - 5) {
                         page++;
-                        print('fetching at $x');
                         exploreWords();
                       }
                       hideMessage(context);
@@ -224,6 +221,11 @@ class _ExploreWordState extends State<ExploreWord>
               mainAxisAlignment:
                   !reveal ? MainAxisAlignment.center : MainAxisAlignment.start,
               children: [
+                !reveal
+                    ? SizedBox.shrink()
+                    : SizedBox(
+                        height: kToolbarHeight,
+                      ),
                 Padding(
                   padding:
                       const EdgeInsets.only(top: kToolbarHeight, bottom: 12),

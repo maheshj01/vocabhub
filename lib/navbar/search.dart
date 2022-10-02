@@ -141,6 +141,7 @@ class _MobileViewState extends State<MobileView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding:
@@ -153,10 +154,14 @@ class _MobileViewState extends State<MobileView> {
               onChanged: (x) {},
             ),
           ),
+          Padding(
+            padding: 8.0.horizontalPadding,
+            child: heading('New Words'),
+          ),
           Expanded(
               child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [Container(), Text('show some popular words')],
+            children: [Text('show some popular words')],
           ))
         ],
       ),

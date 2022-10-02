@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage>
       await Navigate.push(context, AddWordForm(),
           slideTransitionType: TransitionType.btt);
     } else if (text.toLowerCase() == 'sign out') {
-      final isSignedOut = await AuthenticationService().googleSignOut(context);
+      final isSignedOut = await AuthService().googleSignOut(context);
       showCircularIndicator(context);
       if (isSignedOut) {
         Settings.setIsSignedIn(false, email: '');

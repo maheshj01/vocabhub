@@ -89,10 +89,15 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
       resizeToAvoidBottomInset: false,
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(
-          bottom: kBottomNavigationBarHeight * 0.7,
+          bottom: kBottomNavigationBarHeight * 0.8,
         ),
         child: FloatingActionButton(
-            child: Icon(Icons.add),
+            child: Icon(
+              Icons.add,
+              semanticLabel: 'Add Word',
+              size: 32,
+              color: VocabTheme.primaryColor,
+            ),
             onPressed: () {
               Navigate.push(
                   context,

@@ -8,7 +8,7 @@ import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
-class AuthenticationService {
+class AuthService {
   GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: <String>[
       'email',

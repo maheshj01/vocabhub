@@ -85,15 +85,6 @@ class DashboardMobile extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
     final word = AppStateScope.of(context).wordOfTheDay;
-    Widget heading(String title) {
-      return Text(
-        title,
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-      );
-    }
 
     if (word == null) {
       return LoadingWidget();

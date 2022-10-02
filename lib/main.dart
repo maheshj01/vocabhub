@@ -45,8 +45,8 @@ class _VocabAppState extends State<VocabApp> {
     firebaseAnalytics.appOpen();
     final email = await Settings.email;
     if (email.isNotEmpty) {
-      final response = await AuthenticationService.updateLogin(
-          email: email, isLoggedIn: true);
+      final response =
+          await AuthService.updateLogin(email: email, isLoggedIn: true);
       print(response.status);
     }
   }

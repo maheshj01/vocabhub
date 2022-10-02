@@ -19,7 +19,7 @@ class AppSignIn extends StatefulWidget {
 }
 
 class _AppSignInState extends State<AppSignIn> {
-  AuthenticationService auth = AuthenticationService();
+  AuthService auth = AuthService();
 
   Future<void> _handleSignIn(BuildContext context) async {
     final state = AppStateWidget.of(context);
@@ -30,7 +30,7 @@ class _AppSignInState extends State<AppSignIn> {
         final existingUser = await UserService.findByEmail(email: user!.email);
         if (existingUser.email.isEmpty) {
           logger.d('registering new user ${user!.email}');
-          final resp = await AuthenticationService.registerUser(user!);
+          final resp = await AuthService.registerUser(user!);
           if (resp.didSucced) {
             final user = UserModel.fromJson((resp.data as List<dynamic>)[0]);
             state.setUser(user.copyWith(isLoggedIn: true));
@@ -49,7 +49,7 @@ class _AppSignInState extends State<AppSignIn> {
         } else {
           logger.d('found existing user ${user!.email}');
           await Settings.setIsSignedIn(true, email: existingUser.email);
-          await AuthenticationService.updateLogin(
+          await AuthService.updateLogin(
               email: existingUser.email, isLoggedIn: true);
           state.setUser(existingUser.copyWith(isLoggedIn: true));
           loadingNotifier.value = false;
