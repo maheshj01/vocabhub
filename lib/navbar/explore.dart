@@ -221,11 +221,7 @@ class _ExploreWordState extends State<ExploreWord>
               mainAxisAlignment:
                   !reveal ? MainAxisAlignment.center : MainAxisAlignment.start,
               children: [
-                !reveal
-                    ? SizedBox.shrink()
-                    : SizedBox(
-                        height: kToolbarHeight,
-                      ),
+                !reveal ? SizedBox.shrink() : kToolbarHeight.vSpacer(),
                 Padding(
                   padding:
                       const EdgeInsets.only(top: kToolbarHeight, bottom: 12),
@@ -419,9 +415,7 @@ class _WordMasteredPreferenceState extends State<WordMasteredPreference> {
             ),
           ],
         ),
-        SizedBox(
-          height: 16,
-        ),
+        16.0.vSpacer(),
         ToggleButtons(
           borderColor: stateToColor(widget.value),
           selectedBorderColor: stateToColor(widget.value),

@@ -308,9 +308,7 @@ class _AddWordFormState extends State<AddWordForm> {
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: ListView(
             children: [
-              SizedBox(
-                height: 25,
-              ),
+              25.0.vSpacer(),
               VocabField(
                 autofocus: true,
                 fontSize: 30,
@@ -393,9 +391,7 @@ class _AddWordFormState extends State<AddWordForm> {
                             : Container(),
                       ],
                     ),
-              SizedBox(
-                height: 30,
-              ),
+              30.0.hSpacer(),
               ...List.generate(editedWord.examples!.length, (index) {
                 return Container(
                   margin: EdgeInsets.symmetric(
@@ -489,9 +485,7 @@ class _AddWordFormState extends State<AddWordForm> {
                   ),
                 );
               }),
-              SizedBox(
-                height: 24,
-              ),
+              24.0.vSpacer(),
               editedWord.mnemonics!.length < maxMnemonicCount
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -533,9 +527,7 @@ class _AddWordFormState extends State<AddWordForm> {
                       ],
                     )
                   : Container(),
-              SizedBox(
-                height: 50,
-              ),
+              50.0.hSpacer(),
               Align(
                   alignment: Alignment.center,
                   child: SizedBox(
@@ -554,7 +546,7 @@ class _AddWordFormState extends State<AddWordForm> {
                                 color:
                                     isDisabled ? Colors.black : Colors.white))),
                   )),
-              SizedBox(height: 16),
+              16.0.hSpacer(),
               ValueListenableBuilder<bool>(
                   valueListenable: _errorNotifier,
                   builder: (context, value, Widget? widget) {
@@ -591,12 +583,10 @@ class _AddWordFormState extends State<AddWordForm> {
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600),
                           ))
-                      : SizedBox(),
+                      : SizedBox.shrink(),
                 ),
               ),
-              SizedBox(
-                height: 40,
-              )
+              40.0.hSpacer(),
             ],
           ),
         ),

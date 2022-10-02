@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 
 class WordsCountAnimator extends StatefulWidget {
@@ -38,9 +39,7 @@ class _WordsCountAnimatorState extends State<WordsCountAnimator> {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    height: 50,
-                  ),
+                  50.0.vSpacer(),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.end,

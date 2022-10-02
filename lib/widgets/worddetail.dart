@@ -101,7 +101,7 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
                                 ),
                                 slideTransitionType: TransitionType.scale);
                           })
-                      : SizedBox(),
+                      : SizedBox.shrink(),
                 ),
                 Align(
                   alignment: Alignment.topCenter,
@@ -128,9 +128,7 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
           SynonymsList(
             synonyms: widget.word!.synonyms,
           ),
-          SizedBox(
-            height: 50,
-          ),
+          50.0.vSpacer(),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
@@ -143,9 +141,7 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
                   ).fontFamily),
             ),
           ),
-          SizedBox(
-            height: 48,
-          ),
+          48.0.vSpacer(),
           Padding(
               padding: const EdgeInsets.all(16.0),
               child: ExampleListBuilder(
@@ -257,9 +253,7 @@ class _WordDetailDesktopState extends State<WordDetailDesktop>
         : Material(
             child: Column(
               children: [
-                SizedBox(
-                  height: SizeUtils.isMobile ? 24 : (size.height / 5),
-                ),
+                (SizeUtils.isMobile ? 24.0 : (size.height / 5)).vSpacer(),
                 userProvider.isLoggedIn
                     ? Container(
                         alignment: Alignment.topRight,
@@ -277,7 +271,7 @@ class _WordDetailDesktopState extends State<WordDetailDesktop>
                                   ),
                                   slideTransitionType: TransitionType.scale);
                             }))
-                    : SizedBox(),
+                    : SizedBox.shrink(),
                 Align(
                   alignment: Alignment.topCenter,
                   child: GestureDetector(
@@ -307,15 +301,11 @@ class _WordDetailDesktopState extends State<WordDetailDesktop>
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 20,
-                ),
+                20.0.vSpacer(),
                 SynonymsList(
                   synonyms: widget.word!.synonyms,
                 ),
-                SizedBox(
-                  height: 50,
-                ),
+                50.0.vSpacer(),
                 AnimatedBuilder(
                     animation: _animation,
                     builder: (BuildContext _, Widget? child) {
@@ -333,9 +323,7 @@ class _WordDetailDesktopState extends State<WordDetailDesktop>
                                     ).fontFamily)),
                       );
                     }),
-                SizedBox(
-                  height: 48,
-                ),
+                48.0.vSpacer(),
                 Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: ExampleListBuilder(
@@ -356,9 +344,7 @@ class _WordDetailDesktopState extends State<WordDetailDesktop>
                           : widget.word!.mnemonics,
                       word: widget.word!.word,
                     )),
-                SizedBox(
-                  height: 200,
-                ),
+                200.0.vSpacer(),
               ],
             ),
           );
@@ -392,7 +378,7 @@ class _EmptyWordState extends State<EmptyWord> {
             'Whats the word on your mind?',
             style: Theme.of(context).textTheme.headline4,
           ),
-          SizedBox(height: 16),
+          16.0.vSpacer(),
           Text('Tip: ' + tips[randIndex],
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.caption),
@@ -413,7 +399,7 @@ class _EmptyWordState extends State<EmptyWord> {
           Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
               child: VersionBuilder()),
-          SizedBox(height: 40),
+          40.0.vSpacer(),
         ],
       ),
     );

@@ -44,9 +44,7 @@ class _ExampleListBuilderState extends State<ExampleListBuilder> {
               children: [
                 ...[
                   title(widget.title),
-                  SizedBox(
-                    height: 16,
-                  ),
+                  16.0.vSpacer(),
                   for (int i = 0; i < widget.examples!.length; i++)
                     buildExample(widget.examples![i], widget.word)
                 ]

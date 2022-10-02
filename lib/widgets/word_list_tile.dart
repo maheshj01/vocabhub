@@ -72,9 +72,7 @@ class _WordListTileState extends State<WordListTile> {
             hoverColor: colorScheme.primary.withOpacity(0.2),
             child: Row(
               children: [
-                SizedBox(
-                  width: 16,
-                ),
+                16.0.hSpacer(),
                 Flexible(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,

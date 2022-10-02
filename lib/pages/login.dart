@@ -179,21 +179,17 @@ class _AppSignInState extends State<AppSignIn> {
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              SizedBox(
-                                height: 200,
-                              ),
+                              200.0.vSpacer(),
                               // _heading('Hi!'),
                               _heading('Welcome!'),
                               Expanded(child: Container()),
                               _signInButton(),
-                              SizedBox(
-                                height: 20,
-                              ),
+
+                              20.0.vSpacer(),
                               _skipButton(),
                               Expanded(child: Container()),
-                              SizedBox(
-                                height: 100,
-                              )
+
+                              100.0.vSpacer(),
                             ]),
                       )),
           );

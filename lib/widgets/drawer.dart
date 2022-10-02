@@ -7,6 +7,7 @@ import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
+import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
@@ -103,9 +104,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   _avatar(userProvider),
-                  SizedBox(
-                    width: userProvider.isLoggedIn ? 20 : 30,
-                  ),
+                  (userProvider.isLoggedIn ? 20.0 : 30.0).hSpacer(),
                   Flexible(
                     child: GestureDetector(
                         onTap: () {
@@ -181,7 +180,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
                     ),
                     trailing: trailingIcon(Icons.download),
                   )
-                : SizedBox(),
+                : SizedBox.shrink(),
             hLine(),
             ListTile(
               onTap: () {
@@ -213,9 +212,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             WordsCountAnimator(
               isAnimated: isAnimated,
             ),
-            SizedBox(
-              height: 20,
-            ),
+           20.0.hSpacer(),
             if (kIsWeb) storeRedirect(context),
             Container(
               height: 60,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vocabhub/utils/extensions.dart';
 
 class VocabButton extends StatefulWidget {
   VocabButton(
@@ -58,8 +59,8 @@ class _VocabButtonState extends State<VocabButton> {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                widget.leading ?? SizedBox(),
-                SizedBox(width: widget.leading == null ? 0 : 20),
+                widget.leading ?? SizedBox.shrink(),
+                (widget.leading == null ? 0.0 : 20.0).hSpacer(),
                 Text(
                   '${widget.label}',
                   style: Theme.of(context).textTheme.headline4!.copyWith(

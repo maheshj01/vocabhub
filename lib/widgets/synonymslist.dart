@@ -19,7 +19,7 @@ class SynonymsList extends StatelessWidget {
   Widget build(BuildContext context) {
     // Size size = MediaQuery.of(context).size;
     return (synonyms == null || synonyms!.isEmpty)
-        ? SizedBox(height: emptyHeight)
+        ? emptyHeight.vSpacer()
         : Container(
             alignment: Alignment.center,
             padding: EdgeInsets.symmetric(

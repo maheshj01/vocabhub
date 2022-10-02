@@ -179,9 +179,7 @@ class UserNotificationTile extends StatelessWidget {
               border: Border.all(color: iconColor, width: 2),
               backgroundColor: Colors.transparent,
             ),
-            SizedBox(
-              width: 8,
-            ),
+            8.0.hSpacer(),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,9 +271,7 @@ class AdminNotificationTile extends StatelessWidget {
               url: user.avatarUrl,
               name: user.name,
             ),
-            SizedBox(
-              width: 8,
-            ),
+            8.0.hSpacer(),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -308,9 +304,7 @@ class AdminNotificationTile extends StatelessWidget {
                               circle(
                                   color: stateToIconColor(edit.state!),
                                   size: 12),
-                              SizedBox(
-                                width: 6,
-                              ),
+                              6.0.hSpacer(),
                               Text(
                                 edit.state!.toName().capitalize()!,
                               )
@@ -328,9 +322,7 @@ class AdminNotificationTile extends StatelessWidget {
                                   iconColor: Colors.red, onTap: () {
                                 onAction(false);
                               }),
-                              SizedBox(
-                                width: 16,
-                              ),
+                              16.0.hSpacer(),
                               VHIcon(Icons.check,
                                   size: 36,
                                   backgroundColor: Colors.white,

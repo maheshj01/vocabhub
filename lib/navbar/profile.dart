@@ -294,9 +294,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                     //     });
                     //   },
                     // ),
-                    SizedBox(
-                      height: kBottomNavigationBarHeight,
-                    )
+                    kBottomNavigationBarHeight.vSpacer()
                   ],
                 ),
               ));

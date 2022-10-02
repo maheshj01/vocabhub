@@ -106,7 +106,7 @@ class DashboardMobile extends StatelessWidget {
                     Icons.notifications_on,
                     color: VocabTheme.primaryColor,
                   ))
-              : SizedBox(),
+              : SizedBox.shrink(),
         ],
       ),
       body: SingleChildScrollView(
@@ -173,9 +173,7 @@ class DashboardMobile extends StatelessWidget {
                         ),
                       ],
                     ),
-              SizedBox(
-                height: 100,
-              )
+              100.0.vSpacer()
             ],
           ),
         ),

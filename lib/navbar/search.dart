@@ -282,7 +282,7 @@ class _SearchViewState extends State<SearchView> {
                                       closedBuilder: (BuildContext context,
                                           VoidCallback openContainer) {
                                         return ListTile(
-                                          subtitle: SizedBox(),
+                                          subtitle: SizedBox.shrink(),
                                           title: Text('${history[index].word}'),
                                           trailing: GestureDetector(
                                               onTap: () async {
@@ -307,9 +307,7 @@ class _SearchViewState extends State<SearchView> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text('"$searchTerm" not found'),
-                                SizedBox(
-                                  height: 100,
-                                ),
+                                100.0.vSpacer(),
                                 VocabButton(
                                     width: 200,
                                     onTap: () {
@@ -445,7 +443,7 @@ class _WordListState extends State<WordList> {
         builder: (BuildContext context, List<Word> value, Widget? child) {
           return Column(
             children: [
-              SizedBox(height: 8),
+              8.0.vSpacer(),
               Row(
                 children: [
                   Expanded(
@@ -480,7 +478,7 @@ class _WordListState extends State<WordList> {
                     ),
                   ),
                   widget.isExpanded == null
-                      ? SizedBox()
+                      ? SizedBox.shrink()
                       : IconButton(
                           onPressed: () {
                             if (widget.onExpanded != null) {
