@@ -211,7 +211,7 @@ class UserNotificationTile extends StatelessWidget {
                                 .copyWith(
                                     fontSize: 12, fontWeight: FontWeight.w600)),
                         edit.state == EditState.pending
-                            ? VocabButton(
+                            ? VHButton(
                                 onTap: () {
                                   onCancel!();
                                 },

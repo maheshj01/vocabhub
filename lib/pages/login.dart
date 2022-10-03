@@ -101,7 +101,7 @@ class _AppSignInState extends State<AppSignIn> {
     Widget _skipButton() {
       return Align(
           alignment: Alignment.center,
-          child: VocabButton(
+          child: VHButton(
             width: 300,
             backgroundColor: VocabTheme.primaryColor,
             foregroundColor: Colors.white,
@@ -120,7 +120,7 @@ class _AppSignInState extends State<AppSignIn> {
           Widget _signInButton() {
             return Align(
                 alignment: Alignment.center,
-                child: VocabButton(
+                child: VHButton(
                   width: 300,
                   leading: Image.asset('$GOOGLE_ASSET_PATH', height: 32),
                   label: 'Sign In with Google',

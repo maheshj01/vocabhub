@@ -64,5 +64,23 @@
 				"runOn": "folderOpen"
 			}
 		},
+		{
+			"type": "flutter",
+			"command": "flutter",
+			"dependsOn" : [
+				"flutter: flutter run "
+			],
+			"args": [
+				"build",
+				"apk"
+			],
+			"group": "build",
+			"label": "flutter: build apk",
+			"detail": "",
+			"runOptions": {
+				"runOn": "folderOpen"
+			}
+		},
+
 	]
 }

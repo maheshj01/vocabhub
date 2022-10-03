@@ -33,6 +33,46 @@ class UserService {
     }
   }
 
+  static Future<bool> isUsernameValid(
+    String userName,
+  ) async {
+    try {
+      final response = await DatabaseService.findSingleRowByColumnValue(
+          userName,
+          columnName: USERNAME_COLUMN,
+          tableName: _tableName);
+      if (response.status == 200) {
+        final user = UserModel.fromJson(response.data);
+        return !(user.email.isNotEmpty && user.username.isNotEmpty);
+      }
+      if (response.status == 406) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static Future<bool> updateUser(UserModel user) async {
+    try {
+      final data = user.toJson();
+      final response = await DatabaseService.updateRow(
+          colValue: user.email,
+          data: data,
+          columnName: USER_EMAIL_COLUMN,
+          tableName: _tableName);
+      if (response.status == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// ```Select * from words;```
   static Future<List<User>> findAllUsers() async {
     List<User> users = [];

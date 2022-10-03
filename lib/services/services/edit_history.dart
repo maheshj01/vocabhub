@@ -31,7 +31,7 @@ class EditHistoryService {
   static Future<PostgrestResponse> updateRowState(
       String id, EditState state) async {
     final response = await DatabaseService.updateRow(
-        rowValue: id,
+        colValue: id,
         data: {'state': '${state.name}'},
         columnName: '$EDIT_ID_COLUMN',
         tableName: _tableName);

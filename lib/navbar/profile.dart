@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/notification.dart';
+import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/navigator.dart';
-import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
 import 'package:vocabhub/widgets/icon.dart';
@@ -97,11 +97,10 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
   @override
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
-
     return Scaffold(
         body: user == null || !user.isLoggedIn
             ? Center(
-                child: VocabButton(
+                child: VHButton(
                     onTap: () {
                       Navigate.push(context, AppSignIn());
                     },
@@ -164,15 +163,34 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                         Icons.edit,
                                         size: 30,
                                         onTap: () {
-                                          print('tapped icon');
+                                          Navigate.push(
+                                            context,
+                                            EditProfile(
+                                              user: user,
+                                              onClose: () async {
+                                                setState(() {});
+                                              },
+                                            ),
+                                          );
                                         },
                                       ))
                                 ],
                               ),
                               Padding(
-                                  padding: 8.0.allPadding,
-                                  child: Text(
-                                      !user.isAdmin ? ' User 🔒' : 'Admin 🔑')),
+                                  padding: 8.0.horizontalPadding,
+                                  child: Text('@${user.username} ' +
+                                      (!user.isAdmin ? ' (User)' : '(Admin)'))),
+                              Text(
+                                '${user.name.capitalize()}',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline4!
+                                    .copyWith(
+                                        fontSize: 26,
+                                        fontWeight: FontWeight.w500),
+                              ),
+                              10.0.vSpacer(),
                               RichText(
                                   text: TextSpan(children: [
                                 TextSpan(
@@ -191,17 +209,6 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                       .copyWith(fontWeight: FontWeight.w600),
                                 ),
                               ])),
-                              16.0.vSpacer(),
-                              Text(
-                                '${user.name.capitalize()}',
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline4!
-                                    .copyWith(
-                                        fontSize: 32,
-                                        fontWeight: FontWeight.w500),
-                              ),
                             ],
                           ),
                         ),
@@ -265,7 +272,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                           );
                         }),
                     Spacer(),
-                    VocabButton(
+                    VHButton(
                       label: 'Sign Out',
                       height: 50,
                       width: 140,

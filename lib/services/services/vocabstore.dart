@@ -188,7 +188,7 @@ class VocabStoreService {
   }) async {
     final Map<String, dynamic> json = word.toJson();
     final response = await DatabaseService.updateRow(
-        rowValue: id, data: json, columnName: ID_COLUMN, tableName: tableName);
+        colValue: id, data: json, columnName: ID_COLUMN, tableName: tableName);
     return response;
   }
 

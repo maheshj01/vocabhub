@@ -27,7 +27,7 @@ class WordStateService {
   static Future<PostgrestResponse> updateWordPreference(
       String id, WordState state) async {
     final response = await DatabaseService.updateRow(
-        rowValue: id,
+        colValue: id,
         data: {'state': '${state.name}'},
         columnName: 'word_id',
         tableName: _tableName);

@@ -89,6 +89,30 @@ extension ContainerPadding on double {
 
   EdgeInsetsGeometry get rightPadding => EdgeInsets.only(right: this);
 
+  EdgeInsetsGeometry get bottomRightPadding =>
+      EdgeInsets.only(bottom: this, right: this);
+
+  EdgeInsetsGeometry get bottomLeftPadding =>
+      EdgeInsets.only(bottom: this, left: this);
+
+  EdgeInsetsGeometry get topRightPadding =>
+      EdgeInsets.only(top: this, right: this);
+
+  EdgeInsetsGeometry get topLeftPadding =>
+      EdgeInsets.only(top: this, left: this);
+
+  EdgeInsetsGeometry get topHorizontalPadding =>
+      EdgeInsets.only(top: this, left: this, right: this);
+
+  EdgeInsetsGeometry get bottomHorizontalPadding =>
+      EdgeInsets.only(bottom: this, left: this, right: this);
+
+  EdgeInsetsGeometry get leftVerticalPadding =>
+      EdgeInsets.only(left: this, top: this, bottom: this);
+
+  EdgeInsetsGeometry get rightVerticalPadding =>
+      EdgeInsets.only(right: this, top: this, bottom: this);
+
   EdgeInsetsGeometry get verticalPadding =>
       EdgeInsets.symmetric(vertical: this);
 
@@ -150,5 +174,4 @@ extension SizedBoxSpacer on double {
   SizedBox vSpacer() => SizedBox(height: this);
 
   SizedBox hSpacer() => SizedBox(width: this);
-
 }

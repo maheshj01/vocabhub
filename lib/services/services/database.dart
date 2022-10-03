@@ -172,14 +172,14 @@ class DatabaseService {
   /// updates a row in the table
   ///
   static Future<PostgrestResponse> updateRow(
-      {required String rowValue,
+      {required String colValue,
       required Map<String, dynamic> data,
       String columnName = '$ID_COLUMN',
       String tableName = '$VOCAB_TABLE_NAME'}) async {
     final response = await _supabase
         .from(tableName)
         .update(data)
-        .eq("$columnName", "$rowValue")
+        .eq("$columnName", "$colValue")
         .execute();
     return response;
   }

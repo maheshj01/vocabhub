@@ -41,6 +41,7 @@ const CREATED_AT_COLUMN = 'created_at';
 const USERID_COLUMN = 'id';
 const USER_NAME_COLUMN = 'name';
 const USER_EMAIL_COLUMN = 'email';
+const USERNAME_COLUMN = 'username';
 const USER_BOOKMARKS_COLUMN = 'bookmarks';
 const USER_CREATED_AT_COLUMN = 'created_at';
 const USER_LOGGEDIN_COLUMN = 'isLoggedIn';

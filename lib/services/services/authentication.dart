@@ -50,11 +50,16 @@ class AuthService {
       final googleKey = await result!.authentication;
       final String? accessToken = googleKey.accessToken;
       final String? idToken = googleKey.idToken;
+      final String email = _googleSignIn.currentUser!.email;
+
+      /// default username
+      final String username = email.split('@').first;
       user = UserModel(
           name: _googleSignIn.currentUser!.displayName ?? '',
           email: _googleSignIn.currentUser!.email,
           avatarUrl: _googleSignIn.currentUser!.photoUrl,
           idToken: idToken,
+          username: username,
           accessToken: accessToken);
     } catch (error) {
       logger.e(error);

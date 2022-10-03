@@ -25,9 +25,13 @@ Toggle is Admin
 - [ ] Forum Tab to show edit and new word proposals user can only upvote or downvote the proposal.
 - Add a about section for the app
 - [ ] Add deeplinking to specific word from share feature
-### Reputation
 
+### Forum (Reputation rules)
+- [ ] Any one can propose a new word or edit a word. And that post will be shown up in this section.
+- [ ]
+- [ ] A new word can only be approved, if it has 25+ votes.
 - [ ] Add a new word +10 Reputation (on Approve of the word)
+- [ ] A negative upvote on a post will result in -5     Reputation.
 - [ ] Make a successful edit +2
 
 ### Notifications

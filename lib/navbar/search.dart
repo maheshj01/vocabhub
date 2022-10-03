@@ -314,7 +314,7 @@ class _SearchViewState extends State<SearchView> {
                               children: [
                                 Text('"$searchTerm" not found'),
                                 100.0.vSpacer(),
-                                VocabButton(
+                                VHButton(
                                     width: 200,
                                     onTap: () {
                                       Navigate.push(

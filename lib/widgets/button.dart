@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/utils/extensions.dart';
 
-class VocabButton extends StatefulWidget {
-  VocabButton(
+class VHButton extends StatefulWidget {
+  VHButton(
       {Key? key,
       this.backgroundColor = Colors.white,
       this.foregroundColor = Colors.black,
@@ -34,10 +34,10 @@ class VocabButton extends StatefulWidget {
   final bool isLoading;
 
   @override
-  _VocabButtonState createState() => _VocabButtonState();
+  _VHButtonState createState() => _VHButtonState();
 }
 
-class _VocabButtonState extends State<VocabButton> {
+class _VHButtonState extends State<VHButton> {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
