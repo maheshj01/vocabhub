@@ -6,7 +6,6 @@ import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/utils/utility.dart';
-import 'package:vocabhub/widgets/widgets.dart';
 
 class AuthService {
   GoogleSignIn _googleSignIn = GoogleSignIn(

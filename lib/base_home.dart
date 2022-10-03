@@ -1,6 +1,5 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/word.dart';
@@ -13,7 +12,8 @@ import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
-import 'package:vocabhub/widgets/button.dart';
+
+import 'pages/notifications/notifications.dart';
 
 const appBarDesktopHeight = 128.0;
 

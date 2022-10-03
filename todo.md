@@ -9,6 +9,7 @@ Toggle is Admin
 [ ] - yet to be done
 [T] - To be tested
 [P] - in progress
+[?] - Unsure if it is right way
 
 ### TODO
 
@@ -43,13 +44,14 @@ Toggle is Admin
 
 - [X] Slide Animation on Explore Page
 - [X] A word of the day card should be shown on Dashboard
-- [T] A word of the day should be updated when the first user comes online in the server timezone.
+- [X] A word of the day should be updated when the first user comes online in the server timezone.
 - [X] Mastered/Bookmarked words should be visible on Dashboard.
 - [X] User should be able to update the status of mastered/bookmarked words.
 
 ### Word Detail Page
 
 - [ ] Add typewriter animation to meaning of the word.
+- [] Ability to see history of edits made for that word.
 
 ### Search
 
@@ -71,12 +73,15 @@ Toggle is Admin
 - [ ] User should be able to update his profile (username, profile picture)
 - [ ] User Profile should show his Reputation on the platform.
 - [ ] Add a LeaderBoard Redirecion from profile page.
+- [ ] Stats should show contribution details of the user. e.g tapping on under review should
+redirect to new page with all the edits.
+- [ ] Tapping on each contribution should redirect to the edit visualizer.
 #### Contributions
 
+- [?] Make a new contribution table to store all the contributions of the user.
+     userId, email, reputation,
 - [ ] Based on above contribution assign reputation points to user
 - [ ] Show contributions on profile page
-
-
 
 ### Questions to Ponder
 - User makes same requests multiple times, should we allow that?

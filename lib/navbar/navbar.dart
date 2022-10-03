@@ -1,7 +1,6 @@
 library navbar;
 
-export 'dashboard.dart';
-export 'search.dart';
-export 'explore.dart';
-export 'notifications/notifications.dart';
-export 'profile.dart';
+export 'dashboard/dashboard.dart';
+export 'search/search.dart';
+export 'explore/explore.dart';
+export 'profile/profile.dart';

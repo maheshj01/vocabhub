@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:supabase/supabase.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/utils/secrets.dart';

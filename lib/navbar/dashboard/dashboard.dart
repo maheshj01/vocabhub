@@ -5,13 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/word.dart';
-import 'package:vocabhub/navbar/notifications/notifications.dart';
-import 'package:vocabhub/pages/bookmarks.dart';
+import 'package:vocabhub/pages/notifications/notifications.dart';
+import 'package:vocabhub/navbar/dashboard/bookmarks.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
-import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
@@ -45,22 +44,20 @@ class _DashboardState extends State<Dashboard> {
       final allWords = await VocabStoreService.getAllWords();
       final random = Random();
       final randomWord = allWords[random.nextInt(allWords.length)];
-      if (randomWord != null) {
-        final wordOfTheDay = {
-          'word': randomWord.word,
-          'id': randomWord.id,
-          'created_at': now.toIso8601String()
-        };
-        final resp = await DatabaseService.insertIntoTable(
-          wordOfTheDay,
-          table: WORD_OF_THE_DAY_TABLE_NAME,
-        );
-        if (resp.status == 201) {
-          print('word of the day published');
-          state.setWordOfTheDay(randomWord);
-        } else {
-          throw Exception('word of the day not published');
-        }
+      final wordOfTheDay = {
+        'word': randomWord.word,
+        'id': randomWord.id,
+        'created_at': now.toIso8601String()
+      };
+      final resp = await DatabaseService.insertIntoTable(
+        wordOfTheDay,
+        table: WORD_OF_THE_DAY_TABLE_NAME,
+      );
+      if (resp.status == 201) {
+        print('word of the day published');
+        state.setWordOfTheDay(randomWord);
+      } else {
+        throw Exception('word of the day not published');
       }
     } else {
       state.setWordOfTheDay(word);
