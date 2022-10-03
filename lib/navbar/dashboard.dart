@@ -144,7 +144,7 @@ class DashboardMobile extends StatelessWidget {
                       return WoDCard(
                         word: word,
                         color: Colors.green.shade300,
-                        title: '${word.word}',
+                        title: '${word.word}'.toUpperCase(),
                       );
                     }),
                 Padding(
@@ -176,6 +176,7 @@ class DashboardMobile extends StatelessWidget {
                                 return WoDCard(
                                   word: word,
                                   height: 180,
+                                  fontSize: 42,
                                   color: Colors.amberAccent.shade400,
                                   title: 'Bookmarks',
                                 );
@@ -200,8 +201,9 @@ class DashboardMobile extends StatelessWidget {
                                 return WoDCard(
                                   word: word,
                                   height: 180,
+                                  fontSize: 42,
                                   image: 'assets/dart.jpg',
-                                  title: 'Mastered Words',
+                                  title: 'Mastered\nWords',
                                 );
                               })
                         ],
@@ -222,6 +224,7 @@ class WoDCard extends StatelessWidget {
   final Color? color;
   final double? height;
   final String? image;
+  final double fontSize;
 
   const WoDCard(
       {super.key,
@@ -229,6 +232,7 @@ class WoDCard extends StatelessWidget {
       this.height,
       required this.title,
       this.color,
+      this.fontSize = 48,
       this.image});
 
   @override
@@ -251,7 +255,8 @@ class WoDCard extends StatelessWidget {
           child: Text(
             '$title',
             textAlign: TextAlign.center,
-            style: VocabTheme.googleFontsTextTheme.headline2,
+            style: VocabTheme.googleFontsTextTheme.headline2!
+                .copyWith(fontSize: fontSize),
           )),
     );
   }

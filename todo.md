@@ -28,12 +28,11 @@ Toggle is Admin
 
 ### Forum (Reputation rules)
 - [ ] Any one can propose a new word or edit a word. And that post will be shown up in this section.
-- [ ]
+- [ ] Forum posts should be ordered by recents or no of votes or type(edits/new word).
 - [ ] A new word can only be approved, if it has 25+ votes.
 - [ ] Add a new word +10 Reputation (on Approve of the word)
-- [ ] A negative upvote on a post will result in -5     Reputation.
-- [ ] Make a successful edit +2
-
+- [ ] A negative upvote on a post will result in -5 Reputation and the post will be deleted.
+- [ ] Make a successful edit +2 Reputation
 ### Notifications
 
 - [ ] A user should see his edit/add requests and status under notifications.
@@ -81,6 +80,12 @@ Toggle is Admin
 
 ### Questions to Ponder
 - User makes same requests multiple times, should we allow that?
+
 - User tries adding a existing word.
+
 - Multiple users try adding same word. (Two requests pending for same word)
+
 - Two edit requests pending for same word.
+
+- If a user is deleted from the database, what happens to use Contributions?
+Ans: A default user will be shown, wherever required with name being "Deleted User";
