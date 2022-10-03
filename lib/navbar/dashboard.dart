@@ -134,7 +134,10 @@ class DashboardMobile extends StatelessWidget {
                 OpenContainer<bool>(
                     openBuilder:
                         (BuildContext context, VoidCallback openContainer) {
-                      return WordDetail(word: word);
+                      return WordDetail(
+                        word: word,
+                        title: 'Word of the Day',
+                      );
                     },
                     tappable: true,
                     closedShape: 16.0.rounded,

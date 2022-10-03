@@ -27,7 +27,9 @@ import 'wordscount.dart';
 
 class WordDetail extends StatefulWidget {
   final Word word;
-  const WordDetail({Key? key, required this.word}) : super(key: key);
+  final String? title;
+  const WordDetail({Key? key, required this.word, this.title})
+      : super(key: key);
 
   @override
   State<WordDetail> createState() => _WordDetailState();
@@ -43,6 +45,7 @@ class _WordDetailState extends State<WordDetail> {
     }, mobileBuilder: (BuildContext context) {
       return WordDetailMobile(
         word: widget.word,
+        title: widget.title,
       );
     });
   }
@@ -50,7 +53,9 @@ class _WordDetailState extends State<WordDetail> {
 
 class WordDetailMobile extends StatefulWidget {
   final Word? word;
-  const WordDetailMobile({Key? key, required this.word}) : super(key: key);
+  final String? title;
+  const WordDetailMobile({Key? key, required this.word, this.title})
+      : super(key: key);
 
   @override
   State<WordDetailMobile> createState() => _WordDetailMobileState();
@@ -68,6 +73,7 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
     final userProvider = AppStateScope.of(context).user!;
     return Scaffold(
       appBar: AppBar(
+        title: widget.title != null ? Text(widget.title!) : null,
         actions: [
           IconButton(
               icon: Icon(

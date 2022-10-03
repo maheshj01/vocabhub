@@ -73,7 +73,8 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
     _validNotifier.value = null;
     RegExp usernamePattern = new RegExp(r"^[a-zA-Z0-9_]{5,}$");
     if (!usernamePattern.hasMatch(username)) {
-      error = 'Username can only contain letters, numbers and underscores';
+      error =
+          'Username should contain letters, numbers and underscores with minimum 5 characters';
       _validNotifier.value = false;
       return;
     } else {
