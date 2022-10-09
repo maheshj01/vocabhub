@@ -3,6 +3,7 @@ import 'package:vocabhub/constants/styles.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/notification.dart';
+import 'package:vocabhub/pages/notifications/notification_detail.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/edit_history.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
@@ -106,6 +107,7 @@ class _NotificationsState extends State<Notifications> {
                           ? UserNotificationTile(
                               edit: edit,
                               user: editor,
+                              onTap: () {},
                               onCancel: () {
                                 updateRequest(
                                     edit.edit_id!, EditState.cancelled);
@@ -127,7 +129,11 @@ class _NotificationsState extends State<Notifications> {
                                 }
                               },
                               onTap: () {
-                                print('admin tapped');
+                                Navigate.push(
+                                    context,
+                                    EditDetail(
+                                      edit_history: edit,
+                                    ));
                               },
                             );
                     },
@@ -141,6 +147,9 @@ class _NotificationsState extends State<Notifications> {
                     return UserNotificationTile(
                       edit: edit,
                       user: editUser,
+                      onTap: () {
+                        print('user tapped');
+                      },
                       onCancel: () async {
                         updateRequest(edit.edit_id!, EditState.cancelled);
                         print('request has been cancelled');
@@ -156,80 +165,91 @@ class UserNotificationTile extends StatelessWidget {
   final EditHistory edit;
   final UserModel user;
   final Function? onCancel;
+  final Function? onTap;
 
   const UserNotificationTile(
-      {Key? key, required this.edit, required this.user, this.onCancel})
+      {Key? key,
+      required this.edit,
+      required this.user,
+      this.onTap,
+      this.onCancel})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final iconColor = stateToIconColor(edit.state!);
-    return Container(
-      height: 100,
-      decoration: BoxDecoration(
-        color: stateToNotificationCardColor(edit.state!),
-        borderRadius: BorderRadius.circular(4),
-        boxShadow: [VocabTheme.notificationCardShadow],
-      ),
-      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      padding: EdgeInsets.symmetric(vertical: 4),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            VHIcon(
-              stateToNotificationIconData(edit.state!),
-              size: 58,
-              iconColor: iconColor,
-              border: Border.all(color: iconColor, width: 2),
-              backgroundColor: Colors.transparent,
-            ),
-            8.0.hSpacer(),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: buildNotification(
-                        editTypeToUserNotification(edit, user),
-                        edit.word,
+    return InkWell(
+      onTap: () {
+        onTap?.call();
+      },
+      child: Container(
+        height: 100,
+        decoration: BoxDecoration(
+          color: stateToNotificationCardColor(edit.state!),
+          borderRadius: BorderRadius.circular(4),
+          boxShadow: [VocabTheme.notificationCardShadow],
+        ),
+        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: EdgeInsets.symmetric(vertical: 4),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              VHIcon(
+                stateToNotificationIconData(edit.state!),
+                size: 58,
+                iconColor: iconColor,
+                border: Border.all(color: iconColor, width: 2),
+                backgroundColor: Colors.transparent,
+              ),
+              8.0.hSpacer(),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: buildNotification(
+                          editTypeToUserNotification(edit, user),
+                          edit.word,
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(edit.created_at!.formatDate(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .subtitle2!
-                                .copyWith(
-                                    fontSize: 12, fontWeight: FontWeight.w600)),
-                        edit.state == EditState.pending
-                            ? VHButton(
-                                onTap: () {
-                                  onCancel!();
-                                },
-                                label: 'Cancel',
-                                width: 100,
-                                height: 30,
-                                fontSize: 16,
-                                foregroundColor: Colors.white,
-                                backgroundColor: Colors.red,
-                              )
-                            : SizedBox.shrink()
-                      ],
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(edit.created_at!.formatDate(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle2!
+                                  .copyWith(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600)),
+                          edit.state == EditState.pending
+                              ? VHButton(
+                                  onTap: () {
+                                    onCancel!();
+                                  },
+                                  label: 'Cancel',
+                                  width: 100,
+                                  height: 30,
+                                  fontSize: 16,
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.red,
+                                )
+                              : SizedBox.shrink()
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -259,92 +279,98 @@ class AdminNotificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     /// Approve or reject card
-    return Container(
-      height: 120,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(4),
-        boxShadow: [VocabTheme.notificationCardShadow],
-      ),
-      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      padding: EdgeInsets.symmetric(vertical: 4),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            CircularAvatar(
-              url: user.avatarUrl,
-              name: user.name,
-            ),
-            8.0.hSpacer(),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Align(
-                      child: buildNotification(
-                        editTypeToAdminNotification(edit, user),
-                        edit.word,
+    return InkWell(
+      onTap: () {
+        onTap?.call();
+      },
+      child: Container(
+        height: 120,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4),
+          boxShadow: [VocabTheme.notificationCardShadow],
+        ),
+        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: EdgeInsets.symmetric(vertical: 4),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              CircularAvatar(
+                url: user.avatarUrl,
+                name: user.name,
+              ),
+              8.0.hSpacer(),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Align(
+                        child: buildNotification(
+                          editTypeToAdminNotification(edit, user),
+                          edit.word,
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(edit.created_at!.formatDate(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .subtitle2!
-                                .copyWith(
-                                    fontSize: 12, fontWeight: FontWeight.w600)),
-                        Container(
-                          width: 100,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              circle(
-                                  color: stateToIconColor(edit.state!),
-                                  size: 12),
-                              6.0.hSpacer(),
-                              Text(
-                                edit.state!.toName().capitalize()!,
-                              )
-                            ],
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(edit.created_at!.formatDate(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle2!
+                                  .copyWith(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600)),
+                          Container(
+                            width: 100,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                circle(
+                                    color: stateToIconColor(edit.state!),
+                                    size: 12),
+                                6.0.hSpacer(),
+                                Text(
+                                  edit.state!.toName().capitalize()!,
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                        if (edit.state == EditState.pending)
-                          Row(
-                            children: [
-                              VHIcon(Icons.close,
-                                  size: 36,
-                                  backgroundColor: Colors.white,
-                                  border:
-                                      Border.all(color: Colors.red, width: 2),
-                                  iconColor: Colors.red, onTap: () {
-                                onAction(false);
-                              }),
-                              16.0.hSpacer(),
-                              VHIcon(Icons.check,
-                                  size: 36,
-                                  backgroundColor: Colors.white,
-                                  border:
-                                      Border.all(color: Colors.green, width: 2),
-                                  iconColor: Colors.green, onTap: () {
-                                onAction(true);
-                              }),
-                            ],
-                          )
-                      ],
+                          if (edit.state == EditState.pending)
+                            Row(
+                              children: [
+                                VHIcon(Icons.close,
+                                    size: 36,
+                                    backgroundColor: Colors.white,
+                                    border:
+                                        Border.all(color: Colors.red, width: 2),
+                                    iconColor: Colors.red, onTap: () {
+                                  onAction(false);
+                                }),
+                                16.0.hSpacer(),
+                                VHIcon(Icons.check,
+                                    size: 36,
+                                    backgroundColor: Colors.white,
+                                    border: Border.all(
+                                        color: Colors.green, width: 2),
+                                    iconColor: Colors.green, onTap: () {
+                                  onAction(true);
+                                }),
+                              ],
+                            )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

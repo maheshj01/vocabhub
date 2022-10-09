@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
@@ -109,6 +111,98 @@ Widget heading(String title) {
       fontSize: 20,
       color: VocabTheme.lightblue,
       fontWeight: FontWeight.w600,
+    ),
+  );
+}
+
+RichText differenceVisualizerByWord(String editedText, String oldText,
+    {bool isOldVersion = true, TextAlign textAlign = TextAlign.start}) {
+  final oldTextList = oldText.split(' ');
+  final newTextList = editedText.split(' ');
+  final oldTextLength = oldTextList.length;
+  final newTextLength = newTextList.length;
+  final minLengthList = min(newTextLength, oldTextLength);
+
+  return RichText(
+    textAlign: textAlign,
+    text: TextSpan(
+      style: TextStyle(
+        fontSize: 16.0,
+        color: Colors.black,
+      ),
+      children: <TextSpan>[
+        for (int i = 0; i < minLengthList; i++)
+          if (oldTextList[i] == newTextList[i])
+            TextSpan(text: newTextList[i] + ' ')
+          else
+            TextSpan(
+                text:
+                    isOldVersion ? oldTextList[i] + ' ' : newTextList[i] + ' ',
+                style: TextStyle(
+                  color: isOldVersion ? Colors.red : Colors.green,
+                  decoration: isOldVersion ? TextDecoration.lineThrough : null,
+                )),
+        if (oldTextLength > newTextLength && isOldVersion)
+          for (int i = minLengthList; i < oldTextLength; i++)
+            TextSpan(
+                text: oldTextList[i] + ' ',
+                style: TextStyle(
+                  color: Colors.red,
+                  decoration: TextDecoration.lineThrough,
+                )),
+        if (newTextLength > oldTextLength && !isOldVersion)
+          for (int i = minLengthList; i < newTextLength; i++)
+            TextSpan(
+                text: newTextList[i] + ' ',
+                style: TextStyle(color: Colors.green)),
+      ],
+    ),
+  );
+}
+
+RichText differenceVisualizerGranular(String editedText, String oldText,
+    {bool isOldVersion = true, TextAlign textAlign = TextAlign.start}) {
+  final oldTextLength = oldText.length;
+  final newTextLength = editedText.length;
+  final minLength = min(newTextLength, oldTextLength);
+
+  return RichText(
+    textAlign: textAlign,
+    text: TextSpan(
+      style: TextStyle(
+        fontSize: 16.0,
+        color: Colors.black,
+      ),
+      children: <TextSpan>[
+        for (int i = 0; i < minLength; i++)
+          if (oldText[i] == editedText[i])
+            TextSpan(text: editedText[i])
+          else
+            TextSpan(
+                text: isOldVersion ? oldText[i] : editedText[i],
+                style: TextStyle(
+                  color: isOldVersion ? Colors.red : Colors.white,
+                  decoration: isOldVersion ? TextDecoration.lineThrough : null,
+                  backgroundColor: isOldVersion ? Colors.red : Colors.green,
+                )),
+        if (oldTextLength > newTextLength && isOldVersion)
+          for (int i = minLength; i < oldTextLength; i++)
+            TextSpan(
+                text: oldText[i],
+                style: TextStyle(
+                  color: Colors.white,
+                  decoration: TextDecoration.lineThrough,
+                  backgroundColor: Colors.red,
+                )),
+        if (newTextLength > oldTextLength && !isOldVersion)
+          for (int i = minLength; i < newTextLength; i++)
+            TextSpan(
+                text: editedText[i],
+                style: TextStyle(
+                  color: Colors.white,
+                  backgroundColor: Colors.green,
+                )),
+      ],
     ),
   );
 }

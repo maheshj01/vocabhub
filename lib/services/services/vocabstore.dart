@@ -16,7 +16,7 @@ class VocabStoreService {
   static final _logger = log.Logger();
   final SupabaseClient _supabase = SupabaseClient("$CONFIG_URL", "$APIkey");
 
-  Future<PostgrestResponse> findById(String id) async {
+  static Future<PostgrestResponse> findById(String id) async {
     final response = await DatabaseService.findSingleRowByColumnValue(id,
         columnName: ID_COLUMN, tableName: tableName);
     return response;
