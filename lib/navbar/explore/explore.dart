@@ -58,8 +58,8 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
 
   @override
   void dispose() {
-    super.dispose();
     loadingNotifier.dispose();
+    super.dispose();
   }
 
   @override

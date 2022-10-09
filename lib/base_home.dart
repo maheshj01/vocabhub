@@ -1,6 +1,8 @@
 import 'package:animations/animations.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/navbar.dart';
@@ -29,6 +31,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
   void initState() {
     super.initState();
     getWords();
+    isUpdateAvailable();
   }
 
   Future<void> getWords() async {
@@ -56,8 +59,26 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     });
   }
 
-  Future<void> silentLogin() async {
-    /// TODO UPDATE LOGIN STATE IN BACKEND AND LOCALLY
+  Future<void> isUpdateAvailable() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    String appVersion = packageInfo.version;
+    int appBuildNumber = int.parse(packageInfo.buildNumber);
+    print('version: $appVersion, buildNumber: $appBuildNumber');
+    final remoteConfig = FirebaseRemoteConfig.instance;
+    await remoteConfig.setConfigSettings(RemoteConfigSettings(
+      fetchTimeout: const Duration(minutes: 1),
+      minimumFetchInterval: const Duration(seconds: 1),
+    ));
+    await remoteConfig.fetchAndActivate();
+    final version = await remoteConfig.getString('$VERSION_KEY');
+    final buildNumber = await remoteConfig.getInt('$BUILD_NUMBER_KEY');
+    print('version: $version, buildNumber: $buildNumber');
+    if (appVersion != version || buildNumber > appBuildNumber) {
+      hasUpdate = true;
+    } else {
+      hasUpdate = false;
+    }
+    setState(() {});
   }
 
   late AppState state;
@@ -73,10 +94,12 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     super.dispose();
   }
 
+  double bannerHeight = 0;
+  bool hasUpdate = false;
+
   @override
   Widget build(BuildContext context) {
     SizeUtils.size = MediaQuery.of(context).size;
-
     List<NavbarItem> items = [
       NavbarItem(Icons.dashboard, 'Dashboard'),
       NavbarItem(Icons.search, 'Search'),
@@ -103,12 +126,22 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
       });
       items.add(NavbarItem(Icons.person, 'Me'));
     }
+    if (!user.isLoggedIn || hasUpdate) {
+      bannerHeight =
+          kBottomNavigationBarHeight + MediaQuery.of(context).padding.bottom;
+    } else {
+      bannerHeight = 0;
+    }
     return ValueListenableBuilder<int>(
         valueListenable: _selectedIndex,
         builder: (context, int currentIndex, Widget? child) {
+          bannerHeight = kBottomNavigationBarHeight +
+              MediaQuery.of(context).padding.bottom;
           return Scaffold(
             resizeToAvoidBottomInset: false,
-            floatingActionButton: !user.isLoggedIn || currentIndex > 1
+            floatingActionButton: !user.isLoggedIn ||
+                    currentIndex > 1 ||
+                    hasUpdate
                 ? null
                 : Padding(
                     padding: (kBottomNavigationBarHeight * 0.9).bottomPadding,
@@ -171,7 +204,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                     /// Simulate DragGesture on pageView
                     if (EXPLORE_INDEX == x && !animatePageOnce) {
                       print('index change = ${pageController.hasClients}');
-                      if (pageController.hasClients) {
+                      if (pageController.hasClients && user.isLoggedIn) {
                         Future.delayed(Duration(seconds: 3), () {
                           if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {
                             pageController.animateTo(200,
@@ -206,18 +239,44 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                       ),
                   ],
                 ),
-                // SignIn banner
-                if (!user.isLoggedIn)
-                  Positioned(
-                      bottom: kBottomNavigationBarHeight +
-                          MediaQuery.of(context).padding.bottom,
+                if (hasUpdate || !user.isLoggedIn)
+                  AnimatedPositioned(
+                      duration: Duration(milliseconds: 300),
+                      bottom: bannerHeight,
                       left: 0,
                       right: 0,
-                      child: SignInBanner(
-                        onSignIn: () async {
-                          await Navigate().pushAndPopAll(context, AppSignIn());
-                        },
-                      )),
+                      child: VocabBanner(
+                        description: hasUpdate
+                            ? 'New update available'
+                            : 'Sign in for better experience',
+                        actions: [
+                          !hasUpdate
+                              ? SizedBox.shrink()
+                              : TextButton(
+                                  onPressed: () {},
+                                  child: Text('Update',
+                                      style: TextStyle(
+                                        color: VocabTheme.primaryColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      )),
+                                ),
+                          user.isLoggedIn
+                              ? SizedBox.shrink()
+                              : TextButton(
+                                  onPressed: () async {
+                                    await Navigate()
+                                        .pushAndPopAll(context, AppSignIn());
+                                  },
+                                  child: Text('Sign In',
+                                      style: TextStyle(
+                                        color: VocabTheme.primaryColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      )),
+                                ),
+                        ],
+                      ))
               ],
             ),
           );
@@ -225,10 +284,13 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
   }
 }
 
-class SignInBanner extends StatelessWidget {
-  final Function onSignIn;
+class VocabBanner extends StatelessWidget {
+  final String description;
+  final List<Widget> actions;
 
-  const SignInBanner({Key? key, required this.onSignIn}) : super(key: key);
+  const VocabBanner(
+      {Key? key, required this.description, required this.actions})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -239,22 +301,14 @@ class SignInBanner extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Sign in for better experience',
+            '$description',
             style: TextStyle(
               color: Colors.white,
               fontSize: 16,
             ),
           ),
           16.0.hSpacer(),
-          TextButton(
-            onPressed: () async => onSignIn(),
-            child: Text('Sign In',
-                style: TextStyle(
-                  color: VocabTheme.primaryColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                )),
-          ),
+          for (int i = 0; i < actions.length; i++) actions[i]
         ],
       ),
     );

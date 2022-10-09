@@ -2,6 +2,8 @@
 
 const BASE_URL = '';
 const VERSION = 'v0.3.5';
+const VERSION_KEY = 'version';
+const BUILD_NUMBER_KEY = 'buildNumber';
 const SOURCE_CODE_URL = 'https://github.com/maheshmnj/vocabhub';
 const PLAY_STORE_URL =
     'https://play.google.com/store/apps/details?id=com.vocabhub.app';

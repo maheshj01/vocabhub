@@ -309,6 +309,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                     //     });
                     //   },
                     // ),
+                    kBottomNavigationBarHeight.vSpacer(),
                     kBottomNavigationBarHeight.vSpacer()
                   ],
                 ),

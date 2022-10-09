@@ -21,19 +21,21 @@ Toggle is Admin
 - [ ] Before adding to history check if duplicate edit exists.
 - [ ] Ensure the fonts are consistent across the app.
 - [ ] Dark theme for the app.
-- [ ] Add a feature to notify app update.
+- [X] Add a feature to notify app update.
 - [ ] Create a reputation system for users.
 - [ ] Forum Tab to show edit and new word proposals user can only upvote or downvote the proposal.
 - Add a about section for the app
 - [ ] Add deeplinking to specific word from share feature
 
 ### Forum (Reputation rules)
+
 - [ ] Any one can propose a new word or edit a word. And that post will be shown up in this section.
 - [ ] Forum posts should be ordered by recents or no of votes or type(edits/new word).
 - [ ] A new word can only be approved, if it has 25+ votes.
 - [ ] Add a new word +10 Reputation (on Approve of the word)
 - [ ] A negative upvote on a post will result in -5 Reputation and the post will be deleted.
 - [ ] Make a successful edit +2 Reputation
+
 ### Notifications
 
 - [ ] A user should see his edit/add requests and status under notifications.
@@ -76,6 +78,8 @@ Toggle is Admin
 - [ ] Stats should show contribution details of the user. e.g tapping on under review should
 redirect to new page with all the edits.
 - [ ] Tapping on each contribution should redirect to the edit visualizer.
+- [ ] Pull down to refresh.
+
 #### Contributions
 
 - [?] Make a new contribution table to store all the contributions of the user.
