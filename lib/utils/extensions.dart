@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/models/word.dart';
 
 extension StringExtension on String {
   String? capitalize() {
@@ -11,6 +13,16 @@ extension StringExtension on String {
     /// Returns the first letter of each word in the string.
     return this.split(' ').map((e) => e.capitalize()!.substring(0, 1)).join();
   }
+}
+
+extension WordEquals on Word {
+  bool equals(Word other) =>
+      runtimeType == other.runtimeType &&
+      word == other.word &&
+      meaning == other.meaning &&
+      listEquals(synonyms, other.synonyms) &&
+      listEquals(examples, other.examples) &&
+      listEquals(mnemonics, other.mnemonics);
 }
 
 extension DateHelper on DateTime {

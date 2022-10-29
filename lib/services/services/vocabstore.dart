@@ -14,7 +14,7 @@ import 'package:vocabhub/platform/mobile.dart'
 class VocabStoreService {
   static String tableName = '$VOCAB_TABLE_NAME';
   static final _logger = log.Logger();
-  final SupabaseClient _supabase = SupabaseClient("$CONFIG_URL", "$APIkey");
+  static final SupabaseClient _supabase = SupabaseClient("$CONFIG_URL", "$APIkey");
 
   static Future<PostgrestResponse> findById(String id) async {
     final response = await DatabaseService.findSingleRowByColumnValue(id,
@@ -22,23 +22,19 @@ class VocabStoreService {
     return response;
   }
 
-  /// TODO: Can be used to implement server side search.
-
-  // Future<List<Word>> findByWord(String word) async {
-  //   if (word.isEmpty) {
-  //     return await getAllWords();
-  //   }
-  //   final response = await _supabase
-  //       .from(tableName)
-  //       .select("*")
-  //       .contains('$WORD_COLUMN', word)
-  //       .execute();
-  //   List<Word> words = [];
-  //   if (response.status == 200) {
-  //     words = (response.data as List).map((e) => Word.fromJson(e)).toList();
-  //   }
-  //   return words;
-  // }
+  static Future<Word?> findByWord(String word) async {
+    if (word.isEmpty) {
+      return null;
+    }
+   final response = await DatabaseService.findSingleRowByColumnValue(word,
+        columnName: WORD_COLUMN, tableName: tableName);
+    Word? result;
+    if (response.status == 200) {
+      result = Word.fromJson(response.data);
+      return result;
+    }
+    return null;
+  }
 
   static Future<Response> addWord(Word word) async {
     final json = word.toJson();

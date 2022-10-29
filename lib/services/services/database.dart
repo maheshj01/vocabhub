@@ -37,6 +37,7 @@ class DatabaseService {
         .from(tableName)
         .select()
         .ilike('$columnName', "%$columnValue%")
+        //TODO
         .execute();
     return response;
   }

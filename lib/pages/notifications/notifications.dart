@@ -148,7 +148,11 @@ class _NotificationsState extends State<Notifications> {
                       edit: edit,
                       user: editUser,
                       onTap: () {
-                        print('user tapped');
+                        Navigate.push(
+                            context,
+                            EditDetail(
+                              edit_history: edit,
+                            ));
                       },
                       onCancel: () async {
                         updateRequest(edit.edit_id!, EditState.cancelled);

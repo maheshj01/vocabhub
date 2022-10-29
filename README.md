@@ -1,6 +1,6 @@
-# Vocabhub 0.3.5                          
+# Vocabhub 0.3.5
 
-A vocabulary app built with Flutter and Supabase, that is simple to use and available on multiple platforms with 
+A vocabulary app built with Flutter and Supabase, that is simple to use and available on multiple platforms with
 - 800+ most common GRE words
 - provides synonyms, mnemonics, examples to understand each word
 - intelligent search that allows searching for a word with its meaning, synonym.
@@ -13,7 +13,7 @@ A vocabulary app built with Flutter and Supabase, that is simple to use and avai
 | :---------------------------------------------------------------------------------------------------------------------------------------------: |
 | <img src="https://user-images.githubusercontent.com/31410839/125232197-be28a180-e2f9-11eb-82db-980325528b55.png"/> |
 
- 
+
 ### Say Hello to Dark Mode
 
 

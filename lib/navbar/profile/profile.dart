@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/notification.dart';
 import 'package:vocabhub/navbar/profile/edit.dart';
+import 'package:vocabhub/navbar/profile/settings.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
@@ -102,14 +103,14 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
             ? Center(
                 child: VHButton(
                     onTap: () {
-                      Navigate.push(context, AppSignIn());
+                      Navigate.push(context, AppSignIn(),
+                          slideTransitionType: TransitionType.rtl);
                     },
                     label: 'Sign In'),
               )
             : Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 8.0,
-                    vertical: kBottomNavigationBarHeight * 1.1),
+                    horizontal: 8.0, vertical: kBottomNavigationBarHeight),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -141,6 +142,21 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                               //           ? const Icon(Icons.light_mode)
                               //           : const Icon(Icons.dark_mode),
                               //     )),
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: Padding(
+                                  padding: 16.0.horizontalPadding,
+                                  child: VHIcon(
+                                    Icons.settings,
+                                    size: 38,
+                                    onTap: () {
+                                      Navigate.push(
+                                          context, SettingsPageMobile());
+                                    },
+                                  ),
+                                ),
+                              ),
+
                               Stack(
                                 children: [
                                   Padding(

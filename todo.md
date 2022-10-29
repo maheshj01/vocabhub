@@ -4,7 +4,6 @@ Toggle is Admin
 // lib/navbar/notifications.dart
 // lib/utils/utility.dart
 
-
 [X] - Done
 [ ] - yet to be done
 [T] - To be tested
@@ -13,13 +12,20 @@ Toggle is Admin
 
 ### TODO
 
+PRE(=E;Rel)
+- [ ] - Add a way to add a new service
 - [X] SignedIn User's state should update.
 - [X] Remove '\n' from synonyms using Edit Page.
 - [X] BottomnNavigation background color as per UI.
 - [X] Edit a word and add to edit history table.
+- [ ] Add a new word should be intelligent to disable button if the object has not changed during edit and also to recognize duplicates dynamicacally.
 - [ ] Create onBoarding screens for app tour.
 - [ ] Before adding to history check if duplicate edit exists.
 - [ ] Ensure the fonts are consistent across the app.
+- [ ] Add a feedback system
+
+
+
 - [ ] Dark theme for the app.
 - [X] Add a feature to notify app update.
 - [ ] Create a reputation system for users.
@@ -36,11 +42,13 @@ Toggle is Admin
 - [ ] A negative upvote on a post will result in -5 Reputation and the post will be deleted.
 - [ ] Make a successful edit +2 Reputation
 
+Ans:
+
 ### Notifications
 
-- [ ] A user should see his edit/add requests and status under notifications.
+- [X] A user should see his edit/add requests and status under notifications.
 - [X] A admin should be able to see all the requests and approve/reject them.
-- [ ] Edit visualizer: When admin taps on the request it should show a page with differences in current word and the edit request.
+- [X] Edit visualizer: When admin taps on the request it should show a page with differences in current word and the edit request.
 
 ### Dashboard
 
@@ -53,7 +61,7 @@ Toggle is Admin
 ### Word Detail Page
 
 - [ ] Add typewriter animation to meaning of the word.
-- [] Ability to see history of edits made for that word.
+- [ ] Ability to see history of edits made for that word.
 
 ### Search
 
@@ -91,10 +99,21 @@ redirect to new page with all the edits.
 - User makes same requests multiple times, should we allow that?
 
 - User tries adding a existing word.
+Ans Check if word exist while adding a new word
 
 - Multiple users try adding same word. (Two requests pending for same word)
+Ans:
 
 - Two edit requests pending for same word.
+Ans: 
 
 - If a user is deleted from the database, what happens to use Contributions?
 Ans: A default user will be shown, wherever required with name being "Deleted User";
+
+- Word Edit History link with vocabhub table in database, How many past edits?
+Ans:
+
+- smart Search based on meaning and synonyms (Query)?
+Ans: SELECT * FROM vocabsheet_copy
+WHERE word LIKE '%a clo%' OR
+ meaning LIKE '%a clos%'

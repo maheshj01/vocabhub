@@ -63,7 +63,6 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     final packageInfo = await PackageInfo.fromPlatform();
     String appVersion = packageInfo.version;
     int appBuildNumber = int.parse(packageInfo.buildNumber);
-    print('version: $appVersion, buildNumber: $appBuildNumber');
     final remoteConfig = FirebaseRemoteConfig.instance;
     await remoteConfig.setConfigSettings(RemoteConfigSettings(
       fetchTimeout: const Duration(minutes: 1),
@@ -72,7 +71,6 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     await remoteConfig.fetchAndActivate();
     final version = await remoteConfig.getString('$VERSION_KEY');
     final buildNumber = await remoteConfig.getInt('$BUILD_NUMBER_KEY');
-    print('version: $version, buildNumber: $buildNumber');
     if (appVersion != version || buildNumber > appBuildNumber) {
       hasUpdate = true;
     } else {

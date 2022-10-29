@@ -15,7 +15,7 @@ class VHButton extends StatefulWidget {
       this.leading})
       : super(key: key);
 
-  final Function() onTap;
+  final void Function()? onTap;
 
   /// label on the button
   final String label;
@@ -41,16 +41,19 @@ class _VHButtonState extends State<VHButton> {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      style: ButtonStyle(
-          minimumSize: MaterialStateProperty.resolveWith(
-              (states) => Size(widget.width ?? 120, widget.height)),
-          maximumSize: MaterialStateProperty.resolveWith(
-              (states) => Size(widget.width ?? 120, widget.height)),
-          foregroundColor: MaterialStateColor.resolveWith(
-              (states) => widget.foregroundColor),
-          backgroundColor: MaterialStateColor.resolveWith(
-              (states) => widget.backgroundColor)),
-      onPressed: widget.isLoading ? null : widget.onTap,
+      style: (widget.onTap == null)
+          ? null
+          : ButtonStyle(
+              minimumSize: MaterialStateProperty.resolveWith(
+                  (states) => Size(widget.width ?? 120, widget.height)),
+              maximumSize: MaterialStateProperty.resolveWith(
+                  (states) => Size(widget.width ?? 120, widget.height)),
+              foregroundColor: MaterialStateColor.resolveWith(
+                  (states) => widget.foregroundColor),
+              backgroundColor: MaterialStateColor.resolveWith(
+                  (states) => widget.backgroundColor)),
+      onPressed:
+          widget.isLoading || (widget.onTap == null) ? null : widget.onTap,
       child: widget.isLoading
           ? CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(widget.foregroundColor),
