@@ -6,6 +6,7 @@ import 'package:vocabhub/models/notification.dart';
 import 'package:vocabhub/pages/notifications/notification_detail.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/edit_history.dart';
+import 'package:vocabhub/services/services/vocabstore.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -43,22 +44,72 @@ class _NotificationsState extends State<Notifications> {
     }
   }
 
-  Future<void> updateRequest(String editId, EditState state) async {
+  Future<void> updateGlobalDatabase(EditHistory edit, EditState state) async {
     showCircularIndicator(context);
-    final resp = await EditHistoryService.updateRequest(editId, state: state);
+    bool isSuccess = false;
+    Word word = Word(
+      edit.word_id,
+      edit.word,
+      edit.meaning,
+      examples: edit.examples,
+      synonyms: edit.synonyms,
+      created_at: DateTime.now().toUtc(),
+    );
+    if (edit.edit_type == EditType.add) {
+      final resp = await VocabStoreService.addWord(word);
+      stopCircularIndicator(context);
+      if (resp.didSucced) {
+        showMessage(context, 'Word added successfully!');
+        isSuccess = true;
+      } else {
+        showMessage(context, 'Failed to add word, Please try again!');
+        return;
+      }
+    } else if (edit.edit_type == EditType.edit) {
+      final resp =
+          await VocabStoreService.updateWord(id: edit.word_id, word: word);
+      stopCircularIndicator(context);
+      if (resp.status == 200) {
+        showMessage(context, 'Word updated successfully');
+        isSuccess = true;
+      } else {
+        showMessage(context, 'Failed to update word, please try again');
+        return;
+      }
+    } else if (edit.edit_type == EditType.delete) {
+      final resp = await VocabStoreService.deleteById(edit.word_id);
+      stopCircularIndicator(context);
+      if (resp.status == 200) {
+        showMessage(context, 'Word deleted successfully');
+        isSuccess = true;
+      } else {
+        showMessage(context, 'Failed to delete word, please try again');
+        return;
+      }
+    }
+    if (isSuccess) {
+      await updateRequest(edit, state);
+    } else {
+      showMessage(
+        context,
+        'Failed to complete the request, Please try again!',
+      );
+    }
+  }
+
+  Future<void> updateRequest(EditHistory edit, EditState state) async {
+    showCircularIndicator(context);
+    final resp =
+        await EditHistoryService.updateRequest(edit.edit_id!, state: state);
     if (resp.didSucced) {
       getNotifications();
     } else {
       showMessage(
         context,
-        'Failed to cancel request',
+        'Something went wrong, please try again',
       );
     }
-    _stopLoading();
-  }
-
-  void _stopLoading() {
-    Navigate().popView(context);
+    stopCircularIndicator(context);
   }
 
   ValueNotifier<List<NotificationModel>?> historyNotifier =
@@ -72,10 +123,13 @@ class _NotificationsState extends State<Notifications> {
     super.dispose();
   }
 
+  final GlobalKey<ScaffoldState> notificationsKey =
+      new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     // final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+        key: notificationsKey,
         appBar: AppBar(
           elevation: 0,
           centerTitle: false,
@@ -90,7 +144,6 @@ class _NotificationsState extends State<Notifications> {
               if (value == null || user == null) {
                 return LoadingWidget();
               }
-
               if (value.isEmpty) {
                 return Center(
                   child: Text('No notifications'),
@@ -109,23 +162,18 @@ class _NotificationsState extends State<Notifications> {
                               user: editor,
                               onTap: () {},
                               onCancel: () {
-                                updateRequest(
-                                    edit.edit_id!, EditState.cancelled);
-                                print('request has been cancelled');
+                                updateRequest(edit, EditState.cancelled);
                               },
                             )
                           : AdminNotificationTile(
                               edit: edit,
                               user: editor,
-                              onAction: (approved) {
+                              onAction: (approved) async {
                                 if (approved) {
-                                  updateRequest(
-                                      edit.edit_id!, EditState.approved);
-                                  print('request has been approved');
+                                  updateGlobalDatabase(
+                                      edit, EditState.approved);
                                 } else {
-                                  updateRequest(
-                                      edit.edit_id!, EditState.rejected);
-                                  print('request has been rejected');
+                                  updateRequest(edit, EditState.rejected);
                                 }
                               },
                               onTap: () {
@@ -155,7 +203,7 @@ class _NotificationsState extends State<Notifications> {
                             ));
                       },
                       onCancel: () async {
-                        updateRequest(edit.edit_id!, EditState.cancelled);
+                        updateRequest(edit, EditState.cancelled);
                         print('request has been cancelled');
                       },
                     );

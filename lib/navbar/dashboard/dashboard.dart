@@ -110,7 +110,7 @@ class DashboardMobile extends StatelessWidget {
                   ? IconButton(
                       onPressed: () {
                         navigate(context, Notifications.route,
-                            isRootNavigator: false);
+                            isRootNavigator: true);
                       },
                       icon: Icon(
                         Icons.notifications_on,

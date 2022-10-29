@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:logger/logger.dart' as log;
+import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/pages/splashscreen.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
@@ -79,6 +80,9 @@ class _VocabAppState extends State<VocabApp> {
               debugShowCheckedModeBanner: !kDebugMode,
               darkTheme: VocabTheme.darkThemeData,
               theme: VocabTheme.lightThemeData,
+              routes: {
+                Notifications.route: (context) => Notifications(),
+              },
               themeMode: VocabTheme.isDark ? ThemeMode.dark : ThemeMode.light,
               home: SplashScreen(),
             );
