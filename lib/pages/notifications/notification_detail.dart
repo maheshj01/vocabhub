@@ -43,6 +43,8 @@ class EditDetailDesktop extends StatelessWidget {
 
 class EditDetailMobile extends StatefulWidget {
   EditDetailMobile({Key? key, required this.edit_history}) : super(key: key);
+
+  /// current edit
   final EditHistory edit_history;
 
   @override
@@ -50,33 +52,45 @@ class EditDetailMobile extends StatefulWidget {
 }
 
 class _EditDetailMobileState extends State<EditDetailMobile> {
-
   Future<void> getCurrentWord() async {
-    editedWord = Word(widget.edit_history.word_id, widget.edit_history.word,
+    currentEdit = Word(widget.edit_history.word_id, widget.edit_history.word,
         widget.edit_history.meaning,
         synonyms: widget.edit_history.synonyms,
         examples: widget.edit_history.examples,
         mnemonics: widget.edit_history.mnemonics);
-    if (widget.edit_history.edit_type != EditType.edit) {
-      currentWordNotifier.value = editedWord;
-      currentWord = editedWord;
-      return;
-    }
-    ;
-    final resp = await VocabStoreService.findById(widget.edit_history.word_id);
+
+    // find previous approved word
+    final resp = await EditHistoryService.findPreviousEditsByWord(
+        widget.edit_history.word);
+    // findById(widget.edit_history.word_id);
     if (resp.status == 200) {
-      currentWord = Word.fromJson(resp.data);
+      final list = resp.data as List;
+      // case when word is added and deleted
+      // The difference should show the word was added/deleted
+      for (int i = 0; i < list.length; i++) {
+        final data = list[i];
+        final history = EditHistory.fromJson(data);
+        if (history.edit_id == widget.edit_history.edit_id) {
+          if (i == 0) {
+            lastEdit = Word.fromEditHistoryJson(data);
+          } else {
+            lastEdit = Word.fromEditHistoryJson(list[i - 1]);
+          }
+        }
+      }
     } else {
       print("Failed to get word");
-      currentWord = Word('', '', '');
+      lastEdit = Word('', '', '');
     }
-    currentWordNotifier.value = currentWord;
+    currentWordNotifier.value = lastEdit;
   }
 
   ValueNotifier<Word> currentWordNotifier = ValueNotifier(Word('', '', ''));
 
-  late Word currentWord;
-  late Word editedWord;
+  /// edit from database before the current edit
+  late Word lastEdit;
+
+  late Word currentEdit;
   @override
   void initState() {
     super.initState();
@@ -119,34 +133,34 @@ class _EditDetailMobileState extends State<EditDetailMobile> {
                                   heading('Word'),
                                   8.0.vSpacer(),
                                   differenceVisualizerGranular(
-                                      editedWord.word, currentWord.word,
+                                      currentEdit.word, lastEdit.word,
                                       isOldVersion: true),
                                   8.0.vSpacer(),
                                   heading('Meaning'),
                                   8.0.vSpacer(),
                                   differenceVisualizerGranular(
-                                      editedWord.meaning, currentWord.meaning,
+                                      currentEdit.meaning, lastEdit.meaning,
                                       isOldVersion: true),
                                   8.0.vSpacer(),
                                   heading('Synonyms'),
                                   8.0.vSpacer(),
                                   differenceVisualizerGranular(
-                                      editedWord.synonyms!.join(','),
-                                      currentWord.synonyms!.join(','),
+                                      currentEdit.synonyms!.join(','),
+                                      lastEdit.synonyms!.join(','),
                                       isOldVersion: true),
                                   8.0.vSpacer(),
                                   heading('Examples'),
                                   8.0.vSpacer(),
                                   differenceVisualizerGranular(
-                                      editedWord.examples!.join(','),
-                                      currentWord.examples!.join(','),
+                                      currentEdit.examples!.join(','),
+                                      lastEdit.examples!.join(','),
                                       isOldVersion: true),
                                   8.0.vSpacer(),
                                   heading('Mnemonics'),
                                   8.0.vSpacer(),
                                   differenceVisualizerGranular(
-                                      editedWord.mnemonics!.join(','),
-                                      currentWord.mnemonics!.join(','),
+                                      currentEdit.mnemonics!.join(','),
+                                      lastEdit.mnemonics!.join(','),
                                       isOldVersion: true),
                                   Padding(
                                     padding: 8.0.verticalPadding,
@@ -165,34 +179,34 @@ class _EditDetailMobileState extends State<EditDetailMobile> {
                         heading('Word'),
                         8.0.vSpacer(),
                         differenceVisualizerGranular(
-                            editedWord.word, currentWord.word,
+                            currentEdit.word, lastEdit.word,
                             isOldVersion: false),
                         8.0.vSpacer(),
                         heading('Meaning'),
                         8.0.vSpacer(),
                         differenceVisualizerGranular(
-                            editedWord.meaning, currentWord.meaning,
+                            currentEdit.meaning, lastEdit.meaning,
                             isOldVersion: false),
                         8.0.vSpacer(),
                         heading('Synonyms'),
                         8.0.vSpacer(),
                         differenceVisualizerGranular(
-                            editedWord.synonyms!.join(','),
-                            currentWord.synonyms!.join(','),
+                            currentEdit.synonyms!.join(','),
+                            lastEdit.synonyms!.join(','),
                             isOldVersion: false),
                         8.0.vSpacer(),
                         heading('Examples'),
                         8.0.vSpacer(),
                         differenceVisualizerGranular(
-                            editedWord.examples!.join(','),
-                            currentWord.examples!.join(','),
+                            currentEdit.examples!.join(','),
+                            lastEdit.examples!.join(','),
                             isOldVersion: false),
                         8.0.vSpacer(),
                         heading('Mnemonics'),
                         8.0.vSpacer(),
                         differenceVisualizerGranular(
-                            editedWord.mnemonics!.join(','),
-                            currentWord.mnemonics!.join(','),
+                            currentEdit.mnemonics!.join(','),
+                            lastEdit.mnemonics!.join(','),
                             isOldVersion: false),
                         8.0.vSpacer(),
                       ]),
@@ -201,3 +215,8 @@ class _EditDetailMobileState extends State<EditDetailMobile> {
             }));
   }
 }
+
+
+/// Authenticate User using social auth
+/// Allow users to post their ad
+/// 

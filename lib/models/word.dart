@@ -27,6 +27,29 @@ class Word {
       this.examples = const []});
 
   factory Word.fromJson(Map<String, dynamic> json) => _$WordFromJson(json);
+  
+  factory Word.fromEditHistoryJson(Map<String, dynamic> json) {
+    return Word(
+      json['word_id'] as String,
+      json['word'] as String,
+      json['meaning'] as String,
+      synonyms: (json['synonyms'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      mnemonics: (json['mnemonics'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      created_at: json['created_at'] == null
+          ? null
+          : DateTime.parse(json['created_at'] as String),
+      examples: (json['examples'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+    );
+  }
 
   /// TODO: Doesn't seem to work for iterables
   Word copyWith(

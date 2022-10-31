@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:vocabhub/constants/constants.dart';
+import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/navbar.dart';
 import 'package:vocabhub/pages/addword.dart';

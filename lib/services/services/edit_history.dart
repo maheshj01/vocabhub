@@ -26,6 +26,14 @@ class EditHistoryService {
     return response;
   }
 
+  static Future<PostgrestResponse> findPreviousEditsByWord(String word) async {
+    final response = await DatabaseService.findRowByColumnValue(
+        word,
+        columnName: WORD_COLUMN,
+        tableName: _tableName);
+    return response;
+  }
+
   /// approve/reject an edit by updating the state to [EditState]
   ///
   static Future<PostgrestResponse> updateRowState(

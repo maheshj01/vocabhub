@@ -18,7 +18,9 @@ PRE(=E;Rel)
 - [X] Remove '\n' from synonyms using Edit Page.
 - [X] BottomnNavigation background color as per UI.
 - [X] Edit a word and add to edit history table.
-- [ ] Add a new word should be intelligent to disable button if the object has not changed during edit and also to recognize duplicates dynamicacally.
+- [X] Notification Detail on request approval the difference is not visible as it is compared against the current version.
+- [ ] Difference is not shown correctly
+- [X] Add a new word should be intelligent to recognize duplicates dynamically.
 - [ ] Create onBoarding screens for app tour.
 - [ ] Before adding to history check if duplicate edit exists.
 - [ ] Ensure the fonts are consistent across the app.

@@ -17,15 +17,19 @@ class DatabaseService {
   }
 
   static Future<PostgrestResponse> findRowBy2ColumnValues(
-      String column1Value, String column2Value,
-      {String column1Name = '$ID_COLUMN',
-      String column2Name = '$USER_EMAIL_COLUMN',
-      String tableName = '$VOCAB_TABLE_NAME'}) async {
+    String column1Value,
+    String column2Value, {
+    String column1Name = '$ID_COLUMN',
+    String column2Name = '$USER_EMAIL_COLUMN',
+    String tableName = '$VOCAB_TABLE_NAME',
+    bool ascending = false,
+  }) async {
     final response = await _supabase
         .from(tableName)
         .select()
         .eq('$column1Name', column1Value)
         .eq('$column2Name', column2Value)
+        .order(CREATED_AT_COLUMN, ascending: ascending)
         .execute();
     return response;
   }

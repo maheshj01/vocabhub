@@ -48,6 +48,11 @@ extension DateHelper on DateTime {
     final now = DateTime.now();
     return now.difference(this).inDays;
   }
+
+  String standardDate() {
+    final formatter = DateFormat(dateFormatter);
+    return formatter.format(this);
+  }
 }
 
 extension ContainerBorderRadius on double {
