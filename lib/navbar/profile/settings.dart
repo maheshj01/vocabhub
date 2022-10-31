@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:vocabhub/constants/strings.dart';
+import 'package:vocabhub/navbar/profile/about.dart';
+import 'package:vocabhub/navbar/profile/report.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/extensions.dart';
+import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
 class SettingsPage extends StatefulWidget {
-  static const String route = '/';
+  static const String route = '/settings';
 
   const SettingsPage({
     Key? key,
@@ -32,37 +37,60 @@ class SettingsPageMobile extends StatefulWidget {
 }
 
 class _SettingsPageMobileState extends State<SettingsPageMobile> {
+  Widget settingTile(String label, {Function? onTap}) {
+    return ListTile(
+      minVerticalPadding: 24.0,
+      title: Text(
+        '$label',
+        style: TextStyle(
+          fontSize: 20,
+          color: VocabTheme.lightblue,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      onTap: () {
+        if (onTap != null) {
+          onTap();
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
       ),
-      body: Padding(
-        padding: 16.0.allPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            heading('About'),
-            const SizedBox(height: 16),
-            Text(
-              'VocabHub is a free and open source app for learning and managing your vocabulary. It is developed by Mahesh Jamdade with Love and is available on Android and iOS.',
-            ),
-            const SizedBox(height: 16),
-            heading('Theme'),
-            const SizedBox(height: 16),
-            heading('Report a bug'),
-            const SizedBox(height: 16),
-            heading('terms of service'),
-            const SizedBox(height: 16),
-            heading('privacy policy'),
-            const SizedBox(height: 16),
-            heading('contact us'),
-            Expanded(child: SizedBox.shrink()),
-            VersionBuilder(),
-            60.0.vSpacer()
-          ],
-        ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          settingTile(
+            'About',
+            onTap: () {
+              Navigate.push(context, AboutVocabhub());
+            },
+          ),
+          hLine(),
+          // heading('Theme'),
+          // const SizedBox(height: 16),
+          settingTile(
+            'Report a bug',
+            onTap: () {
+              Navigate.push(context, ReportABug());
+            },
+          ),
+          hLine(),
+          // heading('terms of service'),
+          // const SizedBox(height: 16),
+          settingTile('Privacy Policy'),
+          hLine(),
+          settingTile('Contact Us'),
+          hLine(),
+          Expanded(child: SizedBox.shrink()),
+          VersionBuilder(),
+          60.0.vSpacer()
+        ],
       ),
     );
   }

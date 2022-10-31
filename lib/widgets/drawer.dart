@@ -128,7 +128,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             hLine(),
             ListTile(
               onTap: () {
-                launchUrl(REPORT_URL);
+                launchURL(REPORT_URL);
               },
               subtitle: subTitle(
                 'Report a bug or Request a feature',
@@ -157,7 +157,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             ListTile(
               subtitle: subTitle('The code to this app is Open Sourced'),
               onTap: () {
-                launchUrl(SOURCE_CODE_URL);
+                launchURL(SOURCE_CODE_URL);
               },
               title: title(
                 'Source code',
@@ -184,7 +184,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             hLine(),
             ListTile(
               onTap: () {
-                launchUrl(PRIVACY_POLICY);
+                launchURL(PRIVACY_POLICY);
               },
               trailing: trailingIcon(Icons.privacy_tip),
               title: title(

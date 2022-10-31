@@ -57,11 +57,11 @@ void hideToast() {
 }
 
 /// TODO: Add canLaunch condition back when this issue is fixed https://github.com/flutter/flutter/issues/74557
-Future<void> launchUrl(String url, {bool isNewTab = true}) async {
+Future<void> launchURL(String url, {bool isNewTab = true}) async {
   // await canLaunch(url)
   // ?
-  await launch(
-    url,
+  await launchUrl(
+    Uri.parse(url),
     webOnlyWindowName: isNewTab ? '_blank' : '_self',
   );
   // : throw 'Could not launch $url';

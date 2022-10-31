@@ -130,7 +130,7 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                   VHTextfield(
                     hint: 'Name',
                     controller: _nameController,
-                    isReadOnly: isLoading,
+                    isReadOnly: true,
                   ),
                   ValueListenableBuilder<bool?>(
                       valueListenable: _validNotifier,
@@ -301,7 +301,11 @@ class _VHTextfieldState extends State<VHTextfield> {
             controller: _controller,
             keyboardType: widget.keyboardType,
             readOnly: widget.isReadOnly,
-            onChanged: (x) => widget.onChanged!(x),
+            onChanged: (x) {
+              if (widget.onChanged != null) {
+                widget.onChanged!(x);
+              }
+            },
             decoration: InputDecoration(
               border: InputBorder.none,
               hintText: widget.hint,

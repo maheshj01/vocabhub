@@ -80,7 +80,7 @@ Widget storeRedirect(BuildContext context,
       final width = MediaQuery.of(context).size.width;
       firebaseAnalytics.logRedirectToStore(
           width > SizeUtils.kTabletBreakPoint ? 'desktop' : 'mobile');
-      launchUrl(redirectUrl);
+      launchURL(redirectUrl);
     },
     child: MouseRegion(
         cursor: SystemMouseCursors.click,

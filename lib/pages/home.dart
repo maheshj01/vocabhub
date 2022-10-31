@@ -146,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage>
         default:
           url = '$SOURCE_CODE_URL';
       }
-      await launchUrl(url);
+      await launchURL(url);
     }
   }
 
@@ -169,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage>
             onTap: onTap != null
                 ? () => onTap()
                 : () {
-                    launchUrl(url);
+                    launchURL(url);
                   },
             child: Padding(
               padding: EdgeInsets.symmetric(

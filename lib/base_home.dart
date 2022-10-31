@@ -7,6 +7,8 @@ import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/navbar.dart';
+import 'package:vocabhub/navbar/profile/about.dart';
+import 'package:vocabhub/navbar/profile/settings.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
@@ -16,6 +18,7 @@ import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 
+import 'navbar/profile/report.dart';
 import 'pages/notifications/notifications.dart';
 
 const appBarDesktopHeight = 128.0;
@@ -121,7 +124,12 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     final user = AppStateScope.of(context).user;
     if (user!.isLoggedIn) {
       _routes.addAll({
-        3: {UserProfile.route: UserProfile()}
+        3: {
+          UserProfile.route: UserProfile(),
+          SettingsPage.route: SettingsPage(),
+          AboutVocabhub.route: AboutVocabhub(),
+          ReportABug.route: ReportABug(),
+          }
       });
       items.add(NavbarItem(Icons.person, 'Me'));
     }

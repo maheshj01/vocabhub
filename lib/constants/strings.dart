@@ -37,3 +37,6 @@ Map<String, List<String>> popupMenu = {
 const String unKnownWord = 'We will try out best to help you master this word';
 const String knownWord = 'We will try not to show that word again';
 const String signInFailure = 'failed to sign in User, please try again later';
+
+const String ABOUT_TEXT =
+    "Vocabhub is a free and open source project that aims to help you learn new words and improve your vocabulary. This app is developed by a single person as a side project, I am always looking for contributors to help improve the quality of words on the platform.\n\n   Contributions can be made by adding new words, improving existing words or by reporting a bug. I hope you enjoy using Vocabhub and I am always open to your feedback.";

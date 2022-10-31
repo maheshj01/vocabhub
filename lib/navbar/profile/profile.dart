@@ -151,7 +151,9 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                     size: 38,
                                     onTap: () {
                                       Navigate.push(
-                                          context, SettingsPageMobile());
+                                        context,
+                                        SettingsPageMobile(),
+                                      );
                                     },
                                   ),
                                 ),
