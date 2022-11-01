@@ -18,6 +18,7 @@ const String signInScopeUrl =
 const PRIVACY_POLICY = 'https://maheshmnj.github.io/privacy';
 const String profileUrl = 'assets/profile.png';
 const Duration wordCountAnimationDuration = Duration(seconds: 3);
+const FEEDBACK_EMAIL_TO = 'maheshmn121@gmail.com';
 
 /// TABLES
 // const VOCAB_TABLE_NAME = 'vocabsheet';
@@ -58,9 +59,11 @@ const String dateFormatter = 'MMMM dd, y';
 
 enum EditState {
   approved('approved'),
+
   /// Admin has rejected the request
   rejected('rejected'),
   pending('pending'),
+
   /// user can cancel the edit request
   cancelled('cancelled');
 

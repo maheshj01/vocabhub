@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/constants/strings.dart';
-import 'package:vocabhub/utils/extensions.dart';
+import 'package:url_launcher/link.dart';
+import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 
 class AboutVocabhub extends StatefulWidget {
@@ -62,13 +62,28 @@ class _AboutVocabhubMobileState extends State<AboutVocabhubMobile> {
             /// about the app
             Text(
               '$ABOUT_TEXT',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.black,
-                fontWeight: FontWeight.w500,
-              ),
             ),
-            16.0.vSpacer()
+            16.0.vSpacer(),
+            // open source repo link
+            16.0.vSpacer(),
+            Expanded(child: SizedBox.shrink()),
+            Link(
+                uri: Uri.parse(SOURCE_CODE_URL),
+                target: LinkTarget.blank,
+                builder: (context, followLink) {
+                  return TextButton(
+                    onPressed: followLink,
+                    child: Text(
+                      'Visit Repository',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.blue,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  );
+                }),
+            24.0.vSpacer(),
           ],
         ),
       ),

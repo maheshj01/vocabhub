@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/navbar/profile/about.dart';
 import 'package:vocabhub/navbar/profile/report.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
-import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/navigator.dart';
+import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -82,9 +84,15 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
           hLine(),
           // heading('terms of service'),
           // const SizedBox(height: 16),
-          settingTile('Privacy Policy'),
+          settingTile('Privacy Policy', onTap: () {
+            launchUrl(Uri.parse(PRIVACY_POLICY),
+                mode: LaunchMode.externalApplication);
+          }),
           hLine(),
-          settingTile('Contact Us'),
+          settingTile('Contact Us', onTap: () {
+            launchUrl(Uri.parse('mailto:$FEEDBACK_EMAIL_TO'),
+                mode: LaunchMode.externalApplication);
+          }),
           hLine(),
           Expanded(child: SizedBox.shrink()),
           VersionBuilder(),
