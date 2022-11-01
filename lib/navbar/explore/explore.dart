@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/models.dart';
+import 'package:vocabhub/models/request.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/word_state_service.dart';
@@ -40,13 +41,13 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
   }
 
   Future<void> exploreWords() async {
-    loadingNotifier.value = true;
+    _request.value = Request(RequestState.active);
     final user = AppStateScope.of(context).user;
     final newWords =
         await VocabStoreService.exploreWords(user!.email, page: page);
     words!.addAll(newWords);
     max = words!.length;
-    loadingNotifier.value = false;
+    _request.value = Request(RequestState.done);
   }
 
   int page = 0;
@@ -54,19 +55,20 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
   List<Word>? words = [];
   bool isFetching = false;
 
-  ValueNotifier<bool> loadingNotifier = ValueNotifier<bool>(false);
+  ValueNotifier<Request> _request =
+      ValueNotifier<Request>(Request(RequestState.none));
 
   @override
   void dispose() {
-    loadingNotifier.dispose();
+    _request.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-        valueListenable: loadingNotifier,
-        builder: (BuildContext context, bool isLoading, Widget? child) {
+    return ValueListenableBuilder<Request>(
+        valueListenable: _request,
+        builder: (BuildContext context, Request request, Widget? child) {
           if (words == null || words!.isEmpty) return SizedBox.shrink();
           return Material(
             child: Stack(
@@ -88,7 +90,7 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
                     itemBuilder: (context, index) {
                       return ExploreWord(word: words![index], index: index);
                     }),
-                isLoading
+                request.state == RequestState.active
                     ? Positioned(
                         bottom: kBottomNavigationBarHeight + 50,
                         left: 120,
@@ -363,13 +365,12 @@ class WordMasteredPreference extends StatefulWidget {
 }
 
 class _WordMasteredPreferenceState extends State<WordMasteredPreference> {
-  
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final bool isMastered = widget.value == WordState.known;
     final bool unAnswered = widget.value == WordState.unanswered;
-    
+
     Color stateToColor(WordState state) {
       switch (state) {
         case WordState.unanswered:

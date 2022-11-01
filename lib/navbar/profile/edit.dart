@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vocabhub/models/request.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
@@ -55,7 +56,8 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
   }
 
   ValueNotifier<bool?> _validNotifier = ValueNotifier<bool?>(null);
-  ValueNotifier<bool> _loadingNotifier = ValueNotifier<bool>(false);
+  ValueNotifier<Request> _requestNotifier =
+      ValueNotifier<Request>(Request(RequestState.none));
   String error = '';
   TextEditingController _nameController = TextEditingController();
   TextEditingController _usernameController = TextEditingController();
@@ -65,7 +67,7 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
   @override
   void dispose() {
     _validNotifier.dispose();
-    _loadingNotifier.dispose();
+    _requestNotifier.dispose();
     super.dispose();
   }
 
@@ -97,9 +99,9 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
       appBar: AppBar(
         title: Text('Edit Profile'),
       ),
-      body: ValueListenableBuilder<bool>(
-          valueListenable: _loadingNotifier,
-          builder: (BuildContext context, bool isLoading, Widget? child) {
+      body: ValueListenableBuilder<Request>(
+          valueListenable: _requestNotifier,
+          builder: (BuildContext context, Request request, Widget? child) {
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,7 +143,7 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                           children: [
                             VHTextfield(
                               hint: 'Username',
-                              isReadOnly: isLoading,
+                              isReadOnly: request.state == RequestState.active,
                               controller: _usernameController,
                               onChanged: (username) {
                                 user = AppStateScope.of(context).user;
@@ -183,16 +185,18 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                           height: 48,
                           backgroundColor: VocabTheme.primaryColor,
                           foregroundColor: Colors.white,
-                          isLoading: isLoading,
+                          isLoading: request.state == RequestState.active,
                           onTap: () async {
-                            _loadingNotifier.value = true;
+                            _requestNotifier.value =
+                                Request(RequestState.active);
                             final userName = _usernameController.text.trim();
                             final editedUser =
                                 user!.copyWith(username: userName);
                             final success =
                                 await UserService.updateUser(editedUser);
                             if (success) {
-                              _loadingNotifier.value = false;
+                              _requestNotifier.value =
+                                  Request(RequestState.done);
                               _validNotifier.value = null;
                               appState.setUser(editedUser);
                               showMessage(context, 'success updating user! ');

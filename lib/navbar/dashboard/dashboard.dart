@@ -26,8 +26,8 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
-    super.initState();
     publishWordOfTheDay();
+    super.initState();
   }
 
   /// get latest word of the day sort by descending order of created_at

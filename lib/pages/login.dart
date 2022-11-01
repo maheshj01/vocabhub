@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/constants/constants.dart';
+import 'package:vocabhub/models/request.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
@@ -24,7 +25,7 @@ class _AppSignInState extends State<AppSignIn> {
   Future<void> _handleSignIn(BuildContext context) async {
     final state = AppStateWidget.of(context);
     try {
-      loadingNotifier.value = true;
+      _requestNotifier.value = Request(RequestState.active);
       user = await auth.googleSignIn(context);
       if (user != null) {
         final existingUser = await UserService.findByEmail(email: user!.email);
@@ -34,7 +35,7 @@ class _AppSignInState extends State<AppSignIn> {
           if (resp.didSucced) {
             final user = UserModel.fromJson((resp.data as List<dynamic>)[0]);
             state.setUser(user.copyWith(isLoggedIn: true));
-            loadingNotifier.value = false;
+            _requestNotifier.value = Request(RequestState.done);
             Navigate().pushAndPopAll(context, AdaptiveLayout(),
                 slideTransitionType: TransitionType.ttb);
             await Settings.setIsSignedIn(true, email: user.email);
@@ -43,7 +44,7 @@ class _AppSignInState extends State<AppSignIn> {
             logger.d('$signInFailure');
             await Settings.setIsSignedIn(false, email: existingUser.email);
             showMessage(context, '$signInFailure');
-            loadingNotifier.value = false;
+            _requestNotifier.value = Request(RequestState.done);
             throw 'failed to register new user';
           }
         } else {
@@ -52,18 +53,18 @@ class _AppSignInState extends State<AppSignIn> {
           await AuthService.updateLogin(
               email: existingUser.email, isLoggedIn: true);
           state.setUser(existingUser.copyWith(isLoggedIn: true));
-          loadingNotifier.value = false;
+          _requestNotifier.value = Request(RequestState.done);
           Navigate().pushAndPopAll(context, AdaptiveLayout());
           firebaseAnalytics.logSignIn(user!);
         }
       } else {
         showMessage(context, '$signInFailure');
-        loadingNotifier.value = false;
+        _requestNotifier.value = Request(RequestState.done);
         throw 'failed to register new user';
       }
     } catch (error) {
       showMessage(context, error.toString());
-      loadingNotifier.value = false;
+      _requestNotifier.value = Request(RequestState.done);
       logger.e(error);
       await Settings.setIsSignedIn(false);
     }
@@ -71,10 +72,11 @@ class _AppSignInState extends State<AppSignIn> {
 
   UserModel? user;
   late Analytics firebaseAnalytics;
-  final ValueNotifier<bool> loadingNotifier = ValueNotifier<bool>(false);
+  final ValueNotifier<Request> _requestNotifier =
+      ValueNotifier<Request>(Request(RequestState.none));
   @override
   void dispose() {
-    loadingNotifier.dispose();
+    _requestNotifier.dispose();
     super.dispose();
   }
 
@@ -114,9 +116,9 @@ class _AppSignInState extends State<AppSignIn> {
           ));
     }
 
-    return ValueListenableBuilder<bool>(
-        valueListenable: loadingNotifier,
-        builder: (BuildContext context, bool isLoading, Widget? child) {
+    return ValueListenableBuilder<Request>(
+        valueListenable: _requestNotifier,
+        builder: (BuildContext context, Request request, Widget? child) {
           Widget _signInButton() {
             return Align(
                 alignment: Alignment.center,
@@ -124,14 +126,14 @@ class _AppSignInState extends State<AppSignIn> {
                   width: 300,
                   leading: Image.asset('$GOOGLE_ASSET_PATH', height: 32),
                   label: 'Sign In with Google',
-                  isLoading: isLoading,
+                  isLoading: request.state == RequestState.active,
                   onTap: () => _handleSignIn(context),
                   backgroundColor: Colors.white,
                 ));
           }
 
           return IgnorePointer(
-            ignoring: isLoading,
+            ignoring: request.state == RequestState.active,
             child: Scaffold(
                 backgroundColor: darkNotifier.value
                     ? VocabTheme.surfaceGrey
