@@ -75,8 +75,6 @@ class _MyHomePageState extends State<MyHomePage>
       final String _email = await Settings.email;
       userProvider.isLoggedIn = _email.isNotEmpty;
       userProvider.email = _email;
-      print('signedIn =${userProvider.isLoggedIn}');
-      print('email =${userProvider.email}');
     }
     if (userProvider.isLoggedIn) {
       logger.d('loggedIn user = ${userProvider.email}');

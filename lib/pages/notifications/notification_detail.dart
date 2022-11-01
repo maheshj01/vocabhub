@@ -79,7 +79,6 @@ class _EditDetailMobileState extends State<EditDetailMobile> {
         }
       }
     } else {
-      print("Failed to get word");
       lastEdit = Word('', '', '');
     }
     currentWordNotifier.value = lastEdit;

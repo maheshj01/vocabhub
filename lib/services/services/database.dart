@@ -167,7 +167,6 @@ class DatabaseService {
         .upsert(data, onConflict: 'id')
         .execute()
         .onError((error, stackTrace) {
-      print(error);
       return PostgrestResponse();
     });
     return response;

@@ -102,7 +102,6 @@ class _AddWordFormState extends State<AddWordForm> {
     return wordObject;
   }
 
-  /// TODO: Can be optimized to reduce api calls
   Future<bool> wordExists(Word editedWord) async {
     final currentWordFromDatabase =
         await VocabStoreService.findByWord(editedWord.word.capitalize()!);
@@ -110,7 +109,6 @@ class _AddWordFormState extends State<AddWordForm> {
       _requestNotifier.value = Request(RequestState.done);
       return false;
     }
-    print('is word Same = ${currentWordFromDatabase.equals(editedWord)}');
     _requestNotifier.value =
         Request(RequestState.error, message: 'Word already exists');
     return true;
@@ -206,8 +204,6 @@ class _AddWordFormState extends State<AddWordForm> {
         showMessage(
             context, "The word \"${widget.word!.word}\" has been deleted.",
             onClosed: () => Navigate().popView(context));
-      } else {
-        print('failed to delete ${response.error!.message}');
       }
       stopCircularIndicator(context);
     }

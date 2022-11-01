@@ -345,10 +345,8 @@ class _ExploreWordState extends State<ExploreWord>
     /// TODO this doesn't work
     /// keep only 5 near by pages alive based on current index
     if (widget.index < lowerIndex || widget.index > upperIndex) {
-      print('keeAlive false');
       return false;
     }
-    print('keeAlive true');
     return true;
   }
 }
@@ -365,11 +363,13 @@ class WordMasteredPreference extends StatefulWidget {
 }
 
 class _WordMasteredPreferenceState extends State<WordMasteredPreference> {
+  
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final bool isMastered = widget.value == WordState.known;
     final bool unAnswered = widget.value == WordState.unanswered;
+    
     Color stateToColor(WordState state) {
       switch (state) {
         case WordState.unanswered:

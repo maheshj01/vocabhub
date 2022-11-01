@@ -48,15 +48,12 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
 
   updateWord(List<Word> words) {
     words.forEach((word) {
-      print('\nBEFORE\n${word.meaning}');
       if (word.meaning.isNotEmpty) {
         // word.synonyms!.forEach((syn) {
         //   synonyms.add(syn.trim().replaceAll('\n', ''));
         // });
         final meaning = word.meaning.replaceAll('\n', '');
         final _updatedWord = word.copyWith(meaning: meaning);
-        print(
-            '\n AFTER meaning of ${_updatedWord.word}\n${_updatedWord.meaning}');
         // SupaStore().updateWord(id: word.id, word: _updatedWord);
       }
       // _store.updateWord(id: word.id, word: _updatedWord);
@@ -210,7 +207,6 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                   onChanged: (x) {
                     /// Simulate DragGesture on pageView
                     if (EXPLORE_INDEX == x && !animatePageOnce) {
-                      print('index change = ${pageController.hasClients}');
                       if (pageController.hasClients && user.isLoggedIn) {
                         Future.delayed(Duration(seconds: 3), () {
                           if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {

@@ -48,7 +48,6 @@ class _VocabAppState extends State<VocabApp> {
     if (email.isNotEmpty) {
       final response =
           await AuthService.updateLogin(email: email, isLoggedIn: true);
-      print(response.status);
     }
   }
 

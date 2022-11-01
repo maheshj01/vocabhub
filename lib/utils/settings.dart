@@ -105,8 +105,6 @@ class Settings extends ChangeNotifier {
       recentList.add(word);
       final stringData = jsonEncode(recentList);
       await _sharedPreferences!.setString(recentKey, stringData);
-    } else {
-      print('already added');
     }
   }
 

@@ -204,7 +204,6 @@ class _NotificationsState extends State<Notifications> {
                       },
                       onCancel: () async {
                         updateRequest(edit, EditState.cancelled);
-                        print('request has been cancelled');
                       },
                     );
                   },
