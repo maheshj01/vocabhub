@@ -57,6 +57,7 @@ class UserProfileMobile extends StatefulWidget {
 
 class _UserProfileMobileState extends State<UserProfileMobile> {
   Future<void> getEditStats() async {
+    stats = [0, 0, 0];
     await Duration.zero;
     final user = AppStateScope.of(context).user;
     final resp = await EditHistoryService.getUserContributions(user!);
@@ -92,207 +93,205 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
   }
 
   ValueNotifier<List<int>> _statsNotifier = ValueNotifier([0, 0, 0]);
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
     return Scaffold(
-        body: user == null || !user.isLoggedIn
-            ? Center(
-                child: VHButton(
-                    onTap: () {
-                      Navigate.push(context, AppSignIn(),
-                          slideTransitionType: TransitionType.rtl);
-                    },
-                    label: 'Sign In'),
-              )
-            : Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 8.0, vertical: kBottomNavigationBarHeight),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: 16.0.allRadius,
-                          border: Border.all(
-                              color: VocabTheme.primaryColor.withOpacity(0.5))),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Padding(
-                          padding: 18.0.verticalPadding,
-                          child: Column(
-                            children: [
-                              // TODO: implement dark theme
-                              // Container(
-                              //     alignment: Alignment.topRight,
-                              //     padding: EdgeInsets.only(right: 16),
-                              //     child: IconButton(
-                              //       onPressed: () {
-                              //         if (VocabTheme.isDark) {
-                              //           Settings.setTheme(ThemeMode.light);
-                              //         } else {
-                              //           Settings.setTheme(ThemeMode.dark);
-                              //         }
-                              //       },
-                              //       icon: VocabTheme.isDark
-                              //           ? const Icon(Icons.light_mode)
-                              //           : const Icon(Icons.dark_mode),
-                              //     )),
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: Padding(
-                                  padding: 16.0.horizontalPadding,
-                                  child: VHIcon(
-                                    Icons.settings,
-                                    size: 38,
-                                    onTap: () {
-                                      Navigate.push(
-                                        context,
-                                        SettingsPageMobile(),
-                                      );
-                                    },
+        body: ValueListenableBuilder<List<int>>(
+            valueListenable: _statsNotifier,
+            builder: (BuildContext context, List<int> stats, Widget? child) {
+              return RefreshIndicator(
+                key: _refreshIndicatorKey,
+                onRefresh: () async {
+                  await getEditStats();
+                  setState(() {});
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0, vertical: 4.0),
+                  child: ListView(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: 16.0.allRadius,
+                            border: Border.all(
+                                color:
+                                    VocabTheme.primaryColor.withOpacity(0.5))),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: 18.0.verticalPadding,
+                            child: Column(
+                              children: [
+                                // TODO: implement dark theme
+                                // Container(
+                                //     alignment: Alignment.topRight,
+                                //     padding: EdgeInsets.only(right: 16),
+                                //     child: IconButton(
+                                //       onPressed: () {
+                                //         if (VocabTheme.isDark) {
+                                //           Settings.setTheme(ThemeMode.light);
+                                //         } else {
+                                //           Settings.setTheme(ThemeMode.dark);
+                                //         }
+                                //       },
+                                //       icon: VocabTheme.isDark
+                                //           ? const Icon(Icons.light_mode)
+                                //           : const Icon(Icons.dark_mode),
+                                //     )),
+                                Container(
+                                  alignment: Alignment.topRight,
+                                  child: Padding(
+                                    padding: 16.0.horizontalPadding,
+                                    child: VHIcon(
+                                      Icons.settings,
+                                      size: 38,
+                                      onTap: () {
+                                        Navigate.push(
+                                          context,
+                                          SettingsPageMobile(),
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ),
-                              ),
 
-                              Stack(
-                                children: [
-                                  Padding(
-                                    padding: 16.0.allPadding,
-                                    child: CircleAvatar(
-                                        radius: 46,
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .primary
-                                            .withOpacity(0.2),
-                                        child: CircularAvatar(
-                                          url: '${user.avatarUrl}',
-                                          radius: 40,
-                                        )),
-                                  ),
-                                  Positioned(
-                                      right: 8,
-                                      bottom: 16,
-                                      child: VHIcon(
-                                        Icons.edit,
-                                        size: 30,
-                                        onTap: () {
-                                          Navigate.push(
-                                            context,
-                                            EditProfile(
-                                              user: user,
-                                              onClose: () async {
-                                                setState(() {});
-                                              },
-                                            ),
-                                          );
-                                        },
-                                      ))
-                                ],
-                              ),
-                              Padding(
-                                  padding: 8.0.horizontalPadding,
-                                  child: Text('@${user.username} ' +
-                                      (!user.isAdmin ? ' (User)' : '(Admin)'))),
-                              Text(
-                                '${user.name.capitalize()}',
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline4!
-                                    .copyWith(
-                                        fontSize: 26,
-                                        fontWeight: FontWeight.w500),
-                              ),
-                              10.0.vSpacer(),
-                              RichText(
-                                  text: TextSpan(children: [
-                                TextSpan(
-                                    text: 'Joined ',
+                                Stack(
+                                  children: [
+                                    Padding(
+                                      padding: 16.0.allPadding,
+                                      child: CircleAvatar(
+                                          radius: 46,
+                                          backgroundColor: Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                              .withOpacity(0.2),
+                                          child: CircularAvatar(
+                                            url: '${user!.avatarUrl}',
+                                            radius: 40,
+                                          )),
+                                    ),
+                                    Positioned(
+                                        right: 8,
+                                        bottom: 16,
+                                        child: VHIcon(
+                                          Icons.edit,
+                                          size: 30,
+                                          onTap: () {
+                                            Navigate.push(
+                                              context,
+                                              EditProfile(
+                                                user: user,
+                                                onClose: () async {
+                                                  setState(() {});
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        ))
+                                  ],
+                                ),
+                                Padding(
+                                    padding: 8.0.horizontalPadding,
+                                    child: Text('@${user.username} ' +
+                                        (!user.isAdmin
+                                            ? ' (User)'
+                                            : '(Admin)'))),
+                                Text(
+                                  '${user.name.capitalize()}',
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline4!
+                                      .copyWith(
+                                          fontSize: 26,
+                                          fontWeight: FontWeight.w500),
+                                ),
+                                10.0.vSpacer(),
+                                RichText(
+                                    text: TextSpan(children: [
+                                  TextSpan(
+                                      text: 'Joined ',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .subtitle2!
+                                          .copyWith(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 12)),
+                                  TextSpan(
+                                    text: user.created_at!.formatDate(),
                                     style: Theme.of(context)
                                         .textTheme
                                         .subtitle2!
-                                        .copyWith(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 12)),
-                                TextSpan(
-                                  text: user.created_at!.formatDate(),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .subtitle2!
-                                      .copyWith(fontWeight: FontWeight.w600),
-                                ),
-                              ])),
-                            ],
+                                        .copyWith(fontWeight: FontWeight.w600),
+                                  ),
+                                ])),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    16.0.vSpacer(),
-                    Container(
-                        alignment: Alignment.centerLeft,
-                        child: heading('Contributions')),
-                    16.0.vSpacer(),
+                      16.0.vSpacer(),
+                      Container(
+                          alignment: Alignment.centerLeft,
+                          child: heading('Contributions')),
+                      16.0.vSpacer(),
 
-                    /// rounded Container with border
-                    ValueListenableBuilder<List<int>>(
-                        valueListenable: _statsNotifier,
-                        builder: (BuildContext context, List<int> stats,
-                            Widget? child) {
-                          return Container(
-                            height: 80,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: 16.0.allRadius,
-                                border: Border.all(
-                                    color: VocabTheme.primaryColor
-                                        .withOpacity(0.5))),
-                            child: Row(
-                              children: [
-                                for (int i = 0; i < stats.length; i++)
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '${stats[i]}',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .headline4!
-                                              .copyWith(
-                                                  fontSize: 28,
-                                                  fontWeight: FontWeight.w500),
-                                        ),
-                                        4.0.vSpacer(),
-                                        Text(
-                                          i == 0
-                                              ? 'Words Added'
-                                              : i == 1
-                                                  ? 'Words Edited'
-                                                  : 'Under Review',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .subtitle2!
-                                              .copyWith(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600),
-                                        ),
-                                      ],
+                      /// rounded Container with border
+
+                      Container(
+                        height: 80,
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: 16.0.allRadius,
+                            border: Border.all(
+                                color:
+                                    VocabTheme.primaryColor.withOpacity(0.5))),
+                        child: Row(
+                          children: [
+                            for (int i = 0; i < stats.length; i++)
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '${stats[i]}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline4!
+                                          .copyWith(
+                                              fontSize: 28,
+                                              fontWeight: FontWeight.w500),
                                     ),
-                                  ),
-                              ],
-                            ),
-                          );
-                        }),
-                    Spacer(),
-                    kBottomNavigationBarHeight.vSpacer(),
-                    kBottomNavigationBarHeight.vSpacer()
-                  ],
+                                    4.0.vSpacer(),
+                                    Text(
+                                      i == 0
+                                          ? 'Words Added'
+                                          : i == 1
+                                              ? 'Words Edited'
+                                              : 'Under Review',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .subtitle2!
+                                          .copyWith(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ));
+              );
+            }));
   }
 }
 
