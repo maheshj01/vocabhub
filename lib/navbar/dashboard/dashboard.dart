@@ -70,7 +70,11 @@ class _DashboardState extends State<Dashboard> {
     return Material(
         child: ResponsiveBuilder(
       desktopBuilder: (context) => DashboardDesktop(),
-      mobileBuilder: (context) => DashboardMobile(),
+      mobileBuilder: (context) => RefreshIndicator(
+          onRefresh: () async {
+            await publishWordOfTheDay();
+          },
+          child: DashboardMobile()),
     ));
   }
 }

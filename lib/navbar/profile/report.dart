@@ -11,7 +11,6 @@ import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
-import 'package:vocabhub/widgets/worddetail.dart';
 
 class ReportABug extends StatefulWidget {
   static const String route = '/report';

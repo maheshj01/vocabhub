@@ -3,9 +3,8 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/constants/constants.dart';
-import 'package:vocabhub/models/models.dart';
-import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/navbar.dart';
 import 'package:vocabhub/navbar/profile/about.dart';
 import 'package:vocabhub/navbar/profile/settings.dart';
@@ -44,20 +43,6 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
       AppStateWidget.of(context).setWords(words);
       // updateWord(words);
     }
-  }
-
-  updateWord(List<Word> words) {
-    words.forEach((word) {
-      if (word.meaning.isNotEmpty) {
-        // word.synonyms!.forEach((syn) {
-        //   synonyms.add(syn.trim().replaceAll('\n', ''));
-        // });
-        final meaning = word.meaning.replaceAll('\n', '');
-        final _updatedWord = word.copyWith(meaning: meaning);
-        // SupaStore().updateWord(id: word.id, word: _updatedWord);
-      }
-      // _store.updateWord(id: word.id, word: _updatedWord);
-    });
   }
 
   Future<void> isUpdateAvailable() async {
@@ -126,7 +111,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
           SettingsPage.route: SettingsPage(),
           AboutVocabhub.route: AboutVocabhub(),
           ReportABug.route: ReportABug(),
-          }
+        }
       });
       items.add(NavbarItem(Icons.person, 'Me'));
     }
@@ -256,7 +241,10 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                           !hasUpdate
                               ? SizedBox.shrink()
                               : TextButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    launchUrl(Uri.parse(PLAY_STORE_URL),
+                                        mode: LaunchMode.externalApplication);
+                                  },
                                   child: Text('Update',
                                       style: TextStyle(
                                         color: VocabTheme.primaryColor,

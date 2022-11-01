@@ -19,12 +19,16 @@ PRE(=E;Rel)
 - [X] BottomnNavigation background color as per UI.
 - [X] Edit a word and add to edit history table.
 - [X] Notification Detail on request approval the difference is not visible as it is compared against the current version.
-- [ ] Difference is not shown correctly
+- [X] Add a feedback system
 - [X] Add a new word should be intelligent to recognize duplicates dynamically.
+- [X] Add a about section for the app
+- [ ] Difference is not shown correctly
+- [ ] Deeplink to shared word
+- [ ] Implement notification system
 - [ ] Create onBoarding screens for app tour.
 - [ ] Before adding to history check if duplicate edit exists.
 - [ ] Ensure the fonts are consistent across the app.
-- [ ] Add a feedback system
+- [ ] Add deeplinking to specific word from share feature
 
 
 
@@ -32,8 +36,6 @@ PRE(=E;Rel)
 - [X] Add a feature to notify app update.
 - [ ] Create a reputation system for users.
 - [ ] Forum Tab to show edit and new word proposals user can only upvote or downvote the proposal.
-- Add a about section for the app
-- [ ] Add deeplinking to specific word from share feature
 
 ### Forum (Reputation rules)
 
