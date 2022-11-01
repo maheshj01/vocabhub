@@ -56,8 +56,6 @@ class UserProfileMobile extends StatefulWidget {
 }
 
 class _UserProfileMobileState extends State<UserProfileMobile> {
-  bool isLoading = false;
-
   Future<void> getEditStats() async {
     await Duration.zero;
     final user = AppStateScope.of(context).user;
@@ -290,43 +288,6 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                           );
                         }),
                     Spacer(),
-                    VHButton(
-                      label: 'Sign Out',
-                      height: 50,
-                      width: 140,
-                      isLoading: isLoading,
-                      onTap: () async {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        await Settings.clear();
-                        await AuthService.updateLogin(
-                            email: user.email, isLoggedIn: false);
-                        Navigate().pushAndPopAll(context, AppSignIn());
-                      },
-                    ),
-                    // SizedBox(
-                    //   height: 50,
-                    // ),
-                    // VocabButton(
-                    //   label: 'Delete user',
-                    //   height: 50,
-                    //   width: 150,
-                    //   isLoading: isLoading,
-                    //   onTap: () async {
-                    //     setState(() {
-                    //       isLoading = true;
-                    //     });
-                    //     final response =
-                    //         await UserService.deleteById(user.email);
-                    //     if (response.status == 200) {
-                    //       Navigate().pushAndPopAll(context, AppSignIn());
-                    //     }
-                    //     setState(() {
-                    //       isLoading = false;
-                    //     });
-                    //   },
-                    // ),
                     kBottomNavigationBarHeight.vSpacer(),
                     kBottomNavigationBarHeight.vSpacer()
                   ],

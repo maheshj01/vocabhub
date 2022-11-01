@@ -3,9 +3,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/navbar/profile/about.dart';
 import 'package:vocabhub/navbar/profile/report.dart';
+import 'package:vocabhub/pages/login.dart';
+import 'package:vocabhub/services/appstate.dart';
+import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/navigator.dart';
-import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -59,6 +61,7 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
 
   @override
   Widget build(BuildContext context) {
+    final user = AppStateScope.of(context).user;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -92,6 +95,13 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
           settingTile('Contact Us', onTap: () {
             launchUrl(Uri.parse('mailto:$FEEDBACK_EMAIL_TO'),
                 mode: LaunchMode.externalApplication);
+          }),
+          hLine(),
+          settingTile('Logout', onTap: () async {
+            await Settings.clear();
+            await AuthService.updateLogin(
+                email: user!.email, isLoggedIn: false);
+            Navigate().pushAndPopAll(context, AppSignIn());
           }),
           hLine(),
           Expanded(child: SizedBox.shrink()),
