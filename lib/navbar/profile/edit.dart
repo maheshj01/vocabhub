@@ -235,6 +235,7 @@ class VHTextfield extends StatefulWidget {
   final TextInputType keyboardType;
   final bool isReadOnly;
   final bool hasLabel;
+  final int maxLines;
   final Function(String)? onChanged;
 
   const VHTextfield(
@@ -244,6 +245,7 @@ class VHTextfield extends StatefulWidget {
       this.isReadOnly = false,
       this.hasLabel = true,
       this.onChanged,
+      this.maxLines = 1,
       this.keyboardType = TextInputType.text});
 
   @override
@@ -301,6 +303,7 @@ class _VHTextfieldState extends State<VHTextfield> {
             controller: _controller,
             keyboardType: widget.keyboardType,
             readOnly: widget.isReadOnly,
+            maxLines: widget.maxLines,
             onChanged: (x) {
               if (widget.onChanged != null) {
                 widget.onChanged!(x);

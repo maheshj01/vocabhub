@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/constants/strings.dart';
 import 'package:vocabhub/navbar/profile/about.dart';
 import 'package:vocabhub/navbar/profile/report.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
