@@ -21,10 +21,10 @@ const Duration wordCountAnimationDuration = Duration(seconds: 3);
 const FEEDBACK_EMAIL_TO = 'maheshmn121@gmail.com';
 
 /// TABLES
-// const VOCAB_TABLE_NAME = 'vocabsheet';
-// const USER_TABLE_NAME = 'users';
-const VOCAB_TABLE_NAME = 'vocabsheet_copy';
-const USER_TABLE_NAME = 'users_test';
+const VOCAB_TABLE_NAME = 'vocabsheet_mobile';
+const USER_TABLE_NAME = 'users_mobile';
+// const VOCAB_TABLE_NAME = 'vocabsheet_copy';
+// const USER_TABLE_NAME = 'users_test';
 const FEEDBACK_TABLE_NAME = 'feedback';
 
 const EDIT_HISTORY_TABLE = 'edit_history';

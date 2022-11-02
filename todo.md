@@ -22,14 +22,14 @@ PRE(=E;Rel)
 - [X] Add a feedback system
 - [X] Add a new word should be intelligent to recognize duplicates dynamically.
 - [X] Add a about section for the app
+- [ ] Create onBoarding screens for app tour.
 - [ ] Difference is not shown correctly
 - [ ] Deeplink to shared word
 - [ ] Implement notification system
-- [ ] Create onBoarding screens for app tour.
+- [ ] Send report via email add subject in link
 - [ ] Before adding to history check if duplicate edit exists.
 - [ ] Ensure the fonts are consistent across the app.
 - [ ] Add deeplinking to specific word from share feature
-
 
 
 - [ ] Dark theme for the app.

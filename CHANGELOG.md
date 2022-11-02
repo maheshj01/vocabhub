@@ -1,3 +1,7 @@
+### 0.4.0 (10)
+
+- Redesigned public release with minimal features
+
 ### 0.3.4 (9)
 
 - Internal Release (redesigned) 

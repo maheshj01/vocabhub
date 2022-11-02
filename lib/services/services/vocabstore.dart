@@ -141,7 +141,7 @@ class VocabStoreService {
         ascending: false);
     if (response.status == 200) {
       Word lastWordOfTheDay =
-          Word.fromJson(response.data[0]['vocabsheet_copy']);
+          Word.fromJson(response.data[0]['$VOCAB_TABLE_NAME']);
       lastWordOfTheDay.created_at =
           DateTime.parse(response.data[0]['created_at']);
       return lastWordOfTheDay;
