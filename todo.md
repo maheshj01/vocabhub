@@ -30,6 +30,7 @@ PRE(=E;Rel)
 - [ ] Before adding to history check if duplicate edit exists.
 - [ ] Ensure the fonts are consistent across the app.
 - [ ] Add deeplinking to specific word from share feature
+- [ ] Add mechanism to generate screenshots of app.
 
 
 - [ ] Dark theme for the app.
