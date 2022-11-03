@@ -32,6 +32,11 @@ PRE(=E;Rel)
 - [ ] Add deeplinking to specific word from share feature
 - [ ] Add mechanism to generate screenshots of app.
 
+### Release (Issues/Warnings during release)
+
+- [ ] "You must complete the advertising ID declaration before you can release an app that targets Android 13 (API 33). We'll use this declaration to provide safeguards in Play Console to accommodate changes to advertising ID in Android 13.
+
+Apps targeting Android 13 or above and use advertising ID must include the com.google.android.gms.permission.AD_ID permission in the manifest."
 
 - [ ] Dark theme for the app.
 - [X] Add a feature to notify app update.
