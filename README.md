@@ -10,7 +10,7 @@ A vocabulary app built with Flutter and Supabase, that is simple to use and avai
 
 ### Mobile
 
-Solarized dark             |  Solarized Ocean   |  Solarized Ocean
+Track Your Progress            |  Word Detail   |  Explore
 :-------------------------:|:-------------------------:|:-------------------------:
 <img src="https://user-images.githubusercontent.com/31410839/199623337-febc03e2-0bc7-4c72-b269-4ccb0c88fd81.png" width="600">| <img src="https://user-images.githubusercontent.com/31410839/199623341-0b8d4e82-24a4-4c67-b3fc-aaa53f6feb2f.png" width="600"> | <img src="https://user-images.githubusercontent.com/31410839/199623349-e1021ef6-5f6d-473d-b584-0885d5d462e2.png" width="600">
 
