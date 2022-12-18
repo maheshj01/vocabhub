@@ -6,8 +6,8 @@ import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
+import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
@@ -30,7 +30,6 @@ class _AppSignInState extends State<AppSignIn> {
       if (user != null) {
         final existingUser = await UserService.findByEmail(email: user!.email);
         if (existingUser.email.isEmpty) {
-          logger.d('registering new user ${user!.email}');
           final resp = await AuthService.registerUser(user!);
           if (resp.didSucced) {
             final user = UserModel.fromJson((resp.data as List<dynamic>)[0]);
@@ -41,14 +40,12 @@ class _AppSignInState extends State<AppSignIn> {
             await Settings.setIsSignedIn(true, email: user.email);
             firebaseAnalytics.logNewUser(user);
           } else {
-            logger.d('$signInFailure');
             await Settings.setIsSignedIn(false, email: existingUser.email);
             showMessage(context, '$signInFailure');
             _requestNotifier.value = Request(RequestState.done);
             throw 'failed to register new user';
           }
         } else {
-          logger.d('found existing user ${user!.email}');
           await Settings.setIsSignedIn(true, email: existingUser.email);
           await AuthService.updateLogin(
               email: existingUser.email, isLoggedIn: true);
@@ -65,7 +62,6 @@ class _AppSignInState extends State<AppSignIn> {
     } catch (error) {
       showMessage(context, error.toString());
       _requestNotifier.value = Request(RequestState.done);
-      logger.e(error);
       await Settings.setIsSignedIn(false);
     }
   }

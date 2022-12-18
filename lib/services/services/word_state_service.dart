@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:supabase/supabase.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/services/services/database.dart';
-import 'package:logger/logger.dart' as log;
+import 'package:vocabhub/utils/logger.dart';
 
 /// Api to access the edit history and also to update the VocabTable
 /// These edits are only made when the edits are approved by the admin.
 class WordStateService {
   static String _tableName = '$WORD_STATE_TABLE_NAME';
-  final _logger = log.Logger();
+  final _logger = Logger('WordStateService');
 
   /// id could be userId or wordId
   /// This edits need to be shown under notifications for the user

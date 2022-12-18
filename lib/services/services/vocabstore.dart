@@ -1,19 +1,18 @@
 import 'dart:convert';
 
 import 'package:supabase/supabase.dart';
-import 'package:logger/logger.dart' as log;
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/models.dart';
-import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/services/services/database.dart';
-import 'package:vocabhub/utils/secrets.dart';
 import 'package:vocabhub/platform/mobile.dart'
     if (dart.library.html) 'package:vocabhub/platform/web.dart' as platformOnly;
+import 'package:vocabhub/services/services/database.dart';
+import 'package:vocabhub/utils/logger.dart';
+import 'package:vocabhub/utils/secrets.dart';
 
 /// Global Vocabulary table's api.
 class VocabStoreService {
   static String tableName = '$VOCAB_TABLE_NAME';
-  static final _logger = log.Logger();
+  static final _logger = Logger("VocabStoreService");
   static final SupabaseClient _supabase = SupabaseClient("$CONFIG_URL", "$APIkey");
 
   static Future<PostgrestResponse> findById(String id) async {
@@ -173,7 +172,7 @@ class VocabStoreService {
       }
       return false;
     } catch (x) {
-      logger.d(x);
+      _logger.d(x.toString());
       throw 'x';
     }
   }

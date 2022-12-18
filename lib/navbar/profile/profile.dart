@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/notification.dart';
@@ -153,6 +154,14 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                           context,
                                           SettingsPageMobile(),
                                         );
+
+                                        Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pushReplacement(
+                                                PageRoutes.sharedAxis(
+                                                    const SettingsPageMobile(),
+                                                    SharedAxisTransitionType
+                                                        .scaled));
                                       },
                                     ),
                                   ),

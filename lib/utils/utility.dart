@@ -138,7 +138,6 @@ Widget _buildNewTransition(
 //   return getWindowType(context) == AdaptiveWindowType.xsmall;
 // }
 
-// TODO: Toggle isAdmin
 String editTypeToUserNotification(EditHistory history, UserModel editor) {
   String statefilter =
       '${history.state == EditState.pending ? 'under review' : history.state!.toName()}';

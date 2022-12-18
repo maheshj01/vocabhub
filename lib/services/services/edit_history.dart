@@ -7,13 +7,13 @@ import 'package:vocabhub/models/history.dart';
 import 'package:vocabhub/models/notification.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/services/database.dart';
-import 'package:logger/logger.dart' as log;
+import 'package:vocabhub/utils/logger.dart';
 
 /// Api to access the edit history and also to update the VocabTable
 /// These edits are only made when the edits are approved by the admin.
 class EditHistoryService {
   static String _tableName = '$EDIT_HISTORY_TABLE';
-  final _logger = log.Logger();
+   static final _logger =   Logger("EditHistoryService");
 
   /// id could be userId or wordId
   /// This edits need to be shown under notifications for the user

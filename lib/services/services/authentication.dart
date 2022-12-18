@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:vocabhub/constants/constants.dart';
-import 'package:vocabhub/main.dart';
+import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/utils/utility.dart';
 
-class AuthService {
+class AuthService{
   GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: <String>[
       'email',
@@ -16,6 +15,7 @@ class AuthService {
   );
 
   static String _tableName = '$USER_TABLE_NAME';
+  static final _logger =   Logger("AuthService");
 
   static Future<Response> registerUser(UserModel user) async {
     final resp = Response(didSucced: false, message: "Failed");
@@ -30,11 +30,11 @@ class AuthService {
         resp.message = 'Success';
         resp.data = response.data;
       } else {
-        logger.e('error caught');
+        _logger.e('error caught');
         throw "Failed to register new user";
       }
     } catch (_) {
-      logger.e('error caught $_');
+      _logger.e('error caught $_');
       throw "Failed to register new user";
     }
     return resp;
@@ -61,7 +61,7 @@ class AuthService {
           username: username,
           accessToken: accessToken);
     } catch (error) {
-      logger.e(error);
+      _logger.e(error.toString());
       showMessage(context, 'Failed to signIn');
       throw 'Failed to signIn';
     }
@@ -73,7 +73,7 @@ class AuthService {
       await _googleSignIn.disconnect();
       return true;
     } catch (err) {
-      logger.e(err);
+      _logger.e(err.toString());
       showMessage(context, 'Failed to signout!');
       return false;
     }
@@ -93,12 +93,12 @@ class AuthService {
         return ResponseObject(Status.success.name,
             UserModel.fromJson((response.data as List).first), Status.success);
       } else {
-        logger.d('existing user not found');
+        _logger.d('existing user not found');
         return ResponseObject(Status.notfound.name,
             UserModel.fromJson(response.data), Status.notfound);
       }
     } catch (_) {
-      logger.e(_);
+      _logger.e(_.toString());
       return ResponseObject(_.toString(), UserModel.init(), Status.error);
     }
   }
