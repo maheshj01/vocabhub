@@ -102,4 +102,30 @@ class AuthService{
       return ResponseObject(_.toString(), UserModel.init(), Status.error);
     }
   }
+
+  static Future<ResponseObject> updateTokenOnLogin(
+      {required String email, required String token}) async {
+    try {
+      final response = await DatabaseService.updateRow(
+          colValue: email,
+          data: {
+            USER_TOKEN_COLUMN: token,
+            USER_LOGGEDIN_COLUMN: true,
+          },
+          columnName: USER_EMAIL_COLUMN,
+          tableName: _tableName);
+
+      if (response.status == 200) {
+        return ResponseObject(Status.success.name,
+            UserModel.fromJson((response.data as List).first), Status.success);
+      } else {
+        _logger.d('existing user not found');
+        return ResponseObject(Status.notfound.name,
+            UserModel.fromJson(response.data), Status.notfound);
+      }
+    } catch (_) {
+      _logger.e(_.toString());
+      return ResponseObject(_.toString(), UserModel.init(), Status.error);
+    }
+  }
 }

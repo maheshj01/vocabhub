@@ -26,13 +26,15 @@ class _AppSignInState extends State<AppSignIn> {
     try {
       _requestNotifier.value = Response(state:RequestState.active);
       user = await auth.googleSignIn(context);
+      final String fcmToken = await pushNotificationService!.token;
+      print("FirebaseMessaging token: $fcmToken");
       if (user != null) {
         final existingUser = await UserService.findByEmail(email: user!.email);
         if (existingUser.email.isEmpty) {
           final resp = await AuthService.registerUser(user!);
           if (resp.didSucced) {
             final user = UserModel.fromJson((resp.data as List<dynamic>)[0]);
-            state.setUser(user.copyWith(isLoggedIn: true));
+            state.setUser(user.copyWith(isLoggedIn: true, token: fcmToken));
             _requestNotifier.value = Response(state:RequestState.done);
             Navigate().pushAndPopAll(context, AdaptiveLayout(),
                 slideTransitionType: TransitionType.ttb);
@@ -46,9 +48,10 @@ class _AppSignInState extends State<AppSignIn> {
           }
         } else {
           await Settings.setIsSignedIn(true, email: existingUser.email);
-          await AuthService.updateLogin(
-              email: existingUser.email, isLoggedIn: true);
-          state.setUser(existingUser.copyWith(isLoggedIn: true));
+          await AuthService.updateTokenOnLogin(
+              email: existingUser.email, token: fcmToken);
+          state.setUser(
+              existingUser.copyWith(isLoggedIn: true, token: fcmToken));
           _requestNotifier.value = Response(state:RequestState.done);
           Navigate().pushAndPopAll(context, AdaptiveLayout());
           firebaseAnalytics.logSignIn(user!);

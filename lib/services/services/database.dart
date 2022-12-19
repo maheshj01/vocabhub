@@ -173,7 +173,8 @@ class DatabaseService {
   }
 
   /// updates a row in the table
-  ///
+  /// update `tableName` where `columnName` = `colValue`
+  /// with `data`
   static Future<PostgrestResponse> updateRow(
       {required String colValue,
       required Map<String, dynamic> data,
@@ -203,6 +204,7 @@ class DatabaseService {
         .execute();
     return response;
   }
+
 
   static Future<PostgrestResponse> upsertRow(Map<String, dynamic> data,
       {String tableName = '$VOCAB_TABLE_NAME'}) async {
