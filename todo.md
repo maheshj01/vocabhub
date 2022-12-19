@@ -32,19 +32,27 @@ PRE(=E;Rel)
 - [ ] Add deeplinking to specific word from share feature
 - [ ] Add mechanism to generate screenshots of app.
 
+### Repo maintainence
+
+- Use secrets from Remote Config
+- [ ] Update Readme to indicate how users can compile and run this app without secrets
+
 ### Release (Issues/Warnings during release)
 
 - [ ] "You must complete the advertising ID declaration before you can release an app that targets Android 13 (API 33). We'll use this declaration to provide safeguards in Play Console to accommodate changes to advertising ID in Android 13.
 
 Apps targeting Android 13 or above and use advertising ID must include the com.google.android.gms.permission.AD_ID permission in the manifest."
 
-- [ ] Dark theme for the app.
+- [ ] Dark/Color schemes for the app.
 - [X] Add a feature to notify app update.
-- [ ] Create a reputation system for users.
-- [ ] Forum Tab to show edit and new word proposals user can only upvote or downvote the proposal.
+- [ ] Push ntifications should be triggered on  requests made by user and on approval or denial.
+- [ ] App review should be posted to playstore from app
+- [ ] Ability to report a bug by admin
 
 ### Forum (Reputation rules)
 
+- [ ] Create a reputation system for users.
+- [ ] Forum Tab to show edit and new word proposals user can only upvote or downvote the proposal.
 - [ ] Any one can propose a new word or edit a word. And that post will be shown up in this section.
 - [ ] Forum posts should be ordered by recents or no of votes or type(edits/new word).
 - [ ] A new word can only be approved, if it has 25+ votes.

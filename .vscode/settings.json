@@ -1,15 +1,27 @@
 {
   "files.autoSaveDelay": 3000,
   "dart.flutterSdkPath": "/Users/mahesh/Documents/flutter",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "editor.formatOnSaveMode": "modifications",
+  "workbench.colorTheme": "Winter is Coming (Dark Blue)",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true,
+    "source.fixAll": true
+  },
   "files.exclude": {
-    //  "build":true,
-     "test":true,
-  //    ".vscode":false,
-  //    ".*":true,
-     "web":false,
-     "build": false,
-     "windows":false,
-     "macos":false,
-     "ios":false,
- },
+    "test": true,
+    "web": true,
+    "build": true,
+    "windows": true,
+    "macos": true,
+    "ios": false,
+    "*.log": true,
+    "*.iml": true,
+    "android": false,
+    ".dart_tool": true,
+    ".idea": true
+  },
+  "java.configuration.updateBuildConfiguration": "interactive"
 }

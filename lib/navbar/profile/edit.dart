@@ -57,7 +57,7 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
 
   ValueNotifier<bool?> _validNotifier = ValueNotifier<bool?>(null);
   ValueNotifier<Response> _responseNotifier =
-      ValueNotifier<Response>(Response(state:RequestState.none));
+      ValueNotifier<Response>(Response(state: RequestState.none));
   String error = '';
   TextEditingController _nameController = TextEditingController();
   TextEditingController _usernameController = TextEditingController();
@@ -74,7 +74,7 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
   Future<void> validateUsername(String username) async {
     _validNotifier.value = null;
     RegExp usernamePattern = new RegExp(r"^[a-zA-Z0-9_]{5,}$");
-    if (!usernamePattern.hasMatch(username)) {
+    if (username.isEmpty || !usernamePattern.hasMatch(username)) {
       error =
           'Username should contain letters, numbers and underscores with minimum 5 characters';
       _validNotifier.value = false;
@@ -122,13 +122,14 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                           )),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: TextButton(
-                      child: Text('Edit Avatar'),
-                      onPressed: () {},
-                    ),
-                  ),
+                  // Align(
+                  //   alignment: Alignment.center,
+                  //   child: TextButton(
+                  //     child: Text('Edit Avatar'),
+                  //     onPressed: () {},
+                  //   ),
+                  // ),
+                  24.0.vSpacer(),
                   VHTextfield(
                     hint: 'Name',
                     controller: _nameController,
@@ -146,6 +147,7 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                               isReadOnly: request.state == RequestState.active,
                               controller: _usernameController,
                               onChanged: (username) {
+                                print(username);
                                 user = AppStateScope.of(context).user;
                                 if (user!.username == username) {
                                   _validNotifier.value = null;
@@ -183,20 +185,22 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                       padding: 16.0.allPadding,
                       child: VHButton(
                           height: 48,
+                          width: 200,
                           backgroundColor: VocabTheme.primaryColor,
                           foregroundColor: Colors.white,
                           isLoading: request.state == RequestState.active,
                           onTap: () async {
-                            _responseNotifier.value =
-                                Response(didSucced: false,state:RequestState.active);
+                            if (!_validNotifier.value!) return;
+                            _responseNotifier.value = Response(
+                                didSucced: false, state: RequestState.active);
                             final userName = _usernameController.text.trim();
                             final editedUser =
                                 user!.copyWith(username: userName);
                             final success =
                                 await UserService.updateUser(editedUser);
                             if (success) {
-                              _responseNotifier.value =
-                                  Response(state:RequestState.done, didSucced: true);
+                              _responseNotifier.value = Response(
+                                  state: RequestState.done, didSucced: true);
                               _validNotifier.value = null;
                               appState.setUser(editedUser);
                               showMessage(context, 'success updating user! ');

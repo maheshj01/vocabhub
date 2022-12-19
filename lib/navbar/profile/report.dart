@@ -190,7 +190,10 @@ class _ReportABugMobileState extends State<ReportABugMobile> {
                             .copyWith(state: RequestState.active);
                         String description = _feedBackcontroller.text.trim();
                         if (description.isEmpty) {
-                          showMessage(context, 'Please enter valid input');
+                          showMessage(context,
+                              'You must enter a description of the bug');
+                          _responseNotifier.value = _responseNotifier.value
+                              .copyWith(state: RequestState.done);
                           return;
                         }
                         _responseNotifier.value = _responseNotifier.value

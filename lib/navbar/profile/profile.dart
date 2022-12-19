@@ -152,11 +152,10 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                       onTap: () {
                                         Navigator.of(context,
                                                 rootNavigator: true)
-                                            .push(
-                                                PageRoutes.sharedAxis(
-                                                    const SettingsPageMobile(),
-                                                    SharedAxisTransitionType
-                                                        .horizontal));
+                                            .push(PageRoutes.sharedAxis(
+                                                const SettingsPageMobile(),
+                                                SharedAxisTransitionType
+                                                    .horizontal));
                                       },
                                     ),
                                   ),
@@ -184,16 +183,15 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                           Icons.edit,
                                           size: 30,
                                           onTap: () {
-                                             Navigator.of(context,
-                                                rootNavigator: true)
-                                            .push(
-                                                PageRoutes.sharedAxis(
-                                                   EditProfile(
-                                                user: user,
-                                                onClose: () async {
-                                                  setState(() {});
-                                                },
-                                              ),
+                                            Navigator.of(context,
+                                                    rootNavigator: true)
+                                                .push(PageRoutes.sharedAxis(
+                                                    EditProfile(
+                                                      user: user,
+                                                      onClose: () async {
+                                                        setState(() {});
+                                                      },
+                                                    ),
                                                     SharedAxisTransitionType
                                                         .scaled));
                                           },
