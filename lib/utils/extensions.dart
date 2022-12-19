@@ -49,6 +49,11 @@ extension DateHelper on DateTime {
     return now.difference(this).inDays;
   }
 
+  String standardTime() {
+    final formatter = DateFormat(timeFormatter);
+    return formatter.format(this);
+  }
+
   String standardDate() {
     final formatter = DateFormat(dateFormatter);
     return formatter.format(this);

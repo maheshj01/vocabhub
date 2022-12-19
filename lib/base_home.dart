@@ -17,7 +17,6 @@ import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 
-import 'navbar/profile/report.dart';
 import 'pages/notifications/notifications.dart';
 
 const appBarDesktopHeight = 128.0;
@@ -110,7 +109,6 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
           UserProfile.route: UserProfile(),
           SettingsPage.route: SettingsPage(),
           AboutVocabhub.route: AboutVocabhub(),
-          ReportABug.route: ReportABug(),
         }
       });
       items.add(NavbarItem(Icons.person, 'Me'));

@@ -221,21 +221,3 @@ class DatabaseService {
     return response;
   }
 }
-
-class ResponseObject {
-  final String message;
-  final Object data;
-  final Status status;
-
-  ResponseObject(this.message, this.data, this.status);
-}
-
-class Response {
-  bool didSucced;
-  String message;
-  int? status;
-  Object? data;
-
-  Response(
-      {required this.didSucced, required this.message, this.status, this.data});
-}

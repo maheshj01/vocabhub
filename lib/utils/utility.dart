@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -169,4 +170,44 @@ String editTypeToAdminNotification(EditHistory history, UserModel editor) {
     return '$userFilter to update ${history.word}';
   }
   return '';
+}
+
+
+class ResponseObject {
+  final String message;
+  final Object data;
+  final Status status;
+
+  ResponseObject(this.message, this.data, this.status);
+}
+
+class Response {
+  bool didSucced;
+  String message;
+  int? status;
+  Object? data;
+  RequestState state;
+
+  Response(
+      {this.didSucced = false, this.message ='Success', this.status, this.data, this.state = RequestState.none});
+       Response.init(
+      {this.didSucced = true,
+      this.state = RequestState.none,
+      this.message = 'Success',
+      this.status,
+      this.data});
+
+  Response copyWith(
+      {bool? didSucced,
+      String? message,
+      int? status,
+      Object? data,
+      RequestState? state}) {
+    return Response(
+        didSucced: didSucced ?? this.didSucced,
+        message: message ?? this.message,
+        status: status ?? this.status,
+        data: data ?? this.data,
+        state: state ?? this.state);
+  }
 }

@@ -2,12 +2,12 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/notification.dart';
+import 'package:vocabhub/navbar/pageroute.dart';
 import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/navbar/profile/settings.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
-import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
 import 'package:vocabhub/widgets/icon.dart';
 import 'package:vocabhub/widgets/responsive.dart';
@@ -150,18 +150,13 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                       Icons.settings,
                                       size: 38,
                                       onTap: () {
-                                        Navigate.push(
-                                          context,
-                                          SettingsPageMobile(),
-                                        );
-
                                         Navigator.of(context,
                                                 rootNavigator: true)
-                                            .pushReplacement(
+                                            .push(
                                                 PageRoutes.sharedAxis(
                                                     const SettingsPageMobile(),
                                                     SharedAxisTransitionType
-                                                        .scaled));
+                                                        .horizontal));
                                       },
                                     ),
                                   ),
@@ -189,15 +184,18 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                           Icons.edit,
                                           size: 30,
                                           onTap: () {
-                                            Navigate.push(
-                                              context,
-                                              EditProfile(
+                                             Navigator.of(context,
+                                                rootNavigator: true)
+                                            .push(
+                                                PageRoutes.sharedAxis(
+                                                   EditProfile(
                                                 user: user,
                                                 onClose: () async {
                                                   setState(() {});
                                                 },
                                               ),
-                                            );
+                                                    SharedAxisTransitionType
+                                                        .scaled));
                                           },
                                         ))
                                   ],

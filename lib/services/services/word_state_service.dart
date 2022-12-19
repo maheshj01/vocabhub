@@ -4,6 +4,7 @@ import 'package:supabase/supabase.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/utils/logger.dart';
+import 'package:vocabhub/utils/utility.dart';
 
 /// Api to access the edit history and also to update the VocabTable
 /// These edits are only made when the edits are approved by the admin.

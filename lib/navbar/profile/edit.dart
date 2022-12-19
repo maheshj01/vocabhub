@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/models/request.dart';
+import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
@@ -56,8 +56,8 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
   }
 
   ValueNotifier<bool?> _validNotifier = ValueNotifier<bool?>(null);
-  ValueNotifier<Request> _requestNotifier =
-      ValueNotifier<Request>(Request(RequestState.none));
+  ValueNotifier<Response> _responseNotifier =
+      ValueNotifier<Response>(Response(state:RequestState.none));
   String error = '';
   TextEditingController _nameController = TextEditingController();
   TextEditingController _usernameController = TextEditingController();
@@ -67,7 +67,7 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
   @override
   void dispose() {
     _validNotifier.dispose();
-    _requestNotifier.dispose();
+    _responseNotifier.dispose();
     super.dispose();
   }
 
@@ -99,9 +99,9 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
       appBar: AppBar(
         title: Text('Edit Profile'),
       ),
-      body: ValueListenableBuilder<Request>(
-          valueListenable: _requestNotifier,
-          builder: (BuildContext context, Request request, Widget? child) {
+      body: ValueListenableBuilder<Response>(
+          valueListenable: _responseNotifier,
+          builder: (BuildContext context, Response request, Widget? child) {
             return SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,16 +187,16 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                           foregroundColor: Colors.white,
                           isLoading: request.state == RequestState.active,
                           onTap: () async {
-                            _requestNotifier.value =
-                                Request(RequestState.active);
+                            _responseNotifier.value =
+                                Response(didSucced: false,state:RequestState.active);
                             final userName = _usernameController.text.trim();
                             final editedUser =
                                 user!.copyWith(username: userName);
                             final success =
                                 await UserService.updateUser(editedUser);
                             if (success) {
-                              _requestNotifier.value =
-                                  Request(RequestState.done);
+                              _responseNotifier.value =
+                                  Response(state:RequestState.done, didSucced: true);
                               _validNotifier.value = null;
                               appState.setUser(editedUser);
                               showMessage(context, 'success updating user! ');
@@ -267,7 +267,9 @@ class _VHTextfieldState extends State<VHTextfield> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (widget.controller == null) {
+      _controller.dispose();
+    }
     super.dispose();
   }
 

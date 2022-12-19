@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/models.dart';
-import 'package:vocabhub/models/request.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/word_state_service.dart';
@@ -41,13 +40,13 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
   }
 
   Future<void> exploreWords() async {
-    _request.value = Request(RequestState.active);
+    _request.value = Response(state:RequestState.active);
     final user = AppStateScope.of(context).user;
     final newWords =
         await VocabStoreService.exploreWords(user!.email, page: page);
     words!.addAll(newWords);
     max = words!.length;
-    _request.value = Request(RequestState.done);
+    _request.value = Response(state:RequestState.done);
   }
 
   int page = 0;
@@ -55,8 +54,8 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
   List<Word>? words = [];
   bool isFetching = false;
 
-  ValueNotifier<Request> _request =
-      ValueNotifier<Request>(Request(RequestState.none));
+  ValueNotifier<Response> _request =
+      ValueNotifier<Response>(Response(state:RequestState.none));
 
   @override
   void dispose() {
@@ -66,9 +65,9 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<Request>(
+    return ValueListenableBuilder<Response>(
         valueListenable: _request,
-        builder: (BuildContext context, Request request, Widget? child) {
+        builder: (BuildContext context, Response request, Widget? child) {
           if (words == null || words!.isEmpty) return SizedBox.shrink();
           return Material(
             child: Stack(

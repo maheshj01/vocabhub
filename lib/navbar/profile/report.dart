@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/report.dart';
-import 'package:vocabhub/models/request.dart';
 import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/report_service.dart';
@@ -28,27 +28,8 @@ class _ReportABugState extends State<ReportABug> {
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
     return ResponsiveBuilder(
-        desktopBuilder: (context) => ReportABugDesktop(),
-        mobileBuilder: (context) =>
-            user!.isAdmin ? ViewBugReports() : ReportABugMobile());
-  }
-}
-
-class ReportABugDesktop extends StatefulWidget {
-  const ReportABugDesktop({Key? key}) : super(key: key);
-
-  @override
-  State<ReportABugDesktop> createState() => _ReportABugDesktopState();
-}
-
-class _ReportABugDesktopState extends State<ReportABugDesktop> {
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      child: Container(
-        color: Colors.red,
-      ),
-    );
+        desktopBuilder: (context) => ReportABugMobile(),
+        mobileBuilder: (context) => ReportABugMobile());
   }
 }
 
@@ -62,19 +43,20 @@ class ViewBugReports extends StatefulWidget {
 class _ViewBugReportsState extends State<ViewBugReports> {
   @override
   void dispose() {
-    _request.dispose();
+    _responseNotifier.dispose();
     super.dispose();
   }
 
   Future<void> getReports() async {
     try {
-      _request.value =
-          Request(RequestState.active, message: 'Loading', data: null);
+      _responseNotifier.value = _responseNotifier.value
+          .copyWith(state: RequestState.active, message: 'Loading', data: null);
       final reports = await ReportService.getReports();
-      _request.value =
-          Request(RequestState.done, message: 'Success', data: reports);
+      _responseNotifier.value = _responseNotifier.value.copyWith(
+          state: RequestState.done, message: 'Success', data: reports);
     } catch (e) {
-      _request.value = Request(RequestState.error, message: e.toString());
+      _responseNotifier.value = _responseNotifier.value
+          .copyWith(state: RequestState.error, message: e.toString());
     }
   }
 
@@ -84,7 +66,8 @@ class _ViewBugReportsState extends State<ViewBugReports> {
     getReports();
   }
 
-  ValueNotifier<Request> _request = ValueNotifier(Request(RequestState.none));
+  final ValueNotifier<Response> _responseNotifier =
+      ValueNotifier(Response.init());
 
   @override
   Widget build(BuildContext context) {
@@ -92,11 +75,11 @@ class _ViewBugReportsState extends State<ViewBugReports> {
         appBar: AppBar(
           title: const Text('Reports and Feedbacks'),
         ),
-        body: ValueListenableBuilder<Request>(
-            valueListenable: _request,
-            builder: (BuildContext context, Request request, Widget? child) {
+        body: ValueListenableBuilder<Response>(
+            valueListenable: _responseNotifier,
+            builder: (BuildContext context, Response request, Widget? child) {
               if (request.state == RequestState.active) {
-                return LoadingWidget();
+                return const LoadingWidget();
               }
               if (request.state == RequestState.error) {
                 return Center(
@@ -107,62 +90,77 @@ class _ViewBugReportsState extends State<ViewBugReports> {
                         onPressed: () {
                           getReports();
                         },
-                        child: Text('Try Again'),
+                        child: const Text('Try Again'),
                       ),
-                      Text(request.message!),
+                      Text(request.message),
                     ],
                   ),
                 );
               }
               List<ReportModel> reports = request.data as List<ReportModel>;
               if (reports.isEmpty) {
-                return Center(
+                return const Center(
                   child: Text('No reports yet'),
                 );
               }
-              return AnimatedList(
-                  itemBuilder: (context, index, animation) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ListTile(
-                          title: Text(reports[index].name),
-                          subtitle: Text(reports[index].email),
-                          trailing:
-                              Text(reports[index].created_at.standardDate()),
-                          // subtitle: Text(reports[index].feedback * 100),
-                        ),
-                        Padding(
-                          padding: 16.0.horizontalPadding,
-                          child: Text(reports[index].feedback),
-                        ),
-                        Divider(),
-                      ],
-                    );
-                  },
-                  initialItemCount: (request.data as List).length);
+              return Column(
+                children: [
+                  Expanded(
+                    child: AnimatedList(
+                        itemBuilder: (context, index, animation) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ExpansionTile(
+                                subtitle: Text(reports[index]
+                                        .created_at
+                                        .standardDate() +
+                                    ' ' +
+                                    reports[index].created_at.standardTime()),
+                                title: Text(reports[index].name),
+                                expandedCrossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                expandedAlignment: Alignment.centerLeft,
+                                children: [
+                                  Padding(
+                                    padding: 16.0.allPadding,
+                                    child: Text(reports[index].feedback,
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.black87)),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
+                        initialItemCount: (request.data as List).length),
+                  ),
+                  24.0.vSpacer()
+                ],
+              );
             }));
   }
 }
 
 class ReportABugMobile extends StatefulWidget {
-  const ReportABugMobile({Key? key}) : super(key: key);
+  static const String route = '/report';
 
   @override
   State<ReportABugMobile> createState() => _ReportABugMobileState();
 }
 
 class _ReportABugMobileState extends State<ReportABugMobile> {
-  ValueNotifier<Request> _request = ValueNotifier(Request(RequestState.none));
+  ValueNotifier<Response> _responseNotifier = ValueNotifier(Response.init());
 
   @override
   void dispose() {
-    _request.dispose();
-    _controller.dispose();
+    _feedBackcontroller.dispose();
+    _responseNotifier.dispose();
     super.dispose();
   }
 
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _feedBackcontroller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
@@ -170,52 +168,85 @@ class _ReportABugMobileState extends State<ReportABugMobile> {
       appBar: AppBar(
         title: const Text('Report a bug'),
       ),
-      body: ValueListenableBuilder<Request>(
-          valueListenable: _request,
+      body: ValueListenableBuilder<Response>(
+          valueListenable: _responseNotifier,
           builder: (context, value, snapshot) {
-            return Column(
-              children: [
-                24.0.vSpacer(),
-                VHTextfield(
-                  hint: 'Description of the bug',
-                  hasLabel: false,
-                  controller: _controller,
-                  maxLines: 8,
-                ),
-                24.0.vSpacer(),
-                VHButton(
-                    height: 48,
-                    onTap: () async {
-                      _request.value = Request(RequestState.active);
-                      try {
-                        final report = ReportModel(
-                            feedback: _controller.text.trim(),
-                            email: user!.email,
-                            created_at: DateTime.now(),
-                            id: Uuid().v4(),
-                            name: user.name);
-                        await ReportService.addReport(report);
-                        _request.value = Request(RequestState.done);
-                        showMessage(context, 'Thanks for reporting the bug');
-                      } catch (e) {
-                        _request.value =
-                            Request(RequestState.error, message: e.toString());
-                        showMessage(
-                            context, 'Something went wrong, try agcain');
-                      }
-                    },
-                    isLoading: _request.value.state == RequestState.active,
-                    foregroundColor: Colors.white,
-                    backgroundColor: VocabTheme.primaryColor,
-                    label: 'Submit'),
-                Expanded(child: Container()),
-                Padding(
-                  padding: 16.0.allPadding,
-                  child: Text(
-                      'Note: We may contact you for more information about the bug you reported.'),
-                ),
-                24.0.vSpacer(),
-              ],
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  24.0.vSpacer(),
+                  VHTextfield(
+                    hint: 'Description of the bug',
+                    hasLabel: false,
+                    controller: _feedBackcontroller,
+                    maxLines: 8,
+                  ),
+                  24.0.vSpacer(),
+                  VHButton(
+                      height: 48,
+                      onTap: () async {
+                        removeFocus(context);
+                        _responseNotifier.value = _responseNotifier.value
+                            .copyWith(state: RequestState.active);
+                        String description = _feedBackcontroller.text.trim();
+                        if (description.isEmpty) {
+                          showMessage(context, 'Please enter valid input');
+                          return;
+                        }
+                        _responseNotifier.value = _responseNotifier.value
+                            .copyWith(
+                                state: RequestState.active,
+                                message: 'Sending report');
+                        try {
+                          final report = ReportModel(
+                              feedback: description,
+                              email: user!.email,
+                              created_at: DateTime.now(),
+                              id: Uuid().v4(),
+                              name: user.name);
+                          final resp = await ReportService.addReport(report);
+                          if (resp.status == 201) {
+                            _responseNotifier.value = _responseNotifier.value
+                                .copyWith(
+                                    state: RequestState.done,
+                                    message: 'Report sent successfully');
+                            _responseNotifier.value = _responseNotifier.value
+                                .copyWith(state: RequestState.done);
+                            showMessage(
+                                context, 'Thanks for reporting the bug');
+                            _feedBackcontroller.clear();
+                            await Future.delayed(const Duration(seconds: 2));
+                            Navigator.pop(context);
+                          } else {
+                            _responseNotifier.value = _responseNotifier.value
+                                .copyWith(
+                                    state: RequestState.done,
+                                    message: 'Error sending report');
+                            showMessage(
+                                context, 'Error sending report! Try again');
+                          }
+                        } catch (e) {
+                          _responseNotifier.value = _responseNotifier.value
+                              .copyWith(
+                                  state: RequestState.done,
+                                  message: 'Error sending report');
+                          showMessage(
+                              context, 'Something went wrong, try agcain');
+                        }
+                      },
+                      isLoading:
+                          _responseNotifier.value.state == RequestState.active,
+                      foregroundColor: Colors.white,
+                      backgroundColor: VocabTheme.primaryColor,
+                      label: 'Submit'),
+                  Padding(
+                    padding: 16.0.allPadding,
+                    child: Text(
+                        'Note: We may contact you for more information about the bug you reported.'),
+                  ),
+                  24.0.vSpacer(),
+                ],
+              ),
             );
           }),
     );

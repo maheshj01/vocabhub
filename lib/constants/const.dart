@@ -56,6 +56,7 @@ const EDIT_USER_ID_COLUMN = 'user_id';
 const EDIT_WORD_ID_COLUMN = 'word_id';
 
 const String dateFormatter = 'MMMM dd, y';
+const String timeFormatter = 'hh:mm a';
 
 enum EditState {
   approved('approved'),
@@ -87,6 +88,7 @@ enum EditType {
 }
 
 enum Status { success, notfound, error }
+enum RequestState { active, done, error, none }
 
 const int HOME_INDEX = 0;
 const int SEARCH_INDEX = 1;

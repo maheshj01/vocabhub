@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/constants/constants.dart';
-import 'package:vocabhub/models/request.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
@@ -25,7 +24,7 @@ class _AppSignInState extends State<AppSignIn> {
   Future<void> _handleSignIn(BuildContext context) async {
     final state = AppStateWidget.of(context);
     try {
-      _requestNotifier.value = Request(RequestState.active);
+      _requestNotifier.value = Response(state:RequestState.active);
       user = await auth.googleSignIn(context);
       if (user != null) {
         final existingUser = await UserService.findByEmail(email: user!.email);
@@ -34,7 +33,7 @@ class _AppSignInState extends State<AppSignIn> {
           if (resp.didSucced) {
             final user = UserModel.fromJson((resp.data as List<dynamic>)[0]);
             state.setUser(user.copyWith(isLoggedIn: true));
-            _requestNotifier.value = Request(RequestState.done);
+            _requestNotifier.value = Response(state:RequestState.done);
             Navigate().pushAndPopAll(context, AdaptiveLayout(),
                 slideTransitionType: TransitionType.ttb);
             await Settings.setIsSignedIn(true, email: user.email);
@@ -42,7 +41,7 @@ class _AppSignInState extends State<AppSignIn> {
           } else {
             await Settings.setIsSignedIn(false, email: existingUser.email);
             showMessage(context, '$signInFailure');
-            _requestNotifier.value = Request(RequestState.done);
+            _requestNotifier.value = Response(state:RequestState.done);
             throw 'failed to register new user';
           }
         } else {
@@ -50,26 +49,26 @@ class _AppSignInState extends State<AppSignIn> {
           await AuthService.updateLogin(
               email: existingUser.email, isLoggedIn: true);
           state.setUser(existingUser.copyWith(isLoggedIn: true));
-          _requestNotifier.value = Request(RequestState.done);
+          _requestNotifier.value = Response(state:RequestState.done);
           Navigate().pushAndPopAll(context, AdaptiveLayout());
           firebaseAnalytics.logSignIn(user!);
         }
       } else {
         showMessage(context, '$signInFailure');
-        _requestNotifier.value = Request(RequestState.done);
+        _requestNotifier.value = Response(state:RequestState.done);
         throw 'failed to register new user';
       }
     } catch (error) {
       showMessage(context, error.toString());
-      _requestNotifier.value = Request(RequestState.done);
+      _requestNotifier.value = Response(state:RequestState.done);
       await Settings.setIsSignedIn(false);
     }
   }
 
   UserModel? user;
   late Analytics firebaseAnalytics;
-  final ValueNotifier<Request> _requestNotifier =
-      ValueNotifier<Request>(Request(RequestState.none));
+  final ValueNotifier<Response> _requestNotifier =
+      ValueNotifier<Response>(Response(state:RequestState.none));
   @override
   void dispose() {
     _requestNotifier.dispose();
@@ -112,9 +111,9 @@ class _AppSignInState extends State<AppSignIn> {
           ));
     }
 
-    return ValueListenableBuilder<Request>(
+    return ValueListenableBuilder<Response>(
         valueListenable: _requestNotifier,
-        builder: (BuildContext context, Request request, Widget? child) {
+        builder: (BuildContext context, Response request, Widget? child) {
           Widget _signInButton() {
             return Align(
                 alignment: Alignment.center,

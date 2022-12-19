@@ -85,8 +85,15 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
             },
           ),
           hLine(),
-          // heading('terms of service'),
-          // const SizedBox(height: 16),
+          !user!.isAdmin
+              ? const SizedBox.shrink()
+              : settingTile(
+                  'Reports and Feedbacks',
+                  onTap: () {
+                    Navigate.push(context, const ViewBugReports());
+                  },
+                ),
+          !user.isAdmin ? const SizedBox.shrink() : hLine(),
           settingTile('Privacy Policy', onTap: () {
             launchUrl(Uri.parse(PRIVACY_POLICY),
                 mode: LaunchMode.externalApplication);
@@ -100,7 +107,7 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
           settingTile('Logout', onTap: () async {
             await Settings.clear();
             await AuthService.updateLogin(
-                email: user!.email, isLoggedIn: false);
+                email: user.email, isLoggedIn: false);
             Navigate().pushAndPopAll(context, AppSignIn());
           }),
           hLine(),

@@ -4,7 +4,6 @@ import 'package:uuid/uuid.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/history.dart';
-import 'package:vocabhub/models/request.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/analytics.dart';
@@ -49,9 +48,9 @@ class _AddWordFormState extends State<AddWordForm> {
       wordObject = buildWordFromFields()!;
     } else {
       _requestNotifier.value =
-          Request(RequestState.error, message: 'Word and Meaning are required');
+          Response(state: RequestState.error, message: 'Word and Meaning are required');
       Future.delayed(Duration(seconds: 3), () {
-        _requestNotifier.value = Request(RequestState.done);
+        _requestNotifier.value = Response(state:RequestState.done);
       });
       stopCircularIndicator(context);
       return;
@@ -59,7 +58,7 @@ class _AddWordFormState extends State<AddWordForm> {
     try {
       if (await wordExists(wordObject)) {
         stopCircularIndicator(context);
-        _requestNotifier.value = Request(RequestState.error,
+        _requestNotifier.value = Response(state:RequestState.error,
             message: 'Word "${wordObject.word}" already exists!');
         return;
       }
@@ -77,13 +76,13 @@ class _AddWordFormState extends State<AddWordForm> {
           Navigate().popView(context);
         });
       } else {
-        _requestNotifier.value = Request(RequestState.error,
+        _requestNotifier.value = Response(state:RequestState.error,
             message: 'Failed to add ${editedWord.word}');
         stopCircularIndicator(context);
       }
     } catch (x) {
       stopCircularIndicator(context);
-      _requestNotifier.value = Request(RequestState.error, message: '$x');
+      _requestNotifier.value = Response(state:RequestState.error, message: '$x');
     }
   }
 
@@ -106,16 +105,16 @@ class _AddWordFormState extends State<AddWordForm> {
     final currentWordFromDatabase =
         await VocabStoreService.findByWord(editedWord.word.capitalize()!);
     if (currentWordFromDatabase == null) {
-      _requestNotifier.value = Request(RequestState.done);
+      _requestNotifier.value = Response(state:RequestState.done);
       return false;
     }
     _requestNotifier.value =
-        Request(RequestState.error, message: 'Word already exists');
+        Response(state:RequestState.error, message: 'Word already exists');
     return true;
   }
 
   final firebaseAnalytics = Analytics();
-  final _requestNotifier = ValueNotifier<Request>(Request(RequestState.none));
+  final _requestNotifier = ValueNotifier<Response>(Response(state:RequestState.none));
   Word? currentWordFromDatabase;
 
   @override
@@ -152,9 +151,9 @@ class _AddWordFormState extends State<AddWordForm> {
     final mnemonic = mnemonicController.text;
     if (synonym.isNotEmpty || example.isNotEmpty || mnemonic.isNotEmpty) {
       _requestNotifier.value =
-          Request(RequestState.error, message: 'Please submit the field');
+          Response(state:RequestState.error, message: 'Please submit the field');
     } else {
-      _requestNotifier.value = Request(RequestState.done);
+      _requestNotifier.value = Response(state:RequestState.done);
     }
     setState(() {});
   }
@@ -268,9 +267,9 @@ class _AddWordFormState extends State<AddWordForm> {
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: ValueListenableBuilder<Request>(
+      child: ValueListenableBuilder<Response>(
           valueListenable: _requestNotifier,
-          builder: (BuildContext context, Request request, Widget? child) {
+          builder: (BuildContext context, Response request, Widget? child) {
             return Scaffold(
               resizeToAvoidBottomInset: true,
               appBar: AppBar(
@@ -293,10 +292,10 @@ class _AddWordFormState extends State<AddWordForm> {
                               await VocabStoreService.findByWord(
                                   editedWord.word.capitalize()!);
                           if (currentWordFromDatabase != null) {
-                            _requestNotifier.value = Request(RequestState.error,
+                            _requestNotifier.value = Response(state:RequestState.error,
                                 message: 'Word already exists');
                           } else {
-                            _requestNotifier.value = Request(RequestState.done);
+                            _requestNotifier.value = Response(state:RequestState.done);
                           }
                           setState(() {});
                         }

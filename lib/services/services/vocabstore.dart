@@ -8,6 +8,7 @@ import 'package:vocabhub/platform/mobile.dart'
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/utils/logger.dart';
 import 'package:vocabhub/utils/secrets.dart';
+import 'package:vocabhub/utils/utility.dart';
 
 /// Global Vocabulary table's api.
 class VocabStoreService {
