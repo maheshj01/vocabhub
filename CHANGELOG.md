@@ -1,3 +1,6 @@
+### 0.4.0 (11)
+- Fix: [Issue 11](https://github.com/maheshmnj/vocabhub/issues/11)
+
 ### 0.4.0 (10)
 
 - Redesigned public release with minimal features
