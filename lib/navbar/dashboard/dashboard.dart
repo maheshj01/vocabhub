@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/word.dart';
-import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/navbar/dashboard/bookmarks.dart';
+import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
@@ -93,6 +93,7 @@ class DashboardMobile extends StatelessWidget {
     }
 
     return CustomScrollView(
+      physics: BouncingScrollPhysics(),
       slivers: <Widget>[
         SliverAppBar(
             pinned: false,

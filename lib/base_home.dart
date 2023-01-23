@@ -145,6 +145,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                         closedBuilder:
                             (BuildContext context, VoidCallback openContainer) {
                           return FloatingActionButton.extended(
+                              heroTag: "addword",
                               elevation: 3.5,
                               isExtended: true,
                               icon: Icon(Icons.add,
@@ -167,7 +168,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                   errorBuilder: (context) {
                     return const Center(child: Text('Error 404'));
                   },
-                  // type: NavbarType.notched,
+                  type: NavbarType.notched,
                   onBackButtonPressed: (isExiting) {
                     if (isExiting) {
                       newTime = DateTime.now();

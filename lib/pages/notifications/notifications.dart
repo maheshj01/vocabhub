@@ -369,27 +369,34 @@ class AdminNotificationTile extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(edit.created_at!.formatDate(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .subtitle2!
-                                  .copyWith(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600)),
-                          Container(
-                            width: 100,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                circle(
-                                    color: stateToIconColor(edit.state!),
-                                    size: 12),
-                                6.0.hSpacer(),
-                                Text(
-                                  edit.state!.toName().capitalize()!,
-                                )
-                              ],
-                            ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 100,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    circle(
+                                        color: stateToIconColor(edit.state!),
+                                        size: 12),
+                                    6.0.hSpacer(),
+                                    Text(
+                                      edit.state!.toName().capitalize()!,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              4.0.vSpacer(),
+                              Text(edit.created_at!.formatDate(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .subtitle2!
+                                      .copyWith(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600)),
+                            ],
                           ),
                           if (edit.state == EditState.pending)
                             Row(
