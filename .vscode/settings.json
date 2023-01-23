@@ -10,6 +10,7 @@
     "source.organizeImports": true,
     "source.fixAll": true
   },
+  "dart.lineLength": 100,
   "files.exclude": {
     "test": true,
     "web": true,

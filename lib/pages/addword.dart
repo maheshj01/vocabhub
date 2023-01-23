@@ -344,7 +344,8 @@ class _AddWordFormState extends State<AddWordForm> {
                                   maxlength: 16,
                                   inputFormatters: [
                                     FilteringTextInputFormatter.allow(
-                                        RegExp('[A-Z-a-z]+'))
+                                        RegExp('[A-Z-a-z]+')),
+                                    FilteringTextInputFormatter.deny(wordController.text)
                                   ],
                                   controller: synonymController,
                                 ),
@@ -355,23 +356,21 @@ class _AddWordFormState extends State<AddWordForm> {
                                           left: 16.0, right: 16, top: 8),
                                       child: IconButton(
                                           onPressed: () {
-                                            String newSynonym =
-                                                synonymController.text;
+                                            String newSynonym = synonymController.text;
                                             if (editedWord.word.isNotEmpty) {
-                                              if (newSynonym.isNotEmpty) {
-                                                editedWord = editedWord
-                                                    .copyWith(synonyms: [
+                                              if (newSynonym.isNotEmpty &&
+                                                  !editedWord.synonyms!.contains(newSynonym)) {
+                                                editedWord = editedWord.copyWith(synonyms: [
                                                   ...editedWord.synonyms!,
                                                   newSynonym
                                                 ]);
+                                                synonymController.clear();
                                               }
                                             } else {
-                                              showMessage(context,
-                                                  'You must add a word first');
-                                              FocusScope.of(context)
-                                                  .requestFocus(wordFocus);
+                                              showMessage(context, 'You must add a word first');
+                                              FocusScope.of(context).requestFocus(wordFocus);
+                                              synonymController.clear();
                                             }
-                                            synonymController.clear();
                                           },
                                           icon: Icon(Icons.done, size: 32)),
                                     )
