@@ -212,7 +212,8 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                       selectedIconTheme: IconThemeData(
                           size: 24, color: VocabTheme.primaryColor),
                       selectedLabelTextStyle: TextStyle(fontSize: 12),
-                      unselectedLabelTextStyle: TextStyle(fontSize: 10),
+                      unselectedLabelTextStyle:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
                       navbarType: BottomNavigationBarType.fixed),
                   destinations: [
                     for (int i = 0; i < items.length; i++)

@@ -563,7 +563,7 @@ class _AddWordFormState extends State<AddWordForm> {
                             : SizedBox.shrink(),
                       ),
                     ),
-                    40.0.hSpacer(),
+                    40.0.vSpacer(),
                   ],
                 ),
               ),
