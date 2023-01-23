@@ -167,6 +167,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                   errorBuilder: (context) {
                     return const Center(child: Text('Error 404'));
                   },
+                  // type: NavbarType.notched,
                   onBackButtonPressed: (isExiting) {
                     if (isExiting) {
                       newTime = DateTime.now();
@@ -204,9 +205,11 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                     _selectedIndex.value = x;
                   },
                   decoration: NavbarDecoration(
-                      backgroundColor: VocabTheme.navigationBarColor,
+                      backgroundColor: VocabTheme.surfaceGreen,
                       isExtended: SizeUtils.isExtendedDesktop,
                       // showUnselectedLabels: false,
+                      selectedIconTheme: IconThemeData(
+                          size: 24, color: VocabTheme.primaryColor),
                       selectedLabelTextStyle: TextStyle(fontSize: 12),
                       unselectedLabelTextStyle: TextStyle(fontSize: 10),
                       navbarType: BottomNavigationBarType.fixed),

@@ -49,6 +49,7 @@ const USERNAME_COLUMN = 'username';
 const USER_BOOKMARKS_COLUMN = 'bookmarks';
 const USER_CREATED_AT_COLUMN = 'created_at';
 const USER_LOGGEDIN_COLUMN = 'isLoggedIn';
+const USER_TOKEN_COLUMN = 'token';
 
 /// EDIT HISTORY TABLE COLUMNS
 const EDIT_ID_COLUMN = 'edit_id';

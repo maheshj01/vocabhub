@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:vocabhub/models/models.dart';
+
 part 'user.g.dart';
 
 @JsonSerializable()
@@ -14,6 +15,8 @@ class UserModel extends ChangeNotifier {
   bool isLoggedIn;
   bool isAdmin;
   String username;
+  // push notification token
+  String token;
   DateTime? created_at;
 
   UserModel(
@@ -23,6 +26,7 @@ class UserModel extends ChangeNotifier {
       this.idToken,
       this.isAdmin = false,
       this.accessToken,
+      this.token = '',
       this.username = '',
       this.created_at,
       this.isLoggedIn = false,
@@ -41,6 +45,7 @@ class UserModel extends ChangeNotifier {
         accessToken: w.accessToken,
         isAdmin: w.isAdmin,
         username: w.username,
+        token: w.token,
         created_at: w.created_at,
         isLoggedIn: w.isLoggedIn,
         bookmarks: w.bookmarks);
@@ -55,6 +60,7 @@ class UserModel extends ChangeNotifier {
     bool? isAdmin,
     bool? isLoggedIn,
     String? username,
+    String? token,
     DateTime? created_at,
     List<Word>? bookmarks,
   }) {
@@ -66,6 +72,7 @@ class UserModel extends ChangeNotifier {
         accessToken: accessToken ?? this.accessToken,
         isAdmin: isAdmin ?? this.isAdmin,
         username: username ?? this.username,
+        token: token ?? this.token,
         created_at: created_at ?? this.created_at,
         isLoggedIn: isLoggedIn ?? this.isLoggedIn,
         bookmarks: bookmarks ?? this.bookmarks);
@@ -81,6 +88,7 @@ class UserModel extends ChangeNotifier {
         bookmarks: [],
         created_at: DateTime.now(),
         username: '',
+        token: '',
         isAdmin: false,
         isLoggedIn: false);
   }
@@ -128,6 +136,7 @@ class UserModel extends ChangeNotifier {
       idToken = null;
       name = '';
       email = '';
+      token = '';
       isLoggedIn = false;
     } else {
       avatarUrl = user.avatarUrl;
@@ -135,6 +144,7 @@ class UserModel extends ChangeNotifier {
       idToken = user.idToken;
       name = user.name;
       email = user.email;
+      token = user.token;
       isLoggedIn = true;
     }
     notifyListeners();

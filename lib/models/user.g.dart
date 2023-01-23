@@ -14,6 +14,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       isAdmin: json['isAdmin'] as bool? ?? false,
       accessToken: json['accessToken'] as String?,
       username: json['username'] as String? ?? '',
+      token: json['token'] as String? ?? '',
       created_at: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
@@ -34,5 +35,6 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'isLoggedIn': instance.isLoggedIn,
       'isAdmin': instance.isAdmin,
       'username': instance.username,
+      'token': instance.token,
       'created_at': instance.created_at?.toIso8601String(),
     };

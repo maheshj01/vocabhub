@@ -7,26 +7,28 @@ environment:
   sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
-  animations: ^2.0.2
-  cupertino_icons: ^1.0.4
-  firebase_analytics: ^9.3.4
-  firebase_core: ^1.22.0
-  firebase_remote_config: ^2.0.20
+  animations: ^2.0.7
+  cupertino_icons: ^1.0.5
+  firebase_analytics: ^10.1.0
+  firebase_core: ^2.4.1
+  firebase_messaging: ^14.2.1
+  firebase_remote_config: ^3.0.9
   flutter:
     sdk: flutter
+  # flutter_local_notifications: ^12.0.3
   fluttertoast: ^8.0.9
   go_router: ^3.0.6
   google_fonts: ^3.0.1
   google_sign_in: ^5.4.1
-  http: ^0.13.4
-  intl: ^0.17.0
+  http: ^0.13.5
+  intl: ^0.18.0
   json_annotation: ^4.6.0
-  navbar_router: ^0.3.2
+  navbar_router: ^0.4.1
   package_info_plus: ^1.4.2
   pull_to_refresh: ^2.0.0
   realtime_client: ^0.1.15
   share_plus: ^4.1.0
-  shared_preferences: ^2.0.13
+  shared_preferences: ^2.0.16
   supabase: ^0.3.6
   url_launcher: ^6.0.20
   uuid: ^3.0.6
@@ -37,7 +39,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   json_serializable: ^6.3.1
-  logger: ^1.1.0
 flutter_icons:
   android: "launcher_icon"
   ios: true

@@ -14,7 +14,7 @@ class VocabTheme {
   static Color secondaryDark = Colors.black.withOpacity(0.7);
   static Color shrinePink = Color(0xffFEDBD0);
   static Color navbarSurfaceGrey = Color(0xffF2F4F7);
-  static Color? surfaceGreen = Colors.green[50];
+  static Color? surfaceGreen = Color.fromARGB(255, 182, 216, 182);
   static Color? surfaceGrey = Colors.grey[850];
   static Color? background = Color(0XFFF8F8F8);
   static Color errorColor = Colors.red;

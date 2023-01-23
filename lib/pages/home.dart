@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
@@ -8,8 +10,8 @@ import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/utils/circle_clipper.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
+import 'package:vocabhub/utils/circle_clipper.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/size_utils.dart';
@@ -18,10 +20,8 @@ import 'package:vocabhub/widgets/circle_avatar.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/search.dart';
 import 'package:vocabhub/widgets/widgets.dart';
-import 'package:vocabhub/widgets/worddetail.dart';
 import 'package:vocabhub/widgets/word_list_tile.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:vocabhub/widgets/worddetail.dart';
 
 TextEditingController searchController = TextEditingController();
 
@@ -51,7 +51,6 @@ class _MyHomePageState extends State<MyHomePage>
   void initState() {
     super.initState();
     firebaseAnalytics = Analytics();
-    logger.d(SizeUtils.size);
     _animationController = AnimationController(
         vsync: this,
         duration: Duration(milliseconds: (!SizeUtils.isMobile) ? 1000 : 800));
@@ -59,6 +58,28 @@ class _MyHomePageState extends State<MyHomePage>
     _animationController.forward();
     initWebState();
   }
+
+  // _handlePushNavigation() {
+  //   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+  //     print(
+  //         'A new onMessageOpenedApp event was published while the app is in back!');
+
+  //     /// App launched by
+  //     Navigate.push(context, Notifications());
+  //   });
+
+  //   FirebaseMessaging.instance
+  //       .getInitialMessage()
+  //       .then((RemoteMessage? message) {
+  //     if (message != null) {
+  //       print(
+  //           'A new getInitialMessage event was published while the app is in terminated state');
+
+  //       /// App launched by
+  //       Navigate.push(context, Notifications());
+  //     }
+  //   });
+  // }
 
   /// TODO: INVESTIGATE THIS IS NOT WORKING FOR THE WEB
 
@@ -77,7 +98,6 @@ class _MyHomePageState extends State<MyHomePage>
       userProvider.email = _email;
     }
     if (userProvider.isLoggedIn) {
-      logger.d('loggedIn user = ${userProvider.email}');
       if (userProvider.isAdmin) {
         actions = popupMenu['admin']!;
       } else {

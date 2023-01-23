@@ -24,9 +24,9 @@ class _AppSignInState extends State<AppSignIn> {
   Future<void> _handleSignIn(BuildContext context) async {
     final state = AppStateWidget.of(context);
     try {
-      _requestNotifier.value = Response(state:RequestState.active);
+      _requestNotifier.value = Response(state: RequestState.active);
       user = await auth.googleSignIn(context);
-      final String fcmToken = await pushNotificationService!.token;
+      final fcmToken = await pushNotificationService.fcmToken;
       print("FirebaseMessaging token: $fcmToken");
       if (user != null) {
         final existingUser = await UserService.findByEmail(email: user!.email);
@@ -35,7 +35,7 @@ class _AppSignInState extends State<AppSignIn> {
           if (resp.didSucced) {
             final user = UserModel.fromJson((resp.data as List<dynamic>)[0]);
             state.setUser(user.copyWith(isLoggedIn: true, token: fcmToken));
-            _requestNotifier.value = Response(state:RequestState.done);
+            _requestNotifier.value = Response(state: RequestState.done);
             Navigate().pushAndPopAll(context, AdaptiveLayout(),
                 slideTransitionType: TransitionType.ttb);
             await Settings.setIsSignedIn(true, email: user.email);
@@ -43,27 +43,27 @@ class _AppSignInState extends State<AppSignIn> {
           } else {
             await Settings.setIsSignedIn(false, email: existingUser.email);
             showMessage(context, '$signInFailure');
-            _requestNotifier.value = Response(state:RequestState.done);
+            _requestNotifier.value = Response(state: RequestState.done);
             throw 'failed to register new user';
           }
         } else {
           await Settings.setIsSignedIn(true, email: existingUser.email);
           await AuthService.updateTokenOnLogin(
-              email: existingUser.email, token: fcmToken);
+              email: existingUser.email, token: fcmToken!);
           state.setUser(
               existingUser.copyWith(isLoggedIn: true, token: fcmToken));
-          _requestNotifier.value = Response(state:RequestState.done);
+          _requestNotifier.value = Response(state: RequestState.done);
           Navigate().pushAndPopAll(context, AdaptiveLayout());
           firebaseAnalytics.logSignIn(user!);
         }
       } else {
         showMessage(context, '$signInFailure');
-        _requestNotifier.value = Response(state:RequestState.done);
+        _requestNotifier.value = Response(state: RequestState.done);
         throw 'failed to register new user';
       }
     } catch (error) {
       showMessage(context, error.toString());
-      _requestNotifier.value = Response(state:RequestState.done);
+      _requestNotifier.value = Response(state: RequestState.done);
       await Settings.setIsSignedIn(false);
     }
   }
@@ -71,7 +71,7 @@ class _AppSignInState extends State<AppSignIn> {
   UserModel? user;
   late Analytics firebaseAnalytics;
   final ValueNotifier<Response> _requestNotifier =
-      ValueNotifier<Response>(Response(state:RequestState.none));
+      ValueNotifier<Response>(Response(state: RequestState.none));
   @override
   void dispose() {
     _requestNotifier.dispose();
