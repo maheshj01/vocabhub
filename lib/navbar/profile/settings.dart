@@ -95,19 +95,17 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
                 ),
           !user.isAdmin ? const SizedBox.shrink() : hLine(),
           settingTile('Privacy Policy', onTap: () {
-            launchUrl(Uri.parse(PRIVACY_POLICY),
-                mode: LaunchMode.externalApplication);
+            launchUrl(Uri.parse(Constants.PRIVACY_POLICY), mode: LaunchMode.externalApplication);
           }),
           hLine(),
           settingTile('Contact Us', onTap: () {
-            launchUrl(Uri.parse('mailto:$FEEDBACK_EMAIL_TO'),
+            launchUrl(Uri.parse('mailto:${Constants.FEEDBACK_EMAIL_TO}'),
                 mode: LaunchMode.externalApplication);
           }),
           hLine(),
           settingTile('Logout', onTap: () async {
             await Settings.clear();
-            await AuthService.updateLogin(
-                email: user.email, isLoggedIn: false);
+            await AuthService.updateLogin(email: user.email, isLoggedIn: false);
             Navigate().pushAndPopAll(context, AppSignIn());
           }),
           hLine(),

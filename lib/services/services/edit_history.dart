@@ -13,36 +13,33 @@ import 'package:vocabhub/utils/utility.dart';
 /// Api to access the edit history and also to update the VocabTable
 /// These edits are only made when the edits are approved by the admin.
 class EditHistoryService {
-  static String _tableName = '$EDIT_HISTORY_TABLE';
-   static final _logger =   Logger("EditHistoryService");
+  static String _tableName = '${Constants.EDIT_HISTORY_TABLE}';
+  static final _logger = Logger("EditHistoryService");
 
   /// id could be userId or wordId
   /// This edits need to be shown under notifications for the user
   /// for admin the notifications will be of state (pending,add,delete)
   /// for user the notifications will be of state (pending)
   static Future<PostgrestResponse> findEditById(String id,
-      {String columnName = ID_COLUMN}) async {
+      {String columnName = Constants.ID_COLUMN}) async {
     final response = await DatabaseService.findRowByColumnValue(id,
         columnName: columnName, tableName: _tableName);
     return response;
   }
 
   static Future<PostgrestResponse> findPreviousEditsByWord(String word) async {
-    final response = await DatabaseService.findRowByColumnValue(
-        word,
-        columnName: WORD_COLUMN,
-        tableName: _tableName);
+    final response = await DatabaseService.findRowByColumnValue(word,
+        columnName: Constants.WORD_COLUMN, tableName: _tableName);
     return response;
   }
 
   /// approve/reject an edit by updating the state to [EditState]
   ///
-  static Future<PostgrestResponse> updateRowState(
-      String id, EditState state) async {
+  static Future<PostgrestResponse> updateRowState(String id, EditState state) async {
     final response = await DatabaseService.updateRow(
         colValue: id,
         data: {'state': '${state.name}'},
-        columnName: '$EDIT_ID_COLUMN',
+        columnName: '${Constants.EDIT_ID_COLUMN}',
         tableName: _tableName);
     return response;
   }
@@ -55,14 +52,12 @@ class EditHistoryService {
     final data = history.toJson();
     data['edit_id'] = Uuid().v1();
     data['created_at'] = DateTime.now().toIso8601String();
-    final response =
-        await DatabaseService.insertIntoTable(data, table: _tableName);
+    final response = await DatabaseService.insertIntoTable(data, table: _tableName);
     vocabresponse.status = response.status;
     if (response.status == 201) {
       vocabresponse.didSucced = true;
       vocabresponse.message = 'Success';
-      vocabresponse.data =
-          history.copyWith(edit_id: response.data[0]['edit_id']);
+      vocabresponse.data = history.copyWith(edit_id: response.data[0]['edit_id']);
     } else {
       vocabresponse.message = response.error!.message;
     }
@@ -78,12 +73,10 @@ class EditHistoryService {
     // TODO: Toggle isAdmin
     if (user.isAdmin) {
       response = await DatabaseService.findRowsByInnerJoinOnColumnValue(
-          '$USER_EMAIL_COLUMN', '${user.email}',
-          table1: _tableName, table2: USER_TABLE_NAME);
+          '${Constants.USER_EMAIL_COLUMN}', '${user.email}',
+          table1: _tableName, table2: Constants.USER_TABLE_NAME);
       if (response.status == 200) {
-        final data = (response.data as List)
-            .map((e) => NotificationModel.fromJson(e))
-            .toList();
+        final data = (response.data as List).map((e) => NotificationModel.fromJson(e)).toList();
         resp.didSucced = true;
         resp.message = 'Success';
         resp.data = data;
@@ -93,13 +86,11 @@ class EditHistoryService {
     } else {
       response = await DatabaseService.findRowByColumnValue(
         user.email,
-        columnName: '$USER_EMAIL_COLUMN',
+        columnName: '${Constants.USER_EMAIL_COLUMN}',
         tableName: _tableName,
       );
       if (response.status == 200) {
-        final data = (response.data as List)
-            .map((e) => NotificationModel.fromJson(e))
-            .toList();
+        final data = (response.data as List).map((e) => NotificationModel.fromJson(e)).toList();
         resp.didSucced = true;
         resp.message = 'Success';
         resp.data = data;
@@ -118,14 +109,12 @@ class EditHistoryService {
     response = await DatabaseService.findRowByColumnValue(
       '${user.email}',
       // 'approved',
-      columnName: '$USER_EMAIL_COLUMN',
+      columnName: '${Constants.USER_EMAIL_COLUMN}',
       // column2Name: '$STATE_COLUMN',
       tableName: _tableName,
     );
     if (response.status == 200) {
-      final data = (response.data as List)
-          .map((e) => NotificationModel.fromJson(e))
-          .toList();
+      final data = (response.data as List).map((e) => NotificationModel.fromJson(e)).toList();
       resp.didSucced = true;
       resp.message = 'Success';
       resp.data = data;

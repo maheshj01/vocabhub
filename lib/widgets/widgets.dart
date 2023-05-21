@@ -72,7 +72,7 @@ SelectableText buildExample(String example, String word, {TextStyle? style}) {
 }
 
 Widget storeRedirect(BuildContext context,
-    {String redirectUrl = PLAY_STORE_URL,
+    {String redirectUrl = Constants.PLAY_STORE_URL,
     String assetUrl = 'assets/googleplay.png'}) {
   return GestureDetector(
     onTap: () {

@@ -35,7 +35,7 @@ extension DateHelper on DateTime {
     } else if (differenceInDays == 1) {
       return 'Yesterday';
     } else {
-      final formatter = DateFormat(dateFormatter);
+      final formatter = DateFormat(Constants.dateFormatter);
       return formatter.format(this);
     }
   }
@@ -50,12 +50,12 @@ extension DateHelper on DateTime {
   }
 
   String standardTime() {
-    final formatter = DateFormat(timeFormatter);
+    final formatter = DateFormat(Constants.timeFormatter);
     return formatter.format(this);
   }
 
   String standardDate() {
-    final formatter = DateFormat(dateFormatter);
+    final formatter = DateFormat(Constants.dateFormatter);
     return formatter.format(this);
   }
 }

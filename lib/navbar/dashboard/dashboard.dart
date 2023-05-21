@@ -51,7 +51,7 @@ class _DashboardState extends State<Dashboard> {
       };
       final resp = await DatabaseService.insertIntoTable(
         wordOfTheDay,
-        table: WORD_OF_THE_DAY_TABLE_NAME,
+        table: Constants.WORD_OF_THE_DAY_TABLE_NAME,
       );
       if (resp.status == 201) {
         print('word of the day published');

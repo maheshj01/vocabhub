@@ -4,7 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
@@ -23,12 +23,13 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   analytics = FirebaseAnalytics.instance;
-  GoRouter.setUrlPathStrategy(UrlPathStrategy.path);
+  usePathUrlStrategy();
   pushNotificationService = PushNotificationService(_firebaseMessaging);
   // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   Settings.init();
   runApp(VocabApp());
 }
+
 late PushNotificationService pushNotificationService;
 
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -46,8 +47,7 @@ final ValueNotifier<int> totalNotifier = ValueNotifier<int>(0);
 final ValueNotifier<List<Word>?> listNotifier = ValueNotifier<List<Word>>([]);
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 late FirebaseAnalytics analytics;
-FirebaseAnalyticsObserver observer =
-    FirebaseAnalyticsObserver(analytics: analytics);
+FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
 
 class VocabApp extends StatefulWidget {
   @override
@@ -60,8 +60,7 @@ class _VocabAppState extends State<VocabApp> {
     firebaseAnalytics.appOpen();
     final email = await Settings.email;
     if (email.isNotEmpty) {
-      final response =
-          await AuthService.updateLogin(email: email, isLoggedIn: true);
+      final response = await AuthService.updateLogin(email: email, isLoggedIn: true);
     }
     // pushNotificationService!.showFlutterNotification(RemoteMessage(
     //     data: {'title': 'Welcome', 'body': 'Welcome to VocabHub'}));

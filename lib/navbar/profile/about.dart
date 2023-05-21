@@ -68,7 +68,7 @@ class _AboutVocabhubMobileState extends State<AboutVocabhubMobile> {
             16.0.vSpacer(),
             Expanded(child: SizedBox.shrink()),
             Link(
-                uri: Uri.parse(SOURCE_CODE_URL),
+                uri: Uri.parse(Constants.SOURCE_CODE_URL),
                 target: LinkTarget.blank,
                 builder: (context, followLink) {
                   return TextButton(

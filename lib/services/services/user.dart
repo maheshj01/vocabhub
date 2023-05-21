@@ -3,23 +3,21 @@ import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/utils/logger.dart';
-import 'package:vocabhub/utils/secrets.dart';
 
 class UserService {
-  static String _tableName = '$USER_TABLE_NAME';
-  final SupabaseClient _supabase = SupabaseClient("$CONFIG_URL", "$APIkey");
+  static String _tableName = '${Constants.USER_TABLE_NAME}';
   static final _logger = Logger("UserService");
 
   Future<PostgrestResponse> findById(String id) async {
     final response = await DatabaseService.findSingleRowByColumnValue(id,
-        columnName: ID_COLUMN, tableName: _tableName);
+        columnName: Constants.ID_COLUMN, tableName: _tableName);
     return response;
   }
 
   static Future<UserModel> findByEmail({required String email}) async {
     try {
       final response = await DatabaseService.findSingleRowByColumnValue(email,
-          columnName: USER_EMAIL_COLUMN, tableName: _tableName);
+          columnName: Constants.USER_EMAIL_COLUMN, tableName: _tableName);
 
       if (response.status == 200) {
         final user = UserModel.fromJson(response.data);
@@ -38,10 +36,8 @@ class UserService {
     String userName,
   ) async {
     try {
-      final response = await DatabaseService.findSingleRowByColumnValue(
-          userName,
-          columnName: USERNAME_COLUMN,
-          tableName: _tableName);
+      final response = await DatabaseService.findSingleRowByColumnValue(userName,
+          columnName: Constants.USERNAME_COLUMN, tableName: _tableName);
       if (response.status == 200) {
         final user = UserModel.fromJson(response.data);
         return !(user.email.isNotEmpty && user.username.isNotEmpty);
@@ -62,7 +58,7 @@ class UserService {
       final response = await DatabaseService.updateRow(
           colValue: user.email,
           data: data,
-          columnName: USER_EMAIL_COLUMN,
+          columnName: Constants.USER_EMAIL_COLUMN,
           tableName: _tableName);
       if (response.status == 200) {
         return true;
@@ -94,7 +90,7 @@ class UserService {
   static Future<PostgrestResponse> deleteById(String email) async {
     _logger.i(_tableName);
     final response = await DatabaseService.deleteRow(email,
-        columnName: USER_EMAIL_COLUMN, tableName: _tableName);
+        columnName: Constants.USER_EMAIL_COLUMN, tableName: _tableName);
     return response;
   }
 }

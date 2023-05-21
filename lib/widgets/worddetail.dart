@@ -398,7 +398,7 @@ class _EmptyWordState extends State<EmptyWord> {
                   context,
                 ),
                 storeRedirect(context,
-                    redirectUrl: AMAZON_APP_STORE_URL,
+                    redirectUrl: Constants.AMAZON_APP_STORE_URL,
                     assetUrl: 'assets/amazonappstore.png'),
               ],
             ),

@@ -6,16 +6,16 @@ import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/utils/utility.dart';
 
-class AuthService{
+class AuthService {
   GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: <String>[
       'email',
-      //   'https://www.googleapis.com/auth/contacts.readonly',
+      // Constants.SIGN_IN_SCOPE_URL,
     ],
   );
 
-  static String _tableName = '$USER_TABLE_NAME';
-  static final _logger =   Logger("AuthService");
+  static String _tableName = '${Constants.USER_TABLE_NAME}';
+  static final _logger = Logger("AuthService");
 
   static Future<Response> registerUser(UserModel user) async {
     final resp = Response(didSucced: false, message: "Failed");
@@ -24,13 +24,13 @@ class AuthService{
     json['isLoggedIn'] = true;
     try {
       final response =
-          await DatabaseService.insertIntoTable(json, table: USER_TABLE_NAME);
+          await DatabaseService.insertIntoTable(json, table: Constants.USER_TABLE_NAME);
       if (response.status == 201) {
         resp.didSucced = true;
         resp.message = 'Success';
         resp.data = response.data;
       } else {
-        _logger.e('error caught');
+        _logger.e('error caught ${response.error}');
         throw "Failed to register new user";
       }
     } catch (_) {
@@ -83,19 +83,19 @@ class AuthService{
       {required String email, bool isLoggedIn = false}) async {
     try {
       final response = await DatabaseService.updateColumn(
-          searchColumn: USER_EMAIL_COLUMN,
+          searchColumn: Constants.USER_EMAIL_COLUMN,
           searchValue: email,
           columnValue: isLoggedIn,
-          columnName: USER_LOGGEDIN_COLUMN,
+          columnName: Constants.USER_LOGGEDIN_COLUMN,
           tableName: _tableName);
 
       if (response.status == 200) {
-        return ResponseObject(Status.success.name,
-            UserModel.fromJson((response.data as List).first), Status.success);
+        return ResponseObject(
+            Status.success.name, UserModel.fromJson((response.data as List).first), Status.success);
       } else {
         _logger.d('existing user not found');
-        return ResponseObject(Status.notfound.name,
-            UserModel.fromJson(response.data), Status.notfound);
+        return ResponseObject(
+            Status.notfound.name, UserModel.fromJson(response.data), Status.notfound);
       }
     } catch (_) {
       _logger.e(_.toString());
@@ -109,19 +109,19 @@ class AuthService{
       final response = await DatabaseService.updateRow(
           colValue: email,
           data: {
-            USER_TOKEN_COLUMN: token,
-            USER_LOGGEDIN_COLUMN: true,
+            Constants.USER_TOKEN_COLUMN: token,
+            Constants.USER_LOGGEDIN_COLUMN: true,
           },
-          columnName: USER_EMAIL_COLUMN,
+          columnName: Constants.USER_EMAIL_COLUMN,
           tableName: _tableName);
 
       if (response.status == 200) {
-        return ResponseObject(Status.success.name,
-            UserModel.fromJson((response.data as List).first), Status.success);
+        return ResponseObject(
+            Status.success.name, UserModel.fromJson((response.data as List).first), Status.success);
       } else {
         _logger.d('existing user not found');
-        return ResponseObject(Status.notfound.name,
-            UserModel.fromJson(response.data), Status.notfound);
+        return ResponseObject(
+            Status.notfound.name, UserModel.fromJson(response.data), Status.notfound);
       }
     } catch (_) {
       _logger.e(_.toString());

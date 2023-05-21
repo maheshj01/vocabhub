@@ -49,7 +49,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
   Widget _avatar(UserModel user) {
     if (user.email.isEmpty)
       return CircularAvatar(
-        url: '$profileUrl',
+        url: '${Constants.PROFILE_AVATAR_ASSET}',
         radius: 35,
       );
     else {
@@ -90,16 +90,13 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
 
     return Drawer(
       child: Container(
-        decoration:
-            isDark ? null : BoxDecoration(gradient: VocabTheme.primaryGradient),
+        decoration: isDark ? null : BoxDecoration(gradient: VocabTheme.primaryGradient),
         child: Column(
           children: [
             Container(
               padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
               height: 150,
-              decoration: isDark
-                  ? null
-                  : BoxDecoration(gradient: VocabTheme.primaryGradient),
+              decoration: isDark ? null : BoxDecoration(gradient: VocabTheme.primaryGradient),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -113,10 +110,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
                             widget.onMenuTap?.call('Sign In');
                           }
                         },
-                        child: Text(
-                            userProvider.isLoggedIn
-                                ? '${userProvider.name}'
-                                : 'Sign In',
+                        child: Text(userProvider.isLoggedIn ? '${userProvider.name}' : 'Sign In',
                             style: Theme.of(context)
                                 .textTheme
                                 .headline4!
@@ -128,7 +122,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             hLine(),
             ListTile(
               onTap: () {
-                launchURL(REPORT_URL);
+                launchURL(Constants.REPORT_URL);
               },
               subtitle: subTitle(
                 'Report a bug or Request a feature',
@@ -142,8 +136,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             ListTile(
               onTap: () {
                 Navigate().popView(context);
-                Navigate.push(context, AddWordForm(),
-                    slideTransitionType: TransitionType.btt);
+                Navigate.push(context, AddWordForm(), slideTransitionType: TransitionType.btt);
               },
               trailing: trailingIcon(
                 Icons.add,
@@ -157,7 +150,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             ListTile(
               subtitle: subTitle('The code to this app is Open Sourced'),
               onTap: () {
-                launchURL(SOURCE_CODE_URL);
+                launchURL(Constants.SOURCE_CODE_URL);
               },
               title: title(
                 'Source code',
@@ -184,7 +177,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             hLine(),
             ListTile(
               onTap: () {
-                launchURL(PRIVACY_POLICY);
+                launchURL(Constants.PRIVACY_POLICY);
               },
               trailing: trailingIcon(Icons.privacy_tip),
               title: title(
@@ -212,7 +205,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             WordsCountAnimator(
               isAnimated: isAnimated,
             ),
-           20.0.hSpacer(),
+            20.0.hSpacer(),
             if (kIsWeb) storeRedirect(context),
             Container(
               height: 60,
@@ -244,13 +237,12 @@ class VersionBuilder extends StatelessWidget {
           future: getAppDetails(),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             return snapshot.data == null
-                ? Text('$VERSION', style: Theme.of(context).textTheme.caption)
+                ? Text('${Constants.VERSION}', style: Theme.of(context).textTheme.caption)
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text('v', style: Theme.of(context).textTheme.caption),
-                      Text(snapshot.data!,
-                          style: Theme.of(context).textTheme.caption),
+                      Text(snapshot.data!, style: Theme.of(context).textTheme.caption),
                     ],
                   );
           }),

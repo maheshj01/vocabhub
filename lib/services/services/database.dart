@@ -1,27 +1,24 @@
 import 'package:supabase/supabase.dart';
 import 'package:vocabhub/constants/const.dart';
-import 'package:vocabhub/utils/secrets.dart';
 
 class DatabaseService {
-  static SupabaseClient _supabase = SupabaseClient("$CONFIG_URL", "$APIkey");
+  static SupabaseClient _supabase =
+      SupabaseClient("${Constants.SUPABASE_URL}", "${Constants.SUPABASE_API_KEY}");
 
   static Future<PostgrestResponse> findRowByColumnValue(String columnValue,
-      {String columnName = '$ID_COLUMN',
-      String tableName = '$VOCAB_TABLE_NAME'}) async {
-    final response = await _supabase
-        .from(tableName)
-        .select()
-        .eq('$columnName', columnValue)
-        .execute();
+      {String columnName = '${Constants.ID_COLUMN}',
+      String tableName = '${Constants.VOCAB_TABLE_NAME}'}) async {
+    final response =
+        await _supabase.from(tableName).select().eq('$columnName', columnValue).execute();
     return response;
   }
 
   static Future<PostgrestResponse> findRowBy2ColumnValues(
     String column1Value,
     String column2Value, {
-    String column1Name = '$ID_COLUMN',
-    String column2Name = '$USER_EMAIL_COLUMN',
-    String tableName = '$VOCAB_TABLE_NAME',
+    String column1Name = '${Constants.ID_COLUMN}',
+    String column2Name = '${Constants.USER_EMAIL_COLUMN}',
+    String tableName = '${Constants.VOCAB_TABLE_NAME}',
     bool ascending = false,
   }) async {
     final response = await _supabase
@@ -29,14 +26,14 @@ class DatabaseService {
         .select()
         .eq('$column1Name', column1Value)
         .eq('$column2Name', column2Value)
-        .order(CREATED_AT_COLUMN, ascending: ascending)
+        .order(Constants.CREATED_AT_COLUMN, ascending: ascending)
         .execute();
     return response;
   }
 
   static Future<PostgrestResponse> findRowsContaining(String columnValue,
-      {String columnName = '$ID_COLUMN',
-      String tableName = '$VOCAB_TABLE_NAME'}) async {
+      {String columnName = '${Constants.ID_COLUMN}',
+      String tableName = '${Constants.VOCAB_TABLE_NAME}'}) async {
     final response = await _supabase
         .from(tableName)
         .select()
@@ -49,9 +46,9 @@ class DatabaseService {
   /// fetches all
   static Future<PostgrestResponse> findRowsByInnerJoinOnColumnValue(
       String innerJoinColumn, String value,
-      {String table1 = '$EDIT_HISTORY_TABLE',
+      {String table1 = '${Constants.EDIT_HISTORY_TABLE}',
       bool ascending = false,
-      String table2 = '$USER_TABLE_NAME'}) async {
+      String table2 = '${Constants.USER_TABLE_NAME}'}) async {
     final response = await _supabase
         .from('$table1')
         .select('*, $table2!inner(*)')
@@ -73,13 +70,10 @@ class DatabaseService {
   ///  return response;
   /// ```
   static Future<PostgrestResponse> findRowsByInnerJoinOn2ColumnValue(
-      String innerJoinColumn1,
-      String value1,
-      String innerJoinColumn2,
-      String value2,
-      {String table1 = '$EDIT_HISTORY_TABLE',
+      String innerJoinColumn1, String value1, String innerJoinColumn2, String value2,
+      {String table1 = '${Constants.EDIT_HISTORY_TABLE}',
       bool ascending = false,
-      String table2 = '$USER_TABLE_NAME'}) async {
+      String table2 = '${Constants.USER_TABLE_NAME}'}) async {
     final response = await _supabase
         .from('$table1')
         .select('*, $table2!inner(*)')
@@ -109,26 +103,22 @@ class DatabaseService {
   // }
 
   static Future<PostgrestResponse> findAll(
-      {String tableName = '$VOCAB_TABLE_NAME'}) async {
+      {String tableName = '${Constants.VOCAB_TABLE_NAME}'}) async {
     final response = await _supabase.from(tableName).select().execute();
     return response;
   }
 
   static Future<PostgrestResponse> findLimitedWords(
-      {String tableName = '$VOCAB_TABLE_NAME', int page = 0}) async {
-    final response = await _supabase
-        .from(tableName)
-        .select()
-        .range(page * 20, (page + 1) * 20)
-        .execute();
+      {String tableName = '${Constants.VOCAB_TABLE_NAME}', int page = 0}) async {
+    final response =
+        await _supabase.from(tableName).select().range(page * 20, (page + 1) * 20).execute();
     return response;
   }
 
-  static Future<PostgrestResponse> findRecentlyUpdatedRow(
-      String innerJoinColumn, String value,
-      {String table1 = '$EDIT_HISTORY_TABLE',
+  static Future<PostgrestResponse> findRecentlyUpdatedRow(String innerJoinColumn, String value,
+      {String table1 = '${Constants.EDIT_HISTORY_TABLE}',
       bool ascending = false,
-      String table2 = '$USER_TABLE_NAME'}) async {
+      String table2 = '${Constants.USER_TABLE_NAME}'}) async {
     final response = await _supabase
         .from('$table1')
         .select('*, $table2!inner(*)')
@@ -137,21 +127,16 @@ class DatabaseService {
     return response;
   }
 
-  static Future<PostgrestResponse> findSingleRowByColumnValue(
-      String columnValue,
-      {String columnName = '$ID_COLUMN',
-      String tableName = '$VOCAB_TABLE_NAME'}) async {
-    final response = await _supabase
-        .from(tableName)
-        .select()
-        .eq('$columnName', columnValue)
-        .single()
-        .execute();
+  static Future<PostgrestResponse> findSingleRowByColumnValue(String columnValue,
+      {String columnName = '${Constants.ID_COLUMN}',
+      String tableName = '${Constants.VOCAB_TABLE_NAME}'}) async {
+    final response =
+        await _supabase.from(tableName).select().eq('$columnName', columnValue).single().execute();
     return response;
   }
 
   static Future<PostgrestResponse> insertIntoTable(Map<String, dynamic> data,
-      {String table = '$VOCAB_TABLE_NAME'}) async {
+      {String table = '${Constants.VOCAB_TABLE_NAME}'}) async {
     final response = await _supabase.from(table).insert(data).execute();
     return response;
   }
@@ -160,8 +145,8 @@ class DatabaseService {
   /// conflict column refers to the columns which should be unique across all the rows
   /// it is responsible to determine whether insert or update is called.
   static Future<PostgrestResponse> upsertIntoTable(Map<String, dynamic> data,
-      {String table = '$VOCAB_TABLE_NAME',
-      String conflictColumn = '$ID_COLUMN'}) async {
+      {String table = '${Constants.VOCAB_TABLE_NAME}',
+      String conflictColumn = '${Constants.ID_COLUMN}'}) async {
     final response = await _supabase
         .from(table)
         .upsert(data, onConflict: 'id')
@@ -178,13 +163,10 @@ class DatabaseService {
   static Future<PostgrestResponse> updateRow(
       {required String colValue,
       required Map<String, dynamic> data,
-      String columnName = '$ID_COLUMN',
-      String tableName = '$VOCAB_TABLE_NAME'}) async {
-    final response = await _supabase
-        .from(tableName)
-        .update(data)
-        .eq("$columnName", "$colValue")
-        .execute();
+      String columnName = '${Constants.ID_COLUMN}',
+      String tableName = '${Constants.VOCAB_TABLE_NAME}'}) async {
+    final response =
+        await _supabase.from(tableName).update(data).eq("$columnName", "$colValue").execute();
     return response;
   }
 
@@ -205,21 +187,17 @@ class DatabaseService {
     return response;
   }
 
-
   static Future<PostgrestResponse> upsertRow(Map<String, dynamic> data,
-      {String tableName = '$VOCAB_TABLE_NAME'}) async {
+      {String tableName = '${Constants.VOCAB_TABLE_NAME}'}) async {
     final response = await _supabase.from(tableName).upsert(data).execute();
     return response;
   }
 
   static Future<PostgrestResponse> deleteRow(String columnValue,
-      {String columnName = '$ID_COLUMN',
-      String tableName = '$VOCAB_TABLE_NAME'}) async {
-    final response = await _supabase
-        .from(tableName)
-        .delete()
-        .eq('$columnName', columnValue)
-        .execute();
+      {String columnName = '${Constants.ID_COLUMN}',
+      String tableName = '${Constants.VOCAB_TABLE_NAME}'}) async {
+    final response =
+        await _supabase.from(tableName).delete().eq('$columnName', columnValue).execute();
     return response;
   }
 }

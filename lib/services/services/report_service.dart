@@ -4,7 +4,7 @@ import 'package:vocabhub/models/report.dart';
 import 'package:vocabhub/services/services/database.dart';
 
 class ReportService {
-  static final String _tableName = FEEDBACK_TABLE_NAME;
+  static final String _tableName = Constants.FEEDBACK_TABLE_NAME;
   static final Logger _logger = Logger('ReportService');
   static Future<List<ReportModel>>? getReports() async {
     final resp = await DatabaseService.findAll(tableName: _tableName);
@@ -18,7 +18,7 @@ class ReportService {
   static Future<List<ReportModel>?>? getReportByEmail(String email) async {
     final resp = await DatabaseService.findRowByColumnValue(
       email,
-      columnName: USER_EMAIL_COLUMN,
+      columnName: Constants.USER_EMAIL_COLUMN,
       tableName: _tableName,
     );
     if (resp.status == 200) {

@@ -54,8 +54,8 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
       minimumFetchInterval: const Duration(seconds: 1),
     ));
     await remoteConfig.fetchAndActivate();
-    final version = await remoteConfig.getString('$VERSION_KEY');
-    final buildNumber = await remoteConfig.getInt('$BUILD_NUMBER_KEY');
+    final version = await remoteConfig.getString('${Constants.VERSION_KEY}');
+    final buildNumber = await remoteConfig.getInt('${Constants.BUILD_NUMBER_KEY}');
     if (appVersion != version || buildNumber > appBuildNumber) {
       hasUpdate = true;
     } else {
@@ -114,27 +114,22 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
       items.add(NavbarItem(Icons.person, 'Me'));
     }
     if (!user.isLoggedIn || hasUpdate) {
-      bannerHeight =
-          kBottomNavigationBarHeight + MediaQuery.of(context).padding.bottom;
+      bannerHeight = kBottomNavigationBarHeight + MediaQuery.of(context).padding.bottom;
     } else {
       bannerHeight = 0;
     }
     return ValueListenableBuilder<int>(
         valueListenable: _selectedIndex,
         builder: (context, int currentIndex, Widget? child) {
-          bannerHeight = kBottomNavigationBarHeight +
-              MediaQuery.of(context).padding.bottom;
+          bannerHeight = kBottomNavigationBarHeight + MediaQuery.of(context).padding.bottom;
           return Scaffold(
             resizeToAvoidBottomInset: false,
-            floatingActionButton: !user.isLoggedIn ||
-                    currentIndex > 1 ||
-                    hasUpdate
+            floatingActionButton: !user.isLoggedIn || currentIndex > 1 || hasUpdate
                 ? null
                 : Padding(
                     padding: (kBottomNavigationBarHeight * 0.9).bottomPadding,
                     child: OpenContainer<bool>(
-                        openBuilder:
-                            (BuildContext context, VoidCallback openContainer) {
+                        openBuilder: (BuildContext context, VoidCallback openContainer) {
                           return AddWordForm(
                             isEdit: false,
                           );
@@ -142,14 +137,12 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                         tappable: true,
                         closedShape: 22.0.rounded,
                         transitionType: ContainerTransitionType.fadeThrough,
-                        closedBuilder:
-                            (BuildContext context, VoidCallback openContainer) {
+                        closedBuilder: (BuildContext context, VoidCallback openContainer) {
                           return FloatingActionButton.extended(
                               heroTag: "addword",
                               elevation: 3.5,
                               isExtended: true,
-                              icon: Icon(Icons.add,
-                                  color: Colors.white, size: 28),
+                              icon: Icon(Icons.add, color: Colors.white, size: 28),
                               backgroundColor: VocabTheme.primaryColor,
                               onPressed: null,
                               label: Text(
@@ -172,8 +165,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                   onBackButtonPressed: (isExiting) {
                     if (isExiting) {
                       newTime = DateTime.now();
-                      int difference =
-                          newTime.difference(oldTime).inMilliseconds;
+                      int difference = newTime.difference(oldTime).inMilliseconds;
                       oldTime = newTime;
                       if (difference < 1000) {
                         hideToast();
@@ -196,8 +188,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                         Future.delayed(Duration(seconds: 3), () {
                           if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {
                             pageController.animateTo(200,
-                                duration: Duration(milliseconds: 600),
-                                curve: Curves.easeIn);
+                                duration: Duration(milliseconds: 600), curve: Curves.easeIn);
                             animatePageOnce = true;
                           }
                         });
@@ -205,16 +196,16 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                     }
                     _selectedIndex.value = x;
                   },
-                  decoration: NavbarDecoration(
-                      backgroundColor: VocabTheme.surfaceGreen,
-                      isExtended: SizeUtils.isExtendedDesktop,
-                      // showUnselectedLabels: false,
-                      selectedIconTheme: IconThemeData(
-                          size: 24, color: VocabTheme.primaryColor),
-                      selectedLabelTextStyle: TextStyle(fontSize: 12),
-                      unselectedLabelTextStyle:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
-                      navbarType: BottomNavigationBarType.fixed),
+                  decoration: NotchedDecoration(
+                    unselectedLabelTextStyle: TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w700, color: VocabTheme.primaryColor),
+                    backgroundColor: VocabTheme.surfaceGreen,
+                    // isExtended: SizeUtils.isExtendedDesktop,
+                    showUnselectedLabels: true,
+                    selectedIconTheme: IconThemeData(size: 24, color: VocabTheme.primaryColor),
+                    // selectedLabelTextStyle: TextStyle(fontSize: 12),
+                    // navbarType: BottomNavigationBarType.fixed
+                  ),
                   destinations: [
                     for (int i = 0; i < items.length; i++)
                       DestinationRouter(
@@ -237,15 +228,14 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                       left: 0,
                       right: 0,
                       child: VocabBanner(
-                        description: hasUpdate
-                            ? 'New update available'
-                            : 'Sign in for better experience',
+                        description:
+                            hasUpdate ? 'New update available' : 'Sign in for better experience',
                         actions: [
                           !hasUpdate
                               ? SizedBox.shrink()
                               : TextButton(
                                   onPressed: () {
-                                    launchUrl(Uri.parse(PLAY_STORE_URL),
+                                    launchUrl(Uri.parse(Constants.PLAY_STORE_URL),
                                         mode: LaunchMode.externalApplication);
                                   },
                                   child: Text('Update',
@@ -259,10 +249,24 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                               ? SizedBox.shrink()
                               : TextButton(
                                   onPressed: () async {
-                                    await Navigate()
-                                        .pushAndPopAll(context, AppSignIn());
+                                    await Navigate().pushAndPopAll(context, AppSignIn());
                                   },
                                   child: Text('Sign In',
+                                      style: TextStyle(
+                                        color: VocabTheme.primaryColor,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                      )),
+                                ),
+                          !hasUpdate
+                              ? SizedBox.shrink()
+                              : TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      hasUpdate = false;
+                                    });
+                                  },
+                                  child: Text('Dismiss',
                                       style: TextStyle(
                                         color: VocabTheme.primaryColor,
                                         fontWeight: FontWeight.bold,
@@ -282,9 +286,7 @@ class VocabBanner extends StatelessWidget {
   final String description;
   final List<Widget> actions;
 
-  const VocabBanner(
-      {Key? key, required this.description, required this.actions})
-      : super(key: key);
+  const VocabBanner({Key? key, required this.description, required this.actions}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

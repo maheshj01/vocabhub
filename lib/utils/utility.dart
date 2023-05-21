@@ -90,7 +90,7 @@ String buildShareMessage(Word word) {
   I just learned this word on VocabHub: ${word.word}
   Meaning: ${word.meaning}
 
-  You can learn too by downloading the VocabHub app at: $PLAY_STORE_URL
+  You can learn too by downloading the VocabHub app at: ${Constants.PLAY_STORE_URL}
   ''';
 }
 

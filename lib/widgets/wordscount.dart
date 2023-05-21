@@ -6,8 +6,7 @@ import 'package:vocabhub/widgets/drawer.dart';
 
 class WordsCountAnimator extends StatefulWidget {
   final bool isAnimated;
-  const WordsCountAnimator({Key? key, this.isAnimated = false})
-      : super(key: key);
+  const WordsCountAnimator({Key? key, this.isAnimated = false}) : super(key: key);
 
   @override
   _WordsCountAnimatorState createState() => _WordsCountAnimatorState();
@@ -31,7 +30,7 @@ class _WordsCountAnimatorState extends State<WordsCountAnimator> {
         }
         return TweenAnimationBuilder<double>(
             tween: Tween<double>(begin: 0.0, end: total.toDouble()),
-            duration: isAnimated ? Duration.zero : wordCountAnimationDuration,
+            duration: isAnimated ? Duration.zero : Constants.wordCountAnimationDuration,
             onEnd: () {
               _opacityNotifier.value = 1.0;
             },
@@ -48,18 +47,17 @@ class _WordsCountAnimatorState extends State<WordsCountAnimator> {
                         width: 90,
                         alignment: Alignment.bottomRight,
                         child: Text(value.toInt().toString(),
-                            style: Theme.of(context).textTheme.headline3),
+                            style: Theme.of(context).textTheme.displaySmall),
                       ),
                       ValueListenableBuilder<double>(
                           valueListenable: _opacityNotifier,
-                          builder: (BuildContext context, double value,
-                              Widget? child) {
+                          builder: (BuildContext context, double value, Widget? child) {
                             return AnimatedOpacity(
                                 duration: Duration(milliseconds: 500),
                                 opacity: value,
                                 child: Text(
                                   ' Words added so far...',
-                                  style: Theme.of(context).textTheme.headline6,
+                                  style: Theme.of(context).textTheme.titleLarge,
                                 ));
                           })
                     ],

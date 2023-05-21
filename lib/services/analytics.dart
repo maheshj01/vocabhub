@@ -9,29 +9,24 @@ class Analytics {
 //   FirebaseAnalytics analytics;
 
   Future<void> logWordSelection(Word word) async {
-    await analytics
-        .logEvent(name: 'word_selected', parameters: {'word': word.word});
+    await analytics.logEvent(name: 'word_selected', parameters: {'word': word.word});
   }
 
   /// Platform is either Desktop or Web(PWA)
   Future<void> logRedirectToStore(String platform) async {
-    await analytics
-        .logEvent(name: 'play_store', parameters: {'Platform': '$platform'});
+    await analytics.logEvent(name: 'play_store', parameters: {'Platform': '$platform'});
   }
 
   Future<void> logWordEdit(Word word, String email) async {
-    await analytics.logEvent(
-        name: 'word_edit', parameters: {'word': word.word, 'email': email});
+    await analytics.logEvent(name: 'word_edit', parameters: {'word': word.word, 'email': email});
   }
 
   Future<void> logWordDelete(Word word, String email) async {
-    await analytics.logEvent(
-        name: 'word_delete', parameters: {'word': word.word, 'email': email});
+    await analytics.logEvent(name: 'word_delete', parameters: {'word': word.word, 'email': email});
   }
 
   Future<void> logWordAdd(Word word, [String email = '']) async {
-    await analytics.logEvent(
-        name: 'word_add', parameters: {'word': word.word, 'email': email});
+    await analytics.logEvent(name: 'word_add', parameters: {'word': word.word, 'email': email});
   }
 
   Future<void> logNewUser(UserModel user) async {

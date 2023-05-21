@@ -1,63 +1,66 @@
 /// APP CONSTANTS GO HERE IN THIS FILE
-
-const BASE_URL = '';
-const VERSION = 'v0.3.5';
-const VERSION_KEY = 'version';
-const BUILD_NUMBER_KEY = 'buildNumber';
-const SOURCE_CODE_URL = 'https://github.com/maheshmnj/vocabhub';
-const PLAY_STORE_URL =
-    'https://play.google.com/store/apps/details?id=com.vocabhub.app';
-const AMAZON_APP_STORE_URL =
-    'http://www.amazon.com/gp/mas/dl/android?p=com.vocabhub.app';
-const REPORT_URL = 'https://github.com/maheshmnj/vocabhub/issues/new/choose';
-const String signInScopeUrl =
-    'https://www.googleapis.com/auth/contacts.readonly';
-// const SHEET_URL =
+class Constants {
+  static const BASE_URL = '';
+  static const VERSION = 'v0.3.5';
+  static const VERSION_KEY = 'version';
+  static const BUILD_NUMBER_KEY = 'buildNumber';
+  static const SOURCE_CODE_URL = 'https://github.com/maheshmnj/vocabhub';
+  static const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.vocabhub.app';
+  static const AMAZON_APP_STORE_URL = 'http://www.amazon.com/gp/mas/dl/android?p=com.vocabhub.app';
+  static const REPORT_URL = 'https://github.com/maheshmnj/vocabhub/issues/new/choose';
+  static const String SIGN_IN_SCOPE_URL = 'https://www.googleapis.com/auth/contacts.readonly';
+// static const SHEET_URL =
 //     'https://docs.google.com/spreadsheets/d/1G1RtQfsEDqHhHP4cgOpO9x_ZtQ1dYa6QrGCq3KFlu50';
+  /// API KEYS
+  static const SUPABASE_API_KEY = String.fromEnvironment('SUPABASE_API_KEY');
+  static const SUPABASE_URL = String.fromEnvironment('SUPABASE_PROJECT_URL');
+  static const REDIRECT_URL = String.fromEnvironment('SUPABASE_REDIRECT_URL');
 
-const PRIVACY_POLICY = 'https://maheshmnj.github.io/privacy';
-const String profileUrl = 'assets/profile.png';
-const Duration wordCountAnimationDuration = Duration(seconds: 3);
-const FEEDBACK_EMAIL_TO = 'maheshmn121@gmail.com';
+  static const PRIVACY_POLICY = 'https://maheshmnj.github.io/privacy';
+  static const String PROFILE_AVATAR_ASSET = 'assets/profile.png';
+  static const Duration wordCountAnimationDuration = Duration(seconds: 3);
+  static const FEEDBACK_EMAIL_TO = 'maheshmn121@gmail.com';
 
-/// TABLES
-const VOCAB_TABLE_NAME = 'vocabsheet_mobile';
-const USER_TABLE_NAME = 'users_mobile';
-// const VOCAB_TABLE_NAME = 'vocabsheet_copy';
-// const USER_TABLE_NAME = 'users_test';
-const FEEDBACK_TABLE_NAME = 'feedback';
 
-const EDIT_HISTORY_TABLE = 'edit_history';
-const WORD_STATE_TABLE_NAME = 'word_state';
-const WORD_OF_THE_DAY_TABLE_NAME = 'word_of_the_day';
+  /// TABLES
+  static const VOCAB_TABLE_NAME = 'vocabsheet_mobile';
+  static const USER_TABLE_NAME = 'users_mobile';
+// static const VOCAB_TABLE_NAME = 'vocabsheet_copy';
+// static const USER_TABLE_NAME = 'users_test';
+  static const FEEDBACK_TABLE_NAME = 'feedback';
 
-/// VOCAB TABLE COLUMNS
-const WORD_COLUMN = 'word';
-const ID_COLUMN = 'id';
-const SYNONYM_COLUMN = 'synonyms';
-const MEANING_COLUMN = 'meaning';
-const EXAMPLE_COLUMN = 'example';
-const NOTE_COLUMN = 'notes';
-const STATE_COLUMN = 'state';
-const CREATED_AT_COLUMN = 'created_at';
+  static const EDIT_HISTORY_TABLE = 'edit_history';
+  static const WORD_STATE_TABLE_NAME = 'word_state';
+  static const WORD_OF_THE_DAY_TABLE_NAME = 'word_of_the_day';
 
-/// USER TABLE COLUMNS
-const USERID_COLUMN = 'id';
-const USER_NAME_COLUMN = 'name';
-const USER_EMAIL_COLUMN = 'email';
-const USERNAME_COLUMN = 'username';
-const USER_BOOKMARKS_COLUMN = 'bookmarks';
-const USER_CREATED_AT_COLUMN = 'created_at';
-const USER_LOGGEDIN_COLUMN = 'isLoggedIn';
-const USER_TOKEN_COLUMN = 'token';
+  /// VOCAB TABLE COLUMNS
+  static const WORD_COLUMN = 'word';
+  static const ID_COLUMN = 'id';
+  static const SYNONYM_COLUMN = 'synonyms';
+  static const MEANING_COLUMN = 'meaning';
+  static const EXAMPLE_COLUMN = 'example';
+  static const NOTE_COLUMN = 'notes';
+  static const STATE_COLUMN = 'state';
+  static const CREATED_AT_COLUMN = 'created_at';
 
-/// EDIT HISTORY TABLE COLUMNS
-const EDIT_ID_COLUMN = 'edit_id';
-const EDIT_USER_ID_COLUMN = 'user_id';
-const EDIT_WORD_ID_COLUMN = 'word_id';
+  /// USER TABLE COLUMNS
+  static const USERID_COLUMN = 'id';
+  static const USER_NAME_COLUMN = 'name';
+  static const USER_EMAIL_COLUMN = 'email';
+  static const USERNAME_COLUMN = 'username';
+  static const USER_BOOKMARKS_COLUMN = 'bookmarks';
+  static const USER_CREATED_AT_COLUMN = 'created_at';
+  static const USER_LOGGEDIN_COLUMN = 'isLoggedIn';
+  static const USER_TOKEN_COLUMN = 'token';
 
-const String dateFormatter = 'MMMM dd, y';
-const String timeFormatter = 'hh:mm a';
+  /// EDIT HISTORY TABLE COLUMNS
+  static const EDIT_ID_COLUMN = 'edit_id';
+  static const EDIT_USER_ID_COLUMN = 'user_id';
+  static const EDIT_WORD_ID_COLUMN = 'word_id';
+
+  static const String dateFormatter = 'MMMM dd, y';
+  static const String timeFormatter = 'hh:mm a';
+}
 
 enum EditState {
   approved('approved'),
@@ -89,6 +92,7 @@ enum EditType {
 }
 
 enum Status { success, notfound, error }
+
 enum RequestState { active, done, error, none }
 
 const int HOME_INDEX = 0;

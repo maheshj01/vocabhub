@@ -98,13 +98,13 @@ class _SplashScreenState extends State<SplashScreen>
                   child: Text('Vocabhub',
                       style: Theme.of(context)
                           .textTheme
-                          .headline2!
+                          .displayMedium!
                           .copyWith(color: Colors.grey)),
                 ),
                 Text('Vocabhub',
                     style: Theme.of(context)
                         .textTheme
-                        .headline2!
+                        .displayMedium!
                         .copyWith(color: Colors.white)),
               ],
             )),

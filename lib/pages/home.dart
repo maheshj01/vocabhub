@@ -153,16 +153,16 @@ class _MyHomePageState extends State<MyHomePage>
       String url = '';
       switch (text.toLowerCase()) {
         case 'source code':
-          url = '$SOURCE_CODE_URL';
+          url = '${Constants.SOURCE_CODE_URL}';
           break;
         case 'privacy policy':
-          url = '$PRIVACY_POLICY';
+          url = '${Constants.PRIVACY_POLICY}';
           break;
         case 'report':
-          url = '$REPORT_URL';
+          url = '${Constants.REPORT_URL}';
           break;
         default:
-          url = '$SOURCE_CODE_URL';
+          url = '${Constants.SOURCE_CODE_URL}';
       }
       await launchURL(url);
     }
@@ -212,7 +212,7 @@ class _MyHomePageState extends State<MyHomePage>
     final user = AppStateScope.of(context).user!;
     if (user.email.isEmpty)
       return CircularAvatar(
-        url: '$profileUrl',
+        url: '${Constants.PROFILE_AVATAR_ASSET}',
         radius: 25,
       );
     else {

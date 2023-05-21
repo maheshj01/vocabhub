@@ -17,20 +17,20 @@ dependencies:
     sdk: flutter
   # flutter_local_notifications: ^12.0.3
   fluttertoast: ^8.0.9
-  go_router: ^3.0.6
-  google_fonts: ^3.0.1
+  go_router: ^7.0.2
+  google_fonts: ^4.0.4
   google_sign_in: ^5.4.1
-  http: ^0.13.5
+  http: ^0.13.6
   intl: ^0.18.0
   json_annotation: ^4.6.0
-  navbar_router: ^0.4.1
-  package_info_plus: ^1.4.2
+  navbar_router: ^0.4.2
+  package_info_plus: ^4.0.1
   pull_to_refresh: ^2.0.0
   realtime_client: ^0.1.15
   share_plus: ^4.1.0
   shared_preferences: ^2.0.16
   supabase: ^0.3.6
-  url_launcher: ^6.0.20
+  url_launcher: ^6.1.8
   uuid: ^3.0.6
 
 dev_dependencies:

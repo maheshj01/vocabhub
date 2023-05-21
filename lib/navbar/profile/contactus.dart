@@ -33,7 +33,7 @@ class _ContactUsState extends State<ContactUs> {
               ),
               onTap: () {
                 // launch email app
-                launchURL('mailto:$FEEDBACK_EMAIL_TO');
+                launchURL('mailto:${Constants.FEEDBACK_EMAIL_TO}');
               })
         ]));
   }
