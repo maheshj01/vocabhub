@@ -22,6 +22,8 @@ class AuthService {
     final json = user.toJson();
     json['created_at'] = DateTime.now().toIso8601String();
     json['isLoggedIn'] = true;
+    // TODO: temp fix
+    json.remove('bookmarks');
     try {
       final response =
           await DatabaseService.insertIntoTable(json, table: Constants.USER_TABLE_NAME);

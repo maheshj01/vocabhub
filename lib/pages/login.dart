@@ -36,8 +36,8 @@ class _AppSignInState extends State<AppSignIn> {
             final user = UserModel.fromJson((resp.data as List<dynamic>)[0]);
             state.setUser(user.copyWith(isLoggedIn: true, token: fcmToken));
             _requestNotifier.value = Response(state: RequestState.done);
-            Navigate().pushAndPopAll(context, AdaptiveLayout(),
-                slideTransitionType: TransitionType.ttb);
+            Navigate()
+                .pushAndPopAll(context, AdaptiveLayout(), slideTransitionType: TransitionType.ttb);
             await Settings.setIsSignedIn(true, email: user.email);
             firebaseAnalytics.logNewUser(user);
           } else {
@@ -48,10 +48,8 @@ class _AppSignInState extends State<AppSignIn> {
           }
         } else {
           await Settings.setIsSignedIn(true, email: existingUser.email);
-          await AuthService.updateTokenOnLogin(
-              email: existingUser.email, token: fcmToken!);
-          state.setUser(
-              existingUser.copyWith(isLoggedIn: true, token: fcmToken));
+          await AuthService.updateTokenOnLogin(email: existingUser.email, token: fcmToken!);
+          state.setUser(existingUser.copyWith(isLoggedIn: true, token: fcmToken));
           _requestNotifier.value = Response(state: RequestState.done);
           Navigate().pushAndPopAll(context, AdaptiveLayout());
           firebaseAnalytics.logSignIn(user!);
@@ -91,10 +89,7 @@ class _AppSignInState extends State<AppSignIn> {
     Widget _heading(String text) {
       return Text(
         '$text',
-        style: Theme.of(context)
-            .textTheme
-            .headline3!
-            .copyWith(color: Colors.white),
+        style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Colors.white),
       );
     }
 
@@ -133,9 +128,8 @@ class _AppSignInState extends State<AppSignIn> {
           return IgnorePointer(
             ignoring: request.state == RequestState.active,
             child: Scaffold(
-                backgroundColor: darkNotifier.value
-                    ? VocabTheme.surfaceGrey
-                    : VocabTheme.surfaceGreen,
+                backgroundColor:
+                    darkNotifier.value ? VocabTheme.surfaceGrey : VocabTheme.surfaceGreen,
                 body: !SizeUtils.isMobile
                     ? Row(
                         children: [
@@ -176,21 +170,19 @@ class _AppSignInState extends State<AppSignIn> {
                         ],
                       )
                     : ImageBackground(
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              200.0.vSpacer(),
-                              // _heading('Hi!'),
-                              _heading('Welcome!'),
-                              Expanded(child: Container()),
-                              _signInButton(),
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                          200.0.vSpacer(),
+                          // _heading('Hi!'),
+                          _heading('Welcome!'),
+                          Expanded(child: Container()),
+                          _signInButton(),
 
-                              20.0.vSpacer(),
-                              _skipButton(),
-                              Expanded(child: Container()),
+                          20.0.vSpacer(),
+                          _skipButton(),
+                          Expanded(child: Container()),
 
-                              100.0.vSpacer(),
-                            ]),
+                          100.0.vSpacer(),
+                        ]),
                       )),
           );
         });
@@ -200,8 +192,7 @@ class _AppSignInState extends State<AppSignIn> {
 class ImageBackground extends StatelessWidget {
   final Widget child;
   final String? imageSrc;
-  const ImageBackground({Key? key, required this.child, this.imageSrc})
-      : super(key: key);
+  const ImageBackground({Key? key, required this.child, this.imageSrc}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

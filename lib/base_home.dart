@@ -245,7 +245,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                                         fontSize: 18,
                                       )),
                                 ),
-                          user.isLoggedIn
+                          user.isLoggedIn || hasUpdate
                               ? SizedBox.shrink()
                               : TextButton(
                                   onPressed: () async {
@@ -258,21 +258,19 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                                         fontSize: 18,
                                       )),
                                 ),
-                          !hasUpdate
-                              ? SizedBox.shrink()
-                              : TextButton(
+                          hasUpdate
+                              ? IconButton(
                                   onPressed: () {
                                     setState(() {
                                       hasUpdate = false;
                                     });
                                   },
-                                  child: Text('Dismiss',
-                                      style: TextStyle(
-                                        color: VocabTheme.primaryColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      )),
-                                ),
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: VocabTheme.primaryColor,
+                                    size: 24,
+                                  ))
+                              : SizedBox.shrink(),
                         ],
                       ))
               ],
@@ -292,9 +290,10 @@ class VocabBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 60,
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       color: Colors.grey.shade800,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
             '$description',
@@ -303,7 +302,7 @@ class VocabBanner extends StatelessWidget {
               fontSize: 16,
             ),
           ),
-          16.0.hSpacer(),
+          Spacer(),
           for (int i = 0; i < actions.length; i++) actions[i]
         ],
       ),
