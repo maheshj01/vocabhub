@@ -100,7 +100,15 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
         AddWordForm.route: AddWordForm(),
         SearchView.route: SearchView(),
       },
-      2: {ExploreWords.route: ExploreWords()},
+      2: {
+        ExploreWords.route: ExploreWords(
+          onScrollThresholdReached: () {
+            setState(() {
+              showBanner = true;
+            });
+          },
+        )
+      },
     };
 
     final user = AppStateScope.of(context).user;

@@ -15,18 +15,24 @@ import 'package:vocabhub/widgets/worddetail.dart';
 
 class ExploreWords extends StatelessWidget {
   static const String route = '/';
-  const ExploreWords({Key? key}) : super(key: key);
+  final VoidCallback? onScrollThresholdReached;
+
+  const ExploreWords({Key? key, this.onScrollThresholdReached}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
         desktopBuilder: (context) => ExploreWordsDesktop(),
-        mobileBuilder: (context) => ExploreWordsMobile());
+        mobileBuilder: (context) => ExploreWordsMobile(
+              onScrollThresholdReached: () => onScrollThresholdReached!(),
+            ));
   }
 }
 
 class ExploreWordsMobile extends StatefulWidget {
-  const ExploreWordsMobile({Key? key}) : super(key: key);
+  final VoidCallback? onScrollThresholdReached;
+
+  const ExploreWordsMobile({Key? key, this.onScrollThresholdReached}) : super(key: key);
 
   @override
   State<ExploreWordsMobile> createState() => _ExploreWordsMobileState();
@@ -40,13 +46,12 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
   }
 
   Future<void> exploreWords() async {
-    _request.value = Response(state:RequestState.active);
+    _request.value = Response(state: RequestState.active);
     final user = AppStateScope.of(context).user;
-    final newWords =
-        await VocabStoreService.exploreWords(user!.email, page: page);
+    final newWords = await VocabStoreService.exploreWords(user!.email, page: page);
     words!.addAll(newWords);
     max = words!.length;
-    _request.value = Response(state:RequestState.done);
+    _request.value = Response(state: RequestState.done);
   }
 
   int page = 0;
@@ -54,9 +59,8 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
   List<Word>? words = [];
   bool isFetching = false;
 
-  ValueNotifier<Response> _request =
-      ValueNotifier<Response>(Response(state:RequestState.none));
-
+  ValueNotifier<Response> _request = ValueNotifier<Response>(Response(state: RequestState.none));
+  int _scrollCountCallback = 11;
   @override
   void dispose() {
     _request.dispose();
@@ -81,6 +85,9 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
                       if (x > max - 5) {
                         page++;
                         exploreWords();
+                      }
+                      if (x % _scrollCountCallback == 0) {
+                        widget.onScrollThresholdReached!();
                       }
                       hideMessage(context);
                     },
@@ -141,8 +148,7 @@ class _ExploreWordsDesktopState extends State<ExploreWordsDesktop> {
 class ExploreWord extends StatefulWidget {
   final Word? word;
   final int index;
-  const ExploreWord({Key? key, this.word, required this.index})
-      : super(key: key);
+  const ExploreWord({Key? key, this.word, required this.index}) : super(key: key);
 
   @override
   _ExploreWordState createState() => _ExploreWordState();
@@ -164,8 +170,7 @@ class _ExploreWordState extends State<ExploreWord>
       meaning = widget.word!.meaning;
       length = widget.word!.meaning.length;
     }
-    _animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 3));
+    _animationController = AnimationController(vsync: this, duration: Duration(seconds: 3));
     if (length < 30) {
       _animationController.duration = Duration(seconds: 1);
     } else {
@@ -219,21 +224,19 @@ class _ExploreWordState extends State<ExploreWord>
         : Scaffold(
             // backgroundColor: backgrounds[Random().nextInt(backgrounds.length)],
             body: Column(
-              mainAxisAlignment:
-                  !reveal ? MainAxisAlignment.center : MainAxisAlignment.start,
+              mainAxisAlignment: !reveal ? MainAxisAlignment.center : MainAxisAlignment.start,
               children: [
                 !reveal ? SizedBox.shrink() : kToolbarHeight.vSpacer(),
                 Padding(
-                  padding:
-                      const EdgeInsets.only(top: kToolbarHeight, bottom: 12),
+                  padding: const EdgeInsets.only(top: kToolbarHeight, bottom: 12),
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: FittedBox(
                       fit: BoxFit.fitWidth,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                        child: Text(widget.word!.word.capitalize()!,
-                            style: textTheme.headline2!),
+                        child:
+                            Text(widget.word!.word.capitalize()!, style: textTheme.displayMedium!),
                       ),
                     ),
                   ),
@@ -270,18 +273,14 @@ class _ExploreWordState extends State<ExploreWord>
                         AnimatedBuilder(
                             animation: _animation,
                             builder: (BuildContext _, Widget? child) {
-                              meaning = widget.word!.meaning
-                                  .substring(0, _animation.value);
+                              meaning = widget.word!.meaning.substring(0, _animation.value);
                               return Container(
                                 alignment: Alignment.center,
                                 margin: 24.0.verticalPadding,
                                 padding: 16.0.horizontalPadding,
                                 child: SelectableText(meaning,
                                     textAlign: TextAlign.center,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headline4!
-                                        .copyWith(
+                                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                                             fontFamily: GoogleFonts.inter(
                                           fontWeight: FontWeight.w400,
                                         ).fontFamily)),
@@ -289,18 +288,18 @@ class _ExploreWordState extends State<ExploreWord>
                             }),
                         ExampleListBuilder(
                           title: 'Usage',
-                          examples: (widget.word!.examples == null ||
-                                  widget.word!.examples!.isEmpty)
-                              ? []
-                              : widget.word!.examples,
+                          examples:
+                              (widget.word!.examples == null || widget.word!.examples!.isEmpty)
+                                  ? []
+                                  : widget.word!.examples,
                           word: widget.word!.word,
                         ),
                         ExampleListBuilder(
                           title: 'Mnemonics',
-                          examples: (widget.word!.mnemonics == null ||
-                                  widget.word!.mnemonics!.isEmpty)
-                              ? []
-                              : widget.word!.mnemonics,
+                          examples:
+                              (widget.word!.mnemonics == null || widget.word!.mnemonics!.isEmpty)
+                                  ? []
+                                  : widget.word!.mnemonics,
                           word: widget.word!.word,
                         ),
                         SizedBox(
@@ -320,9 +319,8 @@ class _ExploreWordState extends State<ExploreWord>
                                     message = unKnownWord;
                                   }
                                   setState(() {});
-                                  final resp = await WordStateService
-                                      .storeWordPreference(
-                                          wordId, userEmail, wordState);
+                                  final resp = await WordStateService.storeWordPreference(
+                                      wordId, userEmail, wordState);
                                   if (resp.didSucced) {
                                     showToast(message);
                                   }
@@ -387,7 +385,7 @@ class _WordMasteredPreferenceState extends State<WordMasteredPreference> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text('Do you know this word?',
-                style: Theme.of(context).textTheme.headline4!.copyWith(
+                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                       fontFamily: GoogleFonts.inter(
                         fontWeight: FontWeight.w200,
                       ).fontFamily,
@@ -397,13 +395,10 @@ class _WordMasteredPreferenceState extends State<WordMasteredPreference> {
               child: Tooltip(
                 triggerMode: TooltipTriggerMode.tap,
                 preferBelow: false,
-                decoration:
-                    BoxDecoration(color: colorScheme.primary.withOpacity(0.2)),
+                decoration: BoxDecoration(color: colorScheme.primary.withOpacity(0.2)),
                 richMessage: TextSpan(
                     style: GoogleFonts.inter(
-                        color: VocabTheme.lightblue,
-                        fontWeight: FontWeight.w200,
-                        fontSize: 12),
+                        color: VocabTheme.lightblue, fontWeight: FontWeight.w200, fontSize: 12),
                     children: [
                       TextSpan(
                         text:
@@ -428,19 +423,19 @@ class _WordMasteredPreferenceState extends State<WordMasteredPreference> {
               width: 120,
               child: Text('Yes',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headline4!.copyWith(
-                      color: isMastered
-                          ? stateToColor(widget.value)
-                          : Colors.black)),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium!
+                      .copyWith(color: isMastered ? stateToColor(widget.value) : Colors.black)),
             ),
             SizedBox(
               width: 120,
               child: Text('No',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headline4!.copyWith(
-                      color: isMastered
-                          ? Colors.black
-                          : stateToColor(widget.value))),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium!
+                      .copyWith(color: isMastered ? Colors.black : stateToColor(widget.value))),
             ),
           ],
           isSelected: [isMastered, !isMastered],
