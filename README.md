@@ -1,6 +1,6 @@
-# Vocabhub 0.4.0                          
+# Vocabhub 0.4.1
 
-A vocabulary app built with Flutter and Supabase, that is simple to use and available on multiple platforms with 
+A vocabulary app built with Flutter and Supabase, that is simple to use and available on multiple platforms with
 - 800+ most common GRE words
 - provides synonyms, mnemonics, examples to understand each word
 - intelligent search that allows searching for a word with its meaning, synonym.
@@ -55,7 +55,7 @@ Found a mistake?           |  Track your contributions
 
 ## Contributing
 
-Feel Free to contribute to this app to make the platform better. 
+Feel Free to contribute to this app to make the platform better.
 
 Design files for this project can be found here https://www.figma.com/file/xPCoi1IcW8M6TODTqjG9GZ/Vocabhub?node-id=0%3A1
 
