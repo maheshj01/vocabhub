@@ -23,7 +23,7 @@ dependencies:
   http: ^0.13.6
   intl: ^0.18.0
   json_annotation: ^4.6.0
-  navbar_router: ^0.4.2
+  navbar_router: ^0.5.0
   package_info_plus: ^4.0.1
   pull_to_refresh: ^2.0.0
   realtime_client: ^0.1.15
