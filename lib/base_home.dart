@@ -114,14 +114,14 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
       items.add(NavbarItem(Icons.person, 'Me'));
     }
     if (!user.isLoggedIn || hasUpdate) {
-      bannerHeight = kBottomNavigationBarHeight + MediaQuery.of(context).padding.bottom;
+      bannerHeight = kNotchedNavbarHeight;
     } else {
       bannerHeight = 0;
     }
     return ValueListenableBuilder<int>(
         valueListenable: _selectedIndex,
         builder: (context, int currentIndex, Widget? child) {
-          bannerHeight = kBottomNavigationBarHeight + MediaQuery.of(context).padding.bottom;
+          bannerHeight = kNotchedNavbarHeight;
           return Scaffold(
             resizeToAvoidBottomInset: false,
             floatingActionButton: !user.isLoggedIn || currentIndex > 1 || hasUpdate

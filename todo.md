@@ -13,7 +13,6 @@ Toggle is Admin
 ### TODO
 
 PRE(=E;Rel)
-- [ ] - Add a way to add a new service
 - [X] SignedIn User's state should update.
 - [X] Remove '\n' from synonyms using Edit Page.
 - [X] BottomnNavigation background color as per UI.
@@ -23,6 +22,7 @@ PRE(=E;Rel)
 - [X] Add a new word should be intelligent to recognize duplicates dynamically.
 - [X] Add a about section for the app
 - [ ] Create onBoarding screens for app tour.
+- [ ] Add a way to add a new service
 - [ ] Difference is not shown correctly
 - [ ] Implement notification system
 - [ ] Send report via email add subject in link
@@ -31,6 +31,11 @@ PRE(=E;Rel)
 - [ ] Add deeplinking to specific word from share feature
 - [ ] Add mechanism to generate screenshots of app.
 - [ ] Add word only show submit button when required fields are filled.
+
+In Progress
+- [ ] Improve explore page UI
+- [ ] Improve User profile UI page to show user contributions and reputation
+- [ ] Edit Profile upload user avatar
 
 ### Repo maintainence
 
@@ -47,7 +52,7 @@ Apps targeting Android 13 or above and use advertising ID must include the com.g
 - [X] Add a feature to notify app update.
 - [ ] Push ntifications should be triggered on  requests made by user and on approval or denial.
 - [ ] App review should be posted to playstore from app
-- [ ] Ability to report a bug by admin
+- [X] Ability to report a bug by admin
 
 ### Forum (Reputation rules)
 
@@ -95,6 +100,7 @@ Ans:
 - [X] Initially random 20 words will be fetched and then on scroll 20 more words will be fetched But the known words should not be repeated (Unknown status and random only).
 - [ ] If user is not logged In, user can simply swipe all words and a login prompt should be shown on every 5th or 10th word.
 - [ ] Scroll Animation should be shown only for the first time user visits the explore page.
+- [ ] Improve the card UI and add autoscrolling to the explore page.
 
 ### User Profile
 
