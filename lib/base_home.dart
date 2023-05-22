@@ -69,25 +69,26 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
   bool animatePageOnce = false;
   DateTime oldTime = DateTime.now();
   DateTime newTime = DateTime.now();
-  ValueNotifier<int> _selectedIndex = ValueNotifier<int>(0);
+  ValueNotifier<int> _selectedIndexNotifier = ValueNotifier<int>(0);
 
   @override
   void dispose() {
-    _selectedIndex.dispose();
+    _selectedIndexNotifier.dispose();
     super.dispose();
   }
 
   double bannerHeight = 0;
   bool hasUpdate = false;
+  List<NavbarItem> items = [
+    NavbarItem(Icons.dashboard, 'Dashboard'),
+    NavbarItem(Icons.search, 'Search'),
+    NavbarItem(Icons.explore, 'Explore'),
+  ];
 
+  bool showBanner = true;
   @override
   Widget build(BuildContext context) {
     SizeUtils.size = MediaQuery.of(context).size;
-    List<NavbarItem> items = [
-      NavbarItem(Icons.dashboard, 'Dashboard'),
-      NavbarItem(Icons.search, 'Search'),
-      NavbarItem(Icons.explore, 'Explore'),
-    ];
 
     final Map<int, Map<String, Widget>> _routes = {
       0: {
@@ -113,13 +114,15 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
       });
       items.add(NavbarItem(Icons.person, 'Me'));
     }
-    if (!user.isLoggedIn || hasUpdate) {
-      bannerHeight = kNotchedNavbarHeight;
-    } else {
-      bannerHeight = 0;
+    if (showBanner) {
+      if (!user.isLoggedIn || hasUpdate) {
+        bannerHeight = kNotchedNavbarHeight;
+      } else {
+        bannerHeight = 0;
+      }
     }
     return ValueListenableBuilder<int>(
-        valueListenable: _selectedIndex,
+        valueListenable: _selectedIndexNotifier,
         builder: (context, int currentIndex, Widget? child) {
           bannerHeight = kNotchedNavbarHeight;
           return Scaffold(
@@ -194,7 +197,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                         });
                       }
                     }
-                    _selectedIndex.value = x;
+                    _selectedIndexNotifier.value = x;
                   },
                   decoration: NotchedDecoration(
                     unselectedLabelTextStyle: TextStyle(
@@ -221,7 +224,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                       ),
                   ],
                 ),
-                if (hasUpdate || !user.isLoggedIn)
+                if (showBanner)
                   AnimatedPositioned(
                       duration: Duration(milliseconds: 300),
                       bottom: bannerHeight,
@@ -231,9 +234,8 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                         description:
                             hasUpdate ? 'New update available' : 'Sign in for better experience',
                         actions: [
-                          !hasUpdate
-                              ? SizedBox.shrink()
-                              : TextButton(
+                          hasUpdate
+                              ? TextButton(
                                   onPressed: () {
                                     launchUrl(Uri.parse(Constants.PLAY_STORE_URL),
                                         mode: LaunchMode.externalApplication);
@@ -244,10 +246,10 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18,
                                       )),
-                                ),
-                          user.isLoggedIn || hasUpdate
-                              ? SizedBox.shrink()
-                              : TextButton(
+                                )
+                              : SizedBox.shrink(),
+                          !user.isLoggedIn && !hasUpdate
+                              ? TextButton(
                                   onPressed: () async {
                                     await Navigate().pushAndPopAll(context, AppSignIn());
                                   },
@@ -257,13 +259,20 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18,
                                       )),
-                                ),
-                          hasUpdate
+                                )
+                              : SizedBox.shrink(),
+                          hasUpdate || !user.isLoggedIn
                               ? IconButton(
                                   onPressed: () {
-                                    setState(() {
-                                      hasUpdate = false;
-                                    });
+                                    if (!user.isLoggedIn && !hasUpdate) {
+                                      setState(() {
+                                        showBanner = false;
+                                      });
+                                    } else {
+                                      setState(() {
+                                        hasUpdate = false;
+                                      });
+                                    }
                                   },
                                   icon: Icon(
                                     Icons.close,
