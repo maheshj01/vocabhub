@@ -33,6 +33,7 @@ doc/api/
 
 # Visual Studio Code related
 .vscode/
+.vscode/launch.json
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -107,7 +108,6 @@ macos/**/xcuserdata/
 
 ios/Flutter/Debug.xcconfig
 ios/Flutter/Release.xcconfig
-lib/utils/secrets.dart
 lib/utils/firebase_options.dart
 ios/Flutter/flutter_export_environment.sh
 ios/build/Pods.build
