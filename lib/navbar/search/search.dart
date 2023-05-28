@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:vocabhub/models/models.dart';
@@ -68,9 +69,7 @@ class _SearchState extends State<Search> {
                     },
                   ),
                 ),
-                Expanded(
-                    flex: 2,
-                    child: WordDetail(word: selectedWord ?? words.first)),
+                Expanded(flex: 2, child: WordDetail(word: selectedWord ?? words.first)),
               ],
             );
           }, mobileBuilder: (BuildContext context) {
@@ -144,8 +143,7 @@ class _MobileViewState extends State<MobileView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: SearchBuilder(
               ontap: () {
                 Navigate.push(context, SearchView(), isRootNavigator: false);
@@ -241,8 +239,7 @@ class _SearchViewState extends State<SearchView> {
             Expanded(
                 child: ValueListenableBuilder<List<Word>?>(
                     valueListenable: searchNotifier,
-                    builder: (BuildContext context, List<Word>? history,
-                        Widget? child) {
+                    builder: (BuildContext context, List<Word>? history, Widget? child) {
                       if (history == null) {
                         return LoadingWidget(
                           color: Colors.red,
@@ -268,35 +265,30 @@ class _SearchViewState extends State<SearchView> {
                             else
                               Expanded(
                                   child: ListView.builder(
-                                padding:
-                                    kBottomNavigationBarHeight.bottomPadding,
+                                padding: kBottomNavigationBarHeight.bottomPadding,
                                 itemBuilder: (context, index) {
                                   return Padding(
                                     padding: 1.0.verticalPadding,
                                     child: OpenContainer(
-                                        openBuilder: (BuildContext context,
-                                            VoidCallback openContainer) {
+                                        openBuilder:
+                                            (BuildContext context, VoidCallback openContainer) {
                                           return WordDetail(
                                             word: history[index],
                                           );
                                         },
                                         closedElevation: 0,
                                         tappable: true,
-                                        transitionType:
-                                            ContainerTransitionType.fadeThrough,
-                                        closedBuilder: (BuildContext context,
-                                            VoidCallback openContainer) {
+                                        transitionType: ContainerTransitionType.fadeThrough,
+                                        closedBuilder:
+                                            (BuildContext context, VoidCallback openContainer) {
                                           return ListTile(
-                                            title:
-                                                Text('${history[index].word}'),
+                                            title: Text('${history[index].word}'),
                                             trailing: GestureDetector(
                                                 onTap: () async {
-                                                  await Settings.removeRecent(
-                                                      history[index]);
+                                                  await Settings.removeRecent(history[index]);
                                                   showRecents();
                                                 },
-                                                child: Icon(Icons.close,
-                                                    size: 16)),
+                                                child: Icon(Icons.close, size: 16)),
                                           );
                                         }),
                                   );
@@ -338,21 +330,19 @@ class _SearchViewState extends State<SearchView> {
                                   alignment: Alignment.centerRight,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                        'Search Results: ${history.length}'),
+                                    child: Text('Search Results: ${history.length}'),
                                   )),
                             ),
                             Expanded(
                               child: ListView.builder(
-                                padding:
-                                    kBottomNavigationBarHeight.bottomPadding,
+                                padding: kBottomNavigationBarHeight.bottomPadding,
                                 itemBuilder: (context, index) {
                                   return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 1.0),
+                                    padding:
+                                        const EdgeInsets.symmetric(horizontal: 8, vertical: 1.0),
                                     child: OpenContainer(
-                                        openBuilder: (BuildContext context,
-                                            VoidCallback openContainer) {
+                                        openBuilder:
+                                            (BuildContext context, VoidCallback openContainer) {
                                           Settings.addRecent(history[index]);
                                           return WordDetail(
                                             word: history[index],
@@ -360,14 +350,12 @@ class _SearchViewState extends State<SearchView> {
                                         },
                                         closedElevation: 0,
                                         tappable: true,
-                                        transitionType:
-                                            ContainerTransitionType.fadeThrough,
-                                        closedBuilder: (BuildContext context,
-                                            VoidCallback openContainer) {
+                                        transitionType: ContainerTransitionType.fadeThrough,
+                                        closedBuilder:
+                                            (BuildContext context, VoidCallback openContainer) {
                                           return ListTile(
                                             minVerticalPadding: 24,
-                                            title:
-                                                Text('${history[index].word}'),
+                                            title: Text('${history[index].word}'),
                                           );
                                         }),
                                   );
@@ -454,34 +442,33 @@ class _WordListState extends State<WordList> {
               Row(
                 children: [
                   Expanded(
-                    child: SearchBuilder(
-                      ontap: () {
-                        if (widget.onFocus != null) {
-                          widget.onFocus!();
-                        }
-                      },
-                      onChanged: (x) {
-                        _words = AppStateScope.of(context).words!;
-                        wordsNotifier.value = _words;
-                        if (x.isEmpty) {
-                          wordsNotifier.value = _words;
-                          state.setWords(_words);
-                          return;
-                        }
-                        final List<Word> result = [];
-                        for (var element in _words) {
-                          if (element.word
-                                  .toLowerCase()
-                                  .contains(x.toLowerCase()) ||
-                              element.meaning
-                                  .toLowerCase()
-                                  .contains(x.toLowerCase()) ||
-                              isInSynonym(x, element.synonyms)) {
-                            result.add(element);
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: kIsWeb ? 16.0 : 0.0),
+                      child: SearchBuilder(
+                        ontap: () {
+                          if (widget.onFocus != null) {
+                            widget.onFocus!();
                           }
-                        }
-                        wordsNotifier.value = result;
-                      },
+                        },
+                        onChanged: (x) {
+                          _words = AppStateScope.of(context).words!;
+                          wordsNotifier.value = _words;
+                          if (x.isEmpty) {
+                            wordsNotifier.value = _words;
+                            state.setWords(_words);
+                            return;
+                          }
+                          final List<Word> result = [];
+                          for (var element in _words) {
+                            if (element.word.toLowerCase().contains(x.toLowerCase()) ||
+                                element.meaning.toLowerCase().contains(x.toLowerCase()) ||
+                                isInSynonym(x, element.synonyms)) {
+                              result.add(element);
+                            }
+                          }
+                          wordsNotifier.value = result;
+                        },
+                      ),
                     ),
                   ),
                   widget.isExpanded == null

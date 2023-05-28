@@ -15,7 +15,7 @@
   "files.exclude": {
     "test": true,
     "web": false,
-    "build": true,
+    "build": false,
     "windows": true,
     "macos": true,
     "ios": false,

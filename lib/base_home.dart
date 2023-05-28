@@ -54,7 +54,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
       fetchTimeout: const Duration(minutes: 1),
       minimumFetchInterval: const Duration(seconds: 1),
     ));
-    await remoteConfig.fetchAndActivate();
+    await remoteConfig .fetchAndActivate();
     final version = remoteConfig.getString('${Constants.VERSION_KEY}');
     final buildNumber = remoteConfig.getInt('${Constants.BUILD_NUMBER_KEY}');
     if (appVersion != version || buildNumber > appBuildNumber) {

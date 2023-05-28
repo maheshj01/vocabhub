@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/exports.dart';
@@ -111,7 +112,22 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
           hLine(),
           Expanded(child: SizedBox.shrink()),
           VersionBuilder(),
-          60.0.vSpacer()
+          30.0.vSpacer(),
+          !kIsWeb
+              ? const SizedBox.shrink()
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    storeRedirect(
+                      context,
+                    ),
+                    16.0.hSpacer(),
+                    storeRedirect(context,
+                        redirectUrl: Constants.AMAZON_APP_STORE_URL,
+                        assetUrl: 'assets/amazonappstore.png'),
+                  ],
+                ),
+          30.0.vSpacer(),
         ],
       ),
     );

@@ -11,6 +11,7 @@ import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
+import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -224,6 +225,7 @@ class WoDCard extends StatelessWidget {
   final String title;
   final Color? color;
   final double? height;
+  final double? width;
   final String? image;
   final double fontSize;
 
@@ -231,6 +233,7 @@ class WoDCard extends StatelessWidget {
       {super.key,
       this.word,
       this.height,
+      this.width,
       required this.title,
       this.color,
       this.fontSize = 48,
@@ -241,7 +244,7 @@ class WoDCard extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     return Container(
       height: height ?? size.height / 3,
-      width: size.width,
+      width: width ?? size.width,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.0),
           color: this.color,
@@ -266,6 +269,11 @@ class DashboardDesktop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final word = AppStateScope.of(context).wordOfTheDay;
+    if (word == null) {
+      return LoadingWidget();
+    }
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,14 +281,32 @@ class DashboardDesktop extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                Center(
-                  child: Text('Dashboard Desktop'),
-                ),
+                32.0.vSpacer(),
+                InkWell(
+                  onTap: () {
+                    Navigate.push(
+                      context,
+                      WordDetail(
+                        word: word,
+                        title: 'Word of the Day',
+                      ),
+                      isRootNavigator: false,
+                    );
+                  },
+                  child: WoDCard(
+                    height: size.width * 0.5,
+                    width: size.width * 0.5,
+                    word: word,
+                    color: Colors.green.shade300,
+                    title: '${word.word}'.toUpperCase(),
+                  ),
+                )
               ],
             ),
           ),
-          SizedBox(
-              height: SizeUtils.size.height * 0.5,
+          Container(
+              // height: SizeUtils.size.height * 0.95,
+              padding: EdgeInsets.symmetric(vertical: 16.0),
               width: 400,
               child: Column(
                 children: [

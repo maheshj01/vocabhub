@@ -1,11 +1,9 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/constants/strings.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/user.dart';
@@ -22,7 +20,6 @@ import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
-import 'package:vocabhub/widgets/widgets.dart';
 
 import 'wordscount.dart';
 
@@ -374,18 +371,6 @@ class _EmptyWordState extends State<EmptyWord> {
               textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
           WordsCountAnimator(),
           Expanded(child: Container()),
-          if (kIsWeb)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                storeRedirect(
-                  context,
-                ),
-                storeRedirect(context,
-                    redirectUrl: Constants.AMAZON_APP_STORE_URL,
-                    assetUrl: 'assets/amazonappstore.png'),
-              ],
-            ),
           Padding(padding: EdgeInsets.symmetric(vertical: 16), child: VersionBuilder()),
           40.0.vSpacer(),
         ],
