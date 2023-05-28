@@ -91,6 +91,7 @@ Found a mistake?           |  Track your contributions
 
 ### [Try it out on the web](https://vocabhub.web.app/)
 
+<<<<<<< HEAD
 
 ## Contributing
 
@@ -99,3 +100,13 @@ Feel Free to contribute to this app to make the platform better.
 Design files for this project can be found here https://www.figma.com/file/xPCoi1IcW8M6TODTqjG9GZ/Vocabhub?node-id=0%3A1
 
 Data is no longer being collected into [this sheet](https://docs.google.com/spreadsheets/d/1G1RtQfsEDqHhHP4cgOpO9x_ZtQ1dYa6QrGCq3KFlu50/edit#gid=0). Contribution does not necessarily mean sending a pull request you could also contribute by improving the sheet.
+=======
+## Contributing
+
+Feel Free to contribute to this app to make the platform better. 
+
+Design files for this project can be found here https://www.figma.com/file/xPCoi1IcW8M6TODTqjG9GZ/Vocabhub?node-id=0%3A1
+
+Data is no longer being collected into [this sheet](https://docs.google.com/spreadsheets/d/1G1RtQfsEDqHhHP4cgOpO9x_ZtQ1dYa6QrGCq3KFlu50/edit#gid=0).
+
+>>>>>>> b8776828e3403f7c32396bef45cbeb63552b60e2
