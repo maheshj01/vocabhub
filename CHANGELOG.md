@@ -1,3 +1,6 @@
+### 0.4.2+12 May 28, 2023
+- Fix minor issues
+
 ### 0.4.1+11 May 22, 2023
 - Fix: Google sign In fails [Issue 23](https://github.com/maheshmnj/vocabhub/issues/23)
 - Skip signin banner
