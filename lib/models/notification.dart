@@ -1,7 +1,11 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/history.dart';
 import 'package:vocabhub/models/user.dart';
+
 part 'notification.g.dart';
+
+@JsonSerializable()
 
 /// warning: do not regenerate model for this file
 class NotificationModel {

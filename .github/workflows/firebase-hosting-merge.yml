@@ -32,8 +32,9 @@ jobs:
       - run: echo $FIREBASE_UTILS_OPTIONS | base64 -d > lib/utils/firebase_options.dart
         env:
           FIREBASE_UTILS_OPTIONS: ${{ secrets.FIREBASE_UTILS_OPTIONS }}
+      - run: flutter clean
       - run: flutter pub get
-      - run: flutter pub run build_runner build --delete-conflicting-outputs
+      # - run: flutter pub run build_runner build --delete-conflicting-outputs
       # - run: flutter build web --release --dart-define=${{ secrets.SUPABASE_PROJECT_URL }} --dart-define=${{ secrets.SUPABASE_API_KEY }} --dart-define=${{ secrets.SUPABASE_REDIRECT_URL }}
       # - uses: FirebaseExtended/action-hosting-deploy@v0
       #   with:

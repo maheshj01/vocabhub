@@ -13,8 +13,8 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       idToken: json['idToken'] as String?,
       isAdmin: json['isAdmin'] as bool? ?? false,
       accessToken: json['accessToken'] as String?,
-      username: json['username'] as String? ?? '',
       token: json['token'] as String? ?? '',
+      username: json['username'] as String? ?? '',
       created_at: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
