@@ -8,6 +8,42 @@ A vocabulary app built with Flutter and Supabase, that is simple to use and avai
 - Ability to suggest edits to improve the words on the platform.
 - More words and features are being added every week.
 
+
+### Running the app
+
+The api keys in this project are managed using [--dart-define](https://dartcode.org/docs/using-dart-define-in-flutter/) flags passed to the flutter run command. You can also use the
+```dart
+flutter <command> --dart-define=SUPABASE_PROJECT_URL=<your project url here> --dart-define=SUPABASE_API_KEY=<your api key here> --dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>
+```
+command to run the app from the command line, or If you want to use the launch.json file to run the app, you can copy paste the below configuration to your `.vscode/launch.json` file and pass the keys from the Supabase settings.
+
+```
+ {
+    "name": "Launch",
+    "request": "launch",
+    "type": "dart",
+    "program": "lib/main.dart",
+    "args": [
+        "--dart-define=SUPABASE_PROJECT_URL=<your project url here>",
+        "--dart-define=SUPABASE_API_KEY=<your api key here>",
+        "--dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>"
+    ]
+  }
+```
+
+_Run the project using the command_
+```
+  flutter run --dart-define=SUPABASE_PROJECT_URL=<your project url here> --dart-define=SUPABASE_API_KEY=<your api key here> --dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>
+```
+
+#### Build the app
+
+```
+  flutter build apk --dart-define=SUPABASE_PROJECT_URL=<your project url here> --dart-define=SUPABASE_API_KEY=<your api key here> --dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>
+```
+
+The apk will be generated in the `build/app/outputs/flutter-apk/app-release.apk` folder.
+
 ### Mobile
 
 Solarized dark             |  Solarized Ocean   |  Solarized Ocean
@@ -52,6 +88,7 @@ Found a mistake?           |  Track your contributions
 
 
 ### [Try it out on the web](https://vocabhub.web.app/)
+
 
 ## Contributing
 

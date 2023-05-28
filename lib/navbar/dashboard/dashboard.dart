@@ -11,6 +11,7 @@ import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
+import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
@@ -38,30 +39,34 @@ class _DashboardState extends State<Dashboard> {
   /// todo word of the day
   Future<void> publishWordOfTheDay() async {
     final Word word = await VocabStoreService.getLastUpdatedRecord();
-    final state = AppStateWidget.of(context);
-    final now = DateTime.now().toUtc();
-    if (now.difference(word.created_at!.toUtc()).inHours > 24) {
-      final allWords = await VocabStoreService.getAllWords();
-      final random = Random();
-      final randomWord = allWords[random.nextInt(allWords.length)];
-      final wordOfTheDay = {
-        'word': randomWord.word,
-        'id': randomWord.id,
-        'created_at': now.toIso8601String()
-      };
-      final resp = await DatabaseService.insertIntoTable(
-        wordOfTheDay,
-        table: Constants.WORD_OF_THE_DAY_TABLE_NAME,
-      );
-      if (resp.status == 201) {
-        print('word of the day published');
-        state.setWordOfTheDay(randomWord);
+    try {
+      final state = AppStateWidget.of(context);
+      final now = DateTime.now().toUtc();
+      if (now.difference(word.created_at!.toUtc()).inHours > 24) {
+        final allWords = await VocabStoreService.getAllWords();
+        final random = Random();
+        final randomWord = allWords[random.nextInt(allWords.length)];
+        final wordOfTheDay = {
+          'word': randomWord.word,
+          'id': randomWord.id,
+          'created_at': now.toIso8601String()
+        };
+        final resp = await DatabaseService.insertIntoTable(
+          wordOfTheDay,
+          table: Constants.WORD_OF_THE_DAY_TABLE_NAME,
+        );
+        if (resp.status == 201) {
+          print('word of the day published');
+          state.setWordOfTheDay(randomWord);
+        } else {
+          throw Exception('word of the day not published');
+        }
       } else {
-        throw Exception('word of the day not published');
+        state.setWordOfTheDay(word);
+        print('word of the day already published');
       }
-    } else {
-      state.setWordOfTheDay(word);
-      print('word of the day already published');
+    } catch (e) {
+      showMessage(context, "Something went wrong!");
     }
   }
 
@@ -105,7 +110,7 @@ class DashboardMobile extends StatelessWidget {
                 padding: EdgeInsets.only(left: 16, top: 16),
                 child: Text(
                   'Dashboard',
-                  style: VocabTheme.googleFontsTextTheme.subtitle2!
+                  style: VocabTheme.googleFontsTextTheme.titleSmall!
                       .copyWith(fontSize: 28, fontWeight: FontWeight.w700),
                 ),
               ),
@@ -114,8 +119,7 @@ class DashboardMobile extends StatelessWidget {
               user!.isLoggedIn
                   ? IconButton(
                       onPressed: () {
-                        navigate(context, Notifications.route,
-                            isRootNavigator: true);
+                        navigate(context, Notifications.route, isRootNavigator: true);
                       },
                       icon: Icon(
                         Icons.notifications_on,
@@ -134,8 +138,7 @@ class DashboardMobile extends StatelessWidget {
                   child: heading('Word of the day'),
                 ),
                 OpenContainer<bool>(
-                    openBuilder:
-                        (BuildContext context, VoidCallback openContainer) {
+                    openBuilder: (BuildContext context, VoidCallback openContainer) {
                       return WordDetail(
                         word: word,
                         title: 'Word of the Day',
@@ -144,8 +147,7 @@ class DashboardMobile extends StatelessWidget {
                     tappable: true,
                     closedShape: 16.0.rounded,
                     transitionType: ContainerTransitionType.fadeThrough,
-                    closedBuilder:
-                        (BuildContext context, VoidCallback openContainer) {
+                    closedBuilder: (BuildContext context, VoidCallback openContainer) {
                       return WoDCard(
                         word: word,
                         color: Colors.green.shade300,
@@ -165,8 +167,7 @@ class DashboardMobile extends StatelessWidget {
                             child: heading('Progress'),
                           ),
                           OpenContainer<bool>(
-                              openBuilder: (BuildContext context,
-                                  VoidCallback openContainer) {
+                              openBuilder: (BuildContext context, VoidCallback openContainer) {
                                 return BookmarksPage(
                                   isBookMark: true,
                                   user: user,
@@ -174,10 +175,8 @@ class DashboardMobile extends StatelessWidget {
                               },
                               closedShape: 16.0.rounded,
                               tappable: true,
-                              transitionType:
-                                  ContainerTransitionType.fadeThrough,
-                              closedBuilder: (BuildContext context,
-                                  VoidCallback openContainer) {
+                              transitionType: ContainerTransitionType.fadeThrough,
+                              closedBuilder: (BuildContext context, VoidCallback openContainer) {
                                 return WoDCard(
                                   word: word,
                                   height: 180,
@@ -190,8 +189,7 @@ class DashboardMobile extends StatelessWidget {
                             padding: 6.0.verticalPadding,
                           ),
                           OpenContainer<bool>(
-                              openBuilder: (BuildContext context,
-                                  VoidCallback openContainer) {
+                              openBuilder: (BuildContext context, VoidCallback openContainer) {
                                 return BookmarksPage(
                                   isBookMark: false,
                                   user: user,
@@ -199,10 +197,8 @@ class DashboardMobile extends StatelessWidget {
                               },
                               tappable: true,
                               closedShape: 16.0.rounded,
-                              transitionType:
-                                  ContainerTransitionType.fadeThrough,
-                              closedBuilder: (BuildContext context,
-                                  VoidCallback openContainer) {
+                              transitionType: ContainerTransitionType.fadeThrough,
+                              closedBuilder: (BuildContext context, VoidCallback openContainer) {
                                 return WoDCard(
                                   word: word,
                                   height: 180,
@@ -251,17 +247,14 @@ class WoDCard extends StatelessWidget {
           color: this.color,
           image: image != null
               ? DecorationImage(
-                  fit: BoxFit.fill,
-                  opacity: 0.7,
-                  image: AssetImage('assets/dart.jpg'))
+                  fit: BoxFit.fill, opacity: 0.7, image: AssetImage('assets/dart.jpg'))
               : null),
       child: Align(
           alignment: Alignment.center,
           child: Text(
             '$title',
             textAlign: TextAlign.center,
-            style: VocabTheme.googleFontsTextTheme.headline2!
-                .copyWith(fontSize: fontSize),
+            style: VocabTheme.googleFontsTextTheme.displayMedium!.copyWith(fontSize: fontSize),
           )),
     );
   }

@@ -146,7 +146,7 @@ class VocabStoreService {
       lastWordOfTheDay.created_at = DateTime.parse(response.data[0]['created_at']);
       return lastWordOfTheDay;
     } else {
-      throw "Failed to get last updated record";
+      throw "Failed to get last updated record ${response.error!.message} ${response.status}";
     }
   }
 
