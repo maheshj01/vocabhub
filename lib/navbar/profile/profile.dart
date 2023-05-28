@@ -56,7 +56,6 @@ class UserProfileMobile extends StatefulWidget {
 
 class _UserProfileMobileState extends State<UserProfileMobile> {
   Future<void> getEditStats() async {
-    stats = [0, 0, 0];
     await Duration.zero;
     final user = AppStateScope.of(context).user;
     final resp = await EditHistoryService.getUserContributions(user!);
@@ -81,8 +80,9 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
 
   @override
   void initState() {
-    super.initState();
+    _statsNotifier = ValueNotifier<List<int>>(stats);
     getEditStats();
+    super.initState();
   }
 
   @override
@@ -91,9 +91,8 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
     super.dispose();
   }
 
-  ValueNotifier<List<int>> _statsNotifier = ValueNotifier([0, 0, 0]);
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
-      GlobalKey<RefreshIndicatorState>();
+  late ValueNotifier<List<int>> _statsNotifier;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -109,17 +108,14 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                   setState(() {});
                 },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 8.0, vertical: 4.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                   child: ListView(
                     children: [
                       Container(
                         decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: 16.0.allRadius,
-                            border: Border.all(
-                                color:
-                                    VocabTheme.primaryColor.withOpacity(0.5))),
+                            border: Border.all(color: VocabTheme.primaryColor.withOpacity(0.5))),
                         child: Align(
                           alignment: Alignment.center,
                           child: Padding(
@@ -150,12 +146,9 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                       Icons.settings,
                                       size: 38,
                                       onTap: () {
-                                        Navigator.of(context,
-                                                rootNavigator: true)
-                                            .push(PageRoutes.sharedAxis(
-                                                const SettingsPageMobile(),
-                                                SharedAxisTransitionType
-                                                    .horizontal));
+                                        Navigator.of(context, rootNavigator: true).push(
+                                            PageRoutes.sharedAxis(const SettingsPageMobile(),
+                                                SharedAxisTransitionType.horizontal));
                                       },
                                     ),
                                   ),
@@ -183,8 +176,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                           Icons.edit,
                                           size: 30,
                                           onTap: () {
-                                            Navigator.of(context,
-                                                    rootNavigator: true)
+                                            Navigator.of(context, rootNavigator: true)
                                                 .push(PageRoutes.sharedAxis(
                                                     EditProfile(
                                                       user: user,
@@ -192,8 +184,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                                         setState(() {});
                                                       },
                                                     ),
-                                                    SharedAxisTransitionType
-                                                        .scaled));
+                                                    SharedAxisTransitionType.scaled));
                                           },
                                         ))
                                   ],
@@ -201,18 +192,14 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                 Padding(
                                     padding: 8.0.horizontalPadding,
                                     child: Text('@${user.username} ' +
-                                        (!user.isAdmin
-                                            ? ' (User)'
-                                            : '(Admin)'))),
+                                        (!user.isAdmin ? ' (User)' : '(Admin)'))),
                                 Text(
                                   '${user.name.capitalize()}',
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context)
                                       .textTheme
-                                      .headline4!
-                                      .copyWith(
-                                          fontSize: 26,
-                                          fontWeight: FontWeight.w500),
+                                      .headlineMedium!
+                                      .copyWith(fontSize: 26, fontWeight: FontWeight.w500),
                                 ),
                                 10.0.vSpacer(),
                                 RichText(
@@ -221,15 +208,13 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                       text: 'Joined ',
                                       style: Theme.of(context)
                                           .textTheme
-                                          .subtitle2!
-                                          .copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 12)),
+                                          .titleSmall!
+                                          .copyWith(fontWeight: FontWeight.w600, fontSize: 12)),
                                   TextSpan(
                                     text: user.created_at!.formatDate(),
                                     style: Theme.of(context)
                                         .textTheme
-                                        .subtitle2!
+                                        .titleSmall!
                                         .copyWith(fontWeight: FontWeight.w600),
                                   ),
                                 ])),
@@ -239,9 +224,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                         ),
                       ),
                       16.0.vSpacer(),
-                      Container(
-                          alignment: Alignment.centerLeft,
-                          child: heading('Contributions')),
+                      Container(alignment: Alignment.centerLeft, child: heading('Contributions')),
                       16.0.vSpacer(),
 
                       /// rounded Container with border
@@ -251,9 +234,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                         decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: 16.0.allRadius,
-                            border: Border.all(
-                                color:
-                                    VocabTheme.primaryColor.withOpacity(0.5))),
+                            border: Border.all(color: VocabTheme.primaryColor.withOpacity(0.5))),
                         child: Row(
                           children: [
                             for (int i = 0; i < stats.length; i++)
@@ -265,10 +246,8 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                       '${stats[i]}',
                                       style: Theme.of(context)
                                           .textTheme
-                                          .headline4!
-                                          .copyWith(
-                                              fontSize: 28,
-                                              fontWeight: FontWeight.w500),
+                                          .headlineMedium!
+                                          .copyWith(fontSize: 28, fontWeight: FontWeight.w500),
                                     ),
                                     4.0.vSpacer(),
                                     Text(
@@ -279,10 +258,8 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                               : 'Under Review',
                                       style: Theme.of(context)
                                           .textTheme
-                                          .subtitle2!
-                                          .copyWith(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600),
+                                          .titleSmall!
+                                          .copyWith(fontSize: 12, fontWeight: FontWeight.w600),
                                     ),
                                   ],
                                 ),

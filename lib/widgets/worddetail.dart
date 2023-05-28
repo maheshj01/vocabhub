@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +14,7 @@ import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
+import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/size_utils.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -21,15 +23,13 @@ import 'package:vocabhub/widgets/examplebuilder.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
 import 'package:vocabhub/widgets/widgets.dart';
-import 'package:vocabhub/utils/extensions.dart';
 
 import 'wordscount.dart';
 
 class WordDetail extends StatefulWidget {
   final Word word;
   final String? title;
-  const WordDetail({Key? key, required this.word, this.title})
-      : super(key: key);
+  const WordDetail({Key? key, required this.word, this.title}) : super(key: key);
 
   @override
   State<WordDetail> createState() => _WordDetailState();
@@ -54,8 +54,7 @@ class _WordDetailState extends State<WordDetail> {
 class WordDetailMobile extends StatefulWidget {
   final Word? word;
   final String? title;
-  const WordDetailMobile({Key? key, required this.word, this.title})
-      : super(key: key);
+  const WordDetailMobile({Key? key, required this.word, this.title}) : super(key: key);
 
   @override
   State<WordDetailMobile> createState() => _WordDetailMobileState();
@@ -105,7 +104,7 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
                                   isEdit: true,
                                   word: widget.word,
                                 ),
-                                slideTransitionType: TransitionType.scale);
+                                transitionType: TransitionType.scale);
                           })
                       : SizedBox.shrink(),
                 ),
@@ -113,17 +112,15 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
                   alignment: Alignment.topCenter,
                   child: GestureDetector(
                     onTap: () async {
-                      await Clipboard.setData(
-                          ClipboardData(text: "${widget.word!.word}"));
-                      showMessage(context,
-                          " copied ${widget.word!.word} to clipboard.");
+                      await Clipboard.setData(ClipboardData(text: "${widget.word!.word}"));
+                      showMessage(context, " copied ${widget.word!.word} to clipboard.");
                     },
                     child: FittedBox(
                       fit: BoxFit.fitWidth,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 32.0),
                         child: Text(widget.word!.word.capitalize()!,
-                            style: VocabTheme.googleFontsTextTheme.headline2!),
+                            style: VocabTheme.googleFontsTextTheme.displayMedium!),
                       ),
                     ),
                   ),
@@ -140,7 +137,7 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
             child: Text(
               widget.word!.meaning,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headline4!.copyWith(
+              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                   color: Colors.black,
                   fontFamily: GoogleFonts.inter(
                     fontWeight: FontWeight.w400,
@@ -152,8 +149,7 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
               padding: const EdgeInsets.all(16.0),
               child: ExampleListBuilder(
                 title: 'Usage',
-                examples: (widget.word!.examples == null ||
-                        widget.word!.examples!.isEmpty)
+                examples: (widget.word!.examples == null || widget.word!.examples!.isEmpty)
                     ? []
                     : widget.word!.examples,
                 word: widget.word!.word,
@@ -162,8 +158,7 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
               padding: const EdgeInsets.all(16.0),
               child: ExampleListBuilder(
                 title: 'Mnemonics',
-                examples: (widget.word!.mnemonics == null ||
-                        widget.word!.mnemonics!.isEmpty)
+                examples: (widget.word!.mnemonics == null || widget.word!.mnemonics!.isEmpty)
                     ? []
                     : widget.word!.mnemonics,
                 word: widget.word!.word,
@@ -186,16 +181,14 @@ class WordDetailDesktop extends StatefulWidget {
   _WordDetailDesktopState createState() => _WordDetailDesktopState();
 }
 
-class _WordDetailDesktopState extends State<WordDetailDesktop>
-    with SingleTickerProviderStateMixin {
+class _WordDetailDesktopState extends State<WordDetailDesktop> with SingleTickerProviderStateMixin {
   late Animation<int> _animation;
   late Tween<int> _tween;
   late AnimationController _animationController;
   @override
   void initState() {
     super.initState();
-    _animationController =
-        AnimationController(vsync: this, duration: Duration(seconds: 3));
+    _animationController = AnimationController(vsync: this, duration: Duration(seconds: 3));
     meaning = '';
     if (widget.word != null) {
       selectedWord = widget.word!.word;
@@ -275,17 +268,15 @@ class _WordDetailDesktopState extends State<WordDetailDesktop>
                                     isEdit: true,
                                     word: widget.word,
                                   ),
-                                  slideTransitionType: TransitionType.scale);
+                                  transitionType: TransitionType.scale);
                             }))
                     : SizedBox.shrink(),
                 Align(
                   alignment: Alignment.topCenter,
                   child: GestureDetector(
                     onTap: () async {
-                      await Clipboard.setData(
-                          ClipboardData(text: "${widget.word!.word}"));
-                      showMessage(context,
-                          " copied ${widget.word!.word} to clipboard.");
+                      await Clipboard.setData(ClipboardData(text: "${widget.word!.word}"));
+                      showMessage(context, " copied ${widget.word!.word} to clipboard.");
                     },
                     child: MouseRegion(
                       cursor: SystemMouseCursors.click,
@@ -297,10 +288,8 @@ class _WordDetailDesktopState extends State<WordDetailDesktop>
                             widget.word!.word.capitalize()!,
                             style: Theme.of(context)
                                 .textTheme
-                                .headline2!
-                                .copyWith(
-                                    color:
-                                        isDark ? Colors.white : Colors.black),
+                                .displayMedium!
+                                .copyWith(color: isDark ? Colors.white : Colors.black),
                           ),
                         ),
                       ),
@@ -315,18 +304,16 @@ class _WordDetailDesktopState extends State<WordDetailDesktop>
                 AnimatedBuilder(
                     animation: _animation,
                     builder: (BuildContext _, Widget? child) {
-                      meaning =
-                          widget.word!.meaning.substring(0, _animation.value);
+                      meaning = widget.word!.meaning.substring(0, _animation.value);
                       return Container(
                         alignment: Alignment.center,
                         padding: EdgeInsets.symmetric(horizontal: 16),
                         child: SelectableText(meaning,
                             textAlign: TextAlign.center,
-                            style:
-                                Theme.of(context).textTheme.headline4!.copyWith(
-                                        fontFamily: GoogleFonts.inter(
-                                      fontWeight: FontWeight.w400,
-                                    ).fontFamily)),
+                            style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                    fontFamily: GoogleFonts.inter(
+                                  fontWeight: FontWeight.w400,
+                                ).fontFamily)),
                       );
                     }),
                 48.0.vSpacer(),
@@ -334,8 +321,7 @@ class _WordDetailDesktopState extends State<WordDetailDesktop>
                     padding: const EdgeInsets.all(16.0),
                     child: ExampleListBuilder(
                       title: 'Usage',
-                      examples: (widget.word!.examples == null ||
-                              widget.word!.examples!.isEmpty)
+                      examples: (widget.word!.examples == null || widget.word!.examples!.isEmpty)
                           ? []
                           : widget.word!.examples,
                       word: widget.word!.word,
@@ -344,8 +330,7 @@ class _WordDetailDesktopState extends State<WordDetailDesktop>
                     padding: const EdgeInsets.all(16.0),
                     child: ExampleListBuilder(
                       title: 'Mnemonics',
-                      examples: (widget.word!.mnemonics == null ||
-                              widget.word!.mnemonics!.isEmpty)
+                      examples: (widget.word!.mnemonics == null || widget.word!.mnemonics!.isEmpty)
                           ? []
                           : widget.word!.mnemonics,
                       word: widget.word!.word,
@@ -382,12 +367,11 @@ class _EmptyWordState extends State<EmptyWord> {
           Expanded(child: Container()),
           Text(
             'Whats the word on your mind?',
-            style: Theme.of(context).textTheme.headline4,
+            style: Theme.of(context).textTheme.headlineMedium,
           ),
           16.0.vSpacer(),
           Text('Tip: ' + tips[randIndex],
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.caption),
+              textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
           WordsCountAnimator(),
           Expanded(child: Container()),
           if (kIsWeb)
@@ -402,9 +386,7 @@ class _EmptyWordState extends State<EmptyWord> {
                     assetUrl: 'assets/amazonappstore.png'),
               ],
             ),
-          Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: VersionBuilder()),
+          Padding(padding: EdgeInsets.symmetric(vertical: 16), child: VersionBuilder()),
           40.0.vSpacer(),
         ],
       ),

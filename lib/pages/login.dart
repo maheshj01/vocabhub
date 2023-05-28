@@ -36,8 +36,8 @@ class _AppSignInState extends State<AppSignIn> {
             final user = UserModel.fromJson((resp.data as List<dynamic>)[0]);
             state.setUser(user.copyWith(isLoggedIn: true, token: fcmToken));
             _requestNotifier.value = Response(state: RequestState.done);
-            Navigate()
-                .pushAndPopAll(context, AdaptiveLayout(), slideTransitionType: TransitionType.ttb);
+            Navigate.pushAndPopAll(context, AdaptiveLayout(),
+                slideTransitionType: TransitionType.ttb);
             await Settings.setIsSignedIn(true, email: user.email);
             firebaseAnalytics.logNewUser(user);
           } else {
@@ -51,7 +51,7 @@ class _AppSignInState extends State<AppSignIn> {
           await AuthService.updateTokenOnLogin(email: existingUser.email, token: fcmToken!);
           state.setUser(existingUser.copyWith(isLoggedIn: true, token: fcmToken));
           _requestNotifier.value = Response(state: RequestState.done);
-          Navigate().pushAndPopAll(context, AdaptiveLayout());
+          Navigate.pushAndPopAll(context, AdaptiveLayout());
           firebaseAnalytics.logSignIn(user!);
         }
       } else {
@@ -102,7 +102,7 @@ class _AppSignInState extends State<AppSignIn> {
             foregroundColor: Colors.white,
             label: 'Continue as a Guest',
             onTap: () {
-              Navigate().pushReplace(context, AdaptiveLayout(),
+              Navigate.pushReplace(context, AdaptiveLayout(),
                   slideTransitionType: TransitionType.scale);
               Settings.setSkipCount = Settings.maxSkipCount;
             }, // _handleSignIn(context),

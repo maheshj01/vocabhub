@@ -16,8 +16,7 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     duration: const Duration(milliseconds: 1500),
     vsync: this,
@@ -53,15 +52,15 @@ class _SplashScreenState extends State<SplashScreen>
     if (_email.isNotEmpty) {
       user.isLoggedIn = true;
       AppStateWidget.of(context).setUser(user);
-      Navigate().pushReplace(context, AdaptiveLayout());
+      Navigate.pushReplace(context, AdaptiveLayout());
     } else {
       user.isLoggedIn = false;
       AppStateWidget.of(context).setUser(user);
       if (count % 3 != 0) {
         Settings.setSkipCount = count;
-        Navigate().pushReplace(context, AdaptiveLayout());
+        Navigate.pushReplace(context, AdaptiveLayout());
       } else {
-        Navigate().pushReplace(context, AppSignIn());
+        Navigate.pushReplace(context, AppSignIn());
       }
     }
   }
@@ -79,13 +78,11 @@ class _SplashScreenState extends State<SplashScreen>
       backgroundColor: Colors.white,
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                VocabTheme.primaryColor.withOpacity(0.5),
-                VocabTheme.secondaryColor,
-              ]),
+          gradient:
+              LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+            VocabTheme.primaryColor.withOpacity(0.5),
+            VocabTheme.secondaryColor,
+          ]),
         ),
         alignment: Alignment.center,
         child: FadeScaleTransition(
@@ -96,16 +93,12 @@ class _SplashScreenState extends State<SplashScreen>
                   top: 4,
                   left: 2,
                   child: Text('Vocabhub',
-                      style: Theme.of(context)
-                          .textTheme
-                          .displayMedium!
-                          .copyWith(color: Colors.grey)),
+                      style:
+                          Theme.of(context).textTheme.displayMedium!.copyWith(color: Colors.grey)),
                 ),
                 Text('Vocabhub',
-                    style: Theme.of(context)
-                        .textTheme
-                        .displayMedium!
-                        .copyWith(color: Colors.white)),
+                    style:
+                        Theme.of(context).textTheme.displayMedium!.copyWith(color: Colors.white)),
               ],
             )),
       ),

@@ -42,16 +42,19 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => exploreWords());
+    exploreWords();
   }
 
   Future<void> exploreWords() async {
+    await Duration.zero;
     _request.value = Response(state: RequestState.active);
     final user = AppStateScope.of(context).user;
     final newWords = await VocabStoreService.exploreWords(user!.email, page: page);
     words!.addAll(newWords);
     max = words!.length;
-    _request.value = Response(state: RequestState.done);
+    if (mounted) {
+      _request.value = Response(state: RequestState.done);
+    }
   }
 
   int page = 0;

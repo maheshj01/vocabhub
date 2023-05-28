@@ -84,12 +84,10 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     NavbarItem(Icons.search, 'Search'),
     NavbarItem(Icons.explore, 'Explore'),
   ];
-
   bool showBanner = true;
   @override
   Widget build(BuildContext context) {
     SizeUtils.size = MediaQuery.of(context).size;
-
     final Map<int, Map<String, Widget>> _routes = {
       0: {
         Dashboard.route: Dashboard(),
@@ -120,7 +118,13 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
           AboutVocabhub.route: AboutVocabhub(),
         }
       });
-      items.add(NavbarItem(Icons.person, 'Me'));
+      if (items.length < 4) {
+        items.add(NavbarItem(Icons.person, 'Me'));
+      }
+    } else {
+      if (items.length > 3) {
+        items.removeLast();
+      }
     }
     if (showBanner) {
       if (!user.isLoggedIn || hasUpdate) {
@@ -135,10 +139,10 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
           bannerHeight = kNotchedNavbarHeight;
           return Scaffold(
             resizeToAvoidBottomInset: false,
-            floatingActionButton: !user.isLoggedIn || currentIndex > 1 || hasUpdate
+            floatingActionButton: showBanner || currentIndex > 1
                 ? null
                 : Padding(
-                    padding: (kBottomNavigationBarHeight * 0.9).bottomPadding,
+                    padding: (bannerHeight * 0.9).bottomPadding,
                     child: OpenContainer<bool>(
                         openBuilder: (BuildContext context, VoidCallback openContainer) {
                           return AddWordForm(
@@ -232,64 +236,82 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                       ),
                   ],
                 ),
-                if (showBanner)
+                if (!user.isLoggedIn && showBanner)
                   AnimatedPositioned(
                       duration: Duration(milliseconds: 300),
                       bottom: bannerHeight,
                       left: 0,
                       right: 0,
                       child: VocabBanner(
-                        description:
-                            hasUpdate ? 'New update available' : 'Sign in for better experience',
+                        description: 'Sign in for better experience',
                         actions: [
-                          hasUpdate
-                              ? TextButton(
-                                  onPressed: () {
-                                    launchUrl(Uri.parse(Constants.PLAY_STORE_URL),
-                                        mode: LaunchMode.externalApplication);
-                                  },
-                                  child: Text('Update',
-                                      style: TextStyle(
-                                        color: VocabTheme.primaryColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      )),
-                                )
-                              : SizedBox.shrink(),
-                          !user.isLoggedIn && !hasUpdate
-                              ? TextButton(
-                                  onPressed: () async {
-                                    await Navigate().pushAndPopAll(context, AppSignIn());
-                                  },
-                                  child: Text('Sign In',
-                                      style: TextStyle(
-                                        color: VocabTheme.primaryColor,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      )),
-                                )
-                              : SizedBox.shrink(),
-                          hasUpdate || !user.isLoggedIn
-                              ? IconButton(
-                                  onPressed: () {
-                                    if (!user.isLoggedIn && !hasUpdate) {
-                                      setState(() {
-                                        showBanner = false;
-                                      });
-                                    } else {
-                                      setState(() {
-                                        hasUpdate = false;
-                                      });
-                                    }
-                                  },
-                                  icon: Icon(
-                                    Icons.close,
-                                    color: VocabTheme.primaryColor,
-                                    size: 24,
-                                  ))
-                              : SizedBox.shrink(),
+                          TextButton(
+                            onPressed: () async {
+                              NavbarNotifier.clear();
+                              await Navigate.pushAndPopAll(context, AppSignIn());
+                            },
+                            child: Text('Sign In',
+                                style: TextStyle(
+                                  color: VocabTheme.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                )),
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  showBanner = false;
+                                });
+                              },
+                              icon: Icon(
+                                Icons.close,
+                                color: VocabTheme.primaryColor,
+                                size: 24,
+                              ))
                         ],
-                      ))
+                      )),
+                if (showBanner && hasUpdate)
+                  AnimatedPositioned(
+                      duration: Duration(milliseconds: 300),
+                      bottom: bannerHeight,
+                      left: 0,
+                      right: 0,
+                      child: VocabBanner(
+                        description: 'New update available',
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              launchUrl(Uri.parse(Constants.PLAY_STORE_URL),
+                                  mode: LaunchMode.externalApplication);
+                            },
+                            child: Text('Update',
+                                style: TextStyle(
+                                  color: VocabTheme.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                )),
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                /// if user is not loggedin and there is a update
+                                /// hiding update banner should still show sign in banner
+                                if (!user.isLoggedIn) {
+                                  setState(() {
+                                    hasUpdate = false;
+                                  });
+                                } else {
+                                  setState(() {
+                                    showBanner = false;
+                                  });
+                                }
+                              },
+                              icon: Icon(
+                                Icons.close,
+                                color: VocabTheme.primaryColor,
+                                size: 24,
+                              ))
+                        ],
+                      )),
               ],
             ),
           );

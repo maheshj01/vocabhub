@@ -36,7 +36,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
   Widget title(String text) {
     return Text(
       '$text',
-      style: Theme.of(context).textTheme.headline5,
+      style: Theme.of(context).textTheme.headlineSmall,
     );
   }
 
@@ -113,7 +113,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
                         child: Text(userProvider.isLoggedIn ? '${userProvider.name}' : 'Sign In',
                             style: Theme.of(context)
                                 .textTheme
-                                .headline4!
+                                .headlineMedium!
                                 .copyWith(fontWeight: FontWeight.w500))),
                   ),
                 ],
@@ -136,7 +136,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             ListTile(
               onTap: () {
                 Navigate().popView(context);
-                Navigate.push(context, AddWordForm(), slideTransitionType: TransitionType.btt);
+                Navigate.push(context, AddWordForm(), transitionType: TransitionType.btt);
               },
               trailing: trailingIcon(
                 Icons.add,
@@ -237,12 +237,12 @@ class VersionBuilder extends StatelessWidget {
           future: getAppDetails(),
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             return snapshot.data == null
-                ? Text('${Constants.VERSION}', style: Theme.of(context).textTheme.caption)
+                ? Text('${Constants.VERSION}', style: Theme.of(context).textTheme.bodySmall)
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('v', style: Theme.of(context).textTheme.caption),
-                      Text(snapshot.data!, style: Theme.of(context).textTheme.caption),
+                      Text('v', style: Theme.of(context).textTheme.bodySmall),
+                      Text(snapshot.data!, style: Theme.of(context).textTheme.bodySmall),
                     ],
                   );
           }),

@@ -27,8 +27,7 @@ TextEditingController searchController = TextEditingController();
 
 class MyHomePage extends StatefulWidget {
   final bool isSignedIn;
-  MyHomePage({Key? key, required this.title, this.isSignedIn = false})
-      : super(key: key);
+  MyHomePage({Key? key, required this.title, this.isSignedIn = false}) : super(key: key);
 
   final String title;
 
@@ -36,8 +35,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage>
-    with SingleTickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
   String query = '';
   Word? selected;
 
@@ -52,8 +50,7 @@ class _MyHomePageState extends State<MyHomePage>
     super.initState();
     firebaseAnalytics = Analytics();
     _animationController = AnimationController(
-        vsync: this,
-        duration: Duration(milliseconds: (!SizeUtils.isMobile) ? 1000 : 800));
+        vsync: this, duration: Duration(milliseconds: (!SizeUtils.isMobile) ? 1000 : 800));
     userProvider = AppStateScope.of(context).user!;
     _animationController.forward();
     initWebState();
@@ -85,8 +82,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   Future<void> getUser() async {
     if (userProvider.isLoggedIn) {
-      final existingUser =
-          await UserService.findByEmail(email: userProvider.email);
+      final existingUser = await UserService.findByEmail(email: userProvider.email);
       userProvider.user = existingUser;
     }
   }
@@ -126,8 +122,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   Future<void> _onMenuSelect(String text) async {
     if (text.toLowerCase() == 'add word') {
-      await Navigate.push(context, AddWordForm(),
-          slideTransitionType: TransitionType.btt);
+      await Navigate.push(context, AddWordForm(), transitionType: TransitionType.btt);
     } else if (text.toLowerCase() == 'sign out') {
       final isSignedOut = await AuthService().googleSignOut(context);
       showCircularIndicator(context);
@@ -136,9 +131,7 @@ class _MyHomePageState extends State<MyHomePage>
         userProvider.user = null;
         showMessage(context, 'Signed Out successfully!');
         stopCircularIndicator(context);
-        Navigate()
-            .pushAndPopAll(context, AppSignIn(),
-                slideTransitionType: TransitionType.btt)
+        Navigate.pushAndPopAll(context, AppSignIn(), slideTransitionType: TransitionType.btt)
             .then((value) {});
       } else {
         stopCircularIndicator(context);
@@ -147,8 +140,7 @@ class _MyHomePageState extends State<MyHomePage>
     } else if (text.toLowerCase() == 'download file') {
       downloadFile();
     } else if (text.toLowerCase() == 'sign in') {
-      Navigate().pushAndPopAll(context, AppSignIn(),
-          slideTransitionType: TransitionType.btt);
+      Navigate.pushAndPopAll(context, AppSignIn(), slideTransitionType: TransitionType.btt);
     } else {
       String url = '';
       switch (text.toLowerCase()) {
@@ -179,8 +171,7 @@ class _MyHomePageState extends State<MyHomePage>
   double x = 0;
   double y = 0;
 
-  Widget actionWidget(String text, String url,
-      {String toolTip = '', Function? onTap}) {
+  Widget actionWidget(String text, String url, {String toolTip = '', Function? onTap}) {
     return SizeUtils.isMobile
         ? SizedBox()
         : InkWell(
@@ -190,17 +181,14 @@ class _MyHomePageState extends State<MyHomePage>
                     launchURL(url);
                   },
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: SizeUtils.isTablet ? 18 : 24, vertical: 4),
+              padding: EdgeInsets.symmetric(horizontal: SizeUtils.isTablet ? 18 : 24, vertical: 4),
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
                 child: Container(
                   alignment: Alignment.center,
                   child: Text(text,
-                      style: Theme.of(context).textTheme.headline5!.copyWith(
-                          color: darkNotifier.value
-                              ? Colors.white
-                              : VocabTheme.primaryColor,
+                      style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                          color: darkNotifier.value ? Colors.white : VocabTheme.primaryColor,
                           fontWeight: FontWeight.bold)),
                 ),
               ),
@@ -251,7 +239,7 @@ class _MyHomePageState extends State<MyHomePage>
                 iconTheme: Theme.of(context).iconTheme,
                 centerTitle: SizeUtils.isMobile ? true : false,
                 title: Text('$APP_TITLE',
-                    style: Theme.of(context).textTheme.headline4!.copyWith(
+                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                         color: isDark ? Colors.white : VocabTheme.primaryColor,
                         fontWeight: FontWeight.bold)),
                 actions: [
@@ -269,9 +257,7 @@ class _MyHomePageState extends State<MyHomePage>
                           );
                         }).toList();
                       },
-                      child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: _userAvatar()),
+                      child: Padding(padding: const EdgeInsets.all(8.0), child: _userAvatar()),
                     )
                 ],
               ),
@@ -279,8 +265,7 @@ class _MyHomePageState extends State<MyHomePage>
                 key: key,
                 onPressed: () {
                   darkNotifier.value = !darkNotifier.value;
-                  final RenderBox box =
-                      key.currentContext!.findRenderObject() as RenderBox;
+                  final RenderBox box = key.currentContext!.findRenderObject() as RenderBox;
                   Offset position = box.localToGlobal(Offset.zero);
                   x = position.dx;
                   y = position.dy;
@@ -289,11 +274,8 @@ class _MyHomePageState extends State<MyHomePage>
 
                   Settings().dark = darkNotifier.value;
                 },
-                backgroundColor:
-                    isDark ? Colors.cyanAccent : VocabTheme.primaryColor,
-                child: Icon(!isDark
-                    ? Icons.brightness_2_outlined
-                    : Icons.wb_sunny_rounded),
+                backgroundColor: isDark ? Colors.cyanAccent : VocabTheme.primaryColor,
+                child: Icon(!isDark ? Icons.brightness_2_outlined : Icons.wb_sunny_rounded),
               ),
               body: Row(
                 children: [
@@ -302,9 +284,7 @@ class _MyHomePageState extends State<MyHomePage>
                           flex: SizeUtils.isMobile ? 4 : 3,
                           child: Container(
                             decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.grey.withOpacity(0.5)
-                                    : Colors.white,
+                                color: isDark ? Colors.grey.withOpacity(0.5) : Colors.white,
                                 boxShadow: [
                                   BoxShadow(
                                       spreadRadius: 4,
@@ -383,8 +363,7 @@ class _WordsBuilderState extends State<WordsBuilder> {
     return result;
   }
 
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  RefreshController _refreshController = RefreshController(initialRefresh: false);
   List<Word> supaStoreWords = [];
   String selectedWord = '';
   @override
@@ -412,12 +391,8 @@ class _WordsBuilderState extends State<WordsBuilder> {
                       }
                       List<Word> result = [];
                       supaStoreWords.forEach((element) {
-                        if (element.word
-                                .toLowerCase()
-                                .contains(x.toLowerCase()) ||
-                            element.meaning
-                                .toLowerCase()
-                                .contains(x.toLowerCase()) ||
+                        if (element.word.toLowerCase().contains(x.toLowerCase()) ||
+                            element.meaning.toLowerCase().contains(x.toLowerCase()) ||
                             isInSynonym(x, element.synonyms)) {
                           result.add(element);
                         }
@@ -438,8 +413,8 @@ class _WordsBuilderState extends State<WordsBuilder> {
                             itemBuilder: (_, x) {
                               return WordListTile(
                                   word: value[x],
-                                  isSelected: selectedWord.toLowerCase() ==
-                                      value[x].word.toLowerCase(),
+                                  isSelected:
+                                      selectedWord.toLowerCase() == value[x].word.toLowerCase(),
                                   onSelect: (word) {
                                     setState(() {
                                       selectedWord = word.word;
