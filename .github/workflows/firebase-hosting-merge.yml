@@ -35,7 +35,7 @@ jobs:
       - run: flutter clean
       - run: flutter pub get
       # - run: flutter pub run build_runner build --delete-conflicting-outputs
-      - run: flutter build web --release --dart-define=${{secrets.SUPABASE_PROJECT_URL}} --dart-define=${{secrets.SUPABASE_API_KEY}}
+      - run: flutter build web --release --dart-define=SUPABASE_PROJECT_URL=${{secrets.SUPABASE_PROJECT_URL}} --dart-define=SUPABASE_API_KEY=${{secrets.SUPABASE_API_KEY}} --dart-define=SUPABASE_REDIRECT_URL=${{secrets.SUPABASE_REDIRECT_URL}} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }}
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
