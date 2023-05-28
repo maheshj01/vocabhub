@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -40,45 +41,39 @@
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
 </head>
+
 <body>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 
-<!-- TODO: Add SDKs for Firebase products that you want to use
+  <!-- TODO: Add SDKs for Firebase products that you want to use
      https://firebase.google.com/docs/web/setup#available-libraries -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-analytics.js"></script>
 
-<script>
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  var firebaseConfig = {
-    apiKey: "AIzaSyCeoO3BACxhCcm8Sq2oGkZR2uRbca6VHRE",
-    authDomain: "vocabhub-34c7f.firebaseapp.com",
-    projectId: "vocabhub-34c7f",
-    storageBucket: "vocabhub-34c7f.appspot.com",
-    messagingSenderId: "726058956773",
-    appId: "1:726058956773:web:7fcbf23d2ea0e1c246610c",
-    measurementId: "G-PX6FK67F2P"
-  };
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  firebase.analytics();
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/amcharts/3.21.15/plugins/export/libs/FileSaver.js/FileSaver.min.js"></script> 
-<!-- Initialize Firebase -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/init.js"></script>
   <script>
-    window.addEventListener('load', function(ev) {
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+          navigator.serviceWorker.register("/firebase-messaging-sw.js");
+        });
+      }
+    </script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/amcharts/3.21.15/plugins/export/libs/FileSaver.js/FileSaver.min.js"></script>
+  <!-- Initialize Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/init.js"></script>
+  <script>
+      window.addEventListener('load', function (ev) {
       // Download main.dart.js
       _flutter.loader.loadEntrypoint({
         serviceWorker: {
           serviceWorkerVersion: serviceWorkerVersion,
         }
-      }).then(function(engineInitializer) {
+      }).then(function (engineInitializer) {
         return engineInitializer.initializeEngine();
-      }).then(function(appRunner) {
+      }).then(function (appRunner) {
         return appRunner.runApp();
       });
     });
   </script>
 </body>
+
 </html>

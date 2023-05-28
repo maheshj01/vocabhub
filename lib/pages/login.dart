@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/constants/constants.dart';
@@ -48,7 +49,9 @@ class _AppSignInState extends State<AppSignIn> {
           }
         } else {
           await Settings.setIsSignedIn(true, email: existingUser.email);
-          await AuthService.updateTokenOnLogin(email: existingUser.email, token: fcmToken!);
+          if (!kIsWeb) {
+            await AuthService.updateTokenOnLogin(email: existingUser.email, token: fcmToken!);
+          }
           state.setUser(existingUser.copyWith(isLoggedIn: true, token: fcmToken));
           _requestNotifier.value = Response(state: RequestState.done);
           Navigate.pushAndPopAll(context, AdaptiveLayout());

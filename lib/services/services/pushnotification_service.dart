@@ -1,4 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
+import 'package:vocabhub/constants/const.dart';
 
 class PushNotificationService {
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -14,8 +16,23 @@ class PushNotificationService {
 //   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 //       FlutterLocalNotificationsPlugin();
 
+  void setToken(String? tk) {
+    _fcmToken = tk;
+  }
+
   Future<void> setupFlutterNotifications() async {
-    _fcmToken = await _firebaseMessaging.getToken();
+    if (kIsWeb) {
+      _firebaseMessaging
+          .getToken(
+              vapidKey:
+                  Constants.FIREBASE_VAPID_KEY)
+          .then(setToken);
+      final _tokenStream = FirebaseMessaging.instance.onTokenRefresh;
+      _tokenStream.listen(setToken);
+    } else {
+      _fcmToken = await _firebaseMessaging.getToken();
+    }
+
 //     const AndroidInitializationSettings initializationSettingsAndroid =
 //         AndroidInitializationSettings('app_icon');
 //     final InitializationSettings initializationSettings =

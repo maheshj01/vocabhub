@@ -15,12 +15,12 @@ class Constants {
   static const SUPABASE_API_KEY = String.fromEnvironment('SUPABASE_API_KEY');
   static const SUPABASE_URL = String.fromEnvironment('SUPABASE_PROJECT_URL');
   static const REDIRECT_URL = String.fromEnvironment('SUPABASE_REDIRECT_URL');
+  static const FIREBASE_VAPID_KEY = String.fromEnvironment('FIREBASE_VAPID_KEY');
 
   static const PRIVACY_POLICY = 'https://maheshjamdade.com/vocabhub/privacy';
   static const String PROFILE_AVATAR_ASSET = 'assets/profile.png';
   static const Duration wordCountAnimationDuration = Duration(seconds: 3);
   static const FEEDBACK_EMAIL_TO = 'maheshmn121@gmail.com';
-
 
   /// TABLES
   static const VOCAB_TABLE_NAME = 'vocabsheet_mobile';

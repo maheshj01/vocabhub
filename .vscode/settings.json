@@ -14,7 +14,7 @@
   "dart.lineLength": 100,
   "files.exclude": {
     "test": true,
-    "web": true,
+    "web": false,
     "build": true,
     "windows": true,
     "macos": true,

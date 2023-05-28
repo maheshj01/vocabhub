@@ -26,20 +26,22 @@ command to run the app from the command line, or If you want to use the launch.j
     "args": [
         "--dart-define=SUPABASE_PROJECT_URL=<your project url here>",
         "--dart-define=SUPABASE_API_KEY=<your api key here>",
-        "--dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>"
+        "--dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>",
+        --dart-define=FIREBASE_VAPID_KEY=<vapid key from web push certificate in firebase>
     ]
   }
 ```
 
 _Run the project using the command_
 ```
-  flutter run --dart-define=SUPABASE_PROJECT_URL=<your project url here> --dart-define=SUPABASE_API_KEY=<your api key here> --dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>
+  flutter run --dart-define=SUPABASE_PROJECT_URL=<your project url here> --dart-define=SUPABASE_API_KEY=<your api key here> --dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>  --dart-define=FIREBASE_VAPID_KEY=<vapid key from web push certificate in firebase>
 ```
 
 #### Build the app
 
 ```
   flutter build apk --dart-define=SUPABASE_PROJECT_URL=<your project url here> --dart-define=SUPABASE_API_KEY=<your api key here> --dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>
+  --dart-define=FIREBASE_VAPID_KEY=<vapid key from web push certificate in firebase>
 ```
 
 The apk will be generated in the `build/app/outputs/flutter-apk/app-release.apk` folder.

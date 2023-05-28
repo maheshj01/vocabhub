@@ -126,7 +126,7 @@ class AuthService {
             Status.notfound.name, UserModel.fromJson(response.data), Status.notfound);
       }
     } catch (_) {
-      _logger.e(_.toString());
+      _logger.e("Error updating token $_");
       return ResponseObject(_.toString(), UserModel.init(), Status.error);
     }
   }
