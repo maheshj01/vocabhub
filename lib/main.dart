@@ -60,7 +60,7 @@ class _VocabAppState extends State<VocabApp> {
     firebaseAnalytics.appOpen();
     final email = await Settings.email;
     if (email.isNotEmpty) {
-      final response = await AuthService.updateLogin(email: email, isLoggedIn: true);
+      await AuthService.updateLogin(email: email, isLoggedIn: true);
     }
     // pushNotificationService!.showFlutterNotification(RemoteMessage(
     //     data: {'title': 'Welcome', 'body': 'Welcome to VocabHub'}));

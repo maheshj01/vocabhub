@@ -198,12 +198,12 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
   Widget _userAvatar() {
     final user = AppStateScope.of(context).user!;
-    if (user.email.isEmpty)
+    if (user.email.isEmpty) {
       return CircularAvatar(
         url: '${Constants.PROFILE_AVATAR_ASSET}',
         radius: 25,
       );
-    else {
+    } else {
       return CircularAvatar(
         name: getInitial('${user.name}'),
         url: user.avatarUrl,
@@ -216,11 +216,10 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (_, constraints) {
-      final size = MediaQuery.of(context).size;
       return AnimatedBuilder(
         animation: _animationController,
         builder: (BuildContext context, Widget? child) {
-          bool isDark = darkNotifier.value;
+          final bool isDark = darkNotifier.value;
           return ClipPath(
             clipper: CircularClipper(
                 diagonal(Size(constraints.maxWidth, constraints.maxHeight)) *
@@ -246,9 +245,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   if (!SizeUtils.isMobile)
                     PopupMenuButton<String>(
                       offset: Offset(-20, 50),
-                      onSelected: (String x) {
-                        _onMenuSelect(x);
-                      },
+                      onSelected: _onMenuSelect,
                       itemBuilder: (BuildContext context) {
                         return actions.map((String action) {
                           return PopupMenuItem<String>(
@@ -266,7 +263,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                 onPressed: () {
                   darkNotifier.value = !darkNotifier.value;
                   final RenderBox box = key.currentContext!.findRenderObject() as RenderBox;
-                  Offset position = box.localToGlobal(Offset.zero);
+                  final Offset position = box.localToGlobal(Offset.zero);
                   x = position.dx;
                   y = position.dy;
                   _animationController.reset();
@@ -355,11 +352,11 @@ class _WordsBuilderState extends State<WordsBuilder> {
     if (synonyms == null || synonyms.isEmpty) {
       return result;
     }
-    synonyms.forEach((element) {
+    for (var element in synonyms) {
       if (element.toLowerCase() == query.toLowerCase()) {
         result = true;
       }
-    });
+    }
     return result;
   }
 
@@ -368,7 +365,6 @@ class _WordsBuilderState extends State<WordsBuilder> {
   String selectedWord = '';
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return ValueListenableBuilder<List<Word>?>(
         valueListenable: listNotifier,
         builder: (BuildContext context, List<Word>? value, Widget? child) {
@@ -390,13 +386,13 @@ class _WordsBuilderState extends State<WordsBuilder> {
                         return;
                       }
                       List<Word> result = [];
-                      supaStoreWords.forEach((element) {
+                      for (var element in supaStoreWords) {
                         if (element.word.toLowerCase().contains(x.toLowerCase()) ||
                             element.meaning.toLowerCase().contains(x.toLowerCase()) ||
                             isInSynonym(x, element.synonyms)) {
                           result.add(element);
                         }
-                      });
+                      }
                       listNotifier.value = result;
                     },
                   ),
@@ -407,7 +403,7 @@ class _WordsBuilderState extends State<WordsBuilder> {
                         enablePullDown: !SizeUtils.isMobile ? false : true,
                         enablePullUp: false,
                         controller: _refreshController,
-                        onRefresh: () => refresh(),
+                        onRefresh: refresh,
                         child: ListView.builder(
                             itemCount: value.length,
                             itemBuilder: (_, x) {

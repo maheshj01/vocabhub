@@ -423,11 +423,11 @@ class _WordListState extends State<WordList> {
     if (synonyms == null || synonyms.isEmpty) {
       return result;
     }
-    synonyms.forEach((element) {
+    for (var element in synonyms) {
       if (element.toLowerCase() == query.toLowerCase()) {
         result = true;
       }
-    });
+    }
     return result;
   }
 
@@ -468,8 +468,8 @@ class _WordListState extends State<WordList> {
                           state.setWords(_words);
                           return;
                         }
-                        List<Word> result = [];
-                        _words.forEach((element) {
+                        final List<Word> result = [];
+                        for (var element in _words) {
                           if (element.word
                                   .toLowerCase()
                                   .contains(x.toLowerCase()) ||
@@ -479,7 +479,7 @@ class _WordListState extends State<WordList> {
                               isInSynonym(x, element.synonyms)) {
                             result.add(element);
                           }
-                        });
+                        }
                         wordsNotifier.value = result;
                       },
                     ),

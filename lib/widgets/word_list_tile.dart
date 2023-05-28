@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/main.dart';
-import 'package:vocabhub/services/appstate.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/analytics.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/extensions.dart';
 
 class WordListTile extends StatefulWidget {
@@ -35,8 +34,8 @@ class _WordListTileState extends State<WordListTile> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = darkNotifier.value;
-    final userProvider = AppStateScope.of(context).user!;
+    final bool isDark = darkNotifier.value;
+    // final userProvider = AppStateScope.of(context).user!;
 
     Color tileColor() {
       if (isDark) {
@@ -80,11 +79,11 @@ class _WordListTileState extends State<WordListTile> {
                     children: [
                       Text(
                         widget.word.word.trim(),
-                        style: Theme.of(context).textTheme.headline4,
+                        style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       Text(
                         widget.word.meaning,
-                        style: Theme.of(context).textTheme.subtitle2,
+                        style: Theme.of(context).textTheme.titleSmall,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),

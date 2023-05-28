@@ -22,7 +22,7 @@ void showMessage(BuildContext context, String message,
             '$message',
             style: Theme.of(context)
                 .textTheme
-                .headline5!
+                .headlineSmall!
                 .copyWith(color: Colors.white),
           ),
           duration: duration,
@@ -140,7 +140,7 @@ Widget _buildNewTransition(
 // }
 
 String editTypeToUserNotification(EditHistory history, UserModel editor) {
-  String statefilter =
+  final String statefilter =
       '${history.state == EditState.pending ? 'under review' : history.state!.toName()}';
 
   if (history.edit_type == EditType.add) {
@@ -154,10 +154,10 @@ String editTypeToUserNotification(EditHistory history, UserModel editor) {
 }
 
 String editTypeToAdminNotification(EditHistory history, UserModel editor) {
-  bool adminRequest = editor.isAdmin;
-  String statefilter =
-      '${history.state == EditState.pending ? 'under review' : history.state!.toName()}';
-  String userFilter =
+  final bool adminRequest = editor.isAdmin;
+  // final String statefilter =
+  //     '${history.state == EditState.pending ? 'under review' : history.state!.toName()}';
+  final String userFilter =
       adminRequest ? 'You Requested' : '${editor.name} Requested';
 
   /// TODO: handle adminRequest

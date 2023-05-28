@@ -42,11 +42,12 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
   @override
   void initState() {
     super.initState();
-    exploreWords();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      exploreWords();
+    });
   }
 
   Future<void> exploreWords() async {
-    await Duration.zero;
     _request.value = Response(state: RequestState.active);
     final user = AppStateScope.of(context).user;
     final newWords = await VocabStoreService.exploreWords(user!.email, page: page);
@@ -214,6 +215,7 @@ class _ExploreWordState extends State<ExploreWord>
   ];
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     // Size size = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
     final userProvider = AppStateScope.of(context).user!;
@@ -369,7 +371,7 @@ class _WordMasteredPreferenceState extends State<WordMasteredPreference> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final bool isMastered = widget.value == WordState.known;
-    final bool unAnswered = widget.value == WordState.unanswered;
+    // final bool unAnswered = widget.value == WordState.unanswered;
 
     Color stateToColor(WordState state) {
       switch (state) {

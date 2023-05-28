@@ -30,7 +30,10 @@ class CircularAvatar extends StatelessWidget {
           backgroundImage: url == null ? null : getImageProvider(url!),
           child: url == null
               ? Text(name!,
-                  style: Theme.of(context).textTheme.headline4!.copyWith(
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium!
+                      .copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 20))

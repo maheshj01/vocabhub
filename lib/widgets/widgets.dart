@@ -6,7 +6,6 @@ import 'package:vocabhub/main.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/size_utils.dart';
-
 import 'package:vocabhub/utils/utility.dart';
 
 void removeFocus(BuildContext context) => FocusScope.of(context).unfocus();
@@ -57,7 +56,7 @@ SelectableText buildExample(String example, String word, {TextStyle? style}) {
       .split(' ')
       .toList()
       .map((e) => TextSpan(
-          text: e + ' ',
+          text: '$e ',
           style: style ??
               TextStyle(
                   fontWeight: (e.toLowerCase().contains(word.toLowerCase()))
@@ -94,7 +93,7 @@ RichText buildNotification(String notification, String word,
   final iterable = notification.split(' ').toList().map((e) {
     final isMatched = e.toLowerCase().contains(word.toLowerCase());
     return TextSpan(
-        text: e + ' ',
+        text: '$e ',
         style: TextStyle(
             fontSize: 16,
             color: Colors.black,
@@ -133,11 +132,11 @@ RichText differenceVisualizerByWord(String editedText, String oldText,
       children: <TextSpan>[
         for (int i = 0; i < minLengthList; i++)
           if (oldTextList[i] == newTextList[i])
-            TextSpan(text: newTextList[i] + ' ')
+            TextSpan(text: '${newTextList[i]} ')
           else
             TextSpan(
                 text:
-                    isOldVersion ? oldTextList[i] + ' ' : newTextList[i] + ' ',
+                    isOldVersion ? '${oldTextList[i]} ' : '${newTextList[i]} ',
                 style: TextStyle(
                   color: isOldVersion ? Colors.red : Colors.green,
                   decoration: isOldVersion ? TextDecoration.lineThrough : null,
@@ -145,7 +144,7 @@ RichText differenceVisualizerByWord(String editedText, String oldText,
         if (oldTextLength > newTextLength && isOldVersion)
           for (int i = minLengthList; i < oldTextLength; i++)
             TextSpan(
-                text: oldTextList[i] + ' ',
+                text: '${oldTextList[i]} ',
                 style: TextStyle(
                   color: Colors.red,
                   decoration: TextDecoration.lineThrough,
@@ -153,7 +152,7 @@ RichText differenceVisualizerByWord(String editedText, String oldText,
         if (newTextLength > oldTextLength && !isOldVersion)
           for (int i = minLengthList; i < newTextLength; i++)
             TextSpan(
-                text: newTextList[i] + ' ',
+                text: '${newTextList[i]} ',
                 style: TextStyle(color: Colors.green)),
       ],
     ),

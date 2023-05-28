@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/word.dart';
+
 part 'history.g.dart';
 
 ///

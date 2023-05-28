@@ -79,7 +79,7 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
                 Icons.share,
               ),
               onPressed: () {
-                String message = buildShareMessage(widget.word!);
+                final String message = buildShareMessage(widget.word!);
                 Share.share(message);
               })
         ],
@@ -244,8 +244,8 @@ class _WordDetailDesktopState extends State<WordDetailDesktop> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    bool isDark = darkNotifier.value;
+    final Size size = MediaQuery.of(context).size;
+    final bool isDark = darkNotifier.value;
     userProvider = AppStateScope.of(context).user!;
     return widget.word == null
         ? EmptyWord()
@@ -370,7 +370,7 @@ class _EmptyWordState extends State<EmptyWord> {
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           16.0.vSpacer(),
-          Text('Tip: ' + tips[randIndex],
+          Text('Tip: ${tips[randIndex]}',
               textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
           WordsCountAnimator(),
           Expanded(child: Container()),

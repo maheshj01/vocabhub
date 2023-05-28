@@ -45,17 +45,18 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
   }
 
   Future<void> isUpdateAvailable() async {
+    // TODO: check only once on app launch not on every page load
     final packageInfo = await PackageInfo.fromPlatform();
-    String appVersion = packageInfo.version;
-    int appBuildNumber = int.parse(packageInfo.buildNumber);
+    final String appVersion = packageInfo.version;
+    final int appBuildNumber = int.parse(packageInfo.buildNumber);
     final remoteConfig = FirebaseRemoteConfig.instance;
     await remoteConfig.setConfigSettings(RemoteConfigSettings(
       fetchTimeout: const Duration(minutes: 1),
       minimumFetchInterval: const Duration(seconds: 1),
     ));
     await remoteConfig.fetchAndActivate();
-    final version = await remoteConfig.getString('${Constants.VERSION_KEY}');
-    final buildNumber = await remoteConfig.getInt('${Constants.BUILD_NUMBER_KEY}');
+    final version = remoteConfig.getString('${Constants.VERSION_KEY}');
+    final buildNumber = remoteConfig.getInt('${Constants.BUILD_NUMBER_KEY}');
     if (appVersion != version || buildNumber > appBuildNumber) {
       hasUpdate = true;
     } else {
@@ -180,7 +181,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                   onBackButtonPressed: (isExiting) {
                     if (isExiting) {
                       newTime = DateTime.now();
-                      int difference = newTime.difference(oldTime).inMilliseconds;
+                      final int difference = newTime.difference(oldTime).inMilliseconds;
                       oldTime = newTime;
                       if (difference < 1000) {
                         hideToast();

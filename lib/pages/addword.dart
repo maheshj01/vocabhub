@@ -22,8 +22,7 @@ class AddWordForm extends StatefulWidget {
   final Word? word;
   static const route = '/addword';
 
-  const AddWordForm({Key? key, this.isEdit = false, this.word})
-      : super(key: key);
+  const AddWordForm({Key? key, this.isEdit = false, this.word}) : super(key: key);
 
   @override
   _AddWordFormState createState() => _AddWordFormState();
@@ -50,7 +49,7 @@ class _AddWordFormState extends State<AddWordForm> {
       _requestNotifier.value =
           Response(state: RequestState.error, message: 'Word and Meaning are required');
       Future.delayed(Duration(seconds: 3), () {
-        _requestNotifier.value = Response(state:RequestState.done);
+        _requestNotifier.value = Response(state: RequestState.done);
       });
       stopCircularIndicator(context);
       return;
@@ -58,8 +57,8 @@ class _AddWordFormState extends State<AddWordForm> {
     try {
       if (await wordExists(wordObject)) {
         stopCircularIndicator(context);
-        _requestNotifier.value = Response(state:RequestState.error,
-            message: 'Word "${wordObject.word}" already exists!');
+        _requestNotifier.value = Response(
+            state: RequestState.error, message: 'Word "${wordObject.word}" already exists!');
         return;
       }
       var history = EditHistory.fromWord(wordObject, userProvider!.email);
@@ -69,20 +68,19 @@ class _AddWordFormState extends State<AddWordForm> {
       final response = await EditHistoryService.insertHistory(history);
       if (response.didSucced) {
         firebaseAnalytics.logWordAdd(wordObject, userProvider!.email);
-        showMessage(context,
-            'Congrats! Your new word ${editedWord.word} is under review!',
+        showMessage(context, 'Congrats! Your new word ${editedWord.word} is under review!',
             duration: Duration(seconds: 3), onClosed: () {
           stopCircularIndicator(context);
           Navigate().popView(context);
         });
       } else {
-        _requestNotifier.value = Response(state:RequestState.error,
-            message: 'Failed to add ${editedWord.word}');
+        _requestNotifier.value =
+            Response(state: RequestState.error, message: 'Failed to add ${editedWord.word}');
         stopCircularIndicator(context);
       }
     } catch (x) {
       stopCircularIndicator(context);
-      _requestNotifier.value = Response(state:RequestState.error, message: '$x');
+      _requestNotifier.value = Response(state: RequestState.error, message: '$x');
     }
   }
 
@@ -105,16 +103,15 @@ class _AddWordFormState extends State<AddWordForm> {
     final currentWordFromDatabase =
         await VocabStoreService.findByWord(editedWord.word.capitalize()!);
     if (currentWordFromDatabase == null) {
-      _requestNotifier.value = Response(state:RequestState.done);
+      _requestNotifier.value = Response(state: RequestState.done);
       return false;
     }
-    _requestNotifier.value =
-        Response(state:RequestState.error, message: 'Word already exists');
+    _requestNotifier.value = Response(state: RequestState.error, message: 'Word already exists');
     return true;
   }
 
   final firebaseAnalytics = Analytics();
-  final _requestNotifier = ValueNotifier<Response>(Response(state:RequestState.none));
+  final _requestNotifier = ValueNotifier<Response>(Response(state: RequestState.none));
   Word? currentWordFromDatabase;
 
   @override
@@ -151,9 +148,9 @@ class _AddWordFormState extends State<AddWordForm> {
     final mnemonic = mnemonicController.text;
     if (synonym.isNotEmpty || example.isNotEmpty || mnemonic.isNotEmpty) {
       _requestNotifier.value =
-          Response(state:RequestState.error, message: 'Please submit the field');
+          Response(state: RequestState.error, message: 'Please submit the field');
     } else {
-      _requestNotifier.value = Response(state:RequestState.done);
+      _requestNotifier.value = Response(state: RequestState.done);
     }
     setState(() {});
   }
@@ -161,7 +158,6 @@ class _AddWordFormState extends State<AddWordForm> {
   /// Edit mode
   Future<void> updateWord() async {
     showCircularIndicator(context);
-    String id = widget.word!.id;
     final newWord = wordController.text.trim();
     final meaning = meaningController.text.trim();
     try {
@@ -172,7 +168,6 @@ class _AddWordFormState extends State<AddWordForm> {
         if (widget.word != editedWord) {
           final response = await EditHistoryService.insertHistory(history);
           if (response.didSucced) {
-            final pendingWord = response.data;
             showMessage(
                 context,
                 duration: Duration(seconds: 3),
@@ -196,12 +191,11 @@ class _AddWordFormState extends State<AddWordForm> {
   Future<void> deleteWord() async {
     if (widget.isEdit) {
       showCircularIndicator(context);
-      String id = widget.word!.id;
+      final String id = widget.word!.id;
       final response = await VocabStoreService.deleteById(id);
       if (response.status == 200) {
         firebaseAnalytics.logWordDelete(widget.word!, userProvider!.email);
-        showMessage(
-            context, "The word \"${widget.word!.word}\" has been deleted.",
+        showMessage(context, "The word \"${widget.word!.word}\" has been deleted.",
             onClosed: () => Navigate().popView(context));
       }
       stopCircularIndicator(context);
@@ -243,27 +237,22 @@ class _AddWordFormState extends State<AddWordForm> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    bool isDark = darkNotifier.value;
+    final bool isDark = darkNotifier.value;
 
     Widget synonymChip(String synonym, Function onDeleted) {
       return InputChip(
         label: Text(
           '${synonym.trim().capitalize()}',
-          style: Theme.of(context)
-              .textTheme
-              .headline5!
-              .copyWith(color: Colors.white),
+          style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: Colors.white),
         ),
         onDeleted: () => onDeleted(),
         isEnabled: true,
-        backgroundColor:
-            isDark ? VocabTheme.secondaryDark : VocabTheme.secondaryColor,
+        backgroundColor: isDark ? VocabTheme.secondaryDark : VocabTheme.secondaryColor,
         deleteButtonTooltipMessage: 'remove',
       );
     }
 
     userProvider = AppStateScope.of(context).user!;
-    final words = AppStateScope.of(context).words!;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -289,28 +278,25 @@ class _AddWordFormState extends State<AddWordForm> {
                         editedWord = editedWord.copyWith(word: x);
                         if (!widget.isEdit) {
                           final currentWordFromDatabase =
-                              await VocabStoreService.findByWord(
-                                  editedWord.word.capitalize()!);
+                              await VocabStoreService.findByWord(editedWord.word.capitalize()!);
                           if (currentWordFromDatabase != null) {
-                            _requestNotifier.value = Response(state:RequestState.error,
-                                message: 'Word already exists');
+                            _requestNotifier.value =
+                                Response(state: RequestState.error, message: 'Word already exists');
                           } else {
-                            _requestNotifier.value = Response(state:RequestState.done);
+                            _requestNotifier.value = Response(state: RequestState.done);
                           }
                           setState(() {});
                         }
                       },
                       focusNode: wordFocus,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp('[A-Z-a-z]+'))
-                      ],
+                      inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[A-Z-a-z]+'))],
                       controller: wordController,
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: VocabField(
                         hint: 'What does ' +
-                            '${editedWord.word.isEmpty ? 'it mean?' : editedWord.word + ' mean?'}',
+                            '${editedWord.word.isEmpty ? 'it mean?' : '${editedWord.word} mean?'}',
                         controller: meaningController,
                         focusNode: meaningFocus,
                         maxlines: 4,
@@ -321,11 +307,9 @@ class _AddWordFormState extends State<AddWordForm> {
                       alignment: WrapAlignment.center,
                       spacing: 8,
                       runSpacing: 2,
-                      children:
-                          List.generate(editedWord.synonyms!.length, (index) {
+                      children: List.generate(editedWord.synonyms!.length, (index) {
                         return synonymChip(editedWord.synonyms![index], () {
-                          editedWord.synonyms!
-                              .remove(editedWord.synonyms![index]);
+                          editedWord.synonyms!.remove(editedWord.synonyms![index]);
                           setState(() {});
                         });
                       }),
@@ -343,8 +327,7 @@ class _AddWordFormState extends State<AddWordForm> {
                                   hint: 'add synonym',
                                   maxlength: 16,
                                   inputFormatters: [
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp('[A-Z-a-z]+')),
+                                    FilteringTextInputFormatter.allow(RegExp('[A-Z-a-z]+')),
                                     FilteringTextInputFormatter.deny(wordController.text)
                                   ],
                                   controller: synonymController,
@@ -352,11 +335,10 @@ class _AddWordFormState extends State<AddWordForm> {
                               ),
                               synonymController.text.isNotEmpty
                                   ? Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 16.0, right: 16, top: 8),
+                                      padding: const EdgeInsets.only(left: 16.0, right: 16, top: 8),
                                       child: IconButton(
                                           onPressed: () {
-                                            String newSynonym = synonymController.text;
+                                            final String newSynonym = synonymController.text;
                                             if (editedWord.word.isNotEmpty) {
                                               if (newSynonym.isNotEmpty &&
                                                   !editedWord.synonyms!.contains(newSynonym)) {
@@ -380,24 +362,21 @@ class _AddWordFormState extends State<AddWordForm> {
                     30.0.hSpacer(),
                     ...List.generate(editedWord.examples!.length, (index) {
                       return Container(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: SizeUtils.isMobile ? 16 : 24.0),
+                        margin: EdgeInsets.symmetric(horizontal: SizeUtils.isMobile ? 16 : 24.0),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Expanded(
-                                child: buildExample(editedWord.examples![index],
-                                    editedWord.word)),
+                                child: buildExample(editedWord.examples![index], editedWord.word)),
                             GestureDetector(
                                 onTap: () {
-                                  editedWord.examples!.remove(
-                                      editedWord.examples!.elementAt(index));
+                                  editedWord.examples!
+                                      .remove(editedWord.examples!.elementAt(index));
                                   setState(() {});
                                 },
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                   child: Icon(Icons.delete),
                                 )),
                           ],
@@ -419,24 +398,17 @@ class _AddWordFormState extends State<AddWordForm> {
                               ),
                               exampleController.text.isNotEmpty
                                   ? Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 16.0, right: 16, top: 8),
+                                      padding: const EdgeInsets.only(left: 16.0, right: 16, top: 8),
                                       child: IconButton(
                                           onPressed: () {
-                                            String text =
-                                                exampleController.text;
+                                            final String text = exampleController.text;
                                             if (editedWord.word.isNotEmpty) {
                                               editedWord = editedWord.copyWith(
-                                                  examples: [
-                                                    ...editedWord.examples!,
-                                                    text
-                                                  ]);
+                                                  examples: [...editedWord.examples!, text]);
                                               exampleController.clear();
                                             } else {
-                                              showMessage(
-                                                  context, 'Add a word first');
-                                              FocusScope.of(context)
-                                                  .requestFocus(wordFocus);
+                                              showMessage(context, 'Add a word first');
+                                              FocusScope.of(context).requestFocus(wordFocus);
                                             }
                                             setState(() {});
                                           },
@@ -448,25 +420,21 @@ class _AddWordFormState extends State<AddWordForm> {
                         : Container(),
                     ...List.generate(editedWord.mnemonics!.length, (index) {
                       return Container(
-                        margin: EdgeInsets.symmetric(
-                            horizontal: SizeUtils.isMobile ? 16 : 24.0),
+                        margin: EdgeInsets.symmetric(horizontal: SizeUtils.isMobile ? 16 : 24.0),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Expanded(
-                                child: buildExample(
-                                    editedWord.mnemonics![index],
-                                    editedWord.word)),
+                                child: buildExample(editedWord.mnemonics![index], editedWord.word)),
                             GestureDetector(
                                 onTap: () {
-                                  editedWord.mnemonics!.remove(
-                                      editedWord.mnemonics!.elementAt(index));
+                                  editedWord.mnemonics!
+                                      .remove(editedWord.mnemonics!.elementAt(index));
                                   setState(() {});
                                 },
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                   child: Icon(Icons.delete),
                                 )),
                           ],
@@ -481,32 +449,24 @@ class _AddWordFormState extends State<AddWordForm> {
                             children: [
                               Flexible(
                                 child: VocabField(
-                                  hint:
-                                      'A mnemonic to help remember ${editedWord.word} (Optional)',
+                                  hint: 'A mnemonic to help remember ${editedWord.word} (Optional)',
                                   controller: mnemonicController,
                                   maxlines: 4,
                                 ),
                               ),
                               mnemonicController.text.isNotEmpty
                                   ? Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 16.0, right: 16, top: 8),
+                                      padding: const EdgeInsets.only(left: 16.0, right: 16, top: 8),
                                       child: IconButton(
                                           onPressed: () {
-                                            String text =
-                                                mnemonicController.text;
+                                            final String text = mnemonicController.text;
                                             if (text.isNotEmpty) {
                                               editedWord = editedWord.copyWith(
-                                                  mnemonics: [
-                                                    ...editedWord.mnemonics!,
-                                                    text
-                                                  ]);
+                                                  mnemonics: [...editedWord.mnemonics!, text]);
                                               mnemonicController.clear();
                                             } else {
-                                              showMessage(
-                                                  context, 'Add a word first');
-                                              FocusScope.of(context)
-                                                  .requestFocus(wordFocus);
+                                              showMessage(context, 'Add a word first');
+                                              FocusScope.of(context).requestFocus(wordFocus);
                                             }
                                             setState(() {});
                                           },
@@ -521,8 +481,7 @@ class _AddWordFormState extends State<AddWordForm> {
                       alignment: Alignment.center,
                       child: VHButton(
                         foregroundColor: Colors.white,
-                        backgroundColor:
-                            isDark ? Colors.teal : VocabTheme.primaryColor,
+                        backgroundColor: isDark ? Colors.teal : VocabTheme.primaryColor,
                         height: 44,
                         width: 120,
                         onTap: request.state == RequestState.error
@@ -537,8 +496,7 @@ class _AddWordFormState extends State<AddWordForm> {
                         alignment: Alignment.center,
                         child: Text(
                           '${_requestNotifier.value.message}',
-                          style: TextStyle(
-                              color: isDark ? Colors.white : Colors.red),
+                          style: TextStyle(color: isDark ? Colors.white : Colors.red),
                         ),
                       ),
                     16.0.vSpacer(),
@@ -552,13 +510,10 @@ class _AddWordFormState extends State<AddWordForm> {
                                 onPressed: _showAlert,
                                 child: Text(
                                   'Delete',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline4!
-                                      .copyWith(
-                                          color: VocabTheme.errorColor,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600),
+                                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                      color: VocabTheme.errorColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600),
                                 ))
                             : SizedBox.shrink(),
                       ),
@@ -606,7 +561,7 @@ class VocabField extends StatefulWidget {
 class VocabFieldState extends State<VocabField> {
   @override
   Widget build(BuildContext context) {
-    final style = Theme.of(context).textTheme.headline4;
+    final style = Theme.of(context).textTheme.headlineMedium;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
@@ -630,12 +585,10 @@ class VocabFieldState extends State<VocabField> {
               decoration: InputDecoration(
                   hintText: widget.hint,
                   counterText: '',
-                  hintStyle: style!
-                      .copyWith(fontSize: widget.fontSize, color: Colors.grey),
+                  hintStyle: style!.copyWith(fontSize: widget.fontSize, color: Colors.grey),
                   focusedBorder: InputBorder.none,
                   border: InputBorder.none),
-              style: style.copyWith(
-                  fontWeight: FontWeight.bold, fontSize: widget.fontSize)),
+              style: style.copyWith(fontWeight: FontWeight.bold, fontSize: widget.fontSize)),
         ],
       ),
     );
@@ -647,16 +600,12 @@ class VocabAlert extends StatelessWidget {
   final Function()? onConfirm;
   final Function()? onCancel;
 
-  const VocabAlert(
-      {Key? key,
-      required this.title,
-      required this.onConfirm,
-      required this.onCancel})
+  const VocabAlert({Key? key, required this.title, required this.onConfirm, required this.onCancel})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = darkNotifier.value;
+    final bool isDark = darkNotifier.value;
     return AlertDialog(
       content: Text(title),
       actions: [

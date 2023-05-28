@@ -47,12 +47,12 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
   }
 
   Widget _avatar(UserModel user) {
-    if (user.email.isEmpty)
+    if (user.email.isEmpty) {
       return CircularAvatar(
         url: '${Constants.PROFILE_AVATAR_ASSET}',
         radius: 35,
       );
-    else {
+    } else {
       return CircularAvatar(
         name: getInitial('${user.name}'),
         url: user.avatarUrl,
@@ -77,7 +77,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = darkNotifier.value;
+    final bool isDark = darkNotifier.value;
     final userProvider = AppStateScope.of(context).user!;
     Widget trailingIcon(IconData data) {
       return Icon(
@@ -86,7 +86,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
       );
     }
 
-    bool isAdmin = (userProvider.isLoggedIn && userProvider.isAdmin);
+    final bool isAdmin = (userProvider.isLoggedIn && userProvider.isAdmin);
 
     return Drawer(
       child: Container(

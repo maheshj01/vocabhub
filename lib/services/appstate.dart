@@ -52,7 +52,6 @@ class AppStateWidget extends StatefulWidget {
 
 class AppStateWidgetState extends State<AppStateWidget> {
   AppState _data = AppState();
-  final _userStore = UserService();
 
   void setWords(List<Word> words) {
     if (words != _data.words) {

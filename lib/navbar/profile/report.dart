@@ -26,7 +26,6 @@ class ReportABug extends StatefulWidget {
 class _ReportABugState extends State<ReportABug> {
   @override
   Widget build(BuildContext context) {
-    final user = AppStateScope.of(context).user;
     return ResponsiveBuilder(
         desktopBuilder: (context) => ReportABugMobile(),
         mobileBuilder: (context) => ReportABugMobile());
@@ -52,11 +51,11 @@ class _ViewBugReportsState extends State<ViewBugReports> {
       _responseNotifier.value = _responseNotifier.value
           .copyWith(state: RequestState.active, message: 'Loading', data: null);
       final reports = await ReportService.getReports();
-      _responseNotifier.value = _responseNotifier.value.copyWith(
-          state: RequestState.done, message: 'Success', data: reports);
-    } catch (e) {
       _responseNotifier.value = _responseNotifier.value
-          .copyWith(state: RequestState.error, message: e.toString());
+          .copyWith(state: RequestState.done, message: 'Success', data: reports);
+    } catch (e) {
+      _responseNotifier.value =
+          _responseNotifier.value.copyWith(state: RequestState.error, message: e.toString());
     }
   }
 
@@ -66,8 +65,7 @@ class _ViewBugReportsState extends State<ViewBugReports> {
     getReports();
   }
 
-  final ValueNotifier<Response> _responseNotifier =
-      ValueNotifier(Response.init());
+  final ValueNotifier<Response> _responseNotifier = ValueNotifier(Response.init());
 
   @override
   Widget build(BuildContext context) {
@@ -87,9 +85,7 @@ class _ViewBugReportsState extends State<ViewBugReports> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton(
-                        onPressed: () {
-                          getReports();
-                        },
+                        onPressed: getReports,
                         child: const Text('Try Again'),
                       ),
                       Text(request.message),
@@ -112,22 +108,17 @@ class _ViewBugReportsState extends State<ViewBugReports> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               ExpansionTile(
-                                subtitle: Text(reports[index]
-                                        .created_at
-                                        .standardDate() +
-                                    ' ' +
-                                    reports[index].created_at.standardTime()),
+                                subtitle: Text(
+                                    '${reports[index].created_at.standardDate()} ${reports[index].created_at.standardTime()}'),
                                 title: Text(reports[index].name),
-                                expandedCrossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                expandedCrossAxisAlignment: CrossAxisAlignment.start,
                                 expandedAlignment: Alignment.centerLeft,
                                 children: [
                                   Padding(
                                     padding: 16.0.allPadding,
                                     child: Text(reports[index].feedback,
-                                        style: const TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.black87)),
+                                        style:
+                                            const TextStyle(fontSize: 16, color: Colors.black87)),
                                   ),
                                 ],
                               ),
@@ -186,20 +177,17 @@ class _ReportABugMobileState extends State<ReportABugMobile> {
                       height: 48,
                       onTap: () async {
                         removeFocus(context);
-                        _responseNotifier.value = _responseNotifier.value
-                            .copyWith(state: RequestState.active);
-                        String description = _feedBackcontroller.text.trim();
+                        _responseNotifier.value =
+                            _responseNotifier.value.copyWith(state: RequestState.active);
+                        final String description = _feedBackcontroller.text.trim();
                         if (description.isEmpty) {
-                          showMessage(context,
-                              'You must enter a description of the bug');
-                          _responseNotifier.value = _responseNotifier.value
-                              .copyWith(state: RequestState.done);
+                          showMessage(context, 'You must enter a description of the bug');
+                          _responseNotifier.value =
+                              _responseNotifier.value.copyWith(state: RequestState.done);
                           return;
                         }
                         _responseNotifier.value = _responseNotifier.value
-                            .copyWith(
-                                state: RequestState.active,
-                                message: 'Sending report');
+                            .copyWith(state: RequestState.active, message: 'Sending report');
                         try {
                           final report = ReportModel(
                               feedback: description,
@@ -209,36 +197,26 @@ class _ReportABugMobileState extends State<ReportABugMobile> {
                               name: user.name);
                           final resp = await ReportService.addReport(report);
                           if (resp.status == 201) {
-                            _responseNotifier.value = _responseNotifier.value
-                                .copyWith(
-                                    state: RequestState.done,
-                                    message: 'Report sent successfully');
-                            _responseNotifier.value = _responseNotifier.value
-                                .copyWith(state: RequestState.done);
-                            showMessage(
-                                context, 'Thanks for reporting the bug');
+                            _responseNotifier.value = _responseNotifier.value.copyWith(
+                                state: RequestState.done, message: 'Report sent successfully');
+                            _responseNotifier.value =
+                                _responseNotifier.value.copyWith(state: RequestState.done);
+                            showMessage(context, 'Thanks for reporting the bug');
                             _feedBackcontroller.clear();
                             await Future.delayed(const Duration(seconds: 2));
                             Navigator.pop(context);
                           } else {
-                            _responseNotifier.value = _responseNotifier.value
-                                .copyWith(
-                                    state: RequestState.done,
-                                    message: 'Error sending report');
-                            showMessage(
-                                context, 'Error sending report! Try again');
+                            _responseNotifier.value = _responseNotifier.value.copyWith(
+                                state: RequestState.done, message: 'Error sending report');
+                            showMessage(context, 'Error sending report! Try again');
                           }
                         } catch (e) {
                           _responseNotifier.value = _responseNotifier.value
-                              .copyWith(
-                                  state: RequestState.done,
-                                  message: 'Error sending report');
-                          showMessage(
-                              context, 'Something went wrong, try agcain');
+                              .copyWith(state: RequestState.done, message: 'Error sending report');
+                          showMessage(context, 'Something went wrong, try agcain');
                         }
                       },
-                      isLoading:
-                          _responseNotifier.value.state == RequestState.active,
+                      isLoading: _responseNotifier.value.state == RequestState.active,
                       foregroundColor: Colors.white,
                       backgroundColor: VocabTheme.primaryColor,
                       label: 'Submit'),

@@ -28,10 +28,10 @@ class VocabTheme {
 
   static Color color1 = Color(0xff1D976C);
   static Color color2 = Color(0xff93F9B9);
-  static LinearGradient primaryGradient = LinearGradient(
-      colors: [color1.withOpacity(0.1), color2.withOpacity(0.2)]);
-  static LinearGradient secondaryGradient = LinearGradient(
-      colors: [primaryBlue.withOpacity(0.1), primaryColor.withOpacity(0.2)]);
+  static LinearGradient primaryGradient =
+      LinearGradient(colors: [color1.withOpacity(0.1), color2.withOpacity(0.2)]);
+  static LinearGradient secondaryGradient =
+      LinearGradient(colors: [primaryBlue.withOpacity(0.1), primaryColor.withOpacity(0.2)]);
   static TextStyle listSubtitleStyle = TextStyle(fontSize: 12);
 
   static const _lightFillColor = Colors.black;
@@ -51,8 +51,7 @@ class VocabTheme {
   static final Color _lightFocusColor = Colors.black.withOpacity(0.12);
   static final Color _darkFocusColor = Colors.white.withOpacity(0.12);
 
-  static ThemeData lightThemeData =
-      _themeData(lightColorScheme, _lightFocusColor);
+  static ThemeData lightThemeData = _themeData(lightColorScheme, _lightFocusColor);
   static ThemeData darkThemeData = _themeData(darkColorScheme, _darkFocusColor);
 
   static BoxShadow primaryShadow = BoxShadow(
@@ -67,10 +66,7 @@ class VocabTheme {
     offset: Offset(0, 5),
   );
   static BoxShadow notificationCardShadow = BoxShadow(
-      color: Colors.black.withOpacity(0.1),
-      blurRadius: 4.0,
-      spreadRadius: 0,
-      offset: Offset(0, 4));
+      color: Colors.black.withOpacity(0.1), blurRadius: 4.0, spreadRadius: 0, offset: Offset(0, 4));
 
   static ThemeData _themeData(ColorScheme colorScheme, Color focusColor) {
     return ThemeData(
@@ -81,7 +77,7 @@ class VocabTheme {
       primaryColor: const Color(0xFF030303),
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.background,
-        titleTextStyle: googleFontsTextTheme.headline4,
+        titleTextStyle: googleFontsTextTheme.headlineMedium,
         elevation: 2.2,
         iconTheme: IconThemeData(color: primaryColor),
       ),
@@ -90,13 +86,12 @@ class VocabTheme {
           unselectedIconTheme: IconThemeData(
             color: Colors.black87,
           ),
-          unselectedLabelTextStyle: googleFontsTextTheme.headline6,
+          unselectedLabelTextStyle: googleFontsTextTheme.titleLarge,
           indicatorColor: colorScheme.primary),
       iconTheme: IconThemeData(color: colorScheme.primary),
       canvasColor: colorScheme.background,
       scaffoldBackgroundColor: colorScheme.background,
       highlightColor: Colors.transparent,
-      bottomAppBarColor: colorScheme.primary,
       focusColor: focusColor,
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
@@ -104,9 +99,9 @@ class VocabTheme {
           _lightFillColor.withOpacity(0.80),
           _darkFillColor,
         ),
-        contentTextStyle:
-            googleFontsTextTheme.subtitle1!.apply(color: _darkFillColor),
+        contentTextStyle: googleFontsTextTheme.titleMedium!.apply(color: _darkFillColor),
       ),
+      bottomAppBarTheme: BottomAppBarTheme(color: colorScheme.primary),
     );
   }
 
@@ -142,36 +137,22 @@ class VocabTheme {
     onSurface: _darkFillColor,
   );
 
-  static TextTheme googleFontsTextTheme =
-      GoogleFonts.quicksandTextTheme(TextTheme(
-    headline1: GoogleFonts.quicksand(
-        fontSize: 72.0,
-        color: isDark ? Colors.white : Colors.black,
-        fontWeight: FontWeight.w500),
-    headline2: GoogleFonts.quicksand(
-        fontSize: 48.0,
-        color: isDark ? Colors.white : Colors.black,
-        fontWeight: FontWeight.w500),
-    headline3: GoogleFonts.quicksand(
-        fontSize: 36.0,
-        color: isDark ? Colors.white : Colors.black,
-        fontWeight: FontWeight.w500),
-    headline4: GoogleFonts.quicksand(
-        fontSize: 22,
-        color: isDark ? Colors.white : Colors.black,
-        fontWeight: FontWeight.w400),
-    headline5: GoogleFonts.quicksand(
-        fontSize: 16.0, color: isDark ? Colors.white : Colors.black),
-    headline6: GoogleFonts.quicksand(
-        fontSize: 12.0,
-        color: isDark ? Colors.white : Colors.black,
-        fontWeight: FontWeight.w300),
-    caption: GoogleFonts.quicksand(color: Colors.grey, fontSize: 12),
-    subtitle1: GoogleFonts.quicksand(
-        fontSize: 20,
-        color: isDark ? Colors.white : Colors.black,
-        fontWeight: FontWeight.w300),
-    subtitle2: GoogleFonts.quicksand(
-        fontSize: 16, color: lightblue, fontWeight: FontWeight.w300),
+  static TextTheme googleFontsTextTheme = GoogleFonts.quicksandTextTheme(TextTheme(
+    displayLarge: GoogleFonts.quicksand(
+        fontSize: 72.0, color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w500),
+    displayMedium: GoogleFonts.quicksand(
+        fontSize: 48.0, color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w500),
+    displaySmall: GoogleFonts.quicksand(
+        fontSize: 36.0, color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w500),
+    headlineMedium: GoogleFonts.quicksand(
+        fontSize: 22, color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w400),
+    headlineSmall:
+        GoogleFonts.quicksand(fontSize: 16.0, color: isDark ? Colors.white : Colors.black),
+    titleLarge: GoogleFonts.quicksand(
+        fontSize: 12.0, color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w300),
+    bodySmall: GoogleFonts.quicksand(color: Colors.grey, fontSize: 12),
+    titleMedium: GoogleFonts.quicksand(
+        fontSize: 20, color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w300),
+    titleSmall: GoogleFonts.quicksand(fontSize: 16, color: lightblue, fontWeight: FontWeight.w300),
   ));
 }

@@ -46,7 +46,7 @@ class _NotificationsState extends State<Notifications> {
   Future<void> updateGlobalDatabase(EditHistory edit, EditState state) async {
     showCircularIndicator(context);
     bool isSuccess = false;
-    Word word = Word(
+    final Word word = Word(
       edit.word_id,
       edit.word,
       edit.meaning,
@@ -65,8 +65,7 @@ class _NotificationsState extends State<Notifications> {
         return;
       }
     } else if (edit.edit_type == EditType.edit) {
-      final resp =
-          await VocabStoreService.updateWord(id: edit.word_id, word: word);
+      final resp = await VocabStoreService.updateWord(id: edit.word_id, word: word);
       stopCircularIndicator(context);
       if (resp.status == 200) {
         showMessage(context, 'Word updated successfully');
@@ -98,8 +97,7 @@ class _NotificationsState extends State<Notifications> {
 
   Future<void> updateRequest(EditHistory edit, EditState state) async {
     showCircularIndicator(context);
-    final resp =
-        await EditHistoryService.updateRequest(edit.edit_id!, state: state);
+    final resp = await EditHistoryService.updateRequest(edit.edit_id!, state: state);
     if (resp.didSucced) {
       getNotifications();
     } else {
@@ -122,8 +120,7 @@ class _NotificationsState extends State<Notifications> {
     super.dispose();
   }
 
-  final GlobalKey<ScaffoldState> notificationsKey =
-      new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> notificationsKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     // final colorScheme = Theme.of(context).colorScheme;
@@ -138,8 +135,7 @@ class _NotificationsState extends State<Notifications> {
         ),
         body: ValueListenableBuilder<List<NotificationModel>?>(
             valueListenable: historyNotifier,
-            builder: (BuildContext context, List<NotificationModel>? value,
-                Widget? child) {
+            builder: (BuildContext context, List<NotificationModel>? value, Widget? child) {
               if (value == null || user == null) {
                 return LoadingWidget();
               }
@@ -150,8 +146,7 @@ class _NotificationsState extends State<Notifications> {
               }
               if (user!.isAdmin) {
                 return ListView.builder(
-                    padding:
-                        EdgeInsets.only(bottom: kBottomNavigationBarHeight),
+                    padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight),
                     itemBuilder: (context, index) {
                       final edit = value[index].edit;
                       final editor = value[index].user;
@@ -169,8 +164,7 @@ class _NotificationsState extends State<Notifications> {
                               user: editor,
                               onAction: (approved) async {
                                 if (approved) {
-                                  updateGlobalDatabase(
-                                      edit, EditState.approved);
+                                  updateGlobalDatabase(edit, EditState.approved);
                                 } else {
                                   updateRequest(edit, EditState.rejected);
                                 }
@@ -179,7 +173,7 @@ class _NotificationsState extends State<Notifications> {
                                 Navigate.push(
                                     context,
                                     EditDetail(
-                                      edit_history: edit,
+                                      editHistory: edit,
                                     ));
                               },
                             );
@@ -198,7 +192,7 @@ class _NotificationsState extends State<Notifications> {
                         Navigate.push(
                             context,
                             EditDetail(
-                              edit_history: edit,
+                              editHistory: edit,
                             ));
                       },
                       onCancel: () async {
@@ -218,11 +212,7 @@ class UserNotificationTile extends StatelessWidget {
   final Function? onTap;
 
   const UserNotificationTile(
-      {Key? key,
-      required this.edit,
-      required this.user,
-      this.onTap,
-      this.onCancel})
+      {Key? key, required this.edit, required this.user, this.onTap, this.onCancel})
       : super(key: key);
 
   @override
@@ -275,10 +265,8 @@ class UserNotificationTile extends StatelessWidget {
                           Text(edit.created_at!.formatDate(),
                               style: Theme.of(context)
                                   .textTheme
-                                  .subtitle2!
-                                  .copyWith(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600)),
+                                  .titleSmall!
+                                  .copyWith(fontSize: 12, fontWeight: FontWeight.w600)),
                           edit.state == EditState.pending
                               ? VHButton(
                                   onTap: () {
@@ -312,11 +300,7 @@ class AdminNotificationTile extends StatelessWidget {
   final EditHistory edit;
   final UserModel user;
   const AdminNotificationTile(
-      {super.key,
-      required this.edit,
-      required this.onAction,
-      required this.user,
-      this.onTap});
+      {super.key, required this.edit, required this.onAction, required this.user, this.onTap});
 
   Widget circle({Color color = Colors.red, double size = 16}) {
     return Container(
@@ -378,9 +362,7 @@ class AdminNotificationTile extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    circle(
-                                        color: stateToIconColor(edit.state!),
-                                        size: 12),
+                                    circle(color: stateToIconColor(edit.state!), size: 12),
                                     6.0.hSpacer(),
                                     Text(
                                       edit.state!.toName().capitalize()!,
@@ -392,10 +374,8 @@ class AdminNotificationTile extends StatelessWidget {
                               Text(edit.created_at!.formatDate(),
                                   style: Theme.of(context)
                                       .textTheme
-                                      .subtitle2!
-                                      .copyWith(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600)),
+                                      .titleSmall!
+                                      .copyWith(fontSize: 12, fontWeight: FontWeight.w600)),
                             ],
                           ),
                           if (edit.state == EditState.pending)
@@ -404,8 +384,7 @@ class AdminNotificationTile extends StatelessWidget {
                                 VHIcon(Icons.close,
                                     size: 36,
                                     backgroundColor: Colors.white,
-                                    border:
-                                        Border.all(color: Colors.red, width: 2),
+                                    border: Border.all(color: Colors.red, width: 2),
                                     iconColor: Colors.red, onTap: () {
                                   onAction(false);
                                 }),
@@ -413,8 +392,7 @@ class AdminNotificationTile extends StatelessWidget {
                                 VHIcon(Icons.check,
                                     size: 36,
                                     backgroundColor: Colors.white,
-                                    border: Border.all(
-                                        color: Colors.green, width: 2),
+                                    border: Border.all(color: Colors.green, width: 2),
                                     iconColor: Colors.green, onTap: () {
                                   onAction(true);
                                 }),

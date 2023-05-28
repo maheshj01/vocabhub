@@ -61,7 +61,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
     final resp = await EditHistoryService.getUserContributions(user!);
     if (resp.didSucced && resp.data != null) {
       final editHistory = resp.data as List<NotificationModel>;
-      editHistory.forEach((history) {
+      for (var history in editHistory) {
         if (history.edit.state == EditState.approved) {
           if (history.edit.edit_type == EditType.add) {
             stats[0]++;
@@ -71,7 +71,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
         } else if (history.edit.state == EditState.pending) {
           stats[2]++;
         }
-      });
+      }
     }
     _statsNotifier.value = stats;
   }
@@ -191,8 +191,8 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                 ),
                                 Padding(
                                     padding: 8.0.horizontalPadding,
-                                    child: Text('@${user.username} ' +
-                                        (!user.isAdmin ? ' (User)' : '(Admin)'))),
+                                    child: Text(
+                                        '@${user.username} ${!user.isAdmin ? ' (User)' : '(Admin)'}')),
                                 Text(
                                   '${user.name.capitalize()}',
                                   textAlign: TextAlign.center,
