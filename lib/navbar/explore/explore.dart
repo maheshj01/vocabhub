@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/services/appstate.dart';
@@ -123,27 +125,63 @@ class ExploreWordsDesktop extends StatefulWidget {
 }
 
 class _ExploreWordsDesktopState extends State<ExploreWordsDesktop> {
+  final focusNode = FocusNode();
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     final words = AppStateScope.of(context).words;
     if (words == null || words.isEmpty) return SizedBox.shrink();
-    return Material(
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          PageView.builder(
-              itemCount: words.length,
-              controller: pageController,
-              scrollBehavior: MaterialScrollBehavior(),
-              physics: ClampingScrollPhysics(),
-              onPageChanged: (x) {
-                hideMessage(context);
-              },
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                return WordDetail(word: words[index]);
-              }),
-        ],
+    return KeyboardListener(
+      focusNode: focusNode,
+      autofocus: true,
+      onKeyEvent: (event) {
+        if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+          pageController.previousPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+        } else if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+          pageController.nextPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+        }
+      },
+      child: Material(
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 40),
+              child: PageView.builder(
+                  itemCount: words.length,
+                  controller: pageController,
+                  scrollBehavior: MaterialScrollBehavior(),
+                  physics: ClampingScrollPhysics(),
+                  onPageChanged: (x) {
+                    hideMessage(context);
+                  },
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    return WordDetail(word: words[index]);
+                  }),
+            ),
+            Positioned(
+              top: size.height * 0.5,
+              left: kNotchedNavbarHeight,
+              child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.black,
+                    size: 42,
+                  ),
+                  onPressed: () => pageController.previousPage(
+                      duration: Duration(milliseconds: 500), curve: Curves.easeIn)),
+            ),
+            Positioned(
+              top: size.height * 0.5,
+              right: kNotchedNavbarHeight,
+              child: IconButton(
+                  icon: Icon(Icons.arrow_forward_ios, color: Colors.black, size: 42),
+                  onPressed: () => pageController.nextPage(
+                      duration: Duration(milliseconds: 500), curve: Curves.easeIn)),
+            ),
+          ],
+        ),
       ),
     );
   }

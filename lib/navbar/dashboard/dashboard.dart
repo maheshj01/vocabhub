@@ -282,6 +282,13 @@ class DashboardDesktop extends StatelessWidget {
             child: Column(
               children: [
                 32.0.vSpacer(),
+                AppBar(
+                  elevation: 0,
+                  centerTitle: true,
+                  title: Text(
+                    'Word of The Day',
+                  ),
+                ),
                 InkWell(
                   onTap: () {
                     Navigate.push(
@@ -294,13 +301,14 @@ class DashboardDesktop extends StatelessWidget {
                     );
                   },
                   child: WoDCard(
-                    height: size.width * 0.5,
+                    height: size.width * 0.2,
                     width: size.width * 0.5,
                     word: word,
                     color: Colors.green.shade300,
                     title: '${word.word}'.toUpperCase(),
                   ),
                 )
+    
               ],
             ),
           ),

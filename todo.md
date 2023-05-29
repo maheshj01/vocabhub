@@ -21,6 +21,7 @@ PRE(=E;Rel)
 - [X] Add a feedback system
 - [X] Add a new word should be intelligent to recognize duplicates dynamically.
 - [X] Add a about section for the app
+- [ ] Notification detail for desktop and after approval do not popup.
 - [ ] Create onBoarding screens for app tour.
 - [ ] Add a way to add a new service
 - [ ] Difference is not shown correctly
