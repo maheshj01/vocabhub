@@ -25,11 +25,12 @@ class _UserProfileState extends State<UserProfile> {
   @override
   void initState() {
     super.initState();
-    getUser();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getUser();
+    });
   }
 
   Future<void> getUser() async {
-    await Duration.zero;
     final userState = AppStateScope.of(context).user;
     if (userState!.isLoggedIn) {
       final user = await UserService.findByEmail(email: userState.email);
@@ -56,9 +57,9 @@ class UserProfileMobile extends StatefulWidget {
 
 class _UserProfileMobileState extends State<UserProfileMobile> {
   Future<void> getEditStats() async {
-    await Duration.zero;
     final user = AppStateScope.of(context).user;
     final resp = await EditHistoryService.getUserContributions(user!);
+    stats = [0, 0, 0];
     if (resp.didSucced && resp.data != null) {
       final editHistory = resp.data as List<NotificationModel>;
       for (var history in editHistory) {
@@ -81,7 +82,9 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
   @override
   void initState() {
     _statsNotifier = ValueNotifier<List<int>>(stats);
-    getEditStats();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getEditStats();
+    });
     super.initState();
   }
 
