@@ -132,6 +132,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
         bannerHeight = kNotchedNavbarHeight;
       } else {
         bannerHeight = 0;
+        showBanner = false;
       }
     }
     return ValueListenableBuilder<int>(

@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/services.dart';
@@ -13,8 +14,7 @@ class BookmarksPage extends StatefulWidget {
   final bool isBookMark;
   final UserModel user;
 
-  const BookmarksPage({Key? key, required this.isBookMark, required this.user})
-      : super(key: key);
+  const BookmarksPage({Key? key, required this.isBookMark, required this.user}) : super(key: key);
 
   @override
   State<BookmarksPage> createState() => _BookmarksPageState();
@@ -38,8 +38,7 @@ class _BookmarksMobile extends StatefulWidget {
   final bool isBookMark;
   final UserModel user;
 
-  const _BookmarksMobile({Key? key, this.isBookMark = true, required this.user})
-      : super(key: key);
+  const _BookmarksMobile({Key? key, this.isBookMark = true, required this.user}) : super(key: key);
 
   @override
   State<_BookmarksMobile> createState() => _BookmarksMobileState();
@@ -47,8 +46,8 @@ class _BookmarksMobile extends StatefulWidget {
 
 class _BookmarksMobileState extends State<_BookmarksMobile> {
   Future<void> getBookmarks() async {
-    final words = await VocabStoreService.getBookmarks(widget.user.email,
-        isBookmark: widget.isBookMark);
+    final words =
+        await VocabStoreService.getBookmarks(widget.user.email, isBookmark: widget.isBookMark);
     _bookmarksNotifier.value = words;
   }
 
@@ -58,12 +57,11 @@ class _BookmarksMobileState extends State<_BookmarksMobile> {
     getBookmarks();
   }
 
-  ValueNotifier<List<Word>?> _bookmarksNotifier =
-      ValueNotifier<List<Word>?>(null);
+  ValueNotifier<List<Word>?> _bookmarksNotifier = ValueNotifier<List<Word>?>(null);
 
   @override
   Widget build(BuildContext context) {
-    String title = widget.isBookMark ? 'Bookmarks' : 'Mastered words';
+    final String title = widget.isBookMark ? 'Bookmarks' : 'Mastered words';
 
     Widget _emptyWidget() {
       return Center(
@@ -75,35 +73,27 @@ class _BookmarksMobileState extends State<_BookmarksMobile> {
         valueListenable: _bookmarksNotifier,
         builder: (_, List<Word>? value, Widget? child) {
           if (value == null) {
-            return Scaffold(
-                appBar: AppBar(title: Text('$title')), body: LoadingWidget());
+            return Scaffold(appBar: AppBar(title: Text('$title')), body: LoadingWidget());
           }
           return Scaffold(
               appBar: AppBar(
-                title: value.isEmpty
-                    ? Text('$title')
-                    : Text('${value.length} $title'),
+                title: value.isEmpty ? Text('$title') : Text('${value.length} $title'),
               ),
               body: value.isEmpty
                   ? _emptyWidget()
                   : ListView.builder(
                       itemCount: value.length,
-                      padding: EdgeInsets.only(
-                          top: 16, bottom: kBottomNavigationBarHeight),
+                      padding: EdgeInsets.only(top: 16, bottom: kNotchedNavbarHeight * 1.5),
                       itemBuilder: (context, index) {
                         return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
                           child: OpenContainer(
-                              openBuilder: (BuildContext context,
-                                  VoidCallback openContainer) {
+                              openBuilder: (BuildContext context, VoidCallback openContainer) {
                                 return WordDetail(word: value[index]);
                               },
                               tappable: true,
-                              transitionType:
-                                  ContainerTransitionType.fadeThrough,
-                              closedBuilder: (BuildContext context,
-                                  VoidCallback openContainer) {
+                              transitionType: ContainerTransitionType.fadeThrough,
+                              closedBuilder: (BuildContext context, VoidCallback openContainer) {
                                 return ListTile(
                                   minVerticalPadding: 24,
                                   title: Text(value[index].word),
@@ -113,8 +103,7 @@ class _BookmarksMobileState extends State<_BookmarksMobile> {
                                       color: VocabTheme.primaryColor,
                                     ),
                                     onPressed: () async {
-                                      await VocabStoreService.removeBookmark(
-                                          value[index].id,
+                                      await VocabStoreService.removeBookmark(value[index].id,
                                           isBookmark: widget.isBookMark);
                                       getBookmarks();
                                       showMessage(context, '$title removed');
