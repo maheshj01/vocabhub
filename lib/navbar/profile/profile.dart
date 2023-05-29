@@ -43,7 +43,7 @@ class _UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
-        desktopBuilder: (context) => UserProfileMobile(),
+        desktopBuilder: (context) => UserProfileDesktop(),
         mobileBuilder: (context) => UserProfileMobile());
   }
 }
@@ -100,6 +100,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
   @override
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
+    final size = MediaQuery.of(context).size;
     return Scaffold(
         body: ValueListenableBuilder<List<int>>(
             valueListenable: _statsNotifier,
@@ -141,21 +142,23 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                 //           ? const Icon(Icons.light_mode)
                                 //           : const Icon(Icons.dark_mode),
                                 //     )),
-                                Container(
-                                  alignment: Alignment.topRight,
-                                  child: Padding(
-                                    padding: 16.0.horizontalPadding,
-                                    child: VHIcon(
-                                      Icons.settings,
-                                      size: 38,
-                                      onTap: () {
-                                        Navigator.of(context, rootNavigator: true).push(
-                                            PageRoutes.sharedAxis(const SettingsPageMobile(),
-                                                SharedAxisTransitionType.horizontal));
-                                      },
-                                    ),
-                                  ),
-                                ),
+                                size.width > 600
+                                    ? SizedBox.shrink()
+                                    : Container(
+                                        alignment: Alignment.topRight,
+                                        child: Padding(
+                                          padding: 16.0.horizontalPadding,
+                                          child: VHIcon(
+                                            Icons.settings,
+                                            size: 38,
+                                            onTap: () {
+                                              Navigator.of(context, rootNavigator: true).push(
+                                                  PageRoutes.sharedAxis(const SettingsPageMobile(),
+                                                      SharedAxisTransitionType.horizontal));
+                                            },
+                                          ),
+                                        ),
+                                      ),
 
                                 Stack(
                                   children: [
@@ -285,16 +288,14 @@ class UserProfileDesktop extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile Desktop'),
+        title: Text('Profile'),
       ),
-      body: ListView.builder(
-          padding: EdgeInsets.zero,
-          itemCount: 20,
-          itemBuilder: (BuildContext context, int x) {
-            return ListTile(
-              title: Text('item $x'),
-            );
-          }),
+      body: Row(
+        children: [
+          Expanded(child: UserProfileMobile()),
+          Expanded(child: SettingsPageMobile()),
+        ],
+      ),
     );
   }
 }

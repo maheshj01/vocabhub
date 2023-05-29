@@ -200,6 +200,7 @@ class _WordDetailDesktopState extends State<WordDetailDesktop> with SingleTicker
       // _animationController.reset();
       // }
     });
+    _animationController.forward();
   }
 
   int length = 0;
@@ -332,7 +333,7 @@ class _WordDetailDesktopState extends State<WordDetailDesktop> with SingleTicker
                           : widget.word!.mnemonics,
                       word: widget.word!.word,
                     )),
-                200.0.vSpacer(),
+                100.0.vSpacer(),
               ],
             ),
           );
