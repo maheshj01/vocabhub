@@ -70,8 +70,11 @@ class VocabTheme {
 
   static ThemeData _themeData(ColorScheme colorScheme, Color focusColor) {
     return ThemeData(
-      useMaterial3: false,
-      colorScheme: colorScheme,
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: primaryColor,
+        brightness: colorScheme.brightness,
+      ),
       textTheme: googleFontsTextTheme,
       // Matches manifest.json colors and background color.
       primaryColor: const Color(0xFF030303),
