@@ -93,7 +93,7 @@ class VocabTheme {
           indicatorColor: colorScheme.primary),
       iconTheme: IconThemeData(color: colorScheme.primary),
       canvasColor: colorScheme.background,
-      scaffoldBackgroundColor: colorScheme.background,
+      scaffoldBackgroundColor: background,
       highlightColor: Colors.transparent,
       focusColor: focusColor,
       snackBarTheme: SnackBarThemeData(

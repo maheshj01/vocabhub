@@ -13,7 +13,6 @@ import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
-import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 
@@ -141,7 +140,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
           bannerHeight = kNotchedNavbarHeight;
           return Scaffold(
             resizeToAvoidBottomInset: false,
-            floatingActionButton: showBanner || currentIndex > 1
+            floatingActionButton: showBanner || currentIndex > 1 || !user.isLoggedIn
                 ? null
                 : Padding(
                     padding: (bannerHeight * 0.9).bottomPadding,
@@ -178,7 +177,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                   errorBuilder: (context) {
                     return const Center(child: Text('Error 404'));
                   },
-                  type: NavbarType.notched,
+                  type: NavbarType.material3,
                   onBackButtonPressed: (isExiting) {
                     if (isExiting) {
                       newTime = DateTime.now();
@@ -213,13 +212,14 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                     }
                     _selectedIndexNotifier.value = x;
                   },
-                  decoration: NotchedDecoration(
-                    unselectedLabelTextStyle: TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.w700, color: VocabTheme.primaryColor),
-                    backgroundColor: VocabTheme.surfaceGreen,
-                    // isExtended: SizeUtils.isExtendedDesktop,
-                    showUnselectedLabels: true,
-                    selectedIconTheme: IconThemeData(size: 24, color: VocabTheme.primaryColor),
+                  decoration: M3NavbarDecoration(
+                      // isExtended: SizeUtils.isDesktop,
+                      // unselectedLabelTextStyle: TextStyle(
+                      //     fontSize: 12, fontWeight: FontWeight.w700, color: VocabTheme.primaryColor),
+                      // backgroundColor: VocabTheme.surfaceGreen,
+                      // // isExtended: SizeUtils.isExtendedDesktop,
+                      // showUnselectedLabels: true,
+                      // selectedIconTheme: IconThemeData(size: 24, color: VocabTheme.primaryColor),
                     // selectedLabelTextStyle: TextStyle(fontSize: 12),
                     // navbarType: BottomNavigationBarType.fixed
                   ),

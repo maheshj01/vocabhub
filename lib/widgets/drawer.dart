@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:navbar_router/navbar_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/models.dart';
@@ -8,7 +9,6 @@ import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/extensions.dart';
-import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -106,7 +106,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
                     child: GestureDetector(
                         onTap: () {
                           if (!userProvider.isLoggedIn) {
-                            Navigate().popView(context);
+                            Navigate.popView(context);
                             widget.onMenuTap?.call('Sign In');
                           }
                         },
@@ -135,7 +135,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             hLine(),
             ListTile(
               onTap: () {
-                Navigate().popView(context);
+                Navigate.popView(context);
                 Navigate.push(context, AddWordForm(), transitionType: TransitionType.btt);
               },
               trailing: trailingIcon(
@@ -165,7 +165,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
                 ? ListTile(
                     subtitle: subTitle('Downlod the data as json'),
                     onTap: () async {
-                      await Navigate().popView(context);
+                      await Navigate.popView(context);
                       downloadFile();
                     },
                     title: title(
@@ -189,7 +189,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
             userProvider.isLoggedIn
                 ? ListTile(
                     onTap: () {
-                      Navigate().popView(context);
+                      Navigate.popView(context);
                       widget.onMenuTap!('Sign Out');
                     },
                     trailing: trailingIcon(Icons.exit_to_app),

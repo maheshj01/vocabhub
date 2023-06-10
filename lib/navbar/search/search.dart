@@ -2,12 +2,11 @@ import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/addword.dart';
-import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/responsive.dart';
@@ -15,6 +14,8 @@ import 'package:vocabhub/widgets/search.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/word_list_tile.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
+
+TextEditingController searchController = TextEditingController();
 
 class Search extends StatefulWidget {
   static String route = '/';

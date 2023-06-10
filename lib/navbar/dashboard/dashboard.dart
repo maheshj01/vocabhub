@@ -11,7 +11,6 @@ import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
-import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -120,7 +119,7 @@ class DashboardMobile extends StatelessWidget {
               user!.isLoggedIn
                   ? IconButton(
                       onPressed: () {
-                        navigate(context, Notifications.route, isRootNavigator: true);
+                        Navigate.pushNamed(context, Notifications.route, isRootNavigator: true);
                       },
                       icon: Icon(
                         Icons.notifications_on,
@@ -308,7 +307,6 @@ class DashboardDesktop extends StatelessWidget {
                     title: '${word.word}'.toUpperCase(),
                   ),
                 )
-    
               ],
             ),
           ),

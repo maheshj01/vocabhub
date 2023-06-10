@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:navbar_router/navbar_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
@@ -11,7 +12,6 @@ import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/edit_history.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
-import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
@@ -71,7 +71,7 @@ class _AddWordFormState extends State<AddWordForm> {
         showMessage(context, 'Congrats! Your new word ${editedWord.word} is under review!',
             duration: Duration(seconds: 3), onClosed: () {
           stopCircularIndicator(context);
-          Navigate().popView(context);
+          Navigate.popView(context);
         });
       } else {
         _requestNotifier.value =
@@ -176,7 +176,7 @@ class _AddWordFormState extends State<AddWordForm> {
                 "Your edit is under review, We will notifiy you once there is an update",
                 onClosed: () {
               stopCircularIndicator(context);
-              Navigate().popView(context);
+              Navigate.popView(context);
             });
           }
         } else {
@@ -198,7 +198,7 @@ class _AddWordFormState extends State<AddWordForm> {
       if (response.status == 200) {
         firebaseAnalytics.logWordDelete(widget.word!, userProvider!.email);
         showMessage(context, "The word \"${widget.word!.word}\" has been deleted.",
-            onClosed: () => Navigate().popView(context));
+            onClosed: () => Navigate.popView(context));
       }
       stopCircularIndicator(context);
     }
@@ -215,7 +215,7 @@ class _AddWordFormState extends State<AddWordForm> {
               deleteWord();
             },
             onCancel: () {
-              Navigate().popView(context);
+              Navigate.popView(context);
             }));
   }
 
