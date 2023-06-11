@@ -8,6 +8,7 @@ import 'package:vocabhub/navbar/profile/report.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
+import 'package:vocabhub/themes/theme_selector.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -74,6 +75,22 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
         applicationLegalese: applicationLegalese,
       ),
     ));
+  }
+
+  Future<void> _showBottomSheet() async {
+    return showModalBottomSheet(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(13),
+          topRight: Radius.circular(13),
+        )),
+        // backgroundColor: Colors.white,
+        context: context,
+        builder: (context) {
+          return SizedBox.expand(
+            child: RatingsPage(),
+          );
+        });
   }
 
   @override
@@ -158,6 +175,10 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
                 mode: LaunchMode.externalApplication);
           }),
           hLine(),
+          settingTile('Rate Us', onTap: () {
+            _showBottomSheet();
+          }),
+          hLine(),
           settingTile('Licenses', onTap: () {
             showLicensePage(
               context: context,
@@ -196,65 +217,57 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
   }
 }
 
-/// Creates a [ThemeSelector] widget.
-/// The [value] and [onThemeChanged] arguments must not be null.
-/// The [value] must be one of the following colors:
-/// [Colors.red], [Colors.green], [Colors.blue], [Colors.yellow], [Colors.purple]
-class ThemeSelector extends StatefulWidget {
-  ///  The color value for the theme.
-  final Color value;
-
-  /// The callback that is called when the theme is changed.
-  final Function(Color color) onThemeChanged;
-
-  final List<Color> colors;
-
-  ThemeSelector({
-    Key? key,
-    required this.value,
-    required this.onThemeChanged,
-    this.colors = const [Colors.pink, Colors.green, Colors.blue, Colors.yellow, Colors.purple],
-  }) : super(key: key);
+class RatingsPage extends StatefulWidget {
+  const RatingsPage({super.key});
 
   @override
-  State<ThemeSelector> createState() => _ThemeSelectorState();
+  State<RatingsPage> createState() => _RatingsPageState();
 }
 
-class _ThemeSelectorState extends State<ThemeSelector> {
-  Widget circle(Color color, bool isSelected) {
-    return AnimatedContainer(
-        height: 30,
-        width: 30,
-        duration: const Duration(milliseconds: 300),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-        ),
-        child: isSelected
-            ? Icon(
-                Icons.check,
-                color: Colors.white,
-                size: 20,
-              )
-            : const SizedBox.shrink());
-  }
-
+class _RatingsPageState extends State<RatingsPage> {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        for (var color in widget.colors)
-          GestureDetector(
-            onTap: () {
-              widget.onThemeChanged(color);
-            },
-            child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: circle(color, widget.value.value == color.value)),
+    return Padding(
+      padding: 16.0.horizontalPadding,
+      child: Column(
+        children: [
+          20.0.vSpacer(),
+          Text(
+            "Rate Us",
+            style: Theme.of(context).textTheme.titleLarge,
           ),
-      ],
+          20.0.vSpacer(),
+          Text(
+            "Are you enjoying ${Constants.APP_TITLE}?",
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          8.0.vSpacer(),
+          Text(
+            'If you enjoy using ${Constants.APP_TITLE}, would you mind taking a moment to rate it? It won\'t take more than a minute. Thanks for your support!',
+            textAlign: TextAlign.justify,
+          ),
+          20.0.vSpacer(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  launchUrl(Uri.parse(Constants.PLAY_STORE_URL),
+                      mode: LaunchMode.externalApplication);
+                },
+                child: Text('Rate Us'),
+              ),
+              16.0.hSpacer(),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('No, Thanks'),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -269,9 +282,52 @@ class SettingsPageDesktop extends StatefulWidget {
 class _SettingsPageDesktopState extends State<SettingsPageDesktop> {
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Container(
-        color: Colors.red,
+    return FutureBuilder<List<LicenseEntry>>(
+        future: LicenseRegistry.licenses.toList(),
+        builder: (context, snapshot) {
+          final licenses = snapshot.data;
+          if (licenses == null) return const Center(child: CircularProgressIndicator());
+          return Material(
+            child: Container(
+                child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      final license = licenses[index];
+                      return ListTile(
+                        title: Text(license.packages.join(', ')),
+                        subtitle: Text(license.paragraphs.first.text),
+                        onTap: () {
+                          // show license page
+                          Navigate.push(
+                              context,
+                              LicenseDetail(
+                                text: license.paragraphs.map((e) => e.text).join('\n'),
+                              ));
+                        },
+                      );
+                    },
+                    itemCount: licenses.length)),
+          );
+        });
+  }
+}
+
+class LicenseDetail extends StatefulWidget {
+  final String text;
+  const LicenseDetail({super.key, required this.text});
+
+  @override
+  State<LicenseDetail> createState() => _LicenseDetailState();
+}
+
+class _LicenseDetailState extends State<LicenseDetail> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('License'),
+      ),
+      body: SingleChildScrollView(
+        child: Text(widget.text),
       ),
     );
   }
