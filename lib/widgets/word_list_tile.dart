@@ -33,12 +33,11 @@ class _WordListTileState extends State<WordListTile> {
   @override
   Widget build(BuildContext context) {
     // final userProvider = AppStateScope.of(context).user!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     Color tileColor() {
-      return VocabTheme.secondaryColor;
+      return colorScheme.secondary;
     }
-
-    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(

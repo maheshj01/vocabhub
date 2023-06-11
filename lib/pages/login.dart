@@ -88,7 +88,7 @@ class _AppSignInState extends State<AppSignIn> {
   @override
   Widget build(BuildContext context) {
     SizeUtils.size = MediaQuery.of(context).size;
-
+  final  colorScheme = Theme.of(context).colorScheme;
     Widget _heading(String text) {
       return Text(
         '$text',
@@ -101,7 +101,7 @@ class _AppSignInState extends State<AppSignIn> {
           alignment: Alignment.center,
           child: VHButton(
             width: 300,
-            backgroundColor: VocabTheme.primaryColor,
+            backgroundColor: colorScheme.secondary,
             foregroundColor: Colors.white,
             label: 'Continue as a Guest',
             onTap: () {

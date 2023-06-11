@@ -12,7 +12,6 @@ import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 
@@ -134,6 +133,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
         showBanner = false;
       }
     }
+    final colorScheme = Theme.of(context).colorScheme;
     return ValueListenableBuilder<int>(
         valueListenable: _selectedIndexNotifier,
         builder: (context, int currentIndex, Widget? child) {
@@ -155,15 +155,18 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                         transitionType: ContainerTransitionType.fadeThrough,
                         closedBuilder: (BuildContext context, VoidCallback openContainer) {
                           return FloatingActionButton.extended(
+                              backgroundColor: colorScheme.primaryContainer,
                               heroTag: "addword",
                               elevation: 3.5,
                               isExtended: true,
-                              icon: Icon(Icons.add, size: 28),
+                              icon:
+                                  Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28),
                               onPressed: null,
                               label: Text(
                                 'Add Word',
                                 style: TextStyle(
                                   fontSize: 14,
+                                  color: colorScheme.onPrimaryContainer,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ));
@@ -242,7 +245,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                             },
                             child: Text('Sign In',
                                 style: TextStyle(
-                                  color: VocabTheme.primaryColor,
+                                  color: colorScheme.primary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
                                 )),
@@ -255,7 +258,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                               },
                               icon: Icon(
                                 Icons.close,
-                                color: VocabTheme.primaryColor,
+                                color: colorScheme.primary,
                                 size: 24,
                               ))
                         ],
@@ -276,7 +279,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                             },
                             child: Text('Update',
                                 style: TextStyle(
-                                  color: VocabTheme.primaryColor,
+                                  color: colorScheme.primary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
                                 )),
@@ -297,7 +300,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                               },
                               icon: Icon(
                                 Icons.close,
-                                color: VocabTheme.primaryColor,
+                                color: colorScheme.primary,
                                 size: 24,
                               ))
                         ],

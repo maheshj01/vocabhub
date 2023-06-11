@@ -2,13 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class VocabTheme {
-  static final VocabTheme _singleton = VocabTheme._internal();
   VocabTheme._internal();
 
-  static Color primaryGrey = Colors.grey;
-  static Color primaryBlue = Colors.blueAccent;
-  static Color primaryColor = Color(0xff4c9648);
-  static Color secondaryColor = primaryColor.withOpacity(0.6);
   static Color primaryDark = Colors.black.withOpacity(0.6);
   static Color secondaryDark = Colors.black.withOpacity(0.7);
   static Color shrinePink = Color(0xffFEDBD0);
@@ -27,10 +22,6 @@ class VocabTheme {
 
   static Color color1 = Color(0xff1D976C);
   static Color color2 = Color(0xff93F9B9);
-  static LinearGradient primaryGradient =
-      LinearGradient(colors: [color1.withOpacity(0.1), color2.withOpacity(0.2)]);
-  static LinearGradient secondaryGradient =
-      LinearGradient(colors: [primaryBlue.withOpacity(0.1), primaryColor.withOpacity(0.2)]);
   static TextStyle listSubtitleStyle = TextStyle(fontSize: 12);
 
   static List<Color> colorSeeds = [
@@ -40,20 +31,6 @@ class VocabTheme {
     Colors.yellow,
     Colors.purple
   ];
-  static const Color navigationBarColor = Color(0xffF2F4F7);
-  bool _isDark = false;
-  int _themeSeedIndex = 1;
-  static bool get isDark => _singleton._isDark;
-
-  static set isDark(bool value) {
-    _singleton._isDark = value;
-  }
-
-  static int get seed => _singleton._themeSeedIndex;
-
-  static set seedIndex(int value) {
-    _singleton._themeSeedIndex = value;
-  }
 
   static BoxShadow primaryShadow = BoxShadow(
     color: Colors.black.withOpacity(0.1),
