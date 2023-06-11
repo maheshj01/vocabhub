@@ -121,7 +121,7 @@ class DashboardMobile extends StatelessWidget {
                       },
                       icon: Icon(
                         Icons.notifications_on,
-                        color: Theme.of(context).colorScheme.primaryContainer,
+                        color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
                       ))
                   : SizedBox.shrink()
             ]),

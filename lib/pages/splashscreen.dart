@@ -77,11 +77,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     return Scaffold(
       backgroundColor: colorScheme.background,
       body: Container(
-        // gradient:
-        //     LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-        //   VocabTheme.primaryColor.withOpacity(0.5),
-        //   VocabTheme.secondaryColor,
-        // ]),
+        decoration: BoxDecoration(
+          gradient:
+              LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+            colorScheme.primary,
+            colorScheme.secondary,
+          ]),
+        ),
         alignment: Alignment.center,
         child: FadeScaleTransition(
             animation: _animation,
