@@ -73,6 +73,7 @@ class _MobileViewState extends State<MobileView> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: SearchBuilder(
               ontap: () {
+                searchController.clearText();
                 Navigate.push(context, SearchView(),
                     transitionType: TransitionType.fade, isRootNavigator: true);
               },

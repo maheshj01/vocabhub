@@ -154,7 +154,9 @@ class _ReportABugMobileState extends State<ReportABugMobile> {
   @override
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: colorScheme.background,
       appBar: AppBar(
         title: const Text('Report a bug'),
       ),
@@ -216,8 +218,6 @@ class _ReportABugMobileState extends State<ReportABugMobile> {
                         }
                       },
                       isLoading: _responseNotifier.value.state == RequestState.active,
-                      foregroundColor: Colors.white,
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
                       label: 'Submit'),
                   Padding(
                     padding: 16.0.allPadding,

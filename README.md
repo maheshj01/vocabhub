@@ -10,6 +10,15 @@ What sets us apart is our commitment to collaboration and community. Our app is 
 
 Download the app now and embark on an enriching vocabulary journey. Enhance your language skills, build your confidence, and embrace the power of words. Start expanding your linguistic repertoire today.
 
+Key Features:
+
+- 800+ most common GRE words
+- Synonyms, mnemonics, and examples provided for a comprehensive understanding of each word
+- Intelligent search functionality allows you to search for a word based on its meaning or synonym.
+- Supports dark mode and offers various themes to make learning an enjoyable experience
+- Ability to suggest edits to improve the words on the platform
+- Regular updates with new words and features to keep your vocabulary journey exciting and dynamic.
+
 <a href="https://play.google.com/store/apps/details?id=com.vocabhub.app" target="_blank">
 <img src="assets/googleplay.png" height="60">
 </a>
@@ -26,24 +35,24 @@ Download the app now and embark on an enriching vocabulary journey. Enhance your
 
 ### [Try it out on the web](https://vocabhub.web.app/)
 
-
 ### Mobile
 
-Solarized dark             |  Solarized Ocean   |  Solarized Ocean
-:-------------------------:|:-------------------------:|:-------------------------:
-<img src="https://user-images.githubusercontent.com/31410839/199623337-febc03e2-0bc7-4c72-b269-4ccb0c88fd81.png" width="600">| <img src="https://user-images.githubusercontent.com/31410839/199623341-0b8d4e82-24a4-4c67-b3fc-aaa53f6feb2f.png" width="600"> | <img src="https://user-images.githubusercontent.com/31410839/199623349-e1021ef6-5f6d-473d-b584-0885d5d462e2.png" width="600">
+|                                                        Solarized dark                                                         |                                                        Solarized Ocean                                                        |                                                        Solarized Ocean                                                        |
+| :---------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://user-images.githubusercontent.com/31410839/199623337-febc03e2-0bc7-4c72-b269-4ccb0c88fd81.png" width="600"> | <img src="https://user-images.githubusercontent.com/31410839/199623341-0b8d4e82-24a4-4c67-b3fc-aaa53f6feb2f.png" width="600"> | <img src="https://user-images.githubusercontent.com/31410839/199623349-e1021ef6-5f6d-473d-b584-0885d5d462e2.png" width="600"> |
 
-Found a mistake?           |  Track your contributions
-:-------------------------:|:-------------------------:
-![preview 5](https://user-images.githubusercontent.com/31410839/199623676-846ff94b-7d00-4f2f-bcc1-19e12c60c779.png)| ![preview 4](https://user-images.githubusercontent.com/31410839/199623683-1e5841af-5310-41ab-b981-da5d8e654cd1.png)
-
+|                                                  Found a mistake?                                                   |                                              Track your contributions                                               |
+| :-----------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------: |
+| ![preview 5](https://user-images.githubusercontent.com/31410839/199623676-846ff94b-7d00-4f2f-bcc1-19e12c60c779.png) | ![preview 4](https://user-images.githubusercontent.com/31410839/199623683-1e5841af-5310-41ab-b981-da5d8e654cd1.png) |
 
 ### Running the app
 
 The api keys in this project are managed using [--dart-define](https://dartcode.org/docs/using-dart-define-in-flutter/) flags passed to the flutter run command. You can also use the
+
 ```dart
 flutter <command> --dart-define=SUPABASE_PROJECT_URL=<your project url here> --dart-define=SUPABASE_API_KEY=<your api key here> --dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>
 ```
+
 command to run the app from the command line, or If you want to use the launch.json file to run the app, you can copy paste the below configuration to your `.vscode/launch.json` file and pass the keys from the Supabase settings.
 
 ```
@@ -62,6 +71,7 @@ command to run the app from the command line, or If you want to use the launch.j
 ```
 
 _Run the project using the command_
+
 ```
   flutter run --dart-define=SUPABASE_PROJECT_URL=<your project url here> --dart-define=SUPABASE_API_KEY=<your api key here> --dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>  --dart-define=FIREBASE_VAPID_KEY=<vapid key from web push certificate in firebase>
 ```
@@ -75,26 +85,24 @@ _Run the project using the command_
 
 The apk will be generated in the `build/app/outputs/flutter-apk/app-release.apk` folder.
 
+### Redesigned for the Web v0.4.2
 
-### Redesigned for the Web v0.4.2 
-
-|                                                                     v0.4.2                                                                      |
-| :---------------------------------------------------------------------------------------------------------------------------------------------: |
+|                                                 v0.4.2                                                  |
+| :-----------------------------------------------------------------------------------------------------: |
 | <img src="https://github.com/maheshmnj/vocabhub/assets/31410839/a3eee2da-dd51-445c-bed7-45363ae9ed7f"/> |
-
 
 ## Adds Support for Dark Mode (Web only)
 
-|                                                                     v0.2.2                                                                      |
-| :---------------------------------------------------------------------------------------------------------------------------------------------: |
+|                                                       v0.2.2                                                       |
+| :----------------------------------------------------------------------------------------------------------------: |
 | <img src="https://user-images.githubusercontent.com/31410839/125232197-be28a180-e2f9-11eb-82db-980325528b55.png"/> |
 
-|                                                                     v0.2.0                                                                      |
-| :---------------------------------------------------------------------------------------------------------------------------------------------: |
+|                                                       v0.2.0                                                       |
+| :----------------------------------------------------------------------------------------------------------------: |
 | <img src="https://user-images.githubusercontent.com/31410839/121843891-b8429f00-cd00-11eb-8fc9-c242b8a6a19c.png"/> |
 
-|                                                                     v0.1.0                                                                      |
-| :---------------------------------------------------------------------------------------------------------------------------------------------: |
+|                                                       v0.1.0                                                       |
+| :----------------------------------------------------------------------------------------------------------------: |
 | <img src="https://user-images.githubusercontent.com/31410839/120900881-131b2d00-c655-11eb-8c00-6aafade70d29.png"/> |
 
 ## Contributing

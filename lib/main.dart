@@ -94,7 +94,7 @@ class _VocabAppState extends State<VocabApp> {
           builder: (BuildContext context, Widget? child) {
             final colorScheme = ColorScheme.fromSeed(seedColor: settingsController.themeSeed);
             return MaterialApp(
-              title: '$APP_TITLE',
+              title: Constants.APP_TITLE,
               navigatorObservers: [observer],
               debugShowCheckedModeBanner: !kDebugMode,
               darkTheme: ThemeData.dark(

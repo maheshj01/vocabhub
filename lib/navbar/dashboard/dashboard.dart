@@ -10,7 +10,6 @@ import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -249,14 +248,17 @@ class WoDCard extends StatelessWidget {
           color: this.color,
           image: image != null
               ? DecorationImage(
-                  fit: BoxFit.fill, opacity: 0.7, image: AssetImage('assets/dart.jpg'))
+                  fit: BoxFit.fill, opacity: 0.9, image: AssetImage('assets/dart.jpg'))
               : null),
       child: Align(
           alignment: Alignment.center,
           child: Text(
             '$title',
             textAlign: TextAlign.center,
-            style: VocabTheme.googleFontsTextTheme.displayMedium!.copyWith(fontSize: fontSize),
+            style: Theme.of(context)
+                .textTheme
+                .displayMedium!
+                .copyWith(color: Theme.of(context).colorScheme.onPrimary, fontSize: fontSize),
           )),
     );
   }

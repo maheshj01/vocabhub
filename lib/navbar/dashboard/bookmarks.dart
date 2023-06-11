@@ -72,7 +72,10 @@ class _BookmarksMobileState extends State<_BookmarksMobile> {
         valueListenable: _bookmarksNotifier,
         builder: (_, List<Word>? value, Widget? child) {
           if (value == null) {
-            return Scaffold(appBar: AppBar(title: Text('$title')), body: LoadingWidget());
+            return Scaffold(
+                backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                appBar: AppBar(title: Text('$title')),
+                body: LoadingWidget());
           }
           return Scaffold(
               backgroundColor: Theme.of(context).colorScheme.surfaceVariant,

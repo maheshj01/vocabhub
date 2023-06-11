@@ -17,6 +17,11 @@ class SearchFieldController extends ChangeNotifier with ServiceBase {
     notifyListeners();
   }
 
+  void clearText(){
+    _searchController.clear();
+    notifyListeners();
+  }
+
   set searchController(TextEditingController controller) {
     _searchController = controller;
     notifyListeners();

@@ -1,7 +1,9 @@
 /// APP CONSTANTS GO HERE IN THIS FILE
 class Constants {
+  static const APP_TITLE = 'Vocabhub';
+  static const ORGANIZATION = 'Widget Media Labs';
   static const BASE_URL = '';
-  static const VERSION = 'v0.3.5';
+  static const VERSION = 'v0.5.0';
   static const VERSION_KEY = 'version';
   static const BUILD_NUMBER_KEY = 'buildNumber';
   static const SOURCE_CODE_URL = 'https://github.com/maheshmnj/vocabhub';

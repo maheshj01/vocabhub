@@ -52,6 +52,7 @@ class _AboutVocabhubMobileState extends State<AboutVocabhubMobile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         title: const Text('About'),
       ),
@@ -77,7 +78,6 @@ class _AboutVocabhubMobileState extends State<AboutVocabhubMobile> {
                       'Visit Repository',
                       style: TextStyle(
                         fontSize: 18,
-                        color: Colors.blue,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

@@ -58,6 +58,24 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
     );
   }
 
+  void showLicensePage({
+    required BuildContext context,
+    String? applicationName,
+    String? applicationVersion,
+    Widget? applicationIcon,
+    String? applicationLegalese,
+    bool useRootNavigator = false,
+  }) {
+    Navigator.of(context, rootNavigator: useRootNavigator).push(MaterialPageRoute<void>(
+      builder: (BuildContext context) => LicensePage(
+        applicationName: applicationName,
+        applicationVersion: applicationVersion,
+        applicationIcon: applicationIcon,
+        applicationLegalese: applicationLegalese,
+      ),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
@@ -138,6 +156,14 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
           settingTile('Contact Us', onTap: () {
             launchUrl(Uri.parse('mailto:${Constants.FEEDBACK_EMAIL_TO}'),
                 mode: LaunchMode.externalApplication);
+          }),
+          hLine(),
+          settingTile('Licenses', onTap: () {
+            showLicensePage(
+              context: context,
+              applicationLegalese: "© 2022 ${Constants.ORGANIZATION}",
+              applicationName: Constants.APP_TITLE,
+            );
           }),
           hLine(),
           settingTile('Logout', onTap: () async {

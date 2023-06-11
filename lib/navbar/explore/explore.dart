@@ -307,9 +307,7 @@ class _ExploreWordState extends State<ExploreWord>
                         child: SynonymsList(
                           synonyms: widget.word!.synonyms,
                           emptyHeight: 0,
-                          onTap: (synonym) {
-                            searchController.setText(synonym);
-                          },
+                          onTap: (synonym) {},
                         ),
                       ),
                       AnimatedBuilder(
@@ -322,10 +320,10 @@ class _ExploreWordState extends State<ExploreWord>
                               padding: 16.0.horizontalPadding,
                               child: SelectableText(meaning,
                                   textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                                          fontFamily: GoogleFonts.inter(
-                                        fontWeight: FontWeight.w400,
-                                      ).fontFamily)),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium!
+                                      .copyWith(fontWeight: FontWeight.w400)),
                             );
                           }),
                       ExampleListBuilder(
