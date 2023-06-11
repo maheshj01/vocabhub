@@ -14,7 +14,6 @@ import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/pushnotification_service.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/firebase_options.dart';
 
 import 'constants/constants.dart';
@@ -105,7 +104,6 @@ class _VocabAppState extends State<VocabApp> {
                       seedColor: settingsController.themeSeed, brightness: Brightness.dark)),
               theme: ThemeData(
                   useMaterial3: true,
-                  primaryColorDark: VocabTheme.colorSeeds[2],
                   scaffoldBackgroundColor: colorScheme.background,
                   colorScheme: ColorScheme.fromSeed(seedColor: settingsController.themeSeed)),
               routes: {

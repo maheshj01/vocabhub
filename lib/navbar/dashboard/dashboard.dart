@@ -110,8 +110,7 @@ class DashboardMobile extends StatelessWidget {
                 padding: EdgeInsets.only(left: 16, top: 16),
                 child: Text(
                   'Dashboard',
-                  style: VocabTheme.googleFontsTextTheme.titleSmall!
-                      .copyWith(fontSize: 28, fontWeight: FontWeight.w700),
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
                 ),
               ),
             ),

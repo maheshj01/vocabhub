@@ -8,7 +8,6 @@ import 'package:vocabhub/navbar/profile/report.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -47,9 +46,8 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
       title: Text(
         '$label',
         style: TextStyle(
-          fontSize: 20,
-          color: VocabTheme.lightblue,
-          fontWeight: FontWeight.w600,
+          fontSize: 18,
+          fontWeight: FontWeight.w400,
         ),
       ),
       onTap: () {
@@ -64,6 +62,7 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         title: const Text('Settings'),
       ),
@@ -94,8 +93,7 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
                 Text('Theme',
                     style: TextStyle(
                       fontSize: 20,
-                      color: VocabTheme.lightblue,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w400,
                     )),
                 Spacer(),
                 Icon(

@@ -69,6 +69,7 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
     final userProvider = AppStateScope.of(context).user!;
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: colorScheme.background,
       appBar: AppBar(
         title: widget.title != null ? Text(widget.title!) : null,
         actions: [
@@ -136,7 +137,6 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
               widget.word!.meaning,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                  color: Colors.black,
                   fontFamily: GoogleFonts.inter(
                     fontWeight: FontWeight.w400,
                   ).fontFamily),

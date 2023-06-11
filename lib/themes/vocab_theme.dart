@@ -70,21 +70,14 @@ class VocabTheme {
       color: Colors.black.withOpacity(0.1), blurRadius: 4.0, spreadRadius: 0, offset: Offset(0, 4));
 
   static TextTheme googleFontsTextTheme = GoogleFonts.quicksandTextTheme(TextTheme(
-    displayLarge: GoogleFonts.quicksand(
-        fontSize: 72.0, color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w500),
-    displayMedium: GoogleFonts.quicksand(
-        fontSize: 48.0, color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w500),
-    displaySmall: GoogleFonts.quicksand(
-        fontSize: 36.0, color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w500),
-    headlineMedium: GoogleFonts.quicksand(
-        fontSize: 22, color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w400),
-    headlineSmall:
-        GoogleFonts.quicksand(fontSize: 16.0, color: isDark ? Colors.white : Colors.black),
-    titleLarge: GoogleFonts.quicksand(
-        fontSize: 12.0, color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w300),
+    displayLarge: GoogleFonts.quicksand(fontSize: 72.0, fontWeight: FontWeight.w500),
+    displayMedium: GoogleFonts.quicksand(fontSize: 48.0, fontWeight: FontWeight.w500),
+    displaySmall: GoogleFonts.quicksand(fontSize: 36.0, fontWeight: FontWeight.w500),
+    headlineMedium: GoogleFonts.quicksand(fontSize: 22, fontWeight: FontWeight.w400),
+    headlineSmall: GoogleFonts.quicksand(fontSize: 16.0),
+    titleLarge: GoogleFonts.quicksand(fontSize: 12.0, fontWeight: FontWeight.w300),
     bodySmall: GoogleFonts.quicksand(color: Colors.grey, fontSize: 12),
-    titleMedium: GoogleFonts.quicksand(
-        fontSize: 20, color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w300),
-    titleSmall: GoogleFonts.quicksand(fontSize: 16, color: lightblue, fontWeight: FontWeight.w300),
+    titleMedium: GoogleFonts.quicksand(fontSize: 20, fontWeight: FontWeight.w300),
+    titleSmall: GoogleFonts.quicksand(fontSize: 16, fontWeight: FontWeight.w300),
   ));
 }

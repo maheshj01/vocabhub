@@ -10,7 +10,7 @@ class VHButton extends StatefulWidget {
       required this.label,
       this.height = 55.0,
       this.width,
-      this.fontSize,
+      this.fontSize = 18,
       this.isLoading = false,
       this.leading})
       : super(key: key);
@@ -48,12 +48,9 @@ class _VHButtonState extends State<VHButton> {
                   (states) => Size(widget.width ?? 120, widget.height)),
               maximumSize: MaterialStateProperty.resolveWith(
                   (states) => Size(widget.width ?? 120, widget.height)),
-              foregroundColor: MaterialStateColor.resolveWith(
-                  (states) => widget.foregroundColor),
-              backgroundColor: MaterialStateColor.resolveWith(
-                  (states) => widget.backgroundColor)),
-      onPressed:
-          widget.isLoading || (widget.onTap == null) ? null : widget.onTap,
+              foregroundColor: MaterialStateColor.resolveWith((states) => widget.foregroundColor),
+              backgroundColor: MaterialStateColor.resolveWith((states) => widget.backgroundColor)),
+      onPressed: widget.isLoading || (widget.onTap == null) ? null : widget.onTap,
       child: widget.isLoading
           ? CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(widget.foregroundColor),
@@ -66,7 +63,7 @@ class _VHButtonState extends State<VHButton> {
                 (widget.leading == null ? 0.0 : 20.0).hSpacer(),
                 Text(
                   '${widget.label}',
-                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                  style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: widget.fontSize,
                       color: widget.foregroundColor),

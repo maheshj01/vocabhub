@@ -194,7 +194,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                   },
                   isDesktop: !SizeUtils.isMobile,
                   destinationAnimationCurve: Curves.fastOutSlowIn,
-                  destinationAnimationDuration: 600,
+                  destinationAnimationDuration: 0,
                   onChanged: (x) {
                     /// Simulate DragGesture on pageView
                     if (EXPLORE_INDEX == x && !animatePageOnce) {

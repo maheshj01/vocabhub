@@ -5,7 +5,6 @@ import 'package:vocabhub/models/report.dart';
 import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/report_service.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/button.dart';
@@ -218,7 +217,7 @@ class _ReportABugMobileState extends State<ReportABugMobile> {
                       },
                       isLoading: _responseNotifier.value.state == RequestState.active,
                       foregroundColor: Colors.white,
-                      backgroundColor: VocabTheme.primaryColor,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
                       label: 'Submit'),
                   Padding(
                     padding: 16.0.allPadding,

@@ -2,9 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/const.dart';
-import 'package:vocabhub/main.dart';
 import 'package:vocabhub/services/analytics.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/size_utils.dart';
 import 'package:vocabhub/utils/utility.dart';
 
@@ -28,11 +26,7 @@ class LoadingWidget extends StatelessWidget {
   const LoadingWidget({Key? key, this.color}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: CircularProgressIndicator(
-            valueColor: new AlwaysStoppedAnimation<Color>(
-      color ?? VocabTheme.primaryColor,
-    )));
+    return Center(child: CircularProgressIndicator());
   }
 }
 
@@ -65,30 +59,25 @@ SelectableText buildExample(String example, String word, {TextStyle? style}) {
       .toList();
   textSpans.addAll(iterable);
   textSpans.add(TextSpan(text: '\n'));
-  return SelectableText.rich(TextSpan(
-      style: TextStyle(color: darkNotifier.value ? Colors.white : Colors.black),
-      children: textSpans));
+  return SelectableText.rich(TextSpan(children: textSpans));
 }
 
 Widget storeRedirect(BuildContext context,
-    {String redirectUrl = Constants.PLAY_STORE_URL,
-    String assetUrl = 'assets/googleplay.png'}) {
+    {String redirectUrl = Constants.PLAY_STORE_URL, String assetUrl = 'assets/googleplay.png'}) {
   return GestureDetector(
     onTap: () {
       final firebaseAnalytics = Analytics();
       final width = MediaQuery.of(context).size.width;
-      firebaseAnalytics.logRedirectToStore(
-          width > SizeUtils.kTabletBreakPoint ? 'desktop' : 'mobile');
+      firebaseAnalytics
+          .logRedirectToStore(width > SizeUtils.kTabletBreakPoint ? 'desktop' : 'mobile');
       launchURL(redirectUrl);
     },
-    child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: Image.asset('$assetUrl', height: 50)),
+    child:
+        MouseRegion(cursor: SystemMouseCursors.click, child: Image.asset('$assetUrl', height: 50)),
   );
 }
 
-RichText buildNotification(String notification, String word,
-    {TextStyle? style}) {
+RichText buildNotification(String notification, String word, {TextStyle? style}) {
   final List<InlineSpan>? textSpans = [];
   final iterable = notification.split(' ').toList().map((e) {
     final isMatched = e.toLowerCase().contains(word.toLowerCase());
@@ -108,7 +97,7 @@ Widget heading(String title) {
     title,
     style: TextStyle(
       fontSize: 20,
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w500,
     ),
   );
 }
@@ -134,8 +123,7 @@ RichText differenceVisualizerByWord(String editedText, String oldText,
             TextSpan(text: '${newTextList[i]} ')
           else
             TextSpan(
-                text:
-                    isOldVersion ? '${oldTextList[i]} ' : '${newTextList[i]} ',
+                text: isOldVersion ? '${oldTextList[i]} ' : '${newTextList[i]} ',
                 style: TextStyle(
                   color: isOldVersion ? Colors.red : Colors.green,
                   decoration: isOldVersion ? TextDecoration.lineThrough : null,
@@ -150,9 +138,7 @@ RichText differenceVisualizerByWord(String editedText, String oldText,
                 )),
         if (newTextLength > oldTextLength && !isOldVersion)
           for (int i = minLengthList; i < newTextLength; i++)
-            TextSpan(
-                text: '${newTextList[i]} ',
-                style: TextStyle(color: Colors.green)),
+            TextSpan(text: '${newTextList[i]} ', style: TextStyle(color: Colors.green)),
       ],
     ),
   );
