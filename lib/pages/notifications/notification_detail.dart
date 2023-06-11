@@ -97,7 +97,9 @@ class _EditDetailMobileState extends State<EditDetailMobile> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+        backgroundColor: colorScheme.background,
         appBar: AppBar(
           elevation: 0,
           centerTitle: false,

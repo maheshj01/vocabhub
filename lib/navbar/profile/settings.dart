@@ -146,7 +146,7 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
             Navigate.pushAndPopAll(context, AppSignIn());
           }),
           hLine(),
-          Expanded(child: SizedBox.shrink()),
+          30.0.vSpacer(),
           VersionBuilder(),
           30.0.vSpacer(),
           !kIsWeb

@@ -83,10 +83,8 @@ RichText buildNotification(String notification, String word, {TextStyle? style})
     final isMatched = e.toLowerCase().contains(word.toLowerCase());
     return TextSpan(
         text: '$e ',
-        style: TextStyle(
-            fontSize: 16,
-            color: Colors.black,
-            fontWeight: isMatched ? FontWeight.bold : FontWeight.w400));
+        style: style ??
+            TextStyle(fontSize: 16, fontWeight: isMatched ? FontWeight.bold : FontWeight.w400));
   }).toList();
   textSpans!.addAll(iterable);
   return RichText(text: TextSpan(text: '', children: textSpans));
@@ -149,13 +147,11 @@ RichText differenceVisualizerGranular(String editedText, String oldText,
   final oldTextLength = oldText.length;
   final newTextLength = editedText.length;
   final minLength = min(newTextLength, oldTextLength);
-
   return RichText(
     textAlign: textAlign,
     text: TextSpan(
       style: TextStyle(
         fontSize: 16.0,
-        color: Colors.black,
       ),
       children: <TextSpan>[
         for (int i = 0; i < minLength; i++)
@@ -165,7 +161,6 @@ RichText differenceVisualizerGranular(String editedText, String oldText,
             TextSpan(
                 text: isOldVersion ? oldText[i] : editedText[i],
                 style: TextStyle(
-                  color: isOldVersion ? Colors.red : Colors.white,
                   decoration: isOldVersion ? TextDecoration.lineThrough : null,
                   backgroundColor: isOldVersion ? Colors.red : Colors.green,
                 )),
@@ -174,7 +169,6 @@ RichText differenceVisualizerGranular(String editedText, String oldText,
             TextSpan(
                 text: oldText[i],
                 style: TextStyle(
-                  color: Colors.white,
                   decoration: TextDecoration.lineThrough,
                   backgroundColor: Colors.red,
                 )),
@@ -183,7 +177,6 @@ RichText differenceVisualizerGranular(String editedText, String oldText,
             TextSpan(
                 text: editedText[i],
                 style: TextStyle(
-                  color: Colors.white,
                   backgroundColor: Colors.green,
                 )),
       ],

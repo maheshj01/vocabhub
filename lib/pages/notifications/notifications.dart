@@ -123,8 +123,9 @@ class _NotificationsState extends State<Notifications> {
   final GlobalKey<ScaffoldState> notificationsKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    // final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+        backgroundColor: colorScheme.surface,
         key: notificationsKey,
         appBar: AppBar(
           elevation: 0,
@@ -218,6 +219,7 @@ class UserNotificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final iconColor = stateToIconColor(edit.state!);
+    final colorScheme = Theme.of(context).colorScheme;
     return InkWell(
       onTap: () {
         onTap?.call();
@@ -225,7 +227,7 @@ class UserNotificationTile extends StatelessWidget {
       child: Container(
         height: 100,
         decoration: BoxDecoration(
-          color: stateToNotificationCardColor(edit.state!),
+          color: colorScheme.surfaceVariant,
           borderRadius: BorderRadius.circular(4),
           boxShadow: [VocabTheme.notificationCardShadow],
         ),
@@ -313,6 +315,7 @@ class AdminNotificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     /// Approve or reject card
+    final colorScheme = Theme.of(context).colorScheme;
     return InkWell(
       onTap: () {
         onTap?.call();
@@ -320,7 +323,7 @@ class AdminNotificationTile extends StatelessWidget {
       child: Container(
         height: 120,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colorScheme.surfaceVariant,
           borderRadius: BorderRadius.circular(4),
           boxShadow: [VocabTheme.notificationCardShadow],
         ),
@@ -342,10 +345,11 @@ class AdminNotificationTile extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Align(
-                        child: buildNotification(
-                          editTypeToAdminNotification(edit, user),
-                          edit.word,
-                        ),
+                        child: buildNotification(editTypeToAdminNotification(edit, user), edit.word,
+                            style: TextStyle(
+                                color: colorScheme.onSurfaceVariant,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500)),
                       ),
                     ),
                     Expanded(
