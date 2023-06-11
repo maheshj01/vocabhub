@@ -181,8 +181,6 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                       child: VHButton(
                           height: 48,
                           width: 200,
-                          backgroundColor: colorScheme.secondary,
-                          foregroundColor: Colors.white,
                           isLoading: request.state == RequestState.active,
                           onTap: () async {
                             if (!_validNotifier.value!) return;

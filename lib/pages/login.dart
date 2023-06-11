@@ -7,7 +7,6 @@ import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
@@ -101,8 +100,6 @@ class _AppSignInState extends State<AppSignIn> {
           alignment: Alignment.center,
           child: VHButton(
             width: 300,
-            backgroundColor: colorScheme.secondary,
-            foregroundColor: Colors.white,
             label: 'Continue as a Guest',
             onTap: () {
               Navigate.pushReplace(context, AdaptiveLayout(),

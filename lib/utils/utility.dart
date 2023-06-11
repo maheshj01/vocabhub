@@ -20,13 +20,9 @@ void showMessage(BuildContext context, String message,
         SnackBar(
           content: Text(
             '$message',
-            style: Theme.of(context)
-                .textTheme
-                .headlineSmall!
-                .copyWith(color: Colors.white),
           ),
           duration: duration,
-          margin: EdgeInsets.only(bottom: bottom),
+          // margin: EdgeInsets.only(bottom: bottom),
           action: onPressed == null
               ? null
               : SnackBarAction(
@@ -157,8 +153,7 @@ String editTypeToAdminNotification(EditHistory history, UserModel editor) {
   final bool adminRequest = editor.isAdmin;
   // final String statefilter =
   //     '${history.state == EditState.pending ? 'under review' : history.state!.toName()}';
-  final String userFilter =
-      adminRequest ? 'You Requested' : '${editor.name} Requested';
+  final String userFilter = adminRequest ? 'You Requested' : '${editor.name} Requested';
 
   /// TODO: handle adminRequest
   /// and separate notification generator for admin and user
@@ -171,7 +166,6 @@ String editTypeToAdminNotification(EditHistory history, UserModel editor) {
   }
   return '';
 }
-
 
 class ResponseObject {
   final String message;
@@ -189,8 +183,12 @@ class Response {
   RequestState state;
 
   Response(
-      {this.didSucced = false, this.message ='Success', this.status, this.data, this.state = RequestState.none});
-       Response.init(
+      {this.didSucced = false,
+      this.message = 'Success',
+      this.status,
+      this.data,
+      this.state = RequestState.none});
+  Response.init(
       {this.didSucced = true,
       this.state = RequestState.none,
       this.message = 'Success',
@@ -198,11 +196,7 @@ class Response {
       this.data});
 
   Response copyWith(
-      {bool? didSucced,
-      String? message,
-      int? status,
-      Object? data,
-      RequestState? state}) {
+      {bool? didSucced, String? message, int? status, Object? data, RequestState? state}) {
     return Response(
         didSucced: didSucced ?? this.didSucced,
         message: message ?? this.message,

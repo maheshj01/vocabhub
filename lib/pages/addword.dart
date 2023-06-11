@@ -243,7 +243,7 @@ class _AddWordFormState extends State<AddWordForm> {
       return InputChip(
         label: Text(
           '${synonym.trim().capitalize()}',
-          style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: Colors.white),
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.white),
         ),
         onDeleted: () => onDeleted(),
         isEnabled: true,
@@ -253,7 +253,7 @@ class _AddWordFormState extends State<AddWordForm> {
     }
 
     userProvider = AppStateScope.of(context).user!;
-
+    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: ValueListenableBuilder<Response>(
@@ -261,6 +261,7 @@ class _AddWordFormState extends State<AddWordForm> {
           builder: (BuildContext context, Response request, Widget? child) {
             return Scaffold(
               resizeToAvoidBottomInset: true,
+              backgroundColor: colorScheme.background,
               appBar: AppBar(
                 title: Text(widget.isEdit ? 'Edit Word' : 'Add word'),
               ),
@@ -269,7 +270,7 @@ class _AddWordFormState extends State<AddWordForm> {
                 onChanged: () {
                   // update button state
                   editedWord = buildWordFromFields()!;
-                  if (widget.word!.equals(editedWord)) {
+                  if (widget.word != null && widget.word!.equals(editedWord)) {
                     print("equal");
                     _requestNotifier.value = _requestNotifier.value
                         .copyWith(message: 'No changes made', state: RequestState.error);
@@ -505,7 +506,6 @@ class _AddWordFormState extends State<AddWordForm> {
                       Align(
                         alignment: Alignment.center,
                         child: VHButton(
-                          foregroundColor: Colors.white,
                           height: 44,
                           width: 120,
                           onTap: request.state == RequestState.error
@@ -535,7 +535,7 @@ class _AddWordFormState extends State<AddWordForm> {
                                   child: Text(
                                     'Delete',
                                     style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                                        color: VocabTheme.errorColor,
+                                        color: colorScheme.error,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600),
                                   ))

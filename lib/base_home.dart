@@ -151,6 +151,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                           );
                         },
                         tappable: true,
+                        closedColor: colorScheme.primaryContainer ,
                         closedShape: 22.0.rounded,
                         transitionType: ContainerTransitionType.fadeThrough,
                         closedBuilder: (BuildContext context, VoidCallback openContainer) {

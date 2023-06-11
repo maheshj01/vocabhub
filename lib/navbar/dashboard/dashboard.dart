@@ -274,6 +274,7 @@ class DashboardDesktop extends StatelessWidget {
     }
     final size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
