@@ -19,16 +19,11 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
           ? null
           : DateTime.parse(json['created_at'] as String),
       isLoggedIn: json['isLoggedIn'] as bool? ?? false,
-      bookmarks: (json['bookmarks'] as List<dynamic>?)
-              ?.map((e) => Word.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
     );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'idToken': instance.idToken,
       'accessToken': instance.accessToken,
-      'bookmarks': instance.bookmarks,
       'email': instance.email,
       'name': instance.name,
       'avatarUrl': instance.avatarUrl,

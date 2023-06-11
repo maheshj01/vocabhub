@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/appstate.dart';
@@ -183,7 +184,8 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                           width: 200,
                           isLoading: request.state == RequestState.active,
                           onTap: () async {
-                            if (!_validNotifier.value!) return;
+                            FocusScope.of(context).unfocus();
+                            if (_validNotifier.value == null || !_validNotifier.value!) return;
                             _responseNotifier.value =
                                 Response(didSucced: false, state: RequestState.active);
                             final userName = _usernameController.text.trim();
@@ -195,9 +197,15 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                               _validNotifier.value = null;
                               appState.setUser(editedUser);
                               showMessage(context, 'success updating user! ');
-                              Navigator.of(context).pop();
-                              widget.onClose!();
+                            } else {
+                              _responseNotifier.value =
+                                  Response(state: RequestState.done, didSucced: false);
+                              showMessage(context, 'error updating user! ');
                             }
+                            Future.delayed(Duration(seconds: 2), () {
+                              widget.onClose!();
+                              Navigate.popView(context);
+                            });
                           },
                           label: 'Save'),
                     ),

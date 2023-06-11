@@ -8,7 +8,6 @@ part 'user.g.dart';
 class UserModel extends ChangeNotifier {
   String? idToken;
   String? accessToken;
-  List<Word> bookmarks;
   String email;
   String name;
   String? avatarUrl;
@@ -19,36 +18,35 @@ class UserModel extends ChangeNotifier {
   String token;
   DateTime? created_at;
 
-  UserModel(
-      {this.name = '',
-      this.email = '',
-      this.avatarUrl,
-      this.idToken,
-      this.isAdmin = false,
-      this.accessToken,
-      this.token = '',
-      this.username = '',
-      this.created_at,
-      this.isLoggedIn = false,
-      this.bookmarks = const []});
+  UserModel({
+    this.name = '',
+    this.email = '',
+    this.avatarUrl,
+    this.idToken,
+    this.isAdmin = false,
+    this.accessToken,
+    this.token = '',
+    this.username = '',
+    this.created_at,
+    this.isLoggedIn = false,
+  });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) =>
-      _$UserModelFromJson(json);
+  factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
 
   /// todo: add created at parameter
   factory UserModel.copyWith(UserModel w) {
     return UserModel(
-        name: w.name,
-        email: w.email,
-        avatarUrl: w.avatarUrl,
-        idToken: w.idToken,
-        accessToken: w.accessToken,
-        isAdmin: w.isAdmin,
-        username: w.username,
-        token: w.token,
-        created_at: w.created_at,
-        isLoggedIn: w.isLoggedIn,
-        bookmarks: w.bookmarks);
+      name: w.name,
+      email: w.email,
+      avatarUrl: w.avatarUrl,
+      idToken: w.idToken,
+      accessToken: w.accessToken,
+      isAdmin: w.isAdmin,
+      username: w.username,
+      token: w.token,
+      created_at: w.created_at,
+      isLoggedIn: w.isLoggedIn,
+    );
   }
 
   UserModel copyWith({
@@ -65,17 +63,17 @@ class UserModel extends ChangeNotifier {
     List<Word>? bookmarks,
   }) {
     return UserModel(
-        name: name ?? this.name,
-        email: email ?? this.email,
-        avatarUrl: avatarUrl ?? this.avatarUrl,
-        idToken: idToken ?? this.idToken,
-        accessToken: accessToken ?? this.accessToken,
-        isAdmin: isAdmin ?? this.isAdmin,
-        username: username ?? this.username,
-        token: token ?? this.token,
-        created_at: created_at ?? this.created_at,
-        isLoggedIn: isLoggedIn ?? this.isLoggedIn,
-        bookmarks: bookmarks ?? this.bookmarks);
+      name: name ?? this.name,
+      email: email ?? this.email,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      idToken: idToken ?? this.idToken,
+      accessToken: accessToken ?? this.accessToken,
+      isAdmin: isAdmin ?? this.isAdmin,
+      username: username ?? this.username,
+      token: token ?? this.token,
+      created_at: created_at ?? this.created_at,
+      isLoggedIn: isLoggedIn ?? this.isLoggedIn,
+    );
   }
 
   factory UserModel.init() {
@@ -85,7 +83,6 @@ class UserModel extends ChangeNotifier {
         avatarUrl: '',
         idToken: '',
         accessToken: '',
-        bookmarks: [],
         created_at: DateTime.now(),
         username: '',
         token: '',
