@@ -25,6 +25,17 @@ extension WordEquals on Word {
       listEquals(mnemonics, other.mnemonics);
 }
 
+extension ListContains on List<Word> {
+  bool containsWord(Word word) {
+    for (final w in this) {
+      if (w.word == word.word) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
 extension DateHelper on DateTime {
   String formatDate() {
     final now = DateTime.now();

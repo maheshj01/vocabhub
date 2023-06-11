@@ -7,7 +7,6 @@ class SearchFieldController extends ChangeNotifier with ServiceBase {
   late TextEditingController _searchController;
   late SearchService _searchService;
 
-
   List<Word> _recents = [];
 
   String get searchText => _searchController.text;
@@ -17,7 +16,7 @@ class SearchFieldController extends ChangeNotifier with ServiceBase {
     notifyListeners();
   }
 
-  void clearText(){
+  void clearText() {
     _searchController.clear();
     notifyListeners();
   }
@@ -51,6 +50,7 @@ class SearchFieldController extends ChangeNotifier with ServiceBase {
   }
 
   void addRecent(Word word) async {
+    if (_recents.contains(word)) return;
     _recents.add(word);
     await _searchService.addRecent(word);
     notifyListeners();

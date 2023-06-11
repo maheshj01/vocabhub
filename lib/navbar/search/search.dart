@@ -81,15 +81,11 @@ class _MobileViewState extends State<MobileView> {
               onChanged: (x) {},
             ),
           ),
-          // Padding(
-          //   padding: 8.0.horizontalPadding,
-          //   child: heading('New Words'),
-          // ),
           Expanded(
               child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [Text('Popular words\nComing soon!')],
+              children: [Text('Hang Tight!\nPopular words\nComing soon!' + '🚀')],
             ),
           ))
         ],
@@ -116,30 +112,37 @@ class _SearchViewState extends State<SearchView> {
     showRecents();
   }
 
+  @override
+  void dispose() {
+    searchNotifier.dispose();
+    super.dispose();
+  }
+
   Future<void> showRecents() async {
-    // searchNotifier.value = null;
     final _recents = await searchController.recents();
     searchNotifier.value = _recents;
   }
 
   Future<void> search(String query) async {
+    searchNotifier.value = null;
     if (query.isEmpty) {
-      searchNotifier.value = null;
-      showRecents();
+      await showRecents();
       return;
     }
 
     /// show loading when query changes
     if (oldQuery != query) {
-      searchNotifier.value = null;
       oldQuery = query;
     }
     final results = await VocabStoreService.searchWord(query);
-    searchNotifier.value = results;
+    if (mounted) {
+      searchNotifier.value = results;
+    }
   }
 
   List<Word> words = [];
   String oldQuery = '';
+
   @override
   Widget build(BuildContext context) {
     words = AppStateScope.of(context).words!;
@@ -160,7 +163,7 @@ class _SearchViewState extends State<SearchView> {
                         autoFocus: true,
                         onChanged: (query) {
                           setState(() {});
-                          return search(query);
+                          search(query);
                         }),
                   ),
                 ),
@@ -169,8 +172,8 @@ class _SearchViewState extends State<SearchView> {
             Expanded(
                 child: ValueListenableBuilder<List<Word>?>(
                     valueListenable: searchNotifier,
-                    builder: (BuildContext context, List<Word>? history, Widget? child) {
-                      if (history == null) {
+                    builder: (BuildContext context, List<Word>? results, Widget? child) {
+                      if (results == null) {
                         return LoadingWidget();
                       } else if (searchController.searchText.isEmpty) {
                         // show Recent Suggestions
@@ -184,7 +187,7 @@ class _SearchViewState extends State<SearchView> {
                                     child: Text('Recent'),
                                   )),
                             ),
-                            if (history.isEmpty)
+                            if (results.isEmpty)
                               Expanded(
                                 child: Center(
                                   child: Text('No recent searches'),
@@ -200,8 +203,9 @@ class _SearchViewState extends State<SearchView> {
                                     child: OpenContainer(
                                         openBuilder:
                                             (BuildContext context, VoidCallback openContainer) {
+                                          searchController.addRecent(results[index]);
                                           return WordDetail(
-                                            word: history[index],
+                                            word: results[index],
                                           );
                                         },
                                         closedColor: colorScheme.secondaryContainer,
@@ -211,10 +215,10 @@ class _SearchViewState extends State<SearchView> {
                                         closedBuilder:
                                             (BuildContext context, VoidCallback openContainer) {
                                           return ListTile(
-                                            title: Text('${history[index].word}'),
+                                            title: Text('${results[index].word}'),
                                             trailing: GestureDetector(
                                                 onTap: () async {
-                                                  searchController.removeRecent(history[index]);
+                                                  searchController.removeRecent(results[index]);
                                                   showRecents();
                                                 },
                                                 child: Icon(Icons.close, size: 16)),
@@ -222,12 +226,13 @@ class _SearchViewState extends State<SearchView> {
                                         }),
                                   );
                                 },
-                                itemCount: history.length,
+                                itemCount: results.length,
                               ))
                           ],
                         );
                       } else {
-                        if (history.isEmpty) {
+                        /// search results are empty
+                        if (results.isEmpty) {
                           final searchTerm = searchController.searchText;
                           return Center(
                             child: Column(
@@ -251,7 +256,7 @@ class _SearchViewState extends State<SearchView> {
                           );
                         }
 
-                        /// search list
+                        /// search results found
                         return Column(
                           children: [
                             SizedBox(
@@ -259,7 +264,7 @@ class _SearchViewState extends State<SearchView> {
                                   alignment: Alignment.centerRight,
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text('Search Results: ${history.length}'),
+                                    child: Text('Search Results: ${results.length}'),
                                   )),
                             ),
                             Expanded(
@@ -273,9 +278,9 @@ class _SearchViewState extends State<SearchView> {
                                         closedColor: colorScheme.secondaryContainer,
                                         openBuilder:
                                             (BuildContext context, VoidCallback openContainer) {
-                                          searchController.addRecent(history[index]);
+                                          searchController.addRecent(results[index]);
                                           return WordDetail(
-                                            word: history[index],
+                                            word: results[index],
                                           );
                                         },
                                         closedElevation: 0,
@@ -285,12 +290,12 @@ class _SearchViewState extends State<SearchView> {
                                             (BuildContext context, VoidCallback openContainer) {
                                           return ListTile(
                                             minVerticalPadding: 24,
-                                            title: Text('${history[index].word}'),
+                                            title: Text('${results[index].word}'),
                                           );
                                         }),
                                   );
                                 },
-                                itemCount: history.length,
+                                itemCount: results.length,
                               ),
                             ),
                           ],
