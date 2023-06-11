@@ -35,15 +35,22 @@ Key Features:
 
 ### [Try it out on the web](https://vocabhub.web.app/)
 
+
+
 ### Mobile
 
-|                                                        Solarized dark                                                         |                                                        Solarized Ocean                                                        |                                                        Solarized Ocean                                                        |
+|                                                        Preview 1                                                        |                                                        Preview 2                                                        |                                                        Preview 3                                                        |
 | :---------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------: |
-| <img src="https://user-images.githubusercontent.com/31410839/199623337-febc03e2-0bc7-4c72-b269-4ccb0c88fd81.png" width="600"> | <img src="https://user-images.githubusercontent.com/31410839/199623341-0b8d4e82-24a4-4c67-b3fc-aaa53f6feb2f.png" width="600"> | <img src="https://user-images.githubusercontent.com/31410839/199623349-e1021ef6-5f6d-473d-b584-0885d5d462e2.png" width="600"> |
+| <img src="https://user-images.githubusercontent.com/31410839/244975971-0efb5a84-a65d-4bea-8518-ca2b50441ebb.png" width="600"> | <img src="https://user-images.githubusercontent.com/31410839/244975970-726972e8-4c90-431d-b148-42997925a41d.png" width="600"> | <img src="https://user-images.githubusercontent.com/31410839/244976016-d91bad90-f6bd-4a4c-85e6-2873768165f0.png" width="600"> |
 
-|                                                  Found a mistake?                                                   |                                              Track your contributions                                               |
+|                                                        Preview 4                                                         |                                                        Preview 5                                                        |                                                        Preview 6                                                        |
+| :---------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://user-images.githubusercontent.com/31410839/244976020-c733ec5c-b3ee-421e-a85b-409d4b9fcd1e.png" width="600"> | <img src="https://user-images.githubusercontent.com/31410839/244976024-3587a34a-51f8-47c2-be0b-78c7a4446aa6.png" width="600"> | <img src="https://user-images.githubusercontent.com/31410839/244976121-16878a12-367a-4b11-85a7-6fd14af80428.png" width="600"> |
+
+
+|                                                  Preview 7                                                  |                                              Preview 8                                              |
 | :-----------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------: |
-| ![preview 5](https://user-images.githubusercontent.com/31410839/199623676-846ff94b-7d00-4f2f-bcc1-19e12c60c779.png) | ![preview 4](https://user-images.githubusercontent.com/31410839/199623683-1e5841af-5310-41ab-b981-da5d8e654cd1.png) |
+| ![preview 5](https://user-images.githubusercontent.com/31410839/244976125-a2b53e8e-8a8f-4d16-a4d3-499541606ca8.png) | ![preview 4](https://user-images.githubusercontent.com/31410839/244976128-6932df29-c6e3-4895-a305-e5c339f91ccd.png) |
 
 ### Running the app
 
