@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/navbar/profile/settings.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/utils/size_utils.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -182,4 +183,21 @@ RichText differenceVisualizerGranular(String editedText, String oldText,
       ],
     ),
   );
+}
+
+Future<void> showRatingsBottomSheet(context, {double bottomPadding = 0}) async {
+  return showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(13),
+        topRight: Radius.circular(13),
+      )),
+      // backgroundColor: Colors.white,
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: 300 + bottomPadding,
+          child: RatingsPage(),
+        );
+      });
 }

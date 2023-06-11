@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -14,6 +15,7 @@ import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
+import 'package:vocabhub/widgets/widgets.dart';
 
 import 'pages/notifications/notifications.dart';
 
@@ -39,6 +41,18 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     if (words.isNotEmpty) {
       AppStateWidget.of(context).setWords(words);
       // updateWord(words);
+    }
+    Future.delayed(const Duration(seconds: 5), askForRating);
+  }
+
+  Future<void> askForRating() async {
+    if (!settingsController.hasRatedOnPlaystore && !kIsWeb) {
+      final lastRatedAskDate = await settingsController.getLastRatedShown();
+      final diff = DateTime.now().difference(lastRatedAskDate).inDays;
+      if (diff > Constants.ratingAskInterval) {
+        settingsController.lastRatedDate = DateTime.now();
+        showRatingsBottomSheet(context);
+      }
     }
   }
 

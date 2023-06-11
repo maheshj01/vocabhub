@@ -9,6 +9,7 @@ import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/theme_selector.dart';
+import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -75,22 +76,6 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
         applicationLegalese: applicationLegalese,
       ),
     ));
-  }
-
-  Future<void> _showBottomSheet() async {
-    return showModalBottomSheet(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(13),
-          topRight: Radius.circular(13),
-        )),
-        // backgroundColor: Colors.white,
-        context: context,
-        builder: (context) {
-          return SizedBox.expand(
-            child: RatingsPage(),
-          );
-        });
   }
 
   @override
@@ -175,10 +160,6 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
                 mode: LaunchMode.externalApplication);
           }),
           hLine(),
-          settingTile('Rate Us', onTap: () {
-            _showBottomSheet();
-          }),
-          hLine(),
           settingTile('Licenses', onTap: () {
             showLicensePage(
               context: context,
@@ -252,17 +233,20 @@ class _RatingsPageState extends State<RatingsPage> {
             children: [
               ElevatedButton(
                 onPressed: () {
+                  settingsController.ratedOnPlaystore = false;
+                  Navigate.popView(context);
+                },
+                child: Text('No, Thanks'),
+              ),
+              16.0.hSpacer(),
+              VHButton(
+                height: 50,
+                onTap: () async {
+                  settingsController.ratedOnPlaystore = true;
                   launchUrl(Uri.parse(Constants.PLAY_STORE_URL),
                       mode: LaunchMode.externalApplication);
                 },
-                child: Text('Rate Us'),
-              ),
-              16.0.hSpacer(),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('No, Thanks'),
+                label: 'Rate Us',
               ),
             ],
           ),
