@@ -1,11 +1,10 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
-import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/size_utils.dart';
 
@@ -74,16 +73,15 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     SizeUtils.size = MediaQuery.of(context).size;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.background,
       body: Container(
-        decoration: BoxDecoration(
-          gradient:
-              LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-            VocabTheme.primaryColor.withOpacity(0.5),
-            VocabTheme.secondaryColor,
-          ]),
-        ),
+        // gradient:
+        //     LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+        //   VocabTheme.primaryColor.withOpacity(0.5),
+        //   VocabTheme.secondaryColor,
+        // ]),
         alignment: Alignment.center,
         child: FadeScaleTransition(
             animation: _animation,

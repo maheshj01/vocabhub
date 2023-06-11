@@ -1,17 +1,29 @@
+### 0.5.0+13 Jun 11, 2023 (Unreleased)
+
+- Migrate app and components to Material 3.0
+- Add support for changing theme
+- Adds support for dark mode
+- Refactor search implementation
+- Adds Ask for user rating on Play Store
+
 ### 0.4.2+12 May 28, 2023
+
 - Fix minor issues
 
 ### 0.4.1+11 May 22, 2023
+
 - Fix: Google sign In fails [Issue 23](https://github.com/maheshmnj/vocabhub/issues/23)
 - Skip signin banner
 
 ### 0.4.0 (11)
+
 - Fix: [Issue 11](https://github.com/maheshmnj/vocabhub/issues/11)
 - Redesigned public release with minimal features
 
 ### 0.3.4 (9)
 
-- Internal Release (redesigned) 
+- Internal Release (redesigned)
+
 ### 0.3.4
 
 - Adds Google Sign in support
@@ -20,6 +32,7 @@
 ### 0.3.3
 
 - Add dark mode animation
+
 ### 0.3.2
 
 - fix drawer navigation

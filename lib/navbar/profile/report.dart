@@ -5,7 +5,6 @@ import 'package:vocabhub/models/report.dart';
 import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/report_service.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/button.dart';
@@ -70,6 +69,7 @@ class _ViewBugReportsState extends State<ViewBugReports> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
           title: const Text('Reports and Feedbacks'),
         ),
@@ -152,10 +152,24 @@ class _ReportABugMobileState extends State<ReportABugMobile> {
   }
 
   final TextEditingController _feedBackcontroller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      /// Show ratings after 3 seconds
+      Future.delayed(const Duration(seconds: 3), () {
+        showRatingsBottomSheet(context);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: colorScheme.background,
       appBar: AppBar(
         title: const Text('Report a bug'),
       ),
@@ -217,8 +231,6 @@ class _ReportABugMobileState extends State<ReportABugMobile> {
                         }
                       },
                       isLoading: _responseNotifier.value.state == RequestState.active,
-                      foregroundColor: Colors.white,
-                      backgroundColor: VocabTheme.primaryColor,
                       label: 'Submit'),
                   Padding(
                     padding: 16.0.allPadding,

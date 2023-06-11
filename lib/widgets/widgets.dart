@@ -2,9 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/const.dart';
-import 'package:vocabhub/main.dart';
+import 'package:vocabhub/navbar/profile/settings.dart';
 import 'package:vocabhub/services/analytics.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/size_utils.dart';
 import 'package:vocabhub/utils/utility.dart';
 
@@ -28,11 +27,7 @@ class LoadingWidget extends StatelessWidget {
   const LoadingWidget({Key? key, this.color}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: CircularProgressIndicator(
-            valueColor: new AlwaysStoppedAnimation<Color>(
-      color ?? VocabTheme.primaryColor,
-    )));
+    return Center(child: CircularProgressIndicator());
   }
 }
 
@@ -65,39 +60,32 @@ SelectableText buildExample(String example, String word, {TextStyle? style}) {
       .toList();
   textSpans.addAll(iterable);
   textSpans.add(TextSpan(text: '\n'));
-  return SelectableText.rich(TextSpan(
-      style: TextStyle(color: darkNotifier.value ? Colors.white : Colors.black),
-      children: textSpans));
+  return SelectableText.rich(TextSpan(children: textSpans));
 }
 
 Widget storeRedirect(BuildContext context,
-    {String redirectUrl = Constants.PLAY_STORE_URL,
-    String assetUrl = 'assets/googleplay.png'}) {
+    {String redirectUrl = Constants.PLAY_STORE_URL, String assetUrl = 'assets/googleplay.png'}) {
   return GestureDetector(
     onTap: () {
       final firebaseAnalytics = Analytics();
       final width = MediaQuery.of(context).size.width;
-      firebaseAnalytics.logRedirectToStore(
-          width > SizeUtils.kTabletBreakPoint ? 'desktop' : 'mobile');
+      firebaseAnalytics
+          .logRedirectToStore(width > SizeUtils.kTabletBreakPoint ? 'desktop' : 'mobile');
       launchURL(redirectUrl);
     },
-    child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: Image.asset('$assetUrl', height: 50)),
+    child:
+        MouseRegion(cursor: SystemMouseCursors.click, child: Image.asset('$assetUrl', height: 50)),
   );
 }
 
-RichText buildNotification(String notification, String word,
-    {TextStyle? style}) {
+RichText buildNotification(String notification, String word, {TextStyle? style}) {
   final List<InlineSpan>? textSpans = [];
   final iterable = notification.split(' ').toList().map((e) {
     final isMatched = e.toLowerCase().contains(word.toLowerCase());
     return TextSpan(
         text: '$e ',
-        style: TextStyle(
-            fontSize: 16,
-            color: Colors.black,
-            fontWeight: isMatched ? FontWeight.bold : FontWeight.w400));
+        style: style ??
+            TextStyle(fontSize: 16, fontWeight: isMatched ? FontWeight.bold : FontWeight.w400));
   }).toList();
   textSpans!.addAll(iterable);
   return RichText(text: TextSpan(text: '', children: textSpans));
@@ -108,8 +96,7 @@ Widget heading(String title) {
     title,
     style: TextStyle(
       fontSize: 20,
-      color: VocabTheme.lightblue,
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.w500,
     ),
   );
 }
@@ -135,8 +122,7 @@ RichText differenceVisualizerByWord(String editedText, String oldText,
             TextSpan(text: '${newTextList[i]} ')
           else
             TextSpan(
-                text:
-                    isOldVersion ? '${oldTextList[i]} ' : '${newTextList[i]} ',
+                text: isOldVersion ? '${oldTextList[i]} ' : '${newTextList[i]} ',
                 style: TextStyle(
                   color: isOldVersion ? Colors.red : Colors.green,
                   decoration: isOldVersion ? TextDecoration.lineThrough : null,
@@ -151,9 +137,7 @@ RichText differenceVisualizerByWord(String editedText, String oldText,
                 )),
         if (newTextLength > oldTextLength && !isOldVersion)
           for (int i = minLengthList; i < newTextLength; i++)
-            TextSpan(
-                text: '${newTextList[i]} ',
-                style: TextStyle(color: Colors.green)),
+            TextSpan(text: '${newTextList[i]} ', style: TextStyle(color: Colors.green)),
       ],
     ),
   );
@@ -164,13 +148,11 @@ RichText differenceVisualizerGranular(String editedText, String oldText,
   final oldTextLength = oldText.length;
   final newTextLength = editedText.length;
   final minLength = min(newTextLength, oldTextLength);
-
   return RichText(
     textAlign: textAlign,
     text: TextSpan(
       style: TextStyle(
         fontSize: 16.0,
-        color: Colors.black,
       ),
       children: <TextSpan>[
         for (int i = 0; i < minLength; i++)
@@ -180,7 +162,6 @@ RichText differenceVisualizerGranular(String editedText, String oldText,
             TextSpan(
                 text: isOldVersion ? oldText[i] : editedText[i],
                 style: TextStyle(
-                  color: isOldVersion ? Colors.red : Colors.white,
                   decoration: isOldVersion ? TextDecoration.lineThrough : null,
                   backgroundColor: isOldVersion ? Colors.red : Colors.green,
                 )),
@@ -189,7 +170,6 @@ RichText differenceVisualizerGranular(String editedText, String oldText,
             TextSpan(
                 text: oldText[i],
                 style: TextStyle(
-                  color: Colors.white,
                   decoration: TextDecoration.lineThrough,
                   backgroundColor: Colors.red,
                 )),
@@ -198,10 +178,26 @@ RichText differenceVisualizerGranular(String editedText, String oldText,
             TextSpan(
                 text: editedText[i],
                 style: TextStyle(
-                  color: Colors.white,
                   backgroundColor: Colors.green,
                 )),
       ],
     ),
   );
+}
+
+Future<void> showRatingsBottomSheet(context, {double bottomPadding = 0}) async {
+  return showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(13),
+        topRight: Radius.circular(13),
+      )),
+      // backgroundColor: Colors.white,
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: 300 + bottomPadding,
+          child: RatingsPage(),
+        );
+      });
 }

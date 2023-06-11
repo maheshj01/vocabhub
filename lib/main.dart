@@ -5,18 +5,18 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:vocabhub/controller/settings_controller.dart';
 import 'package:vocabhub/models/word.dart';
-import 'package:vocabhub/pages/home.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/pages/splashscreen.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/pushnotification_service.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/firebase_options.dart';
 
 import 'constants/constants.dart';
+import 'controller/searchfield_controller.dart';
 import 'utils/settings.dart';
 
 Future<void> main() async {
@@ -24,12 +24,18 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   analytics = FirebaseAnalytics.instance;
   usePathUrlStrategy();
+  settingsController = SettingsController();
+  searchController = SearchFieldController(controller: TextEditingController());
+  searchController.initService();
   pushNotificationService = PushNotificationService(_firebaseMessaging);
   // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   Settings.init();
+  settingsController.loadSettings();
   runApp(VocabApp());
 }
 
+late SettingsController settingsController;
+late SearchFieldController searchController;
 late PushNotificationService pushNotificationService;
 
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -42,7 +48,6 @@ late PushNotificationService pushNotificationService;
 //   print('Handling a background message ${message.messageId}');
 // }
 
-final ValueNotifier<bool> darkNotifier = ValueNotifier<bool>(false);
 final ValueNotifier<int> totalNotifier = ValueNotifier<int>(0);
 final ValueNotifier<List<Word>?> listNotifier = ValueNotifier<List<Word>>([]);
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -69,35 +74,43 @@ class _VocabAppState extends State<VocabApp> {
   late Analytics firebaseAnalytics;
   @override
   void dispose() {
-    darkNotifier.dispose();
-    totalNotifier.dispose();
     searchController.dispose();
+    totalNotifier.dispose();
     listNotifier.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
-    super.initState();
     initializeApp();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return AppStateWidget(
       child: AnimatedBuilder(
-          animation: Settings(),
+          animation: settingsController,
           builder: (BuildContext context, Widget? child) {
+            final colorScheme = ColorScheme.fromSeed(seedColor: settingsController.themeSeed);
             return MaterialApp(
-              title: '$APP_TITLE',
+              title: Constants.APP_TITLE,
               navigatorObservers: [observer],
               debugShowCheckedModeBanner: !kDebugMode,
-              darkTheme: VocabTheme.darkThemeData,
-              theme: VocabTheme.lightThemeData,
+              darkTheme: ThemeData.dark(
+                useMaterial3: true,
+              ).copyWith(
+                  scaffoldBackgroundColor: colorScheme.background,
+                  colorScheme: ColorScheme.fromSeed(
+                      seedColor: settingsController.themeSeed, brightness: Brightness.dark)),
+              theme: ThemeData(
+                  useMaterial3: true,
+                  scaffoldBackgroundColor: colorScheme.background,
+                  colorScheme: ColorScheme.fromSeed(seedColor: settingsController.themeSeed)),
               routes: {
                 Notifications.route: (context) => Notifications(),
               },
-              themeMode: VocabTheme.isDark ? ThemeMode.dark : ThemeMode.light,
+              themeMode: settingsController.theme,
               home: SplashScreen(),
             );
           }),

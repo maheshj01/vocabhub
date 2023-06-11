@@ -1,7 +1,7 @@
 name: vocabhub
 description: An App to help you build vocabulary.
 publish_to: "none"
-version: 0.4.2+12
+version: 0.5.0+13
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
@@ -12,8 +12,8 @@ dependencies:
   firebase_analytics: ^10.1.0
   firebase_core: ^2.4.1
   firebase_messaging: ^14.2.1
-  firebase_remote_config: ^3.0.9
   firebase_messaging_web: ^3.5.1
+  firebase_remote_config: ^3.0.9
   flutter:
     sdk: flutter
   # flutter_local_notifications: ^12.0.3
@@ -24,7 +24,9 @@ dependencies:
   http: ^0.13.6
   intl: ^0.18.0
   json_annotation: ^4.6.0
-  navbar_router: ^0.5.1
+  navbar_router:
+    git:
+      url: https://github.com/maheshmnj/navbar_router.git
   package_info_plus: ^4.0.1
   pull_to_refresh: ^2.0.0
   realtime_client: ^0.1.15

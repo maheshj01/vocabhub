@@ -3,7 +3,6 @@ import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/button.dart';
@@ -75,8 +74,7 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
     _validNotifier.value = null;
     RegExp usernamePattern = new RegExp(r"^[a-zA-Z0-9_]{5,}$");
     if (username.isEmpty || !usernamePattern.hasMatch(username)) {
-      error =
-          'Username should contain letters, numbers and underscores with minimum 5 characters';
+      error = 'Username should contain letters, numbers and underscores with minimum 5 characters';
       _validNotifier.value = false;
       return;
     } else {
@@ -95,7 +93,9 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
   Widget build(BuildContext context) {
     final appState = AppStateWidget.of(context);
     user = AppStateScope.of(context).user;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: colorScheme.background,
       appBar: AppBar(
         title: Text('Edit Profile'),
       ),
@@ -112,10 +112,7 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                       padding: 16.0.topHorizontalPadding,
                       child: CircleAvatar(
                           radius: 46,
-                          backgroundColor: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(0.2),
+                          backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                           child: CircularAvatar(
                             url: '${user!.avatarUrl}',
                             radius: 40,
@@ -137,8 +134,7 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                   ),
                   ValueListenableBuilder<bool?>(
                       valueListenable: _validNotifier,
-                      builder:
-                          (BuildContext context, bool? isValid, Widget? child) {
+                      builder: (BuildContext context, bool? isValid, Widget? child) {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -162,9 +158,8 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                                     padding: 16.0.bottomLeftPadding,
                                     child: Text(error,
                                         style: TextStyle(
-                                            color: isValid
-                                                ? VocabTheme.primaryColor
-                                                : VocabTheme.errorColor)),
+                                            color:
+                                                isValid ? colorScheme.primary : colorScheme.error)),
                                   ),
                           ],
                         );
@@ -186,21 +181,17 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                       child: VHButton(
                           height: 48,
                           width: 200,
-                          backgroundColor: VocabTheme.primaryColor,
-                          foregroundColor: Colors.white,
                           isLoading: request.state == RequestState.active,
                           onTap: () async {
                             if (!_validNotifier.value!) return;
-                            _responseNotifier.value = Response(
-                                didSucced: false, state: RequestState.active);
+                            _responseNotifier.value =
+                                Response(didSucced: false, state: RequestState.active);
                             final userName = _usernameController.text.trim();
-                            final editedUser =
-                                user!.copyWith(username: userName);
-                            final success =
-                                await UserService.updateUser(editedUser);
+                            final editedUser = user!.copyWith(username: userName);
+                            final success = await UserService.updateUser(editedUser);
                             if (success) {
-                              _responseNotifier.value = Response(
-                                  state: RequestState.done, didSucced: true);
+                              _responseNotifier.value =
+                                  Response(state: RequestState.done, didSucced: true);
                               _validNotifier.value = null;
                               appState.setUser(editedUser);
                               showMessage(context, 'success updating user! ');
@@ -279,6 +270,7 @@ class _VHTextfieldState extends State<VHTextfield> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -294,34 +286,24 @@ class _VHTextfieldState extends State<VHTextfield> {
                       fontWeight: FontWeight.w500),
                 ),
               ),
-        Container(
+        Card(
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: const Offset(0, 3), // changes position of shadow
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            child: TextField(
+              controller: _controller,
+              keyboardType: widget.keyboardType,
+              readOnly: widget.isReadOnly,
+              maxLines: widget.maxLines,
+              onChanged: (x) {
+                if (widget.onChanged != null) {
+                  widget.onChanged!(x);
+                }
+              },
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: widget.hint,
               ),
-            ],
-          ),
-          child: TextField(
-            controller: _controller,
-            keyboardType: widget.keyboardType,
-            readOnly: widget.isReadOnly,
-            maxLines: widget.maxLines,
-            onChanged: (x) {
-              if (widget.onChanged != null) {
-                widget.onChanged!(x);
-              }
-            },
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: widget.hint,
             ),
           ),
         ),

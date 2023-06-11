@@ -4,7 +4,6 @@ import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -73,9 +72,13 @@ class _BookmarksMobileState extends State<_BookmarksMobile> {
         valueListenable: _bookmarksNotifier,
         builder: (_, List<Word>? value, Widget? child) {
           if (value == null) {
-            return Scaffold(appBar: AppBar(title: Text('$title')), body: LoadingWidget());
+            return Scaffold(
+                backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                appBar: AppBar(title: Text('$title')),
+                body: LoadingWidget());
           }
           return Scaffold(
+              backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
               appBar: AppBar(
                 title: value.isEmpty ? Text('$title') : Text('${value.length} $title'),
               ),
@@ -88,6 +91,7 @@ class _BookmarksMobileState extends State<_BookmarksMobile> {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
                           child: OpenContainer(
+                              closedColor: Theme.of(context).colorScheme.surface,
                               openBuilder: (BuildContext context, VoidCallback openContainer) {
                                 return WordDetail(word: value[index]);
                               },
@@ -100,7 +104,7 @@ class _BookmarksMobileState extends State<_BookmarksMobile> {
                                   trailing: IconButton(
                                     icon: Icon(
                                       Icons.bookmark,
-                                      color: VocabTheme.primaryColor,
+                                      color: Theme.of(context).colorScheme.secondary,
                                     ),
                                     onPressed: () async {
                                       await VocabStoreService.removeBookmark(value[index].id,

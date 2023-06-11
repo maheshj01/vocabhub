@@ -10,8 +10,6 @@ import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
-import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -111,8 +109,7 @@ class DashboardMobile extends StatelessWidget {
                 padding: EdgeInsets.only(left: 16, top: 16),
                 child: Text(
                   'Dashboard',
-                  style: VocabTheme.googleFontsTextTheme.titleSmall!
-                      .copyWith(fontSize: 28, fontWeight: FontWeight.w700),
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
                 ),
               ),
             ),
@@ -120,11 +117,11 @@ class DashboardMobile extends StatelessWidget {
               user!.isLoggedIn
                   ? IconButton(
                       onPressed: () {
-                        navigate(context, Notifications.route, isRootNavigator: true);
+                        Navigate.pushNamed(context, Notifications.route, isRootNavigator: true);
                       },
                       icon: Icon(
                         Icons.notifications_on,
-                        color: VocabTheme.primaryColor,
+                        color: Theme.of(context).colorScheme.primaryContainer,
                       ))
                   : SizedBox.shrink()
             ]),
@@ -142,6 +139,7 @@ class DashboardMobile extends StatelessWidget {
                     openBuilder: (BuildContext context, VoidCallback openContainer) {
                       return WordDetail(
                         word: word,
+                        isWod: true,
                         title: 'Word of the Day',
                       );
                     },
@@ -250,14 +248,17 @@ class WoDCard extends StatelessWidget {
           color: this.color,
           image: image != null
               ? DecorationImage(
-                  fit: BoxFit.fill, opacity: 0.7, image: AssetImage('assets/dart.jpg'))
+                  fit: BoxFit.fill, opacity: 0.9, image: AssetImage('assets/dart.jpg'))
               : null),
       child: Align(
           alignment: Alignment.center,
           child: Text(
             '$title',
             textAlign: TextAlign.center,
-            style: VocabTheme.googleFontsTextTheme.displayMedium!.copyWith(fontSize: fontSize),
+            style: Theme.of(context)
+                .textTheme
+                .displayMedium!
+                .copyWith(color: Theme.of(context).colorScheme.onPrimary, fontSize: fontSize),
           )),
     );
   }
@@ -270,11 +271,13 @@ class DashboardDesktop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final word = AppStateScope.of(context).wordOfTheDay;
+    final colorScheme = Theme.of(context).colorScheme;
     if (word == null) {
       return LoadingWidget();
     }
     final size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: colorScheme.background,
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -295,6 +298,7 @@ class DashboardDesktop extends StatelessWidget {
                       context,
                       WordDetail(
                         word: word,
+                        isWod: true,
                         title: 'Word of the Day',
                       ),
                       isRootNavigator: false,
@@ -308,7 +312,6 @@ class DashboardDesktop extends StatelessWidget {
                     title: '${word.word}'.toUpperCase(),
                   ),
                 )
-    
               ],
             ),
           ),

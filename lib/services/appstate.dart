@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:vocabhub/controller/settings_controller.dart';
 import 'package:vocabhub/models/models.dart';
-import 'package:vocabhub/services/services/user.dart';
 
 class AppState {
   final UserModel? user;
   final List<Word>? words;
   final Word? wordOfTheDay;
+  final SettingsController? settingsController;
 
-  const AppState({this.user, this.words,this.wordOfTheDay});
+  const AppState({this.user, this.words, this.wordOfTheDay, this.settingsController});
 
   AppState copyWith({
     List<Word>? words,
     UserModel? user,
     Word? wordOfTheDay,
+    SettingsController? settingsController,
   }) {
-    return AppState(words: words ?? this.words, user: user ?? this.user, wordOfTheDay: wordOfTheDay ?? this.wordOfTheDay);
+    return AppState(
+        words: words ?? this.words,
+        user: user ?? this.user,
+        wordOfTheDay: wordOfTheDay ?? this.wordOfTheDay);
   }
 }
 
 class AppStateScope extends InheritedWidget {
-  AppStateScope(this.data, {Key? key, required Widget child})
-      : super(key: key, child: child);
+  AppStateScope(this.data, {Key? key, required Widget child}) : super(key: key, child: child);
 
   AppState data = AppState(user: UserModel(), words: []);
 
@@ -31,7 +35,9 @@ class AppStateScope extends InheritedWidget {
   @override
   bool updateShouldNotify(AppStateScope oldWidget) {
     return data.user?.email != oldWidget.data.user?.email ||
-        data.words != oldWidget.data.words || data.wordOfTheDay != oldWidget.data.wordOfTheDay;
+        data.words != oldWidget.data.words ||
+        data.settingsController != oldWidget.data.settingsController ||
+        data.wordOfTheDay != oldWidget.data.wordOfTheDay;
   }
 }
 
@@ -75,6 +81,14 @@ class AppStateWidgetState extends State<AppStateWidget> {
     setState(() {
       _data = _data.copyWith(
         wordOfTheDay: word,
+      );
+    });
+  }
+
+  void setSettings(SettingsController settings) {
+    setState(() {
+      _data = _data.copyWith(
+        settingsController: settings,
       );
     });
   }

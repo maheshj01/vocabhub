@@ -3,18 +3,15 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:navbar_router/navbar_router.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:vocabhub/constants/strings.dart';
-import 'package:vocabhub/main.dart';
+import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/appstate.dart';
-import 'package:vocabhub/services/services/vocabstore.dart';
+import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
-import 'package:vocabhub/utils/extensions.dart';
-import 'package:vocabhub/utils/navigator.dart';
-import 'package:vocabhub/utils/size_utils.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
@@ -26,7 +23,11 @@ import 'wordscount.dart';
 class WordDetail extends StatefulWidget {
   final Word word;
   final String? title;
-  const WordDetail({Key? key, required this.word, this.title}) : super(key: key);
+
+  /// If true, then it is a word of the day
+  final bool isWod;
+  const WordDetail({Key? key, required this.word, this.title, this.isWod = false})
+      : super(key: key);
 
   @override
   State<WordDetail> createState() => _WordDetailState();
@@ -38,6 +39,7 @@ class _WordDetailState extends State<WordDetail> {
     return ResponsiveBuilder(desktopBuilder: (context) {
       return WordDetailDesktop(
         word: widget.word,
+        isWod: widget.isWod,
       );
     }, mobileBuilder: (BuildContext context) {
       return WordDetailMobile(
@@ -67,7 +69,9 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
   @override
   Widget build(BuildContext context) {
     final userProvider = AppStateScope.of(context).user!;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: colorScheme.background,
       appBar: AppBar(
         title: widget.title != null ? Text(widget.title!) : null,
         actions: [
@@ -127,6 +131,12 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
           ),
           SynonymsList(
             synonyms: widget.word!.synonyms,
+            onTap: (synonym) {
+              if (SizeUtils.isDesktop) {
+                NavbarNotifier.index = SEARCH_INDEX;
+                searchController.setText(synonym);
+              }
+            },
           ),
           50.0.vSpacer(),
           Padding(
@@ -135,8 +145,7 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
               widget.word!.meaning,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                  color: Colors.black,
-                  fontFamily: GoogleFonts.inter(
+                      fontFamily: GoogleFonts.inter(
                     fontWeight: FontWeight.w400,
                   ).fontFamily),
             ),
@@ -168,10 +177,11 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
 
 class WordDetailDesktop extends StatefulWidget {
   final Word? word;
-
+  final bool isWod;
   WordDetailDesktop({
     Key? key,
     this.word,
+    this.isWod = false,
   }) : super(key: key);
 
   @override
@@ -243,7 +253,6 @@ class _WordDetailDesktopState extends State<WordDetailDesktop> with SingleTicker
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    final bool isDark = darkNotifier.value;
     userProvider = AppStateScope.of(context).user!;
     return widget.word == null
         ? EmptyWord()
@@ -284,10 +293,7 @@ class _WordDetailDesktopState extends State<WordDetailDesktop> with SingleTicker
                           padding: const EdgeInsets.symmetric(horizontal: 32.0),
                           child: Text(
                             widget.word!.word.capitalize()!,
-                            style: Theme.of(context)
-                                .textTheme
-                                .displayMedium!
-                                .copyWith(color: isDark ? Colors.white : Colors.black),
+                            style: Theme.of(context).textTheme.displayMedium!,
                           ),
                         ),
                       ),
@@ -297,6 +303,12 @@ class _WordDetailDesktopState extends State<WordDetailDesktop> with SingleTicker
                 20.0.vSpacer(),
                 SynonymsList(
                   synonyms: widget.word!.synonyms,
+                  onTap: (synonym) {
+                    searchController.setText(synonym);
+                    if (widget.isWod || SizeUtils.isDesktop) {
+                      NavbarNotifier.index = SEARCH_INDEX;
+                    }
+                  },
                 ),
                 50.0.vSpacer(),
                 AnimatedBuilder(

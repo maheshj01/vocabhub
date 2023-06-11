@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:navbar_router/navbar_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vocabhub/constants/const.dart';
-import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/history.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
@@ -11,7 +11,6 @@ import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/edit_history.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
-import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
@@ -71,7 +70,7 @@ class _AddWordFormState extends State<AddWordForm> {
         showMessage(context, 'Congrats! Your new word ${editedWord.word} is under review!',
             duration: Duration(seconds: 3), onClosed: () {
           stopCircularIndicator(context);
-          Navigate().popView(context);
+          Navigate.popView(context);
         });
       } else {
         _requestNotifier.value =
@@ -176,7 +175,7 @@ class _AddWordFormState extends State<AddWordForm> {
                 "Your edit is under review, We will notifiy you once there is an update",
                 onClosed: () {
               stopCircularIndicator(context);
-              Navigate().popView(context);
+              Navigate.popView(context);
             });
           }
         } else {
@@ -198,7 +197,7 @@ class _AddWordFormState extends State<AddWordForm> {
       if (response.status == 200) {
         firebaseAnalytics.logWordDelete(widget.word!, userProvider!.email);
         showMessage(context, "The word \"${widget.word!.word}\" has been deleted.",
-            onClosed: () => Navigate().popView(context));
+            onClosed: () => Navigate.popView(context));
       }
       stopCircularIndicator(context);
     }
@@ -215,7 +214,7 @@ class _AddWordFormState extends State<AddWordForm> {
               deleteWord();
             },
             onCancel: () {
-              Navigate().popView(context);
+              Navigate.popView(context);
             }));
   }
 
@@ -240,23 +239,21 @@ class _AddWordFormState extends State<AddWordForm> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    final bool isDark = darkNotifier.value;
-
     Widget synonymChip(String synonym, Function onDeleted) {
       return InputChip(
         label: Text(
           '${synonym.trim().capitalize()}',
-          style: Theme.of(context).textTheme.headlineSmall!.copyWith(color: Colors.white),
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.white),
         ),
         onDeleted: () => onDeleted(),
         isEnabled: true,
-        backgroundColor: isDark ? VocabTheme.secondaryDark : VocabTheme.secondaryColor,
+        backgroundColor: Theme.of(context).primaryColor,
         deleteButtonTooltipMessage: 'remove',
       );
     }
 
     userProvider = AppStateScope.of(context).user!;
-
+    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: ValueListenableBuilder<Response>(
@@ -264,6 +261,7 @@ class _AddWordFormState extends State<AddWordForm> {
           builder: (BuildContext context, Response request, Widget? child) {
             return Scaffold(
               resizeToAvoidBottomInset: true,
+              backgroundColor: colorScheme.background,
               appBar: AppBar(
                 title: Text(widget.isEdit ? 'Edit Word' : 'Add word'),
               ),
@@ -272,7 +270,7 @@ class _AddWordFormState extends State<AddWordForm> {
                 onChanged: () {
                   // update button state
                   editedWord = buildWordFromFields()!;
-                  if (widget.word!.equals(editedWord)) {
+                  if (widget.word != null && widget.word!.equals(editedWord)) {
                     print("equal");
                     _requestNotifier.value = _requestNotifier.value
                         .copyWith(message: 'No changes made', state: RequestState.error);
@@ -508,8 +506,6 @@ class _AddWordFormState extends State<AddWordForm> {
                       Align(
                         alignment: Alignment.center,
                         child: VHButton(
-                          foregroundColor: Colors.white,
-                          backgroundColor: isDark ? Colors.teal : VocabTheme.primaryColor,
                           height: 44,
                           width: 120,
                           onTap: request.state == RequestState.error
@@ -525,7 +521,6 @@ class _AddWordFormState extends State<AddWordForm> {
                           alignment: Alignment.center,
                           child: Text(
                             '${_requestNotifier.value.message}',
-                            style: TextStyle(color: isDark ? Colors.white : Colors.red),
                           ),
                         ),
                       16.0.vSpacer(),
@@ -540,7 +535,7 @@ class _AddWordFormState extends State<AddWordForm> {
                                   child: Text(
                                     'Delete',
                                     style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                                        color: VocabTheme.errorColor,
+                                        color: colorScheme.error,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600),
                                   ))
@@ -637,7 +632,6 @@ class VocabAlert extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = darkNotifier.value;
     return AlertDialog(
       content: Text(title),
       actions: [
@@ -652,7 +646,6 @@ class VocabAlert extends StatelessWidget {
           onPressed: onCancel,
           child: Text(
             'Cancel',
-            style: TextStyle(color: isDark ? Colors.white : Colors.black),
           ),
         ),
       ],

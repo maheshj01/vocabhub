@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -12,10 +13,9 @@ import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
-import 'package:vocabhub/utils/navigator.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
+import 'package:vocabhub/widgets/widgets.dart';
 
 import 'pages/notifications/notifications.dart';
 
@@ -42,10 +42,25 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
       AppStateWidget.of(context).setWords(words);
       // updateWord(words);
     }
+    Future.delayed(const Duration(seconds: 5), askForRating);
+  }
+
+  Future<void> askForRating() async {
+    if (!settingsController.hasRatedOnPlaystore && !kIsWeb) {
+      final lastRatedAskDate = await settingsController.getLastRatedShown();
+      final diff = DateTime.now().difference(lastRatedAskDate).inDays;
+      if (diff > Constants.ratingAskInterval) {
+        settingsController.lastRatedDate = DateTime.now();
+        showRatingsBottomSheet(context);
+      }
+    }
   }
 
   Future<void> isUpdateAvailable() async {
     // TODO: check only once on app launch not on every page load
+    if (SizeUtils.isDesktop) {
+      return;
+    }
     final packageInfo = await PackageInfo.fromPlatform();
     final String appVersion = packageInfo.version;
     final int appBuildNumber = int.parse(packageInfo.buildNumber);
@@ -59,6 +74,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     final buildNumber = remoteConfig.getInt('${Constants.BUILD_NUMBER_KEY}');
     if (appVersion != version || buildNumber > appBuildNumber) {
       hasUpdate = true;
+      showBanner = true;
     } else {
       hasUpdate = false;
     }
@@ -127,21 +143,20 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
         items.removeLast();
       }
     }
-    if (showBanner) {
-      if (!user.isLoggedIn || hasUpdate) {
-        bannerHeight = kNotchedNavbarHeight;
-      } else {
-        bannerHeight = 0;
-        showBanner = false;
-      }
+    if (hasUpdate || !user.isLoggedIn) {
+      bannerHeight = kNotchedNavbarHeight;
+    } else {
+      bannerHeight = 0;
+      showBanner = false;
     }
+    final colorScheme = Theme.of(context).colorScheme;
     return ValueListenableBuilder<int>(
         valueListenable: _selectedIndexNotifier,
         builder: (context, int currentIndex, Widget? child) {
           bannerHeight = kNotchedNavbarHeight;
           return Scaffold(
             resizeToAvoidBottomInset: false,
-            floatingActionButton: showBanner || currentIndex > 1
+            floatingActionButton: showBanner || currentIndex > 1 || !user.isLoggedIn
                 ? null
                 : Padding(
                     padding: (bannerHeight * 0.9).bottomPadding,
@@ -152,21 +167,23 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                           );
                         },
                         tappable: true,
+                        closedColor: colorScheme.primaryContainer,
                         closedShape: 22.0.rounded,
                         transitionType: ContainerTransitionType.fadeThrough,
                         closedBuilder: (BuildContext context, VoidCallback openContainer) {
                           return FloatingActionButton.extended(
+                              backgroundColor: colorScheme.primaryContainer,
                               heroTag: "addword",
                               elevation: 3.5,
                               isExtended: true,
-                              icon: Icon(Icons.add, color: Colors.white, size: 28),
-                              backgroundColor: VocabTheme.primaryColor,
+                              icon:
+                                  Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28),
                               onPressed: null,
                               label: Text(
                                 'Add Word',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.white,
+                                  color: colorScheme.onPrimaryContainer,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ));
@@ -178,7 +195,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                   errorBuilder: (context) {
                     return const Center(child: Text('Error 404'));
                   },
-                  type: NavbarType.notched,
+                  type: NavbarType.material3,
                   onBackButtonPressed: (isExiting) {
                     if (isExiting) {
                       newTime = DateTime.now();
@@ -197,7 +214,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                   },
                   isDesktop: !SizeUtils.isMobile,
                   destinationAnimationCurve: Curves.fastOutSlowIn,
-                  destinationAnimationDuration: 600,
+                  destinationAnimationDuration: 0,
                   onChanged: (x) {
                     /// Simulate DragGesture on pageView
                     if (EXPLORE_INDEX == x && !animatePageOnce) {
@@ -213,16 +230,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                     }
                     _selectedIndexNotifier.value = x;
                   },
-                  decoration: NotchedDecoration(
-                    unselectedLabelTextStyle: TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.w700, color: VocabTheme.primaryColor),
-                    backgroundColor: VocabTheme.surfaceGreen,
-                    // isExtended: SizeUtils.isExtendedDesktop,
-                    showUnselectedLabels: true,
-                    selectedIconTheme: IconThemeData(size: 24, color: VocabTheme.primaryColor),
-                    // selectedLabelTextStyle: TextStyle(fontSize: 12),
-                    // navbarType: BottomNavigationBarType.fixed
-                  ),
+                  decoration: M3NavbarDecoration(),
                   destinations: [
                     for (int i = 0; i < items.length; i++)
                       DestinationRouter(
@@ -254,7 +262,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                             },
                             child: Text('Sign In',
                                 style: TextStyle(
-                                  color: VocabTheme.primaryColor,
+                                  color: colorScheme.primary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
                                 )),
@@ -267,7 +275,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                               },
                               icon: Icon(
                                 Icons.close,
-                                color: VocabTheme.primaryColor,
+                                color: colorScheme.primary,
                                 size: 24,
                               ))
                         ],
@@ -288,7 +296,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                             },
                             child: Text('Update',
                                 style: TextStyle(
-                                  color: VocabTheme.primaryColor,
+                                  color: colorScheme.primary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
                                 )),
@@ -309,7 +317,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                               },
                               icon: Icon(
                                 Icons.close,
-                                color: VocabTheme.primaryColor,
+                                color: colorScheme.primary,
                                 size: 24,
                               ))
                         ],

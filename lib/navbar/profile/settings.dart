@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:navbar_router/navbar_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/navbar/profile/about.dart';
@@ -7,8 +8,8 @@ import 'package:vocabhub/navbar/profile/report.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
-import 'package:vocabhub/utils/navigator.dart';
+import 'package:vocabhub/themes/theme_selector.dart';
+import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -47,9 +48,8 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
       title: Text(
         '$label',
         style: TextStyle(
-          fontSize: 20,
-          color: VocabTheme.lightblue,
-          fontWeight: FontWeight.w600,
+          fontSize: 18,
+          fontWeight: FontWeight.w400,
         ),
       ),
       onTap: () {
@@ -60,15 +60,34 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
     );
   }
 
+  void showLicensePage({
+    required BuildContext context,
+    String? applicationName,
+    String? applicationVersion,
+    Widget? applicationIcon,
+    String? applicationLegalese,
+    bool useRootNavigator = false,
+  }) {
+    Navigator.of(context, rootNavigator: useRootNavigator).push(MaterialPageRoute<void>(
+      builder: (BuildContext context) => LicensePage(
+        applicationName: applicationName,
+        applicationVersion: applicationVersion,
+        applicationIcon: applicationIcon,
+        applicationLegalese: applicationLegalese,
+      ),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
+      backgroundColor: colorScheme.background,
       appBar: AppBar(
         title: const Text('Settings'),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: ListView(
         children: [
           settingTile(
             'About',
@@ -77,8 +96,45 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
             },
           ),
           hLine(),
-          // heading('Theme'),
-          // const SizedBox(height: 16),
+          10.0.vSpacer(),
+          Padding(
+            padding: 16.0.horizontalPadding,
+            child: Row(
+              children: [
+                Text('Theme',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400,
+                    )),
+                Spacer(),
+                AnimatedBuilder(
+                    animation: settingsController,
+                    builder: (context, child) {
+                      return Switch(
+                          value: settingsController.isDark,
+                          onChanged: (x) {
+                            settingsController.setTheme(x ? ThemeMode.dark : ThemeMode.light);
+                          });
+                    }),
+                10.0.hSpacer(),
+                Icon(
+                  settingsController.isDark ? Icons.dark_mode : Icons.light_mode,
+                  color: colorScheme.primary,
+                ),
+              ],
+            ),
+          ),
+          AnimatedBuilder(
+              animation: settingsController,
+              builder: (context, child) {
+                return ThemeSelector(
+                    value: settingsController.themeSeed,
+                    onThemeChanged: (val) {
+                      settingsController.themeSeed = val;
+                    });
+              }),
+          20.0.vSpacer(),
+          hLine(),
           settingTile(
             'Report a bug',
             onTap: () {
@@ -104,13 +160,21 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
                 mode: LaunchMode.externalApplication);
           }),
           hLine(),
+          settingTile('Licenses', onTap: () {
+            showLicensePage(
+              context: context,
+              applicationLegalese: "© 2022 ${Constants.ORGANIZATION}",
+              applicationName: Constants.APP_TITLE,
+            );
+          }),
+          hLine(),
           settingTile('Logout', onTap: () async {
             await Settings.clear();
             await AuthService.updateLogin(email: user.email, isLoggedIn: false);
             Navigate.pushAndPopAll(context, AppSignIn());
           }),
           hLine(),
-          Expanded(child: SizedBox.shrink()),
+          30.0.vSpacer(),
           VersionBuilder(),
           30.0.vSpacer(),
           !kIsWeb
@@ -134,6 +198,64 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
   }
 }
 
+class RatingsPage extends StatefulWidget {
+  const RatingsPage({super.key});
+
+  @override
+  State<RatingsPage> createState() => _RatingsPageState();
+}
+
+class _RatingsPageState extends State<RatingsPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: 16.0.horizontalPadding,
+      child: Column(
+        children: [
+          20.0.vSpacer(),
+          Text(
+            "Rate Us",
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          20.0.vSpacer(),
+          Text(
+            "Are you enjoying ${Constants.APP_TITLE}?",
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          8.0.vSpacer(),
+          Text(
+            '$ratingDescription',
+            textAlign: TextAlign.justify,
+          ),
+          20.0.vSpacer(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  settingsController.ratedOnPlaystore = false;
+                  Navigate.popView(context);
+                },
+                child: Text('No, Thanks'),
+              ),
+              16.0.hSpacer(),
+              VHButton(
+                height: 50,
+                onTap: () async {
+                  settingsController.ratedOnPlaystore = true;
+                  launchUrl(Uri.parse(Constants.PLAY_STORE_URL),
+                      mode: LaunchMode.externalApplication);
+                },
+                label: 'Rate Us',
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class SettingsPageDesktop extends StatefulWidget {
   const SettingsPageDesktop({Key? key}) : super(key: key);
 
@@ -144,9 +266,52 @@ class SettingsPageDesktop extends StatefulWidget {
 class _SettingsPageDesktopState extends State<SettingsPageDesktop> {
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Container(
-        color: Colors.red,
+    return FutureBuilder<List<LicenseEntry>>(
+        future: LicenseRegistry.licenses.toList(),
+        builder: (context, snapshot) {
+          final licenses = snapshot.data;
+          if (licenses == null) return const Center(child: CircularProgressIndicator());
+          return Material(
+            child: Container(
+                child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      final license = licenses[index];
+                      return ListTile(
+                        title: Text(license.packages.join(', ')),
+                        subtitle: Text(license.paragraphs.first.text),
+                        onTap: () {
+                          // show license page
+                          Navigate.push(
+                              context,
+                              LicenseDetail(
+                                text: license.paragraphs.map((e) => e.text).join('\n'),
+                              ));
+                        },
+                      );
+                    },
+                    itemCount: licenses.length)),
+          );
+        });
+  }
+}
+
+class LicenseDetail extends StatefulWidget {
+  final String text;
+  const LicenseDetail({super.key, required this.text});
+
+  @override
+  State<LicenseDetail> createState() => _LicenseDetailState();
+}
+
+class _LicenseDetailState extends State<LicenseDetail> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('License'),
+      ),
+      body: SingleChildScrollView(
+        child: Text(widget.text),
       ),
     );
   }

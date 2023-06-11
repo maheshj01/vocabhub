@@ -7,7 +7,6 @@ import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/navbar/profile/settings.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
 import 'package:vocabhub/widgets/icon.dart';
 import 'package:vocabhub/widgets/responsive.dart';
@@ -101,183 +100,178 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
     final size = MediaQuery.of(context).size;
-    return Scaffold(
-        body: ValueListenableBuilder<List<int>>(
-            valueListenable: _statsNotifier,
-            builder: (BuildContext context, List<int> stats, Widget? child) {
-              return RefreshIndicator(
-                key: _refreshIndicatorKey,
-                onRefresh: () async {
-                  await getEditStats();
-                  setState(() {});
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                  child: ListView(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: 16.0.allRadius,
-                            border: Border.all(color: VocabTheme.primaryColor.withOpacity(0.5))),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Padding(
-                            padding: 18.0.verticalPadding,
-                            child: Column(
-                              children: [
-                                // TODO: implement dark theme
-                                // Container(
-                                //     alignment: Alignment.topRight,
-                                //     padding: EdgeInsets.only(right: 16),
-                                //     child: IconButton(
-                                //       onPressed: () {
-                                //         if (VocabTheme.isDark) {
-                                //           Settings.setTheme(ThemeMode.light);
-                                //         } else {
-                                //           Settings.setTheme(ThemeMode.dark);
-                                //         }
-                                //       },
-                                //       icon: VocabTheme.isDark
-                                //           ? const Icon(Icons.light_mode)
-                                //           : const Icon(Icons.dark_mode),
-                                //     )),
-                                size.width > 600
-                                    ? SizedBox.shrink()
-                                    : Container(
-                                        alignment: Alignment.topRight,
-                                        child: Padding(
-                                          padding: 16.0.horizontalPadding,
-                                          child: VHIcon(
-                                            Icons.settings,
-                                            size: 38,
-                                            onTap: () {
-                                              Navigator.of(context, rootNavigator: true).push(
-                                                  PageRoutes.sharedAxis(const SettingsPageMobile(),
-                                                      SharedAxisTransitionType.horizontal));
-                                            },
-                                          ),
-                                        ),
+    final colorScheme = Theme.of(context).colorScheme;
+    return ValueListenableBuilder<List<int>>(
+        valueListenable: _statsNotifier,
+        builder: (BuildContext context, List<int> stats, Widget? child) {
+          return RefreshIndicator(
+            key: _refreshIndicatorKey,
+            onRefresh: () async {
+              await getEditStats();
+              setState(() {});
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              child: ListView(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: 16.0.allRadius,
+                        border: Border.all(color: colorScheme.secondary)),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: 18.0.verticalPadding,
+                        child: Column(
+                          children: [
+                            // TODO: implement dark theme
+                            // Container(
+                            //     alignment: Alignment.topRight,
+                            //     padding: EdgeInsets.only(right: 16),
+                            //     child: IconButton(
+                            //       onPressed: () {
+                            //         if (VocabTheme.isDark) {
+                            //           Settings.setTheme(ThemeMode.light);
+                            //         } else {
+                            //           Settings.setTheme(ThemeMode.dark);
+                            //         }
+                            //       },
+                            //       icon: VocabTheme.isDark
+                            //           ? const Icon(Icons.light_mode)
+                            //           : const Icon(Icons.dark_mode),
+                            //     )),
+                            size.width > 600
+                                ? SizedBox.shrink()
+                                : Container(
+                                    alignment: Alignment.topRight,
+                                    child: Padding(
+                                      padding: 16.0.horizontalPadding,
+                                      child: VHIcon(
+                                        Icons.settings,
+                                        size: 38,
+                                        onTap: () {
+                                          Navigator.of(context, rootNavigator: true).push(
+                                              PageRoutes.sharedAxis(const SettingsPageMobile(),
+                                                  SharedAxisTransitionType.horizontal));
+                                        },
                                       ),
-
-                                Stack(
-                                  children: [
-                                    Padding(
-                                      padding: 16.0.allPadding,
-                                      child: CircleAvatar(
-                                          radius: 46,
-                                          backgroundColor: Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                              .withOpacity(0.2),
-                                          child: CircularAvatar(
-                                            url: '${user!.avatarUrl}',
-                                            radius: 40,
-                                          )),
                                     ),
-                                    Positioned(
-                                        right: 8,
-                                        bottom: 16,
-                                        child: VHIcon(
-                                          Icons.edit,
-                                          size: 30,
-                                          onTap: () {
-                                            Navigator.of(context, rootNavigator: true)
-                                                .push(PageRoutes.sharedAxis(
-                                                    EditProfile(
-                                                      user: user,
-                                                      onClose: () async {
-                                                        setState(() {});
-                                                      },
-                                                    ),
-                                                    SharedAxisTransitionType.scaled));
-                                          },
-                                        ))
-                                  ],
-                                ),
+                                  ),
+
+                            Stack(
+                              children: [
                                 Padding(
-                                    padding: 8.0.horizontalPadding,
-                                    child: Text(
-                                        '@${user.username} ${!user.isAdmin ? ' (User)' : '(Admin)'}')),
+                                  padding: 16.0.allPadding,
+                                  child: CircleAvatar(
+                                      radius: 46,
+                                      backgroundColor: colorScheme.primary.withOpacity(0.2),
+                                      child: CircularAvatar(
+                                        url: '${user!.avatarUrl}',
+                                        radius: 40,
+                                      )),
+                                ),
+                                Positioned(
+                                    right: 8,
+                                    bottom: 16,
+                                    child: VHIcon(
+                                      Icons.edit,
+                                      size: 30,
+                                      onTap: () {
+                                        Navigator.of(context, rootNavigator: true)
+                                            .push(PageRoutes.sharedAxis(
+                                                EditProfile(
+                                                  user: user,
+                                                  onClose: () async {
+                                                    setState(() {});
+                                                  },
+                                                ),
+                                                SharedAxisTransitionType.scaled));
+                                      },
+                                    ))
+                              ],
+                            ),
+                            Padding(
+                                padding: 8.0.horizontalPadding,
+                                child: Text(
+                                    '@${user.username} ${!user.isAdmin ? ' (User)' : '(Admin)'}')),
+                            Text(
+                              '${user.name.capitalize()}',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineMedium!
+                                  .copyWith(fontSize: 26, fontWeight: FontWeight.w500),
+                            ),
+                            10.0.vSpacer(),
+                            RichText(
+                                text: TextSpan(children: [
+                              TextSpan(
+                                  text: 'Joined ',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall!
+                                      .copyWith(fontWeight: FontWeight.w600, fontSize: 12)),
+                              TextSpan(
+                                text: user.created_at!.formatDate(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall!
+                                    .copyWith(fontWeight: FontWeight.w600),
+                              ),
+                            ])),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  16.0.vSpacer(),
+                  Container(alignment: Alignment.centerLeft, child: heading('Contributions')),
+                  16.0.vSpacer(),
+
+                  /// rounded Container with border
+
+                  Container(
+                    height: 80,
+                    decoration: BoxDecoration(
+                        borderRadius: 16.0.allRadius,
+                        border: Border.all(color: colorScheme.secondary)),
+                    child: Row(
+                      children: [
+                        for (int i = 0; i < stats.length; i++)
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
                                 Text(
-                                  '${user.name.capitalize()}',
-                                  textAlign: TextAlign.center,
+                                  '${stats[i]}',
                                   style: Theme.of(context)
                                       .textTheme
                                       .headlineMedium!
-                                      .copyWith(fontSize: 26, fontWeight: FontWeight.w500),
+                                      .copyWith(fontSize: 28, fontWeight: FontWeight.w500),
                                 ),
-                                10.0.vSpacer(),
-                                RichText(
-                                    text: TextSpan(children: [
-                                  TextSpan(
-                                      text: 'Joined ',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall!
-                                          .copyWith(fontWeight: FontWeight.w600, fontSize: 12)),
-                                  TextSpan(
-                                    text: user.created_at!.formatDate(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleSmall!
-                                        .copyWith(fontWeight: FontWeight.w600),
-                                  ),
-                                ])),
+                                4.0.vSpacer(),
+                                Text(
+                                  i == 0
+                                      ? 'Words Added'
+                                      : i == 1
+                                          ? 'Words Edited'
+                                          : 'Under Review',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall!
+                                      .copyWith(fontSize: 12, fontWeight: FontWeight.w600),
+                                ),
                               ],
                             ),
                           ),
-                        ),
-                      ),
-                      16.0.vSpacer(),
-                      Container(alignment: Alignment.centerLeft, child: heading('Contributions')),
-                      16.0.vSpacer(),
-
-                      /// rounded Container with border
-
-                      Container(
-                        height: 80,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: 16.0.allRadius,
-                            border: Border.all(color: VocabTheme.primaryColor.withOpacity(0.5))),
-                        child: Row(
-                          children: [
-                            for (int i = 0; i < stats.length; i++)
-                              Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      '${stats[i]}',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headlineMedium!
-                                          .copyWith(fontSize: 28, fontWeight: FontWeight.w500),
-                                    ),
-                                    4.0.vSpacer(),
-                                    Text(
-                                      i == 0
-                                          ? 'Words Added'
-                                          : i == 1
-                                              ? 'Words Edited'
-                                              : 'Under Review',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall!
-                                          .copyWith(fontSize: 12, fontWeight: FontWeight.w600),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              );
-            }));
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
   }
 }
 
@@ -287,6 +281,7 @@ class UserProfileDesktop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         title: Text('Profile'),
       ),

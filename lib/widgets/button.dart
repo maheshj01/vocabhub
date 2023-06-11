@@ -4,13 +4,13 @@ import 'package:vocabhub/utils/extensions.dart';
 class VHButton extends StatefulWidget {
   VHButton(
       {Key? key,
-      this.backgroundColor = Colors.white,
-      this.foregroundColor = Colors.black,
+      this.backgroundColor,
+      this.foregroundColor,
       required this.onTap,
       required this.label,
       this.height = 55.0,
       this.width,
-      this.fontSize,
+      this.fontSize = 18,
       this.isLoading = false,
       this.leading})
       : super(key: key);
@@ -22,9 +22,9 @@ class VHButton extends StatefulWidget {
 
   final Widget? leading;
 
-  final Color backgroundColor;
+  final Color? backgroundColor;
 
-  final Color foregroundColor;
+  final Color? foregroundColor;
 
   final double height;
 
@@ -40,6 +40,7 @@ class VHButton extends StatefulWidget {
 class _VHButtonState extends State<VHButton> {
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return ElevatedButton(
       style: (widget.onTap == null)
           ? null
@@ -49,14 +50,15 @@ class _VHButtonState extends State<VHButton> {
               maximumSize: MaterialStateProperty.resolveWith(
                   (states) => Size(widget.width ?? 120, widget.height)),
               foregroundColor: MaterialStateColor.resolveWith(
-                  (states) => widget.foregroundColor),
+                  (states) => widget.foregroundColor ?? colorScheme.onSecondary),
               backgroundColor: MaterialStateColor.resolveWith(
-                  (states) => widget.backgroundColor)),
-      onPressed:
-          widget.isLoading || (widget.onTap == null) ? null : widget.onTap,
+                (states) => widget.backgroundColor ?? colorScheme.secondary,
+              )),
+      onPressed: widget.isLoading || (widget.onTap == null) ? null : widget.onTap,
       child: widget.isLoading
           ? CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(widget.foregroundColor),
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(widget.foregroundColor ?? colorScheme.onSecondary),
             )
           : Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -66,7 +68,7 @@ class _VHButtonState extends State<VHButton> {
                 (widget.leading == null ? 0.0 : 20.0).hSpacer(),
                 Text(
                   '${widget.label}',
-                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                  style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: widget.fontSize,
                       color: widget.foregroundColor),
