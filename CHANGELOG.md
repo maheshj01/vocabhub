@@ -1,4 +1,4 @@
-### 0.5.0+13 Jun 11, 2023 (Unreleased)
+### 0.5.0+13 Jun 11, 2023
 
 - Migrate app and components to Material 3.0
 - Add support for changing theme
