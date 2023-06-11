@@ -1,8 +1,9 @@
 ### 0.5.0+13 Jun 11, 2023 (Unreleased)
 
-- Migrate app to Material 3.0
+- Migrate app and components to Material 3.0
 - Add support for changing theme
 - Adds support for dark mode
+- Refactor search implementation
 
 ### 0.4.2+12 May 28, 2023
 

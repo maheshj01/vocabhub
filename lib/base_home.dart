@@ -44,6 +44,9 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
 
   Future<void> isUpdateAvailable() async {
     // TODO: check only once on app launch not on every page load
+    if (SizeUtils.isDesktop) {
+      return;
+    }
     final packageInfo = await PackageInfo.fromPlatform();
     final String appVersion = packageInfo.version;
     final int appBuildNumber = int.parse(packageInfo.buildNumber);
@@ -126,7 +129,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
       }
     }
     if (showBanner) {
-      if (!user.isLoggedIn || hasUpdate) {
+      if (hasUpdate || !user.isLoggedIn) {
         bannerHeight = kNotchedNavbarHeight;
       } else {
         bannerHeight = 0;
@@ -151,7 +154,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                           );
                         },
                         tappable: true,
-                        closedColor: colorScheme.primaryContainer ,
+                        closedColor: colorScheme.primaryContainer,
                         closedShape: 22.0.rounded,
                         transitionType: ContainerTransitionType.fadeThrough,
                         closedBuilder: (BuildContext context, VoidCallback openContainer) {

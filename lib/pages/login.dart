@@ -151,7 +151,7 @@ class _AppSignInState extends State<AppSignIn> {
                           ),
                           Expanded(
                             child: Container(
-                              color: Colors.white,
+                              color: colorScheme.background,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [

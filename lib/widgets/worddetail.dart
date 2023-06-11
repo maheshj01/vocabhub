@@ -132,7 +132,10 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
           SynonymsList(
             synonyms: widget.word!.synonyms,
             onTap: (synonym) {
-              searchController.setText(synonym);
+              if (SizeUtils.isDesktop) {
+                NavbarNotifier.index = SEARCH_INDEX;
+                searchController.setText(synonym);
+              }
             },
           ),
           50.0.vSpacer(),
@@ -302,7 +305,7 @@ class _WordDetailDesktopState extends State<WordDetailDesktop> with SingleTicker
                   synonyms: widget.word!.synonyms,
                   onTap: (synonym) {
                     searchController.setText(synonym);
-                    if (widget.isWod) {
+                    if (widget.isWod || SizeUtils.isDesktop) {
                       NavbarNotifier.index = SEARCH_INDEX;
                     }
                   },
