@@ -224,7 +224,7 @@ class _RatingsPageState extends State<RatingsPage> {
           ),
           8.0.vSpacer(),
           Text(
-            'If you enjoy using ${Constants.APP_TITLE}, would you mind taking a moment to rate it? It won\'t take more than a minute. Thanks for your support!',
+            '$ratingDescription',
             textAlign: TextAlign.justify,
           ),
           20.0.vSpacer(),

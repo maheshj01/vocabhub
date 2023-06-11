@@ -4,6 +4,7 @@
 - Add support for changing theme
 - Adds support for dark mode
 - Refactor search implementation
+- Adds Ask for user rating on Play Store
 
 ### 0.4.2+12 May 28, 2023
 

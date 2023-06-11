@@ -69,6 +69,7 @@ class _ViewBugReportsState extends State<ViewBugReports> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
           title: const Text('Reports and Feedbacks'),
         ),
@@ -151,6 +152,18 @@ class _ReportABugMobileState extends State<ReportABugMobile> {
   }
 
   final TextEditingController _feedBackcontroller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      /// Show ratings after 3 seconds
+      Future.delayed(const Duration(seconds: 3), () {
+        showRatingsBottomSheet(context);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
