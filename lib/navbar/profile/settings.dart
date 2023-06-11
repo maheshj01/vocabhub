@@ -66,8 +66,7 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
       appBar: AppBar(
         title: const Text('Settings'),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: ListView(
         children: [
           settingTile(
             'About',
