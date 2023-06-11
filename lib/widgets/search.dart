@@ -58,13 +58,15 @@ class _SearchBuilderState extends State<SearchBuilder> {
           decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(horizontal: 8),
               filled: true,
-              border: InputBorder.none,
+              border: OutlineInputBorder(
+                  gapPadding: 0,
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide.none),
               focusedBorder: OutlineInputBorder(
                   gapPadding: 0,
                   borderRadius: BorderRadius.circular(24),
                   borderSide:
                       BorderSide(color: Theme.of(context).colorScheme.primary.withOpacity(0.2))),
-              hintStyle: TextStyle(color: Colors.black),
               prefixIcon: Icon(Icons.search),
               suffixIcon: IconButton(
                   tooltip: _searchController.text.isNotEmpty ? 'clear' : 'shuffle',
