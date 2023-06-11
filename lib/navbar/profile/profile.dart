@@ -7,7 +7,6 @@ import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/navbar/profile/settings.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
 import 'package:vocabhub/widgets/icon.dart';
 import 'package:vocabhub/widgets/responsive.dart';
@@ -101,6 +100,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
     final size = MediaQuery.of(context).size;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
         body: ValueListenableBuilder<List<int>>(
             valueListenable: _statsNotifier,
@@ -117,9 +117,8 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                            color: Colors.white,
                             borderRadius: 16.0.allRadius,
-                            border: Border.all(color: VocabTheme.primaryColor.withOpacity(0.5))),
+                            border: Border.all(color: colorScheme.secondary)),
                         child: Align(
                           alignment: Alignment.center,
                           child: Padding(
@@ -166,10 +165,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                                       padding: 16.0.allPadding,
                                       child: CircleAvatar(
                                           radius: 46,
-                                          backgroundColor: Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                              .withOpacity(0.2),
+                                          backgroundColor: colorScheme.primary.withOpacity(0.2),
                                           child: CircularAvatar(
                                             url: '${user!.avatarUrl}',
                                             radius: 40,
@@ -238,9 +234,8 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                       Container(
                         height: 80,
                         decoration: BoxDecoration(
-                            color: Colors.white,
                             borderRadius: 16.0.allRadius,
-                            border: Border.all(color: VocabTheme.primaryColor.withOpacity(0.5))),
+                            border: Border.all(color: colorScheme.secondary)),
                         child: Row(
                           children: [
                             for (int i = 0; i < stats.length; i++)

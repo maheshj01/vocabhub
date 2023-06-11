@@ -67,6 +67,7 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
   @override
   Widget build(BuildContext context) {
     final userProvider = AppStateScope.of(context).user!;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: widget.title != null ? Text(widget.title!) : null,

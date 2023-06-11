@@ -123,7 +123,7 @@ class DashboardMobile extends StatelessWidget {
                       },
                       icon: Icon(
                         Icons.notifications_on,
-                        color: VocabTheme.primaryColor,
+                        color: Theme.of(context).colorScheme.primary,
                       ))
                   : SizedBox.shrink()
             ]),

@@ -92,6 +92,7 @@ class _VocabAppState extends State<VocabApp> {
       child: AnimatedBuilder(
           animation: settingsController,
           builder: (BuildContext context, Widget? child) {
+            final colorScheme = ColorScheme.fromSeed(seedColor: settingsController.themeSeed);
             return MaterialApp(
               title: '$APP_TITLE',
               navigatorObservers: [observer],
@@ -99,11 +100,13 @@ class _VocabAppState extends State<VocabApp> {
               darkTheme: ThemeData.dark(
                 useMaterial3: true,
               ).copyWith(
+                  scaffoldBackgroundColor: colorScheme.background,
                   colorScheme: ColorScheme.fromSeed(
                       seedColor: settingsController.themeSeed, brightness: Brightness.dark)),
               theme: ThemeData(
                   useMaterial3: true,
                   primaryColorDark: VocabTheme.colorSeeds[2],
+                  scaffoldBackgroundColor: colorScheme.background,
                   colorScheme: ColorScheme.fromSeed(seedColor: settingsController.themeSeed)),
               routes: {
                 Notifications.route: (context) => Notifications(),

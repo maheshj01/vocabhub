@@ -158,14 +158,12 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                               heroTag: "addword",
                               elevation: 3.5,
                               isExtended: true,
-                              icon: Icon(Icons.add, color: Colors.white, size: 28),
-                              backgroundColor: VocabTheme.primaryColor,
+                              icon: Icon(Icons.add, size: 28),
                               onPressed: null,
                               label: Text(
                                 'Add Word',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.white,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ));
@@ -212,17 +210,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                     }
                     _selectedIndexNotifier.value = x;
                   },
-                  decoration: M3NavbarDecoration(
-                      // isExtended: SizeUtils.isDesktop,
-                      // unselectedLabelTextStyle: TextStyle(
-                      //     fontSize: 12, fontWeight: FontWeight.w700, color: VocabTheme.primaryColor),
-                      // backgroundColor: VocabTheme.surfaceGreen,
-                      // // isExtended: SizeUtils.isExtendedDesktop,
-                      // showUnselectedLabels: true,
-                      // selectedIconTheme: IconThemeData(size: 24, color: VocabTheme.primaryColor),
-                    // selectedLabelTextStyle: TextStyle(fontSize: 12),
-                    // navbarType: BottomNavigationBarType.fixed
-                  ),
+                  decoration: M3NavbarDecoration(),
                   destinations: [
                     for (int i = 0; i < items.length; i++)
                       DestinationRouter(

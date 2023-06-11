@@ -108,7 +108,6 @@ Widget heading(String title) {
     title,
     style: TextStyle(
       fontSize: 20,
-      color: VocabTheme.lightblue,
       fontWeight: FontWeight.w600,
     ),
   );
