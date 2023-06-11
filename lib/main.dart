@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:vocabhub/controller/settings_controller.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/search/search.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
@@ -24,12 +25,15 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   analytics = FirebaseAnalytics.instance;
   usePathUrlStrategy();
+  settingsController = SettingsController();
   pushNotificationService = PushNotificationService(_firebaseMessaging);
   // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   Settings.init();
+  settingsController.loadSettings();
   runApp(VocabApp());
 }
 
+late SettingsController settingsController;
 late PushNotificationService pushNotificationService;
 
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -78,26 +82,33 @@ class _VocabAppState extends State<VocabApp> {
 
   @override
   void initState() {
-    super.initState();
     initializeApp();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return AppStateWidget(
       child: AnimatedBuilder(
-          animation: Settings(),
+          animation: settingsController,
           builder: (BuildContext context, Widget? child) {
             return MaterialApp(
               title: '$APP_TITLE',
               navigatorObservers: [observer],
               debugShowCheckedModeBanner: !kDebugMode,
-              darkTheme: VocabTheme.darkThemeData,
-              theme: VocabTheme.lightThemeData,
+              darkTheme: ThemeData.dark(
+                useMaterial3: true,
+              ).copyWith(
+                  colorScheme: ColorScheme.fromSeed(
+                      seedColor: settingsController.themeSeed, brightness: Brightness.dark)),
+              theme: ThemeData(
+                  useMaterial3: true,
+                  primaryColorDark: VocabTheme.colorSeeds[2],
+                  colorScheme: ColorScheme.fromSeed(seedColor: settingsController.themeSeed)),
               routes: {
                 Notifications.route: (context) => Notifications(),
               },
-              themeMode: VocabTheme.isDark ? ThemeMode.dark : ThemeMode.light,
+              themeMode: settingsController.theme,
               home: SplashScreen(),
             );
           }),
