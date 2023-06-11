@@ -307,6 +307,9 @@ class _ExploreWordState extends State<ExploreWord>
                         child: SynonymsList(
                           synonyms: widget.word!.synonyms,
                           emptyHeight: 0,
+                          onTap: (synonym) {
+                            searchController.setText(synonym);
+                          },
                         ),
                       ),
                       AnimatedBuilder(

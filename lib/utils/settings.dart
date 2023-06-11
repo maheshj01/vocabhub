@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vocabhub/models/word.dart';
 
 class Settings extends ChangeNotifier {
   static final Settings _instance = Settings._internal();
@@ -55,33 +53,6 @@ class Settings extends ChangeNotifier {
   static set setSkipCount(int value) {
     _sharedPreferences!.setInt('$skipCountKey', value);
   }
-
-  static void addRecent(Word word) async {
-    final List<Word> recentList = await recents;
-    if (!recentList.contains(word)) {
-      recentList.add(word);
-      final stringData = jsonEncode(recentList);
-      await _sharedPreferences!.setString(recentKey, stringData);
-    }
-  }
-
-  static Future<void> removeRecent(Word value) async {
-    final List<Word> recentList = await recents;
-    recentList.remove(value);
-    final stringData = jsonEncode(recentList);
-    await _sharedPreferences!.setString(recentKey, stringData);
-  }
-
-  static Future<List<Word>> get recents async {
-    final recentList = _sharedPreferences!.getString('$recentKey') ?? '[]';
-    final List<Word> recentWords = [];
-    final words = jsonDecode(recentList);
-    for (final word in words) {
-      recentWords.add(Word.fromJson(word));
-    }
-    return recentWords;
-  }
-
   static FutureOr<int> get skipCount async {
     if (_sharedPreferences == null) {
       _sharedPreferences = await SharedPreferences.getInstance();

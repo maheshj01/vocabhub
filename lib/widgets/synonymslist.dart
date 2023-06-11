@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/navbar/search/search.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/size_utils.dart';
 
 class SynonymsList extends StatelessWidget {
   final List<String>? synonyms;
   final double emptyHeight;
+  final Function(String) onTap;
   SynonymsList({
     Key? key,
     this.emptyHeight = 20,
     this.synonyms,
+    required this.onTap,
   }) : super(key: key);
 
   @override
@@ -19,8 +20,7 @@ class SynonymsList extends StatelessWidget {
         ? emptyHeight.vSpacer()
         : Container(
             alignment: Alignment.center,
-            padding: EdgeInsets.symmetric(
-                horizontal: !SizeUtils.isMobile ? 12.0 : 8.0),
+            padding: EdgeInsets.symmetric(horizontal: !SizeUtils.isMobile ? 12.0 : 8.0),
             child: Wrap(
               direction: Axis.horizontal,
               runSpacing: 5,
@@ -28,21 +28,20 @@ class SynonymsList extends StatelessWidget {
               children: List.generate(synonyms!.length, (index) {
                 final String synonym = synonyms![index].capitalize()!;
                 return MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () {
-                      searchController.text = synonym.trim();
-                    },
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () {
+                        onTap(synonym);
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
                             color: Theme.of(context).colorScheme.secondaryContainer,
-                          borderRadius: BorderRadius.circular(20)),
+                            borderRadius: BorderRadius.circular(20)),
                         child: Text(
                           '${synonym.trim()}',
-                    ),
-                  ),
+                        ),
+                      ),
                     ));
               }),
             ),

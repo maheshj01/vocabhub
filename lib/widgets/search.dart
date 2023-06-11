@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/navbar/search/search.dart';
 
 class SearchBuilder extends StatefulWidget {
   final Function(String) onChanged;
@@ -26,24 +25,32 @@ class _SearchBuilderState extends State<SearchBuilder> {
   @override
   void initState() {
     super.initState();
-    searchController = TextEditingController();
-    searchController.addListener(() {
-      widget.onChanged(searchController.text);
+    _searchController = TextEditingController();
+    if (widget.controller != null) {
+      _searchController = widget.controller!;
+    }
+    _searchController.addListener(() {
+      widget.onChanged(_searchController.text);
     });
   }
 
   @override
   void dispose() {
+    /// dispose the controller if it is not passed from outside
+    if (widget.controller == null) {
+      _searchController.dispose();
+    }
     super.dispose();
   }
 
+  late TextEditingController _searchController;
   @override
   Widget build(BuildContext context) {
     return Container(
         height: 60,
         child: TextField(
           readOnly: widget.readOnly,
-          controller: searchController,
+          controller: _searchController,
           autofocus: widget.autoFocus,
           onTap: () => widget.ontap!(),
           cursorHeight: 24,
@@ -54,18 +61,17 @@ class _SearchBuilderState extends State<SearchBuilder> {
               border: InputBorder.none,
               focusedBorder: OutlineInputBorder(
                   gapPadding: 0,
+                  borderRadius: BorderRadius.circular(24),
                   borderSide:
                       BorderSide(color: Theme.of(context).colorScheme.primary.withOpacity(0.2))),
               hintStyle: TextStyle(color: Colors.black),
               prefixIcon: Icon(Icons.search),
               suffixIcon: IconButton(
-                  tooltip: searchController.text.isNotEmpty ? 'clear' : 'shuffle',
-                  icon: searchController.text.isNotEmpty
-                      ? Icon(Icons.clear)
-                      : SizedBox.shrink(),
+                  tooltip: _searchController.text.isNotEmpty ? 'clear' : 'shuffle',
+                  icon: _searchController.text.isNotEmpty ? Icon(Icons.clear) : SizedBox.shrink(),
                   onPressed: () {
-                    if (searchController.text.isNotEmpty) {
-                      searchController.clear();
+                    if (_searchController.text.isNotEmpty) {
+                      _searchController.clear();
                     }
                   }),
               hintText: "Search for a word"),

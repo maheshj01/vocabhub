@@ -1,7 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/addword.dart';
@@ -15,8 +14,6 @@ import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/word_list_tile.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
 
-TextEditingController searchController = TextEditingController();
-
 class Search extends StatefulWidget {
   static String route = '/';
   const Search({Key? key}) : super(key: key);
@@ -26,30 +23,9 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-  int selectedIndex = 0;
   Word? selectedWord;
-  final ScrollController controller = ScrollController();
-
-  @override
-  void dispose() {
-    // todo: dispose of the controller
-    // wordsNotifier.dispose();
-    super.dispose();
-  }
-
-  final DraggableScrollableController _draggableScrollableController =
-      DraggableScrollableController();
-
-  void _scrollSheetToSize({double size = 0.6}) {
-    // if (_draggableScrollableController.isAttached) {
-    SchedulerBinding.instance.addPostFrameCallback((x) {
-      _draggableScrollableController.animateTo(size,
-          duration: Duration(milliseconds: 300), curve: Curves.easeIn);
-    });
-    // }
-  }
-
-  bool expand = true;
+  int selectedIndex = 0;
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -75,56 +51,6 @@ class _SearchState extends State<Search> {
             );
           }, mobileBuilder: (BuildContext context) {
             return MobileView();
-            //   Stack(
-            //     fit: StackFit.expand,
-            //     children: [
-            //       GestureDetector(
-            //         onTapDown: (x) {
-            //           removeFocus(context);
-            //           if (_draggableScrollableController.size == 0.2) return;
-            //           _scrollSheetToSize(size: 0.2);
-            //         },
-            //         child: SizedBox(
-            //             height: SizeUtils.size.height * 0.6,
-            //             child: SingleChildScrollView(
-            //                 child: WordDetail(word: words[selectedIndex]))),
-            //       ),
-            //       DraggableScrollableSheet(
-            //           maxChildSize: 0.6,
-            //           minChildSize: 0.2,
-            //           controller: _draggableScrollableController,
-            //           expand: true,
-            //           builder: ((context, scrollController) {
-            //             return Container(
-            //               margin: const EdgeInsets.symmetric(horizontal: 8.0),
-            //               decoration: BoxDecoration(
-            //                   color: Colors.white,
-            //                   borderRadius: 16.0.allRadius,
-            //                   boxShadow: [VocabTheme.secondaryShadow]),
-            //               child: WordList(
-            //                 onFocus: () {
-            //                   _scrollSheetToSize(size: 0.6);
-            //                 },
-            //                 controller: scrollController,
-            //                 isExpanded: expand,
-            //                 onExpanded: () {
-            //                   setState(() {
-            //                     expand = !expand;
-            //                   });
-            //                   _scrollSheetToSize(size: expand ? 0.6 : 0.2);
-            //                 },
-            //                 onSelected: (word) {
-            //                   removeFocus(context);
-            //                   setState(() {
-            //                     selectedIndex = words.indexOf(word);
-            //                   });
-            //                   // _scrollSheetToSize(size: 0.2);
-            //                 },
-            //               ),
-            //             );
-            //           }))
-            //     ],
-            //   );
           });
   }
 }
@@ -147,7 +73,8 @@ class _MobileViewState extends State<MobileView> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: SearchBuilder(
               ontap: () {
-                Navigate.push(context, SearchView(), isRootNavigator: false);
+                Navigate.push(context, SearchView(),
+                    transitionType: TransitionType.fade, isRootNavigator: true);
               },
               readOnly: true,
               onChanged: (x) {},
@@ -190,8 +117,8 @@ class _SearchViewState extends State<SearchView> {
 
   Future<void> showRecents() async {
     // searchNotifier.value = null;
-    final recents = await Settings.recents;
-    searchNotifier.value = recents;
+    final _recents = await searchController.recents();
+    searchNotifier.value = _recents;
   }
 
   Future<void> search(String query) async {
@@ -215,6 +142,7 @@ class _SearchViewState extends State<SearchView> {
   @override
   Widget build(BuildContext context) {
     words = AppStateScope.of(context).words!;
+    final colorScheme = Theme.of(context).colorScheme;
     return Material(
       child: SafeArea(
         child: Column(
@@ -242,10 +170,8 @@ class _SearchViewState extends State<SearchView> {
                     valueListenable: searchNotifier,
                     builder: (BuildContext context, List<Word>? history, Widget? child) {
                       if (history == null) {
-                        return LoadingWidget(
-                          color: Colors.red,
-                        );
-                      } else if (searchController.text.isEmpty) {
+                        return LoadingWidget();
+                      } else if (searchController.searchText.isEmpty) {
                         // show Recent Suggestions
                         return Column(
                           children: [
@@ -277,6 +203,7 @@ class _SearchViewState extends State<SearchView> {
                                             word: history[index],
                                           );
                                         },
+                                        closedColor: colorScheme.secondaryContainer,
                                         closedElevation: 0,
                                         tappable: true,
                                         transitionType: ContainerTransitionType.fadeThrough,
@@ -286,7 +213,7 @@ class _SearchViewState extends State<SearchView> {
                                             title: Text('${history[index].word}'),
                                             trailing: GestureDetector(
                                                 onTap: () async {
-                                                  await Settings.removeRecent(history[index]);
+                                                  searchController.removeRecent(history[index]);
                                                   showRecents();
                                                 },
                                                 child: Icon(Icons.close, size: 16)),
@@ -300,7 +227,7 @@ class _SearchViewState extends State<SearchView> {
                         );
                       } else {
                         if (history.isEmpty) {
-                          final searchTerm = searchController.text;
+                          final searchTerm = searchController.searchText;
                           return Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -342,9 +269,10 @@ class _SearchViewState extends State<SearchView> {
                                     padding:
                                         const EdgeInsets.symmetric(horizontal: 8, vertical: 1.0),
                                     child: OpenContainer(
+                                        closedColor: colorScheme.secondaryContainer,
                                         openBuilder:
                                             (BuildContext context, VoidCallback openContainer) {
-                                          Settings.addRecent(history[index]);
+                                          searchController.addRecent(history[index]);
                                           return WordDetail(
                                             word: history[index],
                                           );
@@ -446,6 +374,7 @@ class _WordListState extends State<WordList> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: kIsWeb ? 16.0 : 0.0),
                       child: SearchBuilder(
+                        controller: searchController.controller,
                         ontap: () {
                           if (widget.onFocus != null) {
                             widget.onFocus!();

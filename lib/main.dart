@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:vocabhub/controller/settings_controller.dart';
 import 'package:vocabhub/models/word.dart';
-import 'package:vocabhub/navbar/search/search.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/pages/splashscreen.dart';
 import 'package:vocabhub/services/analytics.dart';
@@ -17,6 +16,7 @@ import 'package:vocabhub/services/services/pushnotification_service.dart';
 import 'package:vocabhub/utils/firebase_options.dart';
 
 import 'constants/constants.dart';
+import 'controller/searchfield_controller.dart';
 import 'utils/settings.dart';
 
 Future<void> main() async {
@@ -25,6 +25,8 @@ Future<void> main() async {
   analytics = FirebaseAnalytics.instance;
   usePathUrlStrategy();
   settingsController = SettingsController();
+  searchController = SearchFieldController(controller: TextEditingController());
+  searchController.initService();
   pushNotificationService = PushNotificationService(_firebaseMessaging);
   // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   Settings.init();
@@ -33,6 +35,7 @@ Future<void> main() async {
 }
 
 late SettingsController settingsController;
+late SearchFieldController searchController;
 late PushNotificationService pushNotificationService;
 
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -71,8 +74,8 @@ class _VocabAppState extends State<VocabApp> {
   late Analytics firebaseAnalytics;
   @override
   void dispose() {
-    totalNotifier.dispose();
     searchController.dispose();
+    totalNotifier.dispose();
     listNotifier.dispose();
     super.dispose();
   }

@@ -140,6 +140,7 @@ class DashboardMobile extends StatelessWidget {
                     openBuilder: (BuildContext context, VoidCallback openContainer) {
                       return WordDetail(
                         word: word,
+                        isWod: true,
                         title: 'Word of the Day',
                       );
                     },
@@ -293,6 +294,7 @@ class DashboardDesktop extends StatelessWidget {
                       context,
                       WordDetail(
                         word: word,
+                        isWod: true,
                         title: 'Word of the Day',
                       ),
                       isRootNavigator: false,
