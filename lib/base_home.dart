@@ -60,6 +60,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     final buildNumber = remoteConfig.getInt('${Constants.BUILD_NUMBER_KEY}');
     if (appVersion != version || buildNumber > appBuildNumber) {
       hasUpdate = true;
+      showBanner = true;
     } else {
       hasUpdate = false;
     }
@@ -128,13 +129,11 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
         items.removeLast();
       }
     }
-    if (showBanner) {
-      if (hasUpdate || !user.isLoggedIn) {
-        bannerHeight = kNotchedNavbarHeight;
-      } else {
-        bannerHeight = 0;
-        showBanner = false;
-      }
+    if (hasUpdate || !user.isLoggedIn) {
+      bannerHeight = kNotchedNavbarHeight;
+    } else {
+      bannerHeight = 0;
+      showBanner = false;
     }
     final colorScheme = Theme.of(context).colorScheme;
     return ValueListenableBuilder<int>(

@@ -269,12 +269,13 @@ class DashboardDesktop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final word = AppStateScope.of(context).wordOfTheDay;
+    final colorScheme = Theme.of(context).colorScheme;
     if (word == null) {
       return LoadingWidget();
     }
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: colorScheme.background,
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
