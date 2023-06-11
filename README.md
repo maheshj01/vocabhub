@@ -1,12 +1,41 @@
 # Vocabhub 0.4.2
 
-A vocabulary app built with Flutter and Supabase, that is simple to use and available on multiple platforms with
-- 800+ most common GRE words
-- provides synonyms, mnemonics, examples to understand each word
-- intelligent search that allows searching for a word with its meaning, synonym.
-- supports dark mode for the night owls (Web only)
-- Ability to suggest edits to improve the words on the platform.
-- More words and features are being added every week.
+Supercharge your vocabulary with our comprehensive app designed to help you excel in English! Whether you're preparing for the GRE or simply aiming to enhance your language skills, this app is your ultimate companion. Unlock the potential of over 800 meticulously curated GRE words, carefully selected to bolster your word power.
+
+Our app goes beyond just presenting words; it empowers you to truly master them. Keep track of your progress as you conquer words, marking them as mastered and solidifying your understanding. With our intuitive interface, effortlessly navigate through your learned words while exploring exciting new vocabulary.
+
+Stay motivated and inspired with our engaging 'Word of the Day' feature. Every day, discover a captivating new word accompanied by its definition, example usage, and additional insights to broaden your linguistic horizons.
+
+What sets us apart is our commitment to collaboration and community. Our app is an open-source crowd platform, welcoming contributions from every user. Join our network of language enthusiasts, and contribute to our expanding database by suggesting edits, offering alternative definitions, or sharing additional examples. Together, we can collectively improve the quality and accuracy of our word collection, fostering a community-driven platform for continuous learning.
+
+Download the app now and embark on an enriching vocabulary journey. Enhance your language skills, build your confidence, and embrace the power of words. Start expanding your linguistic repertoire today.
+
+<a href="https://play.google.com/store/apps/details?id=com.vocabhub.app" target="_blank">
+<img src="assets/googleplay.png" height="60">
+</a>
+
+<a href="http://www.amazon.com/gp/mas/dl/android?p=com.vocabhub.app" target="_blank">
+<img src="assets/amazonappstore.png" height="60">
+</a>
+
+### Platform
+
+| Android | iOS | MacOS | Web |
+| :-----: | :-: | :---: | :-: |
+|   ✅    | ✅  |  ❌   | ✅  |
+
+### [Try it out on the web](https://vocabhub.web.app/)
+
+
+### Mobile
+
+Solarized dark             |  Solarized Ocean   |  Solarized Ocean
+:-------------------------:|:-------------------------:|:-------------------------:
+<img src="https://user-images.githubusercontent.com/31410839/199623337-febc03e2-0bc7-4c72-b269-4ccb0c88fd81.png" width="600">| <img src="https://user-images.githubusercontent.com/31410839/199623341-0b8d4e82-24a4-4c67-b3fc-aaa53f6feb2f.png" width="600"> | <img src="https://user-images.githubusercontent.com/31410839/199623349-e1021ef6-5f6d-473d-b584-0885d5d462e2.png" width="600">
+
+Found a mistake?           |  Track your contributions
+:-------------------------:|:-------------------------:
+![preview 5](https://user-images.githubusercontent.com/31410839/199623676-846ff94b-7d00-4f2f-bcc1-19e12c60c779.png)| ![preview 4](https://user-images.githubusercontent.com/31410839/199623683-1e5841af-5310-41ab-b981-da5d8e654cd1.png)
 
 
 ### Running the app
@@ -46,17 +75,12 @@ _Run the project using the command_
 
 The apk will be generated in the `build/app/outputs/flutter-apk/app-release.apk` folder.
 
-### Mobile
 
-Solarized dark             |  Solarized Ocean   |  Solarized Ocean
-:-------------------------:|:-------------------------:|:-------------------------:
-<img src="https://user-images.githubusercontent.com/31410839/199623337-febc03e2-0bc7-4c72-b269-4ccb0c88fd81.png" width="600">| <img src="https://user-images.githubusercontent.com/31410839/199623341-0b8d4e82-24a4-4c67-b3fc-aaa53f6feb2f.png" width="600"> | <img src="https://user-images.githubusercontent.com/31410839/199623349-e1021ef6-5f6d-473d-b584-0885d5d462e2.png" width="600">
+### Redesigned for the Web v0.4.2 
 
-Found a mistake?           |  Track your contributions
-:-------------------------:|:-------------------------:
-![preview 5](https://user-images.githubusercontent.com/31410839/199623676-846ff94b-7d00-4f2f-bcc1-19e12c60c779.png)| ![preview 4](https://user-images.githubusercontent.com/31410839/199623683-1e5841af-5310-41ab-b981-da5d8e654cd1.png)
-
-
+|                                                                     v0.4.2                                                                      |
+| :---------------------------------------------------------------------------------------------------------------------------------------------: |
+| <img src="https://github.com/maheshmnj/vocabhub/assets/31410839/a3eee2da-dd51-445c-bed7-45363ae9ed7f"/> |
 
 
 ## Adds Support for Dark Mode (Web only)
@@ -67,30 +91,11 @@ Found a mistake?           |  Track your contributions
 
 |                                                                     v0.2.0                                                                      |
 | :---------------------------------------------------------------------------------------------------------------------------------------------: |
-| <img src="https://user-images.githubusercontent.com/31410839/121843891-b8429f00-cd00-11eb-8fc9-c242b8a6a19c.png" alt="" style="width: 400px;"/> |
-
+| <img src="https://user-images.githubusercontent.com/31410839/121843891-b8429f00-cd00-11eb-8fc9-c242b8a6a19c.png"/> |
 
 |                                                                     v0.1.0                                                                      |
 | :---------------------------------------------------------------------------------------------------------------------------------------------: |
-| <img src="https://user-images.githubusercontent.com/31410839/120900881-131b2d00-c655-11eb-8c00-6aafade70d29.png" alt="" style="width: 400px;"/> |
-
-### Platform
-
-| Android | iOS | MacOS | Web |
-| :-----: | :-: | :---: | :-: |
-|   ✅    | ✅  |  ❌   | ✅  |
-
-<a href="https://play.google.com/store/apps/details?id=com.vocabhub.app" target="_blank">
-<img src="assets/googleplay.png" height="60">
-</a>
-
-<a href="http://www.amazon.com/gp/mas/dl/android?p=com.vocabhub.app" target="_blank">
-<img src="assets/amazonappstore.png" height="60">
-</a>
-
-
-### [Try it out on the web](https://vocabhub.web.app/)
-
+| <img src="https://user-images.githubusercontent.com/31410839/120900881-131b2d00-c655-11eb-8c00-6aafade70d29.png"/> |
 
 ## Contributing
 
