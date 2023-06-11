@@ -7,7 +7,6 @@ import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/word_state_service.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
@@ -433,14 +432,15 @@ class _WordMasteredPreferenceState extends State<WordMasteredPreference> {
               child: Tooltip(
                 triggerMode: TooltipTriggerMode.tap,
                 preferBelow: false,
-                decoration: BoxDecoration(color: colorScheme.primary.withOpacity(0.2)),
+                decoration: BoxDecoration(color: colorScheme.tertiaryContainer),
                 richMessage: TextSpan(
-                    style: GoogleFonts.inter(
-                        color: VocabTheme.lightblue, fontWeight: FontWeight.w200, fontSize: 12),
+                    style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                          fontWeight: FontWeight.w200,
+                        ),
                     children: [
                       TextSpan(
                         text:
-                            'If marked as "yes" this word will be under your mastered list\nand when marked as "no" it will be under your bookmarks.',
+                            'If marked as "yes" this word will be under your mastered list and when marked as "no" it will be under your bookmarks.',
                       ),
                     ]),
                 child: Icon(Icons.help),

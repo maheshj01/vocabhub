@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:vocabhub/constants/strings.dart';
-import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
@@ -244,7 +243,6 @@ class _WordDetailDesktopState extends State<WordDetailDesktop> with SingleTicker
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    final bool isDark = darkNotifier.value;
     userProvider = AppStateScope.of(context).user!;
     return widget.word == null
         ? EmptyWord()
@@ -287,8 +285,7 @@ class _WordDetailDesktopState extends State<WordDetailDesktop> with SingleTicker
                             widget.word!.word.capitalize()!,
                             style: Theme.of(context)
                                 .textTheme
-                                .displayMedium!
-                                .copyWith(color: isDark ? Colors.white : Colors.black),
+                                .displayMedium!,
                           ),
                         ),
                       ),

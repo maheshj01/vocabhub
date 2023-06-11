@@ -7,6 +7,8 @@ class SettingsController extends ChangeNotifier {
   SettingsService? _settingsService;
   ThemeMode _theme = ThemeMode.light;
   ThemeMode get theme => _theme;
+
+  bool get isDark => _theme == ThemeMode.dark; 
   Color _themeSeed = VocabTheme.colorSeeds[1];
 
   Color get themeSeed => _themeSeed;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
@@ -28,29 +27,15 @@ class _WordListTileState extends State<WordListTile> {
   @override
   void initState() {
     super.initState();
-    expandedColor = darkNotifier.value ? Colors.white : Colors.black;
     firebaseAnalytics = Analytics();
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = darkNotifier.value;
     // final userProvider = AppStateScope.of(context).user!;
 
     Color tileColor() {
-      if (isDark) {
-        return Colors.white54;
-      } else {
-        return VocabTheme.secondaryColor;
-      }
-    }
-
-    Color textColor() {
-      if (!widget.isSelected && isDark) {
-        return Colors.white;
-      } else {
-        return Colors.black;
-      }
+      return VocabTheme.secondaryColor;
     }
 
     final colorScheme = Theme.of(context).colorScheme;

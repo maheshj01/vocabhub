@@ -77,12 +77,10 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = darkNotifier.value;
     final userProvider = AppStateScope.of(context).user!;
     Widget trailingIcon(IconData data) {
       return Icon(
         data,
-        color: isDark ? Colors.white : Colors.black.withOpacity(0.75),
       );
     }
 
@@ -90,13 +88,11 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
 
     return Drawer(
       child: Container(
-        decoration: isDark ? null : BoxDecoration(gradient: VocabTheme.primaryGradient),
         child: Column(
           children: [
             Container(
               padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
               height: 150,
-              decoration: isDark ? null : BoxDecoration(gradient: VocabTheme.primaryGradient),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -156,7 +152,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
                 'Source code',
               ),
               trailing: Image.asset(
-                isDark ? GITHUB_WHITE_ASSET_PATH : GITHUB_ASSET_PATH,
+                settingsController.isDark ? GITHUB_WHITE_ASSET_PATH : GITHUB_ASSET_PATH,
                 width: 26,
               ),
             ),

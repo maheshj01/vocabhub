@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vocabhub/constants/const.dart';
-import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/history.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
@@ -240,8 +239,6 @@ class _AddWordFormState extends State<AddWordForm> {
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
-    final bool isDark = darkNotifier.value;
-
     Widget synonymChip(String synonym, Function onDeleted) {
       return InputChip(
         label: Text(
@@ -250,7 +247,7 @@ class _AddWordFormState extends State<AddWordForm> {
         ),
         onDeleted: () => onDeleted(),
         isEnabled: true,
-        backgroundColor: isDark ? VocabTheme.secondaryDark : VocabTheme.secondaryColor,
+        backgroundColor: Theme.of(context).primaryColor,
         deleteButtonTooltipMessage: 'remove',
       );
     }
@@ -509,7 +506,6 @@ class _AddWordFormState extends State<AddWordForm> {
                         alignment: Alignment.center,
                         child: VHButton(
                           foregroundColor: Colors.white,
-                          backgroundColor: isDark ? Colors.teal : VocabTheme.primaryColor,
                           height: 44,
                           width: 120,
                           onTap: request.state == RequestState.error
@@ -525,7 +521,6 @@ class _AddWordFormState extends State<AddWordForm> {
                           alignment: Alignment.center,
                           child: Text(
                             '${_requestNotifier.value.message}',
-                            style: TextStyle(color: isDark ? Colors.white : Colors.red),
                           ),
                         ),
                       16.0.vSpacer(),
@@ -637,7 +632,6 @@ class VocabAlert extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = darkNotifier.value;
     return AlertDialog(
       content: Text(title),
       actions: [
@@ -652,7 +646,6 @@ class VocabAlert extends StatelessWidget {
           onPressed: onCancel,
           child: Text(
             'Cancel',
-            style: TextStyle(color: isDark ? Colors.white : Colors.black),
           ),
         ),
       ],

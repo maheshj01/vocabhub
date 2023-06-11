@@ -45,7 +45,6 @@ late PushNotificationService pushNotificationService;
 //   print('Handling a background message ${message.messageId}');
 // }
 
-final ValueNotifier<bool> darkNotifier = ValueNotifier<bool>(false);
 final ValueNotifier<int> totalNotifier = ValueNotifier<int>(0);
 final ValueNotifier<List<Word>?> listNotifier = ValueNotifier<List<Word>>([]);
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -72,7 +71,6 @@ class _VocabAppState extends State<VocabApp> {
   late Analytics firebaseAnalytics;
   @override
   void dispose() {
-    darkNotifier.dispose();
     totalNotifier.dispose();
     searchController.dispose();
     listNotifier.dispose();

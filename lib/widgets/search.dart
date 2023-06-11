@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/main.dart';
 import 'package:vocabhub/navbar/search/search.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 
 class SearchBuilder extends StatefulWidget {
   final Function(String) onChanged;
@@ -41,7 +39,6 @@ class _SearchBuilderState extends State<SearchBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDark = darkNotifier.value;
     return Container(
         height: 60,
         child: TextField(
@@ -64,7 +61,7 @@ class _SearchBuilderState extends State<SearchBuilder> {
               suffixIcon: IconButton(
                   tooltip: searchController.text.isNotEmpty ? 'clear' : 'shuffle',
                   icon: searchController.text.isNotEmpty
-                      ? Icon(Icons.clear, color: isDark ? Colors.white : VocabTheme.primaryColor)
+                      ? Icon(Icons.clear)
                       : SizedBox.shrink(),
                   onPressed: () {
                     if (searchController.text.isNotEmpty) {

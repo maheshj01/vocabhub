@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/main.dart';
 import 'package:vocabhub/navbar/search/search.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
-
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/size_utils.dart';
 
@@ -29,7 +26,7 @@ class SynonymsList extends StatelessWidget {
               runSpacing: 5,
               spacing: 10,
               children: List.generate(synonyms!.length, (index) {
-                String synonym = synonyms![index].capitalize()!;
+                final String synonym = synonyms![index].capitalize()!;
                 return MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: GestureDetector(
@@ -40,18 +37,13 @@ class SynonymsList extends StatelessWidget {
                       padding:
                           EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                          color: darkNotifier.value
-                              ? Colors.white
-                              : VocabTheme.secondaryColor,
+                            color: Theme.of(context).colorScheme.secondaryContainer,
                           borderRadius: BorderRadius.circular(20)),
-                      child: Text('${synonym.trim()}',
-                          style: TextStyle(
-                              color: darkNotifier.value
-                                  ? Colors.black
-                                  : Colors.white)),
+                        child: Text(
+                          '${synonym.trim()}',
                     ),
                   ),
-                );
+                    ));
               }),
             ),
           );

@@ -131,8 +131,7 @@ class _AppSignInState extends State<AppSignIn> {
           return IgnorePointer(
             ignoring: request.state == RequestState.active,
             child: Scaffold(
-                backgroundColor:
-                    darkNotifier.value ? VocabTheme.surfaceGrey : VocabTheme.surfaceGreen,
+                backgroundColor: Theme.of(context).colorScheme.background,
                 body: !SizeUtils.isMobile
                     ? Row(
                         children: [
