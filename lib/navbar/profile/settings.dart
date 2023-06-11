@@ -61,8 +61,9 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
   @override
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: colorScheme.background,
       appBar: AppBar(
         title: const Text('Settings'),
       ),
@@ -72,15 +73,6 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
             'About',
             onTap: () {
               Navigate.push(context, AboutVocabhub());
-            },
-          ),
-          hLine(),
-          // heading('Theme'),
-          // const SizedBox(height: 16),
-          settingTile(
-            'Report a bug',
-            onTap: () {
-              Navigate.push(context, ReportABug());
             },
           ),
           hLine(),
@@ -95,19 +87,20 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
                       fontWeight: FontWeight.w400,
                     )),
                 Spacer(),
-                Icon(
-                  Icons.brightness_6,
-                  color: settingsController.themeSeed,
-                ),
                 AnimatedBuilder(
                     animation: settingsController,
                     builder: (context, child) {
                       return Switch(
-                          value: settingsController.theme == ThemeMode.dark,
+                          value: settingsController.isDark,
                           onChanged: (x) {
                             settingsController.setTheme(x ? ThemeMode.dark : ThemeMode.light);
                           });
                     }),
+                10.0.hSpacer(),
+                Icon(
+                  settingsController.isDark ? Icons.dark_mode : Icons.light_mode,
+                  color: colorScheme.primary,
+                ),
               ],
             ),
           ),
@@ -121,6 +114,13 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
                     });
               }),
           20.0.vSpacer(),
+          hLine(),
+          settingTile(
+            'Report a bug',
+            onTap: () {
+              Navigate.push(context, ReportABug());
+            },
+          ),
           hLine(),
           !user!.isAdmin
               ? const SizedBox.shrink()
