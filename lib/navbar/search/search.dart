@@ -162,7 +162,7 @@ class _SearchViewState extends State<SearchView> {
                         ontap: () {},
                         autoFocus: true,
                         onChanged: (query) {
-                          setState(() {});
+                          searchController.controller.text = query;
                           search(query);
                         }),
                   ),
@@ -363,11 +363,16 @@ class _WordListState extends State<WordList> {
     super.activate();
   }
 
+  Future<void> search(String query) async {
+    final results = await VocabStoreService.searchWord(query);
+    if (mounted) {
+      wordsNotifier.value = results;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = AppStateWidget.of(context);
-
-    /// todo: sheet should be draggable on dragging the  top edge of the sheet
     return ValueListenableBuilder<List<Word>>(
         valueListenable: wordsNotifier,
         builder: (BuildContext context, List<Word> value, Widget? child) {
@@ -387,22 +392,24 @@ class _WordListState extends State<WordList> {
                           }
                         },
                         onChanged: (x) {
+                          // /// Searching on the Web
                           _words = AppStateScope.of(context).words!;
-                          wordsNotifier.value = _words;
+                          // wordsNotifier.value = _words;
                           if (x.isEmpty) {
                             wordsNotifier.value = _words;
                             state.setWords(_words);
                             return;
                           }
-                          final List<Word> result = [];
-                          for (var element in _words) {
-                            if (element.word.toLowerCase().contains(x.toLowerCase()) ||
-                                element.meaning.toLowerCase().contains(x.toLowerCase()) ||
-                                isInSynonym(x, element.synonyms)) {
-                              result.add(element);
-                            }
-                          }
-                          wordsNotifier.value = result;
+                          // final List<Word> result = [];
+                          // for (var element in _words) {
+                          //   if (element.word.toLowerCase().contains(x.toLowerCase()) ||
+                          //       element.meaning.toLowerCase().contains(x.toLowerCase()) ||
+                          //       isInSynonym(x, element.synonyms)) {
+                          //     result.add(element);
+                          //   }
+                          // }
+                          // wordsNotifier.value = result;
+                          search(x);
                         },
                       ),
                     ),

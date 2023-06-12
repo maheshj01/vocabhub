@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/main.dart';
 
 class SearchBuilder extends StatefulWidget {
   final Function(String) onChanged;
@@ -31,7 +30,6 @@ class _SearchBuilderState extends State<SearchBuilder> {
       _searchController = widget.controller!;
     }
     _searchController.addListener(() {
-      searchController.controller.text = _searchController.text;
       widget.onChanged(_searchController.text);
     });
   }

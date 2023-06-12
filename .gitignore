@@ -34,6 +34,7 @@ doc/api/
 # Visual Studio Code related
 .vscode/
 .vscode/launch.json
+.vascode/tasks.json
 
 # Flutter/Dart/Pub related
 **/doc/api/
