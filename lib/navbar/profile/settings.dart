@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/navbar/profile/about.dart';
 import 'package:vocabhub/navbar/profile/report.dart';
+import 'package:vocabhub/navbar/profile/webview.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
@@ -151,8 +152,8 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
                   },
                 ),
           !user.isAdmin ? const SizedBox.shrink() : hLine(),
-          settingTile('Privacy Policy', onTap: () {
-            launchUrl(Uri.parse(Constants.PRIVACY_POLICY), mode: LaunchMode.externalApplication);
+          settingTile(Constants.PRIVACY_POLICY_TITLE, onTap: () {
+            Navigate.pushNamed(context, WebViewPage.routeName, isRootNavigator: true);
           }),
           hLine(),
           settingTile('Contact Us', onTap: () {

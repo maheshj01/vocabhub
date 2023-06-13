@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:vocabhub/controller/settings_controller.dart';
 import 'package:vocabhub/models/word.dart';
+import 'package:vocabhub/navbar/profile/webview.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/pages/splashscreen.dart';
 import 'package:vocabhub/services/analytics.dart';
@@ -109,6 +110,10 @@ class _VocabAppState extends State<VocabApp> {
                   colorScheme: ColorScheme.fromSeed(seedColor: settingsController.themeSeed)),
               routes: {
                 Notifications.route: (context) => Notifications(),
+                WebViewPage.routeName: (context) => WebViewPage(
+                      title: 'Privacy Policy',
+                      url: Constants.PRIVACY_POLICY,
+                    ),
               },
               themeMode: settingsController.theme,
               home: SplashScreen(),
