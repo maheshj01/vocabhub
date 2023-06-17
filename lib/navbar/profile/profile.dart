@@ -73,7 +73,9 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
         }
       }
     }
-    _statsNotifier.value = stats;
+    if (mounted) {
+      _statsNotifier.value = stats;
+    }
   }
 
   List<int> stats = [0, 0, 0];

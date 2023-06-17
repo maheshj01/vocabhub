@@ -31,3 +31,5 @@ const String ABOUT_TEXT =
 
 const String ratingDescription =
     "If you've been finding value in your experience with ${Constants.APP_TITLE}, we kindly request a moment of your time to rate the app on the Play Store. We genuinely appreciate your support and feedback, and it will only take a minute. Thank you for choosing ${Constants.APP_TITLE}!";
+
+const String exploreScrollMessage = 'Swipe up to explore more words';

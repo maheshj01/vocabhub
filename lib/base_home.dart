@@ -216,10 +216,10 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                   destinationAnimationDuration: 0,
                   onChanged: (x) {
                     /// Simulate DragGesture on pageView
-                    if (EXPLORE_INDEX == x) {
+                    if (EXPLORE_INDEX == x && SizeUtils.isMobile) {
                       if (pageController.hasClients && user.isLoggedIn) {
                         if (exploreController.shouldShowScrollMessage) {
-                          showToast('Swipe up to explore more words');
+                          showToast(exploreScrollMessage);
                           Future.delayed(Duration(seconds: 3), () {
                             if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {
                               pageController.animateTo(200,

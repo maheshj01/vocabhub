@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vocabhub/utils/utils.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewPage extends StatefulWidget {
@@ -36,7 +37,7 @@ class _NewPageState extends State<WebViewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          automaticallyImplyLeading: SizeUtils.isMobile ? true : false,
           title: Text(widget.title),
         ),
         body: WebViewWidget(

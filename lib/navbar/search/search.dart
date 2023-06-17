@@ -94,6 +94,43 @@ class _MobileViewState extends State<MobileView> {
   }
 }
 
+class TOP10WordsCard extends StatefulWidget {
+  const TOP10WordsCard({super.key});
+
+  @override
+  State<TOP10WordsCard> createState() => _TOP10WordsCardState();
+}
+
+class _TOP10WordsCardState extends State<TOP10WordsCard> {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Column(
+        children: [
+          ListTile(
+            title: Text('Top 10 Words'),
+            trailing: IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {},
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: 10,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text('Word $index'),
+                  subtitle: Text('Meaning $index'),
+                );
+              },
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 class SearchView extends StatefulWidget {
   static String route = '/searchview';
 

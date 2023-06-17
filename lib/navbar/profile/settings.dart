@@ -43,7 +43,7 @@ class SettingsPageMobile extends StatefulWidget {
 }
 
 class _SettingsPageMobileState extends State<SettingsPageMobile> {
-  Widget settingTile(String label, {String? description, Function? onTap}) {
+  Widget settingTile(String label, {String? description, Function? onTap, IconData? trailingIcon}) {
     return ListTile(
       minVerticalPadding: 24.0,
       title: Text(
@@ -67,6 +67,7 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
           onTap();
         }
       },
+      trailing: trailingIcon != null ? Icon(trailingIcon) : null,
     );
   }
 
@@ -198,7 +199,7 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
             );
           }),
           hLine(),
-          settingTile('Logout', onTap: () async {
+          settingTile('Logout', trailingIcon: Icons.logout, onTap: () async {
             await Settings.clear();
             // todo: on logout show explore words
             await AuthService.updateLogin(email: user.email, isLoggedIn: false);

@@ -6,6 +6,7 @@ import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/dashboard/bookmarks.dart';
+import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/database.dart';
@@ -123,6 +124,17 @@ class DashboardMobile extends StatelessWidget {
                         Icons.notifications_on,
                         color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
                       ))
+                  : SizedBox.shrink(),
+              !user.isLoggedIn
+                  ? TextButton(
+                      onPressed: () {
+                        Navigate.push(context, AppSignIn(), isRootNavigator: true);
+                      },
+                      child: Text('Sign In',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(color: Theme.of(context).colorScheme.primary)))
                   : SizedBox.shrink()
             ]),
         SliverToBoxAdapter(
