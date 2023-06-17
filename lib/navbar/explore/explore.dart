@@ -51,17 +51,17 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
   Future<void> exploreWords() async {
     _request.value = Response(state: RequestState.active);
     final user = AppStateScope.of(context).user;
-    final newWords = await VocabStoreService.exploreWords(user!.email, page: page);
-    words!.addAll(newWords);
-    max = words!.length;
+    final newWords = await ExploreService.exploreWords(user!.email, page: page);
+    newWords.shuffle();
+    max = newWords.length;
+    print(max);
     if (mounted) {
-      _request.value = Response(state: RequestState.done);
+      _request.value = _request.value.copyWith(data: newWords, state: RequestState.done);
     }
   }
 
   int page = 0;
   int max = 0;
-  List<Word>? words = [];
   bool isFetching = false;
 
   ValueNotifier<Response> _request = ValueNotifier<Response>(Response(state: RequestState.none));
@@ -76,14 +76,19 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Response>(
         valueListenable: _request,
-        builder: (BuildContext context, Response request, Widget? child) {
-          if (words == null || words!.isEmpty) return SizedBox.shrink();
+        builder: (BuildContext context, Response? request, Widget? child) {
+          if (request == null ||
+              (request.data == null) ||
+              (request.data as List<dynamic>).isEmpty) {
+            return SizedBox.shrink();
+          }
+          final words = request.data as List<Word>;
           return Material(
             child: Stack(
               fit: StackFit.expand,
               children: [
                 PageView.builder(
-                    itemCount: words!.length,
+                    itemCount: words.length,
                     controller: pageController,
                     scrollBehavior: MaterialScrollBehavior(),
                     onPageChanged: (x) {

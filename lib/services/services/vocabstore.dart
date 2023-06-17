@@ -92,24 +92,6 @@ class VocabStoreService {
     }
   }
 
-  static Future<List<Word>> exploreWords(String email, {int page = 0}) async {
-    final response = await DatabaseService.findLimitedWords(page: page);
-    final masteredWords = await getBookmarks(email, isBookmark: false);
-    List<Word> words = [];
-    List<Word> exploreWords = [];
-    if (response.status == 200) {
-      words = (response.data as List).map((e) => Word.fromJson(e)).toList();
-
-      /// exclude words that are already bookmarked.
-      words.forEach((element) {
-        if (!masteredWords.contains(element)) {
-          exploreWords.add(element);
-        }
-      });
-    }
-    return exploreWords;
-  }
-
   static Future<List<Word>> getBookmarks(String email, {bool isBookmark = true}) async {
     final response = await DatabaseService.findRowsByInnerJoinOn2ColumnValue(
       'email',

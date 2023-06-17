@@ -104,15 +104,18 @@ class DatabaseService {
 
   static Future<PostgrestResponse> findAll(
       {String tableName = '${Constants.VOCAB_TABLE_NAME}'}) async {
-    final response = await _supabase.from(tableName).select().execute();
-    return response;
+    return await _supabase.from(tableName).select().execute();
   }
 
   static Future<PostgrestResponse> findLimitedWords(
-      {String tableName = '${Constants.VOCAB_TABLE_NAME}', int page = 0}) async {
-    final response =
-        await _supabase.from(tableName).select().range(page * 20, (page + 1) * 20).execute();
-    return response;
+      {String tableName = '${Constants.VOCAB_TABLE_NAME}', bool sort = false, int page = 0}) async {
+    // final response =
+    //     await _supabase.from(tableName).select().range(page * 20, (page + 1) * 20).execute();
+    return await _supabase
+        .from(tableName)
+        .select()
+        .order('${Constants.CREATED_AT_COLUMN}', ascending: sort)
+        .execute();
   }
 
   static Future<PostgrestResponse> findRecentlyUpdatedRow(String innerJoinColumn, String value,
