@@ -14,6 +14,7 @@ import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
+import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
 
 class ExploreWords extends StatelessWidget {
@@ -80,42 +81,47 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
     return ValueListenableBuilder<Response>(
         valueListenable: _request,
         builder: (BuildContext context, Response? request, Widget? child) {
-          if (request == null ||
-              (request.data == null) ||
-              (request.data as List<dynamic>).isEmpty) {
+          if (request == null || (request.data == null)) {
+            return LoadingWidget();
+          } else if ((request.data as List<dynamic>).isEmpty) {
             return SizedBox.shrink();
           }
           final words = request.data as List<Word>;
           return Material(
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                PageView.builder(
-                    itemCount: words.length,
-                    controller: pageController,
-                    scrollBehavior: MaterialScrollBehavior(),
-                    onPageChanged: (x) {
-                      if (x > max - 5) {
-                        page++;
-                        exploreWords();
-                      }
-                      if (x % _scrollCountCallback == 0) {
-                        widget.onScrollThresholdReached!();
-                      }
-                      hideMessage(context);
-                    },
-                    physics: ClampingScrollPhysics(),
-                    scrollDirection: Axis.vertical,
-                    itemBuilder: (context, index) {
-                      return ExploreWord(word: words[index], index: index);
-                    }),
-                request.state == RequestState.active
-                    ? Positioned(
-                        bottom: kBottomNavigationBarHeight + 50,
-                        left: 120,
-                        child: Text('Fetching more words'))
-                    : SizedBox.shrink(),
-              ],
+            child: RefreshIndicator(
+              onRefresh: () async {
+                await exploreWords();
+              },
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  PageView.builder(
+                      itemCount: words.length,
+                      controller: pageController,
+                      scrollBehavior: MaterialScrollBehavior(),
+                      onPageChanged: (x) {
+                        // if (x > max - 5) {
+                        //   page++;
+                        //   exploreWords();
+                        // }
+                        if (x % _scrollCountCallback == 0) {
+                          widget.onScrollThresholdReached!();
+                        }
+                        hideMessage(context);
+                      },
+                      physics: ClampingScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      itemBuilder: (context, index) {
+                        return ExploreWord(word: words[index], index: index);
+                      }),
+                  request.state == RequestState.active
+                      ? Positioned(
+                          bottom: kBottomNavigationBarHeight + 50,
+                          left: 120,
+                          child: Text('Fetching more words'))
+                      : SizedBox.shrink(),
+                ],
+              ),
             ),
           );
         });
