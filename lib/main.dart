@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:vocabhub/controller/explore_controller.dart';
 import 'package:vocabhub/controller/settings_controller.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/profile/webview.dart';
@@ -26,8 +27,10 @@ Future<void> main() async {
   analytics = FirebaseAnalytics.instance;
   usePathUrlStrategy();
   settingsController = SettingsController();
+  exploreController = ExploreController();
   searchController = SearchFieldController(controller: TextEditingController());
   searchController.initService();
+  exploreController.initService();
   pushNotificationService = PushNotificationService(_firebaseMessaging);
   // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   Settings.init();
@@ -37,6 +40,7 @@ Future<void> main() async {
 
 late SettingsController settingsController;
 late SearchFieldController searchController;
+late ExploreController exploreController;
 late PushNotificationService pushNotificationService;
 
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -78,6 +82,7 @@ class _VocabAppState extends State<VocabApp> {
     searchController.dispose();
     totalNotifier.dispose();
     listNotifier.dispose();
+    exploreController.dispose();
     super.dispose();
   }
 

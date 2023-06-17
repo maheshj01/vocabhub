@@ -48,4 +48,7 @@ class SearchService extends ServiceBase {
   Future<void> clearSearchHistory() async {
     await _sharedPreferences.remove(recentKey);
   }
+
+  @override
+  Future<void> disposeService() async {}
 }

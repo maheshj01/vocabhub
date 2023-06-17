@@ -37,7 +37,9 @@ class SearchFieldController extends ChangeNotifier with ServiceBase {
 
   TextEditingController get controller => _searchController;
 
-  void dispose() {
+  @override
+  Future<void> disposeService() async {
+    // TODO: implement disposeService
     _searchController.dispose();
     super.dispose();
   }

@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/constants/constants.dart';
+import 'package:vocabhub/controller/explore_controller.dart';
 import 'package:vocabhub/models/models.dart';
+import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/word_state_service.dart';
@@ -51,7 +53,7 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
   Future<void> exploreWords() async {
     _request.value = Response(state: RequestState.active);
     final user = AppStateScope.of(context).user;
-    final newWords = await ExploreService.exploreWords(user!.email, page: page);
+    final newWords = await exploreController.exploreWords(user!.email, page: page);
     newWords.shuffle();
     max = newWords.length;
     print(max);
@@ -63,12 +65,13 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
   int page = 0;
   int max = 0;
   bool isFetching = false;
-
+  ExploreController _exploreController = ExploreController();
   ValueNotifier<Response> _request = ValueNotifier<Response>(Response(state: RequestState.none));
   int _scrollCountCallback = 11;
   @override
   void dispose() {
     _request.dispose();
+    _exploreController.dispose();
     super.dispose();
   }
 
@@ -104,14 +107,14 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
                     physics: ClampingScrollPhysics(),
                     scrollDirection: Axis.vertical,
                     itemBuilder: (context, index) {
-                      return ExploreWord(word: words![index], index: index);
+                      return ExploreWord(word: words[index], index: index);
                     }),
                 request.state == RequestState.active
                     ? Positioned(
                         bottom: kBottomNavigationBarHeight + 50,
                         left: 120,
                         child: Text('Fetching more words'))
-                    : SizedBox.shrink()
+                    : SizedBox.shrink(),
               ],
             ),
           );
@@ -230,6 +233,7 @@ class _ExploreWordState extends State<ExploreWord>
       // _animationController.reset();
       // }
     });
+    isHidden = exploreController.isHidden;
   }
 
   int length = 0;
@@ -246,7 +250,6 @@ class _ExploreWordState extends State<ExploreWord>
   late VocabStoreService supaStore;
   int upperIndex = 0;
   int lowerIndex = 0;
-  bool reveal = false;
   WordState wordState = WordState.unanswered;
   List<Color> backgrounds = [
     Color(0xff989E9C),
@@ -255,129 +258,155 @@ class _ExploreWordState extends State<ExploreWord>
     Color(0xff72858C),
     Color(0xff30414B),
   ];
+  late bool isHidden;
   @override
   Widget build(BuildContext context) {
     super.build(context);
     // Size size = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
     final userProvider = AppStateScope.of(context).user!;
-
     if (!userProvider.isLoggedIn) {
-      reveal = true;
       _animationController.forward();
     }
     return widget.word == null
         ? EmptyWord()
-        : Column(
-            mainAxisAlignment: !reveal ? MainAxisAlignment.center : MainAxisAlignment.start,
-            children: [
-              !reveal ? SizedBox.shrink() : kToolbarHeight.vSpacer(),
-              Padding(
-                padding: const EdgeInsets.only(top: kToolbarHeight, bottom: 12),
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                      child: Text(widget.word!.word.capitalize()!, style: textTheme.displayMedium!),
-                    ),
-                  ),
-                ),
-              ),
-              userProvider.isLoggedIn && !reveal
-                  ? IconButton(
-                      onPressed: () {
-                        setState(() {
-                          reveal = !reveal;
-                        });
-                        if (reveal) {
-                          _animationController.forward();
-                        }
-                      },
-                      icon: Icon(
-                        reveal ? Icons.visibility : Icons.visibility_off,
-                      ),
-                    )
-                  : SizedBox.shrink(),
-              AnimatedOpacity(
-                opacity: reveal ? 1 : 0,
-                duration: Duration(milliseconds: 500),
-                child: IgnorePointer(
-                  ignoring: !reveal,
-                  child: Column(
+        : AnimatedBuilder(
+            animation: exploreController,
+            builder: (BuildContext context, Widget? child) {
+              return Column(
+                children: [
+                  kToolbarHeight.vSpacer(),
+                  Stack(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        child: SynonymsList(
-                          synonyms: widget.word!.synonyms,
-                          emptyHeight: 0,
-                          onTap: (synonym) {},
+                        padding: const EdgeInsets.only(top: kToolbarHeight, bottom: 12),
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: FittedBox(
+                            fit: BoxFit.fitWidth,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                              child: Text(widget.word!.word.capitalize()!,
+                                  style: textTheme.displayMedium!),
+                            ),
+                          ),
                         ),
                       ),
-                      AnimatedBuilder(
-                          animation: _animation,
-                          builder: (BuildContext _, Widget? child) {
-                            meaning = widget.word!.meaning.substring(0, _animation.value);
-                            return Container(
-                              alignment: Alignment.center,
-                              margin: 24.0.verticalPadding,
-                              padding: 16.0.horizontalPadding,
-                              child: SelectableText(meaning,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium!
-                                      .copyWith(fontWeight: FontWeight.w400)),
-                            );
-                          }),
-                      ExampleListBuilder(
-                        title: 'Usage',
-                        examples: (widget.word!.examples == null || widget.word!.examples!.isEmpty)
-                            ? []
-                            : widget.word!.examples,
-                        word: widget.word!.word,
-                      ),
-                      ExampleListBuilder(
-                        title: 'Mnemonics',
-                        examples:
-                            (widget.word!.mnemonics == null || widget.word!.mnemonics!.isEmpty)
-                                ? []
-                                : widget.word!.mnemonics,
-                        word: widget.word!.word,
-                      ),
-                      SizedBox(
-                        height: 48,
-                      ),
-                      userProvider.isLoggedIn
-                          ? WordMasteredPreference(
-                              onChanged: (state) async {
-                                final wordId = widget.word!.id;
-                                final userEmail = userProvider.email;
-                                String message = '';
-                                if (state) {
-                                  wordState = WordState.known;
-                                  message = knownWord;
-                                } else {
-                                  wordState = WordState.unknown;
-                                  message = unKnownWord;
-                                }
-                                setState(() {});
-                                final resp = await WordStateService.storeWordPreference(
-                                    wordId, userEmail, wordState);
-                                if (resp.didSucced) {
-                                  showToast(message);
-                                }
-                              },
-                              value: wordState,
-                            )
-                          : SizedBox.shrink(),
+                      Positioned(
+                        top: 20,
+                        right: 40,
+                        child: userProvider.isLoggedIn && !isHidden
+                            ? IconButton(
+                                onPressed: () {
+                                  Navigate.push(
+                                      context,
+                                      AddWordForm(
+                                        isEdit: true,
+                                        word: widget.word,
+                                      ),
+                                      transitionType: TransitionType.scale);
+                                },
+                                icon: Icon(
+                                  Icons.edit,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ))
+                            : SizedBox.shrink(),
+                      )
                     ],
                   ),
-                ),
-              )
-            ],
-          );
+                  (userProvider.isLoggedIn && isHidden)
+                      ? IconButton(
+                          onPressed: () {
+                            setState(() {
+                              isHidden = !isHidden;
+                            });
+                            _animationController.forward();
+                          },
+                          icon: Icon(
+                            Icons.visibility_off,
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                  AnimatedOpacity(
+                    opacity: !isHidden ? 1 : 0,
+                    duration: Duration(milliseconds: 500),
+                    child: IgnorePointer(
+                      ignoring: isHidden,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16.0),
+                            child: SynonymsList(
+                              synonyms: widget.word!.synonyms,
+                              emptyHeight: 0,
+                              onTap: (synonym) {},
+                            ),
+                          ),
+                          AnimatedBuilder(
+                              animation: _animation,
+                              builder: (BuildContext _, Widget? child) {
+                                meaning = widget.word!.meaning.substring(0, _animation.value);
+                                return Container(
+                                  alignment: Alignment.center,
+                                  margin: 24.0.verticalPadding,
+                                  padding: 16.0.horizontalPadding,
+                                  child: SelectableText(meaning,
+                                      textAlign: TextAlign.center,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium!
+                                          .copyWith(fontWeight: FontWeight.w400)),
+                                );
+                              }),
+                          ExampleListBuilder(
+                            title: 'Usage',
+                            examples:
+                                (widget.word!.examples == null || widget.word!.examples!.isEmpty)
+                                    ? []
+                                    : widget.word!.examples,
+                            word: widget.word!.word,
+                          ),
+                          ExampleListBuilder(
+                            title: 'Mnemonics',
+                            examples:
+                                (widget.word!.mnemonics == null || widget.word!.mnemonics!.isEmpty)
+                                    ? []
+                                    : widget.word!.mnemonics,
+                            word: widget.word!.word,
+                          ),
+                          SizedBox(
+                            height: 48,
+                          ),
+                          userProvider.isLoggedIn
+                              ? WordMasteredPreference(
+                                  onChanged: (state) async {
+                                    final wordId = widget.word!.id;
+                                    final userEmail = userProvider.email;
+                                    String message = '';
+                                    if (state) {
+                                      wordState = WordState.known;
+                                      message = knownWord;
+                                    } else {
+                                      wordState = WordState.unknown;
+                                      message = unKnownWord;
+                                    }
+                                    setState(() {});
+                                    final resp = await WordStateService.storeWordPreference(
+                                        wordId, userEmail, wordState);
+                                    if (resp.didSucced) {
+                                      showToast(message);
+                                    }
+                                  },
+                                  value: wordState,
+                                )
+                              : SizedBox.shrink(),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              );
+            });
   }
 
   @override
@@ -466,11 +495,7 @@ class _WordMasteredPreferenceState extends State<WordMasteredPreference> {
             SizedBox(
               width: 120,
               child: Text('Yes',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium!
-                      .copyWith(color: isMastered ? stateToColor(widget.value) : Colors.black)),
+                  textAlign: TextAlign.center, style: Theme.of(context).textTheme.headlineMedium!),
             ),
             SizedBox(
               width: 120,

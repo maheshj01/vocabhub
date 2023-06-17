@@ -1,3 +1,8 @@
+### 0.5.1+14 Jun 11, 2023 (Unreleased Release)
+
+- Improve explore page logic for new words
+- Add setting to hide/unhide words in explore page.
+
 ### 0.5.0+13 Jun 11, 2023
 
 - Migrate app and components to Material 3.0

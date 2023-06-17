@@ -234,7 +234,7 @@ class WoDCard extends StatelessWidget {
       this.width,
       required this.title,
       this.color,
-      this.fontSize = 48,
+      this.fontSize = 40,
       this.image});
 
   @override
@@ -257,7 +257,7 @@ class WoDCard extends StatelessWidget {
             textAlign: TextAlign.center,
             style: Theme.of(context)
                 .textTheme
-                .displayMedium!
+                .displaySmall!
                 .copyWith(color: Theme.of(context).colorScheme.onPrimary, fontSize: fontSize),
           )),
     );

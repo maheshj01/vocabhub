@@ -43,7 +43,7 @@ class SettingsPageMobile extends StatefulWidget {
 }
 
 class _SettingsPageMobileState extends State<SettingsPageMobile> {
-  Widget settingTile(String label, {Function? onTap}) {
+  Widget settingTile(String label, {String? description, Function? onTap}) {
     return ListTile(
       minVerticalPadding: 24.0,
       title: Text(
@@ -53,6 +53,15 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
           fontWeight: FontWeight.w400,
         ),
       ),
+      subtitle: description != null
+          ? Text(
+              '$description',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              ),
+            )
+          : null,
       onTap: () {
         if (onTap != null) {
           onTap();
@@ -108,6 +117,11 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
                       fontWeight: FontWeight.w400,
                     )),
                 Spacer(),
+                Icon(
+                  settingsController.isDark ? Icons.dark_mode : Icons.light_mode,
+                  color: colorScheme.primary,
+                ),
+                10.0.hSpacer(),
                 AnimatedBuilder(
                     animation: settingsController,
                     builder: (context, child) {
@@ -117,11 +131,6 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
                             settingsController.setTheme(x ? ThemeMode.dark : ThemeMode.light);
                           });
                     }),
-                10.0.hSpacer(),
-                Icon(
-                  settingsController.isDark ? Icons.dark_mode : Icons.light_mode,
-                  color: colorScheme.primary,
-                ),
               ],
             ),
           ),
@@ -135,6 +144,26 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
                     });
               }),
           20.0.vSpacer(),
+          hLine(),
+          Stack(
+            children: [
+              settingTile(
+                'Hide Explore Words',
+                description: 'When enabled, words will be hidden in explore page',
+              ),
+              Positioned(
+                top: 10,
+                right: 16,
+                child: Switch(
+                    value: exploreController.isHidden,
+                    onChanged: (x) {
+                      setState(() {
+                        exploreController.toggleHiddenExplore();
+                      });
+                    }),
+              )
+            ],
+          ),
           hLine(),
           settingTile(
             'Report a bug',
@@ -171,6 +200,7 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
           hLine(),
           settingTile('Logout', onTap: () async {
             await Settings.clear();
+            // todo: on logout show explore words
             await AuthService.updateLogin(email: user.email, isLoggedIn: false);
             Navigate.pushAndPopAll(context, AppSignIn());
           }),
