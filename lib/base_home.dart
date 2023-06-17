@@ -83,7 +83,6 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
 
   late AppState state;
 
-  bool animatePageOnce = false;
   DateTime oldTime = DateTime.now();
   DateTime newTime = DateTime.now();
   ValueNotifier<int> _selectedIndexNotifier = ValueNotifier<int>(0);
@@ -217,15 +216,18 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                   destinationAnimationDuration: 0,
                   onChanged: (x) {
                     /// Simulate DragGesture on pageView
-                    if (EXPLORE_INDEX == x && !animatePageOnce) {
+                    if (EXPLORE_INDEX == x) {
                       if (pageController.hasClients && user.isLoggedIn) {
-                        Future.delayed(Duration(seconds: 3), () {
-                          if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {
-                            pageController.animateTo(200,
-                                duration: Duration(milliseconds: 600), curve: Curves.easeIn);
-                            animatePageOnce = true;
-                          }
-                        });
+                        if (exploreController.shouldShowScrollMessage) {
+                          showToast('Swipe up to explore more words');
+                          Future.delayed(Duration(seconds: 3), () {
+                            if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {
+                              pageController.animateTo(200,
+                                  duration: Duration(milliseconds: 600), curve: Curves.easeIn);
+                            }
+                            exploreController.setIsScrollMessageShown(true);
+                          });
+                        }
                       }
                     }
                     _selectedIndexNotifier.value = x;

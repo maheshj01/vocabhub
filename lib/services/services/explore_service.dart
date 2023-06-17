@@ -9,6 +9,8 @@ class ExploreService extends ServiceBase {
   final _logger = Logger('ExploreService');
   late SharedPreferences _sharedPreferences;
   final kExploreHiddenKey = 'kExploreHiddenKey';
+  final kScrollMessageShownDateKey = 'kScrollMessageShownDateKey';
+  final kIsScrollMessageShownKey = 'kIsScrollMessageShownKey';
   @override
   Future<void> initService() async {
     _sharedPreferences = await SharedPreferences.getInstance();
@@ -37,6 +39,27 @@ class ExploreService extends ServiceBase {
       _logger.e(_.toString());
       throw Exception('Error while fetching explore words');
     }
+  }
+
+  Future<void> setScrollMessageShownDate(DateTime date) {
+    return _sharedPreferences.setString(kScrollMessageShownDateKey, date.toString());
+  }
+
+  Future<DateTime> getScrollMessageShownDate() async {
+    final String? date = _sharedPreferences.getString(kScrollMessageShownDateKey);
+    if (date != null) {
+      return DateTime.parse(date);
+    }
+    return DateTime.now();
+  }
+
+  Future<void> setIsScrollMessageShown(bool value) async {
+    await setScrollMessageShownDate(DateTime.now());
+    await _sharedPreferences.setBool(kIsScrollMessageShownKey, value);
+  }
+
+  Future<bool> getIsScrollMessageShown() async {
+    return _sharedPreferences.getBool(kIsScrollMessageShownKey) ?? false;
   }
 
   Future<bool> getExploreHidden() async {

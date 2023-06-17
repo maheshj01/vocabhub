@@ -1,26 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/services/explore_service.dart';
 import 'package:vocabhub/services/services/service_base.dart';
 
 class ExploreController extends ChangeNotifier with ServiceBase {
   final Duration _autoScrollDuration = Duration(seconds: 10);
+  late DateTime _scrollMessageShownDate;
+  late bool _isScrollMessageShown;
   late bool _isHidden;
+
   bool get isHidden => _isHidden;
+
+  DateTime get scrollMessageShownDate => _scrollMessageShownDate;
+
+  bool get isScrollMessageShown => _isScrollMessageShown;
+
   late final ExploreService _exploreService;
+
+  bool _shouldShowScrollMessage = false;
+
+  bool get shouldShowScrollMessage => _shouldShowScrollMessage;
+
+  void setShouldShowScrollMessage() {
+    if (!isScrollMessageShown) {
+      _shouldShowScrollMessage = true;
+      return;
+    }
+    final shownDate = scrollMessageShownDate;
+    final now = DateTime.now();
+    final differenceInDays = shownDate.difference(now).inDays;
+    _shouldShowScrollMessage = differenceInDays > Constants.scrollMessageShownInterval;
+  }
 
   @override
   Future<void> initService() async {
     _isHidden = true;
+    _scrollMessageShownDate = DateTime.now();
     _exploreService = ExploreService();
     await _exploreService.initService();
     _isHidden = await _exploreService.getExploreHidden();
+    setIsScrollMessageShown(await _exploreService.getIsScrollMessageShown());
+    _scrollMessageShownDate = await _exploreService.getScrollMessageShownDate();
   }
 
   Future<void> hideExplore(bool value) async {
     _isHidden = value;
     notifyListeners();
     await _exploreService.setExploreHidden(value);
+  }
+
+  Future<void> setIsScrollMessageShown(bool value) async {
+    _isScrollMessageShown = value;
+    notifyListeners();
+    await _exploreService.setIsScrollMessageShown(value);
+    if (isScrollMessageShown) {
+      setShouldShowScrollMessage();
+    }
   }
 
   void toggleHiddenExplore() {

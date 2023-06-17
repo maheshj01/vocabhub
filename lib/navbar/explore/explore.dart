@@ -228,12 +228,10 @@ class _ExploreWordState extends State<ExploreWord>
     supaStore = VocabStoreService();
     _tween = IntTween(begin: 0, end: length);
     _animation = _tween.animate(_animationController);
-    _animationController.addStatusListener((status) {
-      // if (status == AnimationStatus.completed) {
-      // _animationController.reset();
-      // }
-    });
     isHidden = exploreController.isHidden;
+    if (!isHidden) {
+      _animationController.forward();
+    }
   }
 
   int length = 0;
@@ -244,6 +242,14 @@ class _ExploreWordState extends State<ExploreWord>
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant ExploreWord oldWidget) {
+    if (!exploreController.isHidden) {
+      _animationController.forward();
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   late String meaning;
@@ -346,6 +352,10 @@ class _ExploreWordState extends State<ExploreWord>
                               animation: _animation,
                               builder: (BuildContext _, Widget? child) {
                                 meaning = widget.word!.meaning.substring(0, _animation.value);
+                                // if (!exploreController.isHidden) {
+                                // } else {
+                                //   meaning = widget.word!.meaning;
+                                // }
                                 return Container(
                                   alignment: Alignment.center,
                                   margin: 24.0.verticalPadding,
