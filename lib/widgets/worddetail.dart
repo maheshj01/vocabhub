@@ -9,6 +9,7 @@ import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
+import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
@@ -21,6 +22,7 @@ import 'package:vocabhub/widgets/synonymslist.dart';
 import 'wordscount.dart';
 
 class WordDetail extends StatefulWidget {
+  static String routeName = '/worddetail';
   final Word word;
   final String? title;
 
@@ -34,6 +36,15 @@ class WordDetail extends StatefulWidget {
 }
 
 class _WordDetailState extends State<WordDetail> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isWod) {
+      analytics.logRouteView(WordDetail.routeName);
+    }
+  }
+
+  final analytics = Analytics.instance;
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(desktopBuilder: (context) {

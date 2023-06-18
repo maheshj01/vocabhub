@@ -27,7 +27,7 @@ class _WordListTileState extends State<WordListTile> {
   @override
   void initState() {
     super.initState();
-    firebaseAnalytics = Analytics();
+    firebaseAnalytics = Analytics.instance;
   }
 
   @override
@@ -38,6 +38,7 @@ class _WordListTileState extends State<WordListTile> {
     Color tileColor() {
       return colorScheme.secondary;
     }
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(

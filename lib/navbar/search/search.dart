@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/addword.dart';
+import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/utils.dart';
@@ -26,7 +27,13 @@ class _SearchState extends State<Search> {
   Word? selectedWord;
   int selectedIndex = 0;
   TextEditingController searchController = TextEditingController();
+  @override
+  void initState() {
+    analytics.logRouteView('${Search.route}search');
+    super.initState();
+  }
 
+  final analytics = Analytics.instance;
   @override
   Widget build(BuildContext context) {
     final words = AppStateScope.of(context).words;

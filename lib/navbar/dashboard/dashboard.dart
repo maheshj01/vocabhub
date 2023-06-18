@@ -8,6 +8,7 @@ import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/dashboard/bookmarks.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
+import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
@@ -86,8 +87,8 @@ class _DashboardState extends State<Dashboard> {
 
 class DashboardMobile extends StatelessWidget {
   static String route = '/';
-  const DashboardMobile({Key? key}) : super(key: key);
-
+  DashboardMobile({Key? key}) : super(key: key);
+  final analytics = Analytics.instance;
   @override
   Widget build(BuildContext context) {
     final user = AppStateScope.of(context).user;

@@ -7,6 +7,7 @@ import 'package:vocabhub/navbar/profile/about.dart';
 import 'package:vocabhub/navbar/profile/report.dart';
 import 'package:vocabhub/navbar/profile/webview.dart';
 import 'package:vocabhub/pages/login.dart';
+import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/theme_selector.dart';
@@ -27,6 +28,13 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  @override
+  void initState() {
+    analytics.logRouteView(SettingsPage.route);
+    super.initState();
+  }
+
+  final analytics = Analytics.instance;
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(

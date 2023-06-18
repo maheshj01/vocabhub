@@ -67,7 +67,7 @@ Widget storeRedirect(BuildContext context,
     {String redirectUrl = Constants.PLAY_STORE_URL, String assetUrl = 'assets/googleplay.png'}) {
   return GestureDetector(
     onTap: () {
-      final firebaseAnalytics = Analytics();
+      final firebaseAnalytics = Analytics.instance;
       final width = MediaQuery.of(context).size.width;
       firebaseAnalytics
           .logRedirectToStore(width > SizeUtils.kTabletBreakPoint ? 'desktop' : 'mobile');

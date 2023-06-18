@@ -24,7 +24,7 @@ import 'utils/settings.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  analytics = FirebaseAnalytics.instance;
+  firebaseAnalytics = FirebaseAnalytics.instance;
   usePathUrlStrategy();
   settingsController = SettingsController();
   exploreController = ExploreController();
@@ -43,21 +43,10 @@ late SearchFieldController searchController;
 late ExploreController exploreController;
 late PushNotificationService pushNotificationService;
 
-// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-//   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-//   pushNotificationService = PushNotificationService(_firebaseMessaging);
-//   await pushNotificationService!.setupFlutterNotifications();
-//   pushNotificationService!.showFlutterNotification(message);
-//   // If you're going to use other Firebase services in the background, such as Firestore,
-//   // make sure you call `initializeApp` before using other Firebase services.
-//   print('Handling a background message ${message.messageId}');
-// }
-
 final ValueNotifier<int> totalNotifier = ValueNotifier<int>(0);
 final ValueNotifier<List<Word>?> listNotifier = ValueNotifier<List<Word>>([]);
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-late FirebaseAnalytics analytics;
-FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(analytics: analytics);
+late FirebaseAnalytics firebaseAnalytics;
 
 class VocabApp extends StatefulWidget {
   @override
@@ -66,8 +55,7 @@ class VocabApp extends StatefulWidget {
 
 class _VocabAppState extends State<VocabApp> {
   Future<void> initializeApp() async {
-    firebaseAnalytics = Analytics();
-    firebaseAnalytics.appOpen();
+    firebaseAnalytics.logAppOpen();
     final email = await Settings.email;
     if (email.isNotEmpty) {
       await AuthService.updateLogin(email: email, isLoggedIn: true);
@@ -76,7 +64,7 @@ class _VocabAppState extends State<VocabApp> {
     //     data: {'title': 'Welcome', 'body': 'Welcome to VocabHub'}));
   }
 
-  late Analytics firebaseAnalytics;
+  FirebaseAnalyticsObserver _observer = FirebaseAnalyticsObserver(analytics: firebaseAnalytics);
   @override
   void dispose() {
     searchController.dispose();
@@ -101,7 +89,7 @@ class _VocabAppState extends State<VocabApp> {
             final colorScheme = ColorScheme.fromSeed(seedColor: settingsController.themeSeed);
             return MaterialApp(
               title: Constants.APP_TITLE,
-              navigatorObservers: [observer],
+              navigatorObservers: [_observer],
               debugShowCheckedModeBanner: !kDebugMode,
               darkTheme: ThemeData.dark(
                 useMaterial3: true,

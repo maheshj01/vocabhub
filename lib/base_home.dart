@@ -11,6 +11,7 @@ import 'package:vocabhub/navbar/profile/about.dart';
 import 'package:vocabhub/navbar/profile/settings.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/login.dart';
+import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -101,6 +102,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     NavbarItem(Icons.explore, 'Explore'),
   ];
   bool showBanner = true;
+  final analytics = Analytics.instance;
   @override
   Widget build(BuildContext context) {
     SizeUtils.size = MediaQuery.of(context).size;
@@ -293,6 +295,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                         actions: [
                           TextButton(
                             onPressed: () {
+                              analytics.logAppUpdate(settingsController.version!);
                               launchUrl(Uri.parse(Constants.PLAY_STORE_URL),
                                   mode: LaunchMode.externalApplication);
                             },

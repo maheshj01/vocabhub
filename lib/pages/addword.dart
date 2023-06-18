@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:navbar_router/navbar_router.dart';
@@ -21,7 +19,7 @@ import 'package:vocabhub/widgets/widgets.dart';
 class AddWordForm extends StatefulWidget {
   final bool isEdit;
   final Word? word;
-  static const route = '/addword';
+  static const String route = '/addword';
 
   const AddWordForm({Key? key, this.isEdit = false, this.word}) : super(key: key);
 
@@ -55,6 +53,7 @@ class _AddWordFormState extends State<AddWordForm> {
       stopCircularIndicator(context);
       return;
     }
+    analytics.logWordAddSubmit(wordObject, 'submitted');
     try {
       if (await wordExists(wordObject)) {
         stopCircularIndicator(context);
@@ -68,7 +67,7 @@ class _AddWordFormState extends State<AddWordForm> {
       );
       final response = await EditHistoryService.insertHistory(history);
       if (response.didSucced) {
-        firebaseAnalytics.logWordAdd(wordObject, userProvider!.email);
+        analytics.logWordAddSubmit(wordObject, 'success');
         showMessage(context, 'Congrats! Your new word ${editedWord.word} is under review!',
             duration: Duration(seconds: 3), onClosed: () {
           stopCircularIndicator(context);
@@ -111,7 +110,7 @@ class _AddWordFormState extends State<AddWordForm> {
     return true;
   }
 
-  final firebaseAnalytics = Analytics();
+  final analytics = Analytics.instance;
   final _requestNotifier =
       ValueNotifier<Response>(Response(message: '', state: RequestState.error));
   Word? currentWordFromDatabase;
@@ -120,6 +119,7 @@ class _AddWordFormState extends State<AddWordForm> {
   @override
   void initState() {
     super.initState();
+    analytics.logRouteView(AddWordForm.route);
     wordController = TextEditingController();
     meaningController = TextEditingController();
     exampleController = TextEditingController();
@@ -198,7 +198,7 @@ class _AddWordFormState extends State<AddWordForm> {
         final String id = widget.word!.id;
         final response = await VocabStoreService.deleteById(id);
         if (response.status == 200) {
-          firebaseAnalytics.logWordDelete(widget.word!, userProvider!.email);
+          analytics.logWordDelete(widget.word!, userProvider!.email);
           showMessage(context, "The word \"${widget.word!.word}\" has been deleted.",
               onClosed: () => Navigate.popView(context));
         } else {

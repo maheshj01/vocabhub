@@ -81,7 +81,7 @@ class _AppSignInState extends State<AppSignIn> {
   @override
   void initState() {
     super.initState();
-    firebaseAnalytics = Analytics();
+    firebaseAnalytics = Analytics.instance;
   }
 
   @override
