@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:navbar_router/navbar_router.dart';
@@ -190,16 +192,24 @@ class _AddWordFormState extends State<AddWordForm> {
   }
 
   Future<void> deleteWord() async {
-    if (widget.isEdit) {
-      showCircularIndicator(context);
-      final String id = widget.word!.id;
-      final response = await VocabStoreService.deleteById(id);
-      if (response.status == 200) {
-        firebaseAnalytics.logWordDelete(widget.word!, userProvider!.email);
-        showMessage(context, "The word \"${widget.word!.word}\" has been deleted.",
-            onClosed: () => Navigate.popView(context));
+    try {
+      if (widget.isEdit) {
+        showCircularIndicator(context);
+        final String id = widget.word!.id;
+        final response = await VocabStoreService.deleteById(id);
+        if (response.status == 200) {
+          firebaseAnalytics.logWordDelete(widget.word!, userProvider!.email);
+          showMessage(context, "The word \"${widget.word!.word}\" has been deleted.",
+              onClosed: () => Navigate.popView(context));
+        } else {
+          final error = response.error;
+          showMessage(context, "Failed to delete word", onClosed: () {});
+        }
+        stopCircularIndicator(context);
       }
+    } catch (_) {
       stopCircularIndicator(context);
+      showMessage(context, "Failed to delete word", onClosed: () {});
     }
   }
 

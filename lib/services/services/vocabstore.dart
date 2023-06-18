@@ -186,6 +186,9 @@ class VocabStoreService {
     _logger.i(tableName);
     final response =
         await DatabaseService.deleteRow(id, tableName: tableName, columnName: Constants.ID_COLUMN);
+    if (response.error != null) {
+      _logger.e("${response.error!.message}$id");
+    }
     return response;
   }
 }
