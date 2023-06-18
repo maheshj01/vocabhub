@@ -4,6 +4,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/dashboard/bookmarks.dart';
 import 'package:vocabhub/pages/login.dart';
@@ -119,6 +120,7 @@ class DashboardMobile extends StatelessWidget {
               user!.isLoggedIn
                   ? IconButton(
                       onPressed: () {
+                        pushNotificationService.showFlutterNotification();
                         Navigate.pushNamed(context, Notifications.route, isRootNavigator: true);
                       },
                       icon: Icon(

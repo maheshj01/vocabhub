@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:vocabhub/controller/explore_controller.dart';
 import 'package:vocabhub/controller/settings_controller.dart';
@@ -11,7 +12,6 @@ import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/profile/webview.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/pages/splashscreen.dart';
-import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/pushnotification_service.dart';
@@ -29,13 +29,27 @@ Future<void> main() async {
   settingsController = SettingsController();
   exploreController = ExploreController();
   searchController = SearchFieldController(controller: TextEditingController());
+  pushNotificationService = PushNotificationService(_firebaseMessaging);
   searchController.initService();
   exploreController.initService();
-  pushNotificationService = PushNotificationService(_firebaseMessaging);
+  pushNotificationService.initService();
   // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   Settings.init();
   settingsController.loadSettings();
+  pushNotificationService.initService();
   runApp(VocabApp());
+}
+
+@pragma('vm:entry-point')
+void notificationTapBackground(NotificationResponse notificationResponse) {
+  // ignore: avoid_print
+  print('notification(${notificationResponse.id}) action tapped: '
+      '${notificationResponse.actionId} with'
+      ' payload: ${notificationResponse.payload}');
+  if (notificationResponse.input?.isNotEmpty ?? false) {
+    // ignore: avoid_print
+    print('notification action tapped with input: ${notificationResponse.input}');
+  }
 }
 
 late SettingsController settingsController;
@@ -47,11 +61,20 @@ final ValueNotifier<int> totalNotifier = ValueNotifier<int>(0);
 final ValueNotifier<List<Word>?> listNotifier = ValueNotifier<List<Word>>([]);
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 late FirebaseAnalytics firebaseAnalytics;
+final InitializationSettings initializationSettings = InitializationSettings(
+    android: AndroidInitializationSettings(
+      'app_icon',
+    ),
+    iOS: null,
+    macOS: null);
 
 class VocabApp extends StatefulWidget {
   @override
   _VocabAppState createState() => _VocabAppState();
 }
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 class _VocabAppState extends State<VocabApp> {
   Future<void> initializeApp() async {
@@ -60,8 +83,12 @@ class _VocabAppState extends State<VocabApp> {
     if (email.isNotEmpty) {
       await AuthService.updateLogin(email: email, isLoggedIn: true);
     }
-    // pushNotificationService!.showFlutterNotification(RemoteMessage(
-    //     data: {'title': 'Welcome', 'body': 'Welcome to VocabHub'}));
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onDidReceiveNotificationResponse: (x) {
+      print('received notification');
+    }, onDidReceiveBackgroundNotificationResponse: (x) {
+      print('received background notification');
+    });
   }
 
   FirebaseAnalyticsObserver _observer = FirebaseAnalyticsObserver(analytics: firebaseAnalytics);
@@ -104,7 +131,7 @@ class _VocabAppState extends State<VocabApp> {
               routes: {
                 Notifications.route: (context) => Notifications(),
                 WebViewPage.routeName: (context) => WebViewPage(
-                      title: 'Privacy Policy',
+                      title: Constants.PRIVACY_POLICY_TITLE,
                       url: Constants.PRIVACY_POLICY,
                     ),
               },

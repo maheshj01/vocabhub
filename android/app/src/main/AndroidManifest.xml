@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.vocabhub.app">
 
-  <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.INTERNET" />
   <queries>
     <intent>
       <action android:name="android.intent.action.SENDTO" />
@@ -11,18 +11,23 @@
       <action android:name="android.intent.action.VIEW" />
       <data android:scheme="https" />
     </intent>
-    <!--#docregion android-queries-->
+    <!--#docregion
+    android-queries-->
   </queries>
   <application android:label="vocabhub" android:icon="@mipmap/launcher_icon">
     <meta-data
       android:name="com.google.firebase.messaging.default_notification_icon"
-      android:resource="@mipmap/ic_launcher" />
+      android:resource="@mipmap/launcher_icon" />
     <activity
       android:name=".MainActivity"
       android:exported="true"
-      android:launchMode="singleTop" android:theme="@style/LaunchTheme" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" android:hardwareAccelerated="true" android:windowSoftInputMode="adjustResize">
-      <meta-data android:name="io.flutter.embedding.android.NormalTheme" android:resource="@style/NormalTheme" />
-      <meta-data android:name="io.flutter.embedding.android.SplashScreenDrawable" android:resource="@drawable/launch_background" />
+      android:launchMode="singleTop" android:theme="@style/LaunchTheme"
+      android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+      android:hardwareAccelerated="true" android:windowSoftInputMode="adjustResize">
+      <meta-data android:name="io.flutter.embedding.android.NormalTheme"
+        android:resource="@style/NormalTheme" />
+      <meta-data android:name="io.flutter.embedding.android.SplashScreenDrawable"
+        android:resource="@drawable/launch_background" />
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
@@ -35,6 +40,6 @@
     <meta-data android:name="flutterEmbedding" android:value="2" />
     <meta-data
       android:value="default"
-      android:name="com.google.firebase.messaging.default_notification_channel_id"/>
+      android:name="com.google.firebase.messaging.default_notification_channel_id" />
   </application>
 </manifest>
