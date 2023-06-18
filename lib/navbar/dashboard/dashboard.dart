@@ -128,8 +128,8 @@ class DashboardMobile extends StatelessWidget {
                   : SizedBox.shrink(),
               !user.isLoggedIn
                   ? TextButton(
-                      onPressed: () {
-                        Navigate.push(context, AppSignIn(), isRootNavigator: true);
+                      onPressed: () async {
+                        await Navigate.pushAndPopAll(context, AppSignIn());
                       },
                       child: Text('Sign In',
                           style: Theme.of(context)

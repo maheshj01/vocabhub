@@ -209,7 +209,6 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
           hLine(),
           settingTile('Logout', trailingIcon: Icons.logout, onTap: () async {
             await Settings.clear();
-            // todo: on logout show explore words
             await AuthService.updateLogin(email: user.email, isLoggedIn: false);
             Navigate.pushAndPopAll(context, AppSignIn());
           }),
