@@ -206,7 +206,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                         hideToast();
                         return isExiting;
                       } else {
-                        showToast('Press back button to exit');
+                        showToast('Press again to exit');
                         return false;
                       }
                     } else {
