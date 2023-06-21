@@ -2,6 +2,7 @@
 
 - Improve explore page logic for new words
 - Add setting to hide/unhide words in explore page.
+- Get Notified for word of the day
 
 ### 0.5.0+13 Jun 11, 2023
 
