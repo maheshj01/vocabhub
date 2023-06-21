@@ -44,7 +44,7 @@ jobs:
           projectId: vocabhub-34c7f
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
-      - run: flutter build appbundle --dart-define=${{ secrets.SUPABASE_PROJECT_URL }} --dart-define=${{ secrets.SUPABASE_API_KEY }} --dart-define=${{ secrets.SUPABASE_REDIRECT_URL }} --dart-define=${{ secrets.FIREBASE_VAPID_KEY }}
+      - run: flutter build apk --dart-define=${{ secrets.SUPABASE_PROJECT_URL }} --dart-define=${{ secrets.SUPABASE_API_KEY }} --dart-define=${{ secrets.SUPABASE_REDIRECT_URL }} --dart-define=${{ secrets.FIREBASE_VAPID_KEY }}
       - uses: actions/upload-artifact@v1
         with:
           name: Android app bundle
