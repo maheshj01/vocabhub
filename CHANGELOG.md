@@ -1,4 +1,8 @@
-### 0.5.1+14 Jun 11, 2023 (Unreleased Release)
+### 0.5.2+15 Jun 21, 2023
+
+- Fix workflow Keys not passed to build release.
+
+### 0.5.1+14 Jun 11, 2023
 
 - Improve explore page logic for new words
 - Add setting to hide/unhide words in explore page.
