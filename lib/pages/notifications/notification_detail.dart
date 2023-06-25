@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
@@ -21,7 +20,9 @@ class _EditDetailState extends State<EditDetail> {
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
-        desktopBuilder: (context) => EditDetailDesktop(),
+        desktopBuilder: (context) => EditDetailMobile(
+              editHistory: widget.editHistory,
+            ),
         mobileBuilder: (context) => EditDetailMobile(
               editHistory: widget.editHistory,
             ));
@@ -114,53 +115,53 @@ class _EditDetailMobileState extends State<EditDetailMobile> {
               if (value.id == '') {
                 return LoadingWidget();
               }
-              return Padding(
-                padding: 12.0.horizontalPadding,
-                child: SingleChildScrollView(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    widget.editHistory.edit_type == EditType.edit
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Old Version',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                              16.0.vSpacer(),
-                              heading('Word'),
-                              8.0.vSpacer(),
-                              differenceVisualizerGranular(currentEdit.word, lastEdit.word,
-                                  isOldVersion: true),
-                              8.0.vSpacer(),
-                              heading('Meaning'),
-                              8.0.vSpacer(),
-                              differenceVisualizerGranular(currentEdit.meaning, lastEdit.meaning,
-                                  isOldVersion: true),
-                              8.0.vSpacer(),
-                              heading('Synonyms'),
-                              8.0.vSpacer(),
-                              differenceVisualizerGranular(
-                                  currentEdit.synonyms!.join(','), lastEdit.synonyms!.join(','),
-                                  isOldVersion: true),
-                              8.0.vSpacer(),
-                              heading('Examples'),
-                              8.0.vSpacer(),
-                              differenceVisualizerGranular(
-                                  currentEdit.examples!.join(','), lastEdit.examples!.join(','),
-                                  isOldVersion: true),
-                              8.0.vSpacer(),
-                              heading('Mnemonics'),
-                              8.0.vSpacer(),
-                              differenceVisualizerGranular(
-                                  currentEdit.mnemonics!.join(','), lastEdit.mnemonics!.join(','),
-                                  isOldVersion: true),
-                              Padding(
-                                padding: 8.0.verticalPadding,
-                                child: hLine(),
-                              ),
-                            ],
-                          )
-                        : SizedBox.shrink(),
+
+              List<Widget> _children = [
+                widget.editHistory.edit_type == EditType.edit
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Old Version',
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          16.0.vSpacer(),
+                          heading('Word'),
+                          8.0.vSpacer(),
+                          differenceVisualizerGranular(currentEdit.word, lastEdit.word,
+                              isOldVersion: true),
+                          8.0.vSpacer(),
+                          heading('Meaning'),
+                          8.0.vSpacer(),
+                          differenceVisualizerGranular(currentEdit.meaning, lastEdit.meaning,
+                              isOldVersion: true),
+                          8.0.vSpacer(),
+                          heading('Synonyms'),
+                          8.0.vSpacer(),
+                          differenceVisualizerGranular(
+                              currentEdit.synonyms!.join(','), lastEdit.synonyms!.join(','),
+                              isOldVersion: true),
+                          8.0.vSpacer(),
+                          heading('Examples'),
+                          8.0.vSpacer(),
+                          differenceVisualizerGranular(
+                              currentEdit.examples!.join(','), lastEdit.examples!.join(','),
+                              isOldVersion: true),
+                          8.0.vSpacer(),
+                          heading('Mnemonics'),
+                          8.0.vSpacer(),
+                          differenceVisualizerGranular(
+                              currentEdit.mnemonics!.join(','), lastEdit.mnemonics!.join(','),
+                              isOldVersion: true),
+                          Padding(
+                            padding: 8.0.verticalPadding,
+                            child: hLine(),
+                          ),
+                        ],
+                      )
+                    : SizedBox.shrink(),
+                Column(
+                  children: [
                     Text(
                       widget.editHistory.edit_type == EditType.add ? 'New Word' : 'New Version',
                       style: Theme.of(context).textTheme.titleLarge,
@@ -194,14 +195,25 @@ class _EditDetailMobileState extends State<EditDetailMobile> {
                         currentEdit.mnemonics!.join(','), lastEdit.mnemonics!.join(','),
                         isOldVersion: false),
                     8.0.vSpacer(),
-                  ]),
-                ),
-              );
+                  ],
+                )
+              ];
+              return Padding(
+                  padding: 12.0.horizontalPadding,
+                  child: SingleChildScrollView(
+                    scrollDirection: SizeUtils.isDesktop ? Axis.horizontal : Axis.vertical,
+                    child: SizeUtils.isMobile
+                        ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: _children)
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: _children,
+                          ),
+                  ));
             }));
   }
 }
 
-
 /// Authenticate User using social auth
 /// Allow users to post their ad
-/// 
+///
