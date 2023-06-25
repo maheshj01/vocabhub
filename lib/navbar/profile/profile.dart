@@ -2,11 +2,13 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/notification.dart';
+import 'package:vocabhub/navbar/error_page.dart';
 import 'package:vocabhub/navbar/pageroute.dart';
 import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/navbar/profile/settings.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
+import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
 import 'package:vocabhub/widgets/icon.dart';
 import 'package:vocabhub/widgets/responsive.dart';
@@ -24,31 +26,77 @@ class _UserProfileState extends State<UserProfile> {
   @override
   void initState() {
     super.initState();
+    userProfileNotifier = ValueNotifier<Response>(response);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getUser();
     });
   }
 
   Future<void> getUser() async {
-    final userState = AppStateScope.of(context).user;
-    if (userState!.isLoggedIn) {
-      final user = await UserService.findByEmail(email: userState.email);
-      if (user.email.isNotEmpty) {
-        AppStateWidget.of(context).setUser(user);
+    try {
+      final userState = AppStateScope.of(context).user;
+      if (userState!.isLoggedIn) {
+        final user = await UserService.findByEmail(email: userState.email);
+        if (user.email.isNotEmpty) {
+          AppStateWidget.of(context).setUser(user);
+          userProfileNotifier.value = response.copyWith(didSucced: true, data: user);
+        }
       }
+    } on Exception catch (_) {
+      showMessage(context, _.toString());
+      userProfileNotifier.value =
+          response.copyWith(didSucced: false, message: _.toString(), state: RequestState.error);
+    } catch (_) {
+      userProfileNotifier.value =
+          response.copyWith(didSucced: false, message: _.toString(), state: RequestState.error);
     }
+  }
+
+  late final ValueNotifier<Response> userProfileNotifier;
+  final response = Response.init();
+
+  @override
+  void dispose() {
+    userProfileNotifier.dispose();
+    super.dispose();
+  }
+
+  Future<void> _retry() async {
+    userProfileNotifier.value =
+        response.copyWith(state: RequestState.active, message: "Loading...");
+    await getUser();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ResponsiveBuilder(
-        desktopBuilder: (context) => UserProfileDesktop(),
-        mobileBuilder: (context) => UserProfileMobile());
+    return Material(
+      child: ValueListenableBuilder<Response>(
+          valueListenable: userProfileNotifier,
+          builder: (context, response, child) {
+            if (response.state == RequestState.error) {
+              return ErrorPage(
+                onRetry: _retry,
+                errorMessage: response.message,
+              );
+            }
+            return ResponsiveBuilder(
+                desktopBuilder: (context) => UserProfileDesktop(),
+                mobileBuilder: (context) {
+                  if (response.state == RequestState.active) {
+                    return LoadingWidget();
+                  }
+                  return UserProfileMobile(
+                    onRefresh: _retry,
+                  );
+                });
+          }),
+    );
   }
 }
 
 class UserProfileMobile extends StatefulWidget {
-  const UserProfileMobile({Key? key}) : super(key: key);
+  const UserProfileMobile({Key? key, this.onRefresh}) : super(key: key);
+  final VoidCallback? onRefresh;
 
   @override
   State<UserProfileMobile> createState() => _UserProfileMobileState();
@@ -110,6 +158,9 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
             key: _refreshIndicatorKey,
             onRefresh: () async {
               await getEditStats();
+              if (widget.onRefresh != null) {
+                widget.onRefresh!();
+              }
               setState(() {});
             },
             child: Padding(
@@ -126,7 +177,6 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
                         padding: 18.0.verticalPadding,
                         child: Column(
                           children: [
-                            // TODO: implement dark theme
                             // Container(
                             //     alignment: Alignment.topRight,
                             //     padding: EdgeInsets.only(right: 16),

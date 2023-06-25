@@ -18,7 +18,6 @@ class UserService {
     try {
       final response = await DatabaseService.findSingleRowByColumnValue(email,
           columnName: Constants.USER_EMAIL_COLUMN, tableName: _tableName);
-
       if (response.status == 200) {
         final user = UserModel.fromJson(response.data);
         return user;
@@ -28,7 +27,7 @@ class UserService {
       }
     } catch (_) {
       _logger.e(_.toString());
-      return UserModel.init();
+      rethrow;
     }
   }
 

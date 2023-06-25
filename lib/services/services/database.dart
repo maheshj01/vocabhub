@@ -133,9 +133,20 @@ class DatabaseService {
   static Future<PostgrestResponse> findSingleRowByColumnValue(String columnValue,
       {String columnName = '${Constants.ID_COLUMN}',
       String tableName = '${Constants.VOCAB_TABLE_NAME}'}) async {
-    final response =
-        await _supabase.from(tableName).select().eq('$columnName', columnValue).single().execute();
-    return response;
+    try {
+      final response = await _supabase
+          .from(tableName)
+          .select()
+          .eq('$columnName', columnValue)
+          .single()
+          .execute()
+          .timeout(Duration(seconds: 8), onTimeout: () async {
+        throw "Please check your internet connection";
+      });
+      return response;
+    } catch (_) {
+      rethrow;
+    }
   }
 
   static Future<PostgrestResponse> insertIntoTable(Map<String, dynamic> data,

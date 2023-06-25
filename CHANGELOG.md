@@ -1,3 +1,7 @@
+### 0.5.3+16 Jun 25, 2023 (Unreleased)
+
+- Load explore when offline.
+
 ### 0.5.2+15 Jun 21, 2023
 
 - Fix workflow Keys not passed to build release.
