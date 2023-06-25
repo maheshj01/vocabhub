@@ -1,9 +1,9 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/word.dart';
+import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/services/services/service_base.dart';
-import 'package:vocabhub/services/services/vocabstore.dart';
 
 class ExploreService extends ServiceBase {
   final _logger = Logger('ExploreService');
@@ -37,7 +37,7 @@ class ExploreService extends ServiceBase {
       return _exploreWords;
     } catch (_) {
       _logger.e(_.toString());
-      throw Exception('Error while fetching explore words');
+      return localService.localWords;
     }
   }
 

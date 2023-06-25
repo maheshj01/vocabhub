@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:supabase/supabase.dart';
 import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/platform/mobile.dart'
     if (dart.library.html) 'package:vocabhub/platform/web.dart' as platformOnly;
@@ -15,7 +16,6 @@ class VocabStoreService {
   static final _logger = Logger("VocabStoreService");
   static final SupabaseClient _supabase =
       SupabaseClient("${Constants.SUPABASE_URL}", "${Constants.SUPABASE_API_KEY}}");
-
   static Future<PostgrestResponse> findById(String id) async {
     final response = await DatabaseService.findSingleRowByColumnValue(id,
         columnName: Constants.ID_COLUMN, tableName: tableName);
@@ -84,11 +84,14 @@ class VocabStoreService {
         if (sort) {
           words.sort((a, b) => a.word.compareTo(b.word));
         }
+        localService.setLocalWords(words);
+      } else {
+        return localService.localWords;
       }
       return words;
     } catch (_) {
       _logger.e("Failed to get words,error:$_");
-      throw "Failed to get all words,error:$_";
+      return localService.localWords;
     }
   }
 

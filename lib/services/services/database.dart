@@ -107,6 +107,7 @@ class DatabaseService {
     return await _supabase.from(tableName).select().execute();
   }
 
+  /// fetch words sorted by created_at column
   static Future<PostgrestResponse> findLimitedWords(
       {String tableName = '${Constants.VOCAB_TABLE_NAME}', bool sort = false, int page = 0}) async {
     // final response =
@@ -115,7 +116,10 @@ class DatabaseService {
         .from(tableName)
         .select()
         .order('${Constants.CREATED_AT_COLUMN}', ascending: sort)
-        .execute();
+        .execute()
+        .timeout(Duration(seconds: 4), onTimeout: () {
+      throw "Please check your internet connectivity!";
+    });
   }
 
   static Future<PostgrestResponse> findRecentlyUpdatedRow(String innerJoinColumn, String value,

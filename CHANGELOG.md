@@ -1,6 +1,8 @@
 ### 0.5.3+16 Jun 25, 2023 (Unreleased)
 
 - Load explore when offline.
+- hadle network error for profile page
+- Fetch words from local storage when offline
 
 ### 0.5.2+15 Jun 21, 2023
 

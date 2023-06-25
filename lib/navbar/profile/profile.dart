@@ -86,7 +86,9 @@ class _UserProfileState extends State<UserProfile> {
                     return LoadingWidget();
                   }
                   return UserProfileMobile(
-                    onRefresh: _retry,
+                    onRefresh: () async {
+                      await getUser();
+                    },
                   );
                 });
           }),

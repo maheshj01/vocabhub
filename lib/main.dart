@@ -13,6 +13,7 @@ import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/pages/splashscreen.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
+import 'package:vocabhub/services/services/local_service.dart';
 import 'package:vocabhub/utils/firebase_options.dart';
 
 import 'constants/constants.dart';
@@ -26,12 +27,14 @@ Future<void> main() async {
   dashboardController = DashboardController();
   settingsController = SettingsController();
   exploreController = ExploreController();
+  localService = LocalService();
   searchController = SearchFieldController(controller: TextEditingController());
   await dashboardController.initService();
   pushNotificationService = PushNotificationService(_firebaseMessaging);
   searchController.initService();
   exploreController.initService();
   pushNotificationService.initService();
+  localService.initService();
   // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   Settings.init();
   settingsController.loadSettings();
@@ -56,7 +59,7 @@ late SearchFieldController searchController;
 late ExploreController exploreController;
 late PushNotificationService pushNotificationService;
 late DashboardController dashboardController;
-
+late LocalService localService;
 final ValueNotifier<int> totalNotifier = ValueNotifier<int>(0);
 final ValueNotifier<List<Word>?> listNotifier = ValueNotifier<List<Word>>([]);
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
