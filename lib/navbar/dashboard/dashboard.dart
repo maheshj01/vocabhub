@@ -10,8 +10,7 @@ import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
-import 'package:vocabhub/services/services/database.dart';
-import 'package:vocabhub/services/services/vocabstore.dart';
+import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -28,7 +27,10 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
-    publishWordOfTheDay();
+    _dashBoardNotifier = ValueNotifier(response);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      publishWordOfTheDay();
+    });
     super.initState();
   }
 
@@ -39,49 +41,97 @@ class _DashboardState extends State<Dashboard> {
 
   /// todo word of the day
   Future<void> publishWordOfTheDay() async {
-    final Word word = await VocabStoreService.getLastUpdatedRecord();
+    final state = AppStateWidget.of(context);
     try {
-      final state = AppStateWidget.of(context);
-      final now = DateTime.now().toUtc();
-      if (now.difference(word.created_at!.toUtc()).inHours > 24) {
-        final allWords = await VocabStoreService.getAllWords();
-        final random = Random();
-        final randomWord = allWords[random.nextInt(allWords.length)];
-        final wordOfTheDay = {
-          'word': randomWord.word,
-          'id': randomWord.id,
-          'created_at': now.toIso8601String()
-        };
-        final resp = await DatabaseService.insertIntoTable(
-          wordOfTheDay,
-          table: Constants.WORD_OF_THE_DAY_TABLE_NAME,
-        );
-        if (resp.status == 201) {
-          print('word of the day published');
-          state.setWordOfTheDay(randomWord);
-        } else {
-          throw Exception('word of the day not published');
-        }
-      } else {
-        state.setWordOfTheDay(word);
-        print('word of the day already published');
+      if (dashboardController.isWodPublishedToday) {
+        final publishedWod = dashboardController.lastPublishedWord;
+        state.setWordOfTheDay(publishedWod);
+        return;
       }
+      final allWords = await VocabStoreService.getAllWords();
+      final random = Random();
+      final randomWord = allWords[random.nextInt(allWords.length)];
+      final success = await dashboardController.publishWod(randomWord);
+      if (success) {
+        state.setWordOfTheDay(randomWord);
+      } else {
+        showMessage(context, "Something went wrong!");
+      }
+      _dashBoardNotifier.value = response.copyWith(state: RequestState.done);
     } catch (e) {
-      showMessage(context, "Something went wrong!");
+      _dashBoardNotifier.value =
+          response.copyWith(state: RequestState.error, message: e.toString());
     }
+  }
+
+  late final ValueNotifier<Response> _dashBoardNotifier;
+  final response = Response.init();
+
+  @override
+  void dispose() {
+    _dashBoardNotifier.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Material(
-        child: ResponsiveBuilder(
-      desktopBuilder: (context) => DashboardDesktop(),
-      mobileBuilder: (context) => RefreshIndicator(
-          onRefresh: () async {
-            await publishWordOfTheDay();
-          },
-          child: DashboardMobile()),
-    ));
+        child: ValueListenableBuilder<Response>(
+            valueListenable: _dashBoardNotifier,
+            builder: (context, response, child) {
+              if (response.state == RequestState.error) {
+                return ErrorPage(
+                  onRetry: () async {
+                    _dashBoardNotifier.value =
+                        response.copyWith(state: RequestState.active, message: "Loading...");
+                    await publishWordOfTheDay();
+                  },
+                  errorMessage: response.message,
+                );
+              }
+              return ResponsiveBuilder(
+                desktopBuilder: (context) => DashboardDesktop(),
+                mobileBuilder: (context) {
+                  if (response.state == RequestState.active) {
+                    return LoadingWidget();
+                  }
+                  return RefreshIndicator(
+                      onRefresh: () async {
+                        await publishWordOfTheDay();
+                      },
+                      child: DashboardMobile());
+                },
+              );
+            }));
+  }
+}
+
+class ErrorPage extends StatelessWidget {
+  final VoidCallback onRetry;
+  final String errorMessage;
+  const ErrorPage({Key? key, required this.onRetry, required this.errorMessage}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onRetry,
+      child: Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            errorMessage,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          SizedBox(height: 16),
+          Text(
+            "Tap to retry",
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ],
+      )),
+    );
   }
 }
 

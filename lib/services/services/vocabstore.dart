@@ -118,6 +118,7 @@ class VocabStoreService {
     return response;
   }
 
+  // Gets previous word of the day from the database.
   static Future<Word> getLastUpdatedRecord() async {
     final response = await DatabaseService.findRecentlyUpdatedRow('created_at', '',
         table1: Constants.WORD_OF_THE_DAY_TABLE_NAME,
@@ -129,6 +130,29 @@ class VocabStoreService {
       return lastWordOfTheDay;
     } else {
       throw "Failed to get last updated record ${response.error!.message} ${response.status}";
+    }
+  }
+
+  static Future<Response> publishWod(Word word) async {
+    final vocabresponse = Response(didSucced: false, message: "Failed", data: word);
+    final now = DateTime.now().toUtc();
+    final wordOfTheDay = {'word': word.word, 'id': word.id, 'created_at': now.toIso8601String()};
+    final resp = await DatabaseService.insertIntoTable(
+      wordOfTheDay,
+      table: Constants.WORD_OF_THE_DAY_TABLE_NAME,
+    );
+    if (resp.status == 201) {
+      return vocabresponse.copyWith(
+          didSucced: true,
+          message: 'Word of the day published successfully',
+          status: resp.status,
+          data: word.copyWith(created_at: now));
+    } else {
+      return vocabresponse.copyWith(
+        didSucced: false,
+        message: resp.error!.message,
+        status: resp.status,
+      );
     }
   }
 

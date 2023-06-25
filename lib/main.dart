@@ -6,19 +6,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
-import 'package:vocabhub/controller/explore_controller.dart';
-import 'package:vocabhub/controller/settings_controller.dart';
+import 'package:vocabhub/controller/controllers.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/profile/webview.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/pages/splashscreen.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/services/services/pushnotification_service.dart';
 import 'package:vocabhub/utils/firebase_options.dart';
 
 import 'constants/constants.dart';
-import 'controller/searchfield_controller.dart';
 import 'utils/settings.dart';
 
 Future<void> main() async {
@@ -26,9 +23,11 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   firebaseAnalytics = FirebaseAnalytics.instance;
   usePathUrlStrategy();
+  dashboardController = DashboardController();
   settingsController = SettingsController();
   exploreController = ExploreController();
   searchController = SearchFieldController(controller: TextEditingController());
+  await dashboardController.initService();
   pushNotificationService = PushNotificationService(_firebaseMessaging);
   searchController.initService();
   exploreController.initService();
@@ -56,6 +55,7 @@ late SettingsController settingsController;
 late SearchFieldController searchController;
 late ExploreController exploreController;
 late PushNotificationService pushNotificationService;
+late DashboardController dashboardController;
 
 final ValueNotifier<int> totalNotifier = ValueNotifier<int>(0);
 final ValueNotifier<List<Word>?> listNotifier = ValueNotifier<List<Word>>([]);
