@@ -16,7 +16,7 @@ Key Features:
 - Synonyms, mnemonics, and examples provided for a comprehensive understanding of each word
 - Intelligent search functionality allows you to search for a word based on its meaning or synonym.
 - Supports dark mode and offers various themes to make learning an enjoyable experience
-- App works in offline mode
+- Supports offline mode to help you learn on the go.
 - Ability to suggest edits to improve the words on the platform
 - Regular updates with new words and features to keep your vocabulary journey exciting and dynamic.
 
