@@ -37,28 +37,32 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     final words = AppStateScope.of(context).words;
-    return words == null
-        ? LoadingWidget()
-        : ResponsiveBuilder(desktopBuilder: (context) {
-            return Row(
-              children: [
-                Flexible(
-                  child: WordList(
-                    controller: ScrollController(),
-                    onSelected: (word) {
-                      setState(() {
-                        selectedWord = word;
-                        selectedIndex = words.indexOf(word);
-                      });
-                    },
-                  ),
-                ),
-                Expanded(flex: 2, child: WordDetail(word: selectedWord ?? words.first)),
-              ],
-            );
-          }, mobileBuilder: (BuildContext context) {
-            return MobileView();
-          });
+    return ResponsiveBuilder(desktopBuilder: (context) {
+      if (words == null) {
+        return LoadingWidget();
+      }
+      return Row(
+        children: [
+          Flexible(
+            child: WordList(
+              controller: ScrollController(),
+              onSelected: (word) {
+                setState(() {
+                  selectedWord = word;
+                  selectedIndex = words.indexOf(word);
+                });
+              },
+            ),
+          ),
+          Expanded(flex: 2, child: WordDetail(word: selectedWord ?? words.first)),
+        ],
+      );
+    }, mobileBuilder: (BuildContext context) {
+      if (words == null) {
+        return LoadingWidget();
+      }
+      return MobileView();
+    });
   }
 }
 

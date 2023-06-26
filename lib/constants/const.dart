@@ -65,6 +65,7 @@ class Constants {
   static const String timeFormatter = 'hh:mm a';
   static const int ratingAskInterval = 7;
   static const int scrollMessageShownInterval = 7;
+  static const Duration timeoutDuration = Duration(seconds: 6);
 }
 
 enum EditState {

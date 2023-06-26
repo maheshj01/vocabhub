@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:animations/animations.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
@@ -6,6 +8,7 @@ import 'package:navbar_router/navbar_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/constants/constants.dart';
+import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/navbar/navbar.dart';
 import 'package:vocabhub/navbar/profile/about.dart';
 import 'package:vocabhub/navbar/profile/settings.dart';
@@ -33,15 +36,33 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
   @override
   void initState() {
     super.initState();
-    getWords();
-    isUpdateAvailable();
+    Future.wait([
+      getWords(),
+      isUpdateAvailable(),
+    ]).then((value) {
+      if (!user!.isLoggedIn) {
+        showSnackBar("Sign in for better experience", action: 'Sign In', persist: true,
+            onActionPressed: () async {
+          NavbarNotifier.clear();
+          await Navigate.pushAndPopAll(context, AppSignIn());
+        });
+      }
+    });
   }
 
   Future<void> getWords() async {
-    final words = await VocabStoreService.getAllWords();
-    if (words.isNotEmpty) {
-      AppStateWidget.of(context).setWords(words);
-      // updateWord(words);
+    try {
+      final words = await VocabStoreService.getAllWords();
+      if (words.isNotEmpty) {
+        AppStateWidget.of(context).setWords(words);
+        // updateWord(words);
+      }
+    } catch (_) {
+      final localWords = localService.localWords;
+      AppStateWidget.of(context).setWords(localWords);
+      if (_.runtimeType == TimeoutException) {
+        showSnackBar(NETWORK_ERROR);
+      }
     }
     Future.delayed(const Duration(seconds: 5), askForRating);
   }
@@ -74,12 +95,11 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     final version = remoteConfig.getString('${Constants.VERSION_KEY}');
     final buildNumber = remoteConfig.getInt('${Constants.BUILD_NUMBER_KEY}');
     if (appVersion != version || buildNumber > appBuildNumber) {
-      hasUpdate = true;
-      showBanner = true;
-    } else {
-      hasUpdate = false;
+      showSnackBar("New Update Available", action: 'Update', persist: true, onActionPressed: () {
+        analytics.logAppUpdate(settingsController.version!);
+        launchUrl(Uri.parse(Constants.PLAY_STORE_URL), mode: LaunchMode.externalApplication);
+      });
     }
-    setState(() {});
   }
 
   late AppState state;
@@ -94,15 +114,32 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
     super.dispose();
   }
 
-  double bannerHeight = 0;
+  void showSnackBar(String message,
+      {String? action, bool persist = false, Function? onActionPressed}) {
+    setState(() {
+      hideFloatingActionButton = true;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      NavbarNotifier.showSnackBar(context, message,
+          actionLabel: action,
+          onActionPressed: onActionPressed,
+          duration: persist ? Duration(days: 1) : Duration(seconds: 3), onClosed: () {
+        setState(() {
+          hideFloatingActionButton = false;
+        });
+      });
+    });
+  }
+
   bool hasUpdate = false;
   List<NavbarItem> items = [
     NavbarItem(Icons.dashboard, 'Dashboard'),
     NavbarItem(Icons.search, 'Search'),
     NavbarItem(Icons.explore, 'Explore'),
   ];
-  bool showBanner = true;
   final analytics = Analytics.instance;
+  bool hideFloatingActionButton = false;
+  UserModel? user;
   @override
   Widget build(BuildContext context) {
     SizeUtils.size = MediaQuery.of(context).size;
@@ -119,15 +156,19 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
       2: {
         ExploreWords.route: ExploreWords(
           onScrollThresholdReached: () {
-            setState(() {
-              showBanner = true;
-            });
+            if (!user!.isLoggedIn) {
+              showSnackBar("Sign in for better experience", action: 'Sign In', persist: true,
+                  onActionPressed: () async {
+                NavbarNotifier.clear();
+                await Navigate.pushAndPopAll(context, AppSignIn());
+              });
+            }
           },
         )
       },
     };
 
-    final user = AppStateScope.of(context).user;
+    user = AppStateScope.of(context).user;
     if (user!.isLoggedIn) {
       _routes.addAll({
         3: {
@@ -144,23 +185,17 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
         items.removeLast();
       }
     }
-    if (hasUpdate || !user.isLoggedIn) {
-      bannerHeight = kNotchedNavbarHeight;
-    } else {
-      bannerHeight = 0;
-      showBanner = false;
-    }
     final colorScheme = Theme.of(context).colorScheme;
     return ValueListenableBuilder<int>(
         valueListenable: _selectedIndexNotifier,
         builder: (context, int currentIndex, Widget? child) {
-          bannerHeight = kNotchedNavbarHeight;
           return Scaffold(
             resizeToAvoidBottomInset: false,
-            floatingActionButton: showBanner || currentIndex > 1 || !user.isLoggedIn
+            floatingActionButton: hideFloatingActionButton ||
+                    (currentIndex > 1 || !user!.isLoggedIn)
                 ? null
                 : Padding(
-                    padding: (bannerHeight * 0.9).bottomPadding,
+                    padding: (kM3NavbarHeight * 0.9).bottomPadding,
                     child: OpenContainer<bool>(
                         openBuilder: (BuildContext context, VoidCallback openContainer) {
                           return AddWordForm(
@@ -219,7 +254,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                   onChanged: (x) {
                     /// Simulate DragGesture on pageView
                     if (EXPLORE_INDEX == x && SizeUtils.isMobile) {
-                      if (pageController.hasClients && user.isLoggedIn) {
+                      if (pageController.hasClients && user!.isLoggedIn) {
                         if (exploreController.shouldShowScrollMessage) {
                           showToast(exploreScrollMessage);
                           Future.delayed(Duration(seconds: 3), () {
@@ -250,83 +285,6 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                       ),
                   ],
                 ),
-                if (!user.isLoggedIn && showBanner)
-                  AnimatedPositioned(
-                      duration: Duration(milliseconds: 300),
-                      bottom: bannerHeight,
-                      left: 0,
-                      right: 0,
-                      child: VocabBanner(
-                        description: 'Sign in for better experience',
-                        actions: [
-                          TextButton(
-                            onPressed: () async {
-                              NavbarNotifier.clear();
-                              await Navigate.pushAndPopAll(context, AppSignIn());
-                            },
-                            child: Text('Sign In',
-                                style: TextStyle(
-                                  color: colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                )),
-                          ),
-                          IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  showBanner = false;
-                                });
-                              },
-                              icon: Icon(
-                                Icons.close,
-                                color: colorScheme.primary,
-                                size: 24,
-                              ))
-                        ],
-                      )),
-                if (showBanner && hasUpdate)
-                  AnimatedPositioned(
-                      duration: Duration(milliseconds: 300),
-                      bottom: bannerHeight,
-                      left: 0,
-                      right: 0,
-                      child: VocabBanner(
-                        description: 'New update available',
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              analytics.logAppUpdate(settingsController.version!);
-                              launchUrl(Uri.parse(Constants.PLAY_STORE_URL),
-                                  mode: LaunchMode.externalApplication);
-                            },
-                            child: Text('Update',
-                                style: TextStyle(
-                                  color: colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                )),
-                          ),
-                          IconButton(
-                              onPressed: () {
-                                /// if user is not loggedin and there is a update
-                                /// hiding update banner should still show sign in banner
-                                if (!user.isLoggedIn) {
-                                  setState(() {
-                                    hasUpdate = false;
-                                  });
-                                } else {
-                                  setState(() {
-                                    showBanner = false;
-                                  });
-                                }
-                              },
-                              icon: Icon(
-                                Icons.close,
-                                color: colorScheme.primary,
-                                size: 24,
-                              ))
-                        ],
-                      )),
               ],
             ),
           );

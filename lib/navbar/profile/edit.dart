@@ -196,11 +196,11 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                                   Response(state: RequestState.done, didSucced: true);
                               _validNotifier.value = null;
                               appState.setUser(editedUser);
-                              showMessage(context, 'success updating user! ');
+                              NavbarNotifier.showSnackBar(context, 'success updating user! ');
                             } else {
                               _responseNotifier.value =
                                   Response(state: RequestState.done, didSucced: false);
-                              showMessage(context, 'error updating user! ');
+                              NavbarNotifier.showSnackBar(context, 'error updating user! ');
                             }
                             Future.delayed(Duration(seconds: 2), () {
                               widget.onClose!();
@@ -278,7 +278,6 @@ class _VHTextfieldState extends State<VHTextfield> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

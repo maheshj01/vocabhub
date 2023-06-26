@@ -1,5 +1,6 @@
 import 'package:supabase/supabase.dart';
 import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/constants/strings.dart';
 
 class DatabaseService {
   static SupabaseClient _supabase =
@@ -104,7 +105,7 @@ class DatabaseService {
 
   static Future<PostgrestResponse> findAll(
       {String tableName = '${Constants.VOCAB_TABLE_NAME}'}) async {
-    return await _supabase.from(tableName).select().execute();
+    return await _supabase.from(tableName).select().execute().timeout(Constants.timeoutDuration);
   }
 
   /// fetch words sorted by created_at column
@@ -117,8 +118,8 @@ class DatabaseService {
         .select()
         .order('${Constants.CREATED_AT_COLUMN}', ascending: sort)
         .execute()
-        .timeout(Duration(seconds: 4), onTimeout: () {
-      throw "Please check your internet connectivity!";
+        .timeout(Constants.timeoutDuration, onTimeout: () {
+      throw NETWORK_ERROR;
     });
   }
 
@@ -130,7 +131,8 @@ class DatabaseService {
         .from('$table1')
         .select('*, $table2!inner(*)')
         .order('created_at', ascending: ascending)
-        .execute();
+        .execute()
+        .timeout(Constants.timeoutDuration);
     return response;
   }
 
@@ -144,8 +146,8 @@ class DatabaseService {
           .eq('$columnName', columnValue)
           .single()
           .execute()
-          .timeout(Duration(seconds: 8), onTimeout: () async {
-        throw "Please check your internet connection";
+          .timeout(Constants.timeoutDuration, onTimeout: () async {
+        throw NETWORK_ERROR;
       });
       return response;
     } catch (_) {
@@ -155,7 +157,13 @@ class DatabaseService {
 
   static Future<PostgrestResponse> insertIntoTable(Map<String, dynamic> data,
       {String table = '${Constants.VOCAB_TABLE_NAME}'}) async {
-    final response = await _supabase.from(table).insert(data).execute();
+    final response = await _supabase
+        .from(table)
+        .insert(data)
+        .execute()
+        .timeout(Constants.timeoutDuration, onTimeout: () {
+      throw NETWORK_ERROR;
+    });
     return response;
   }
 
@@ -169,6 +177,7 @@ class DatabaseService {
         .from(table)
         .upsert(data, onConflict: 'id')
         .execute()
+        .timeout(Constants.timeoutDuration)
         .onError((error, stackTrace) {
       return PostgrestResponse();
     });
@@ -183,8 +192,13 @@ class DatabaseService {
       required Map<String, dynamic> data,
       String columnName = '${Constants.ID_COLUMN}',
       String tableName = '${Constants.VOCAB_TABLE_NAME}'}) async {
-    final response =
-        await _supabase.from(tableName).update(data).eq("$columnName", "$colValue").execute();
+    final response = await _supabase
+        .from(tableName)
+        .update(data)
+        .eq("$columnName", "$colValue")
+        .execute()
+        .timeout(Constants.timeoutDuration);
+    ;
     return response;
   }
 
@@ -201,21 +215,28 @@ class DatabaseService {
         .from(tableName)
         .update({columnName: columnValue})
         .eq("$searchColumn", "$searchValue")
-        .execute();
+        .execute()
+        .timeout(Constants.timeoutDuration);
     return response;
   }
 
   static Future<PostgrestResponse> upsertRow(Map<String, dynamic> data,
       {String tableName = '${Constants.VOCAB_TABLE_NAME}'}) async {
-    final response = await _supabase.from(tableName).upsert(data).execute();
+    final response =
+        await _supabase.from(tableName).upsert(data).execute().timeout(Constants.timeoutDuration);
     return response;
   }
 
   static Future<PostgrestResponse> deleteRow(String columnValue,
       {String columnName = '${Constants.ID_COLUMN}',
       String tableName = '${Constants.VOCAB_TABLE_NAME}'}) async {
-    final response =
-        await _supabase.from(tableName).delete().eq('$columnName', columnValue).execute();
+    final response = await _supabase
+        .from(tableName)
+        .delete()
+        .eq('$columnName', columnValue)
+        .execute()
+        .timeout(Constants.timeoutDuration);
+    ;
     return response;
   }
 }

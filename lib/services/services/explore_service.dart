@@ -33,8 +33,13 @@ class ExploreService extends ServiceBase {
             _exploreWords.add(element);
           }
         });
+        return _exploreWords;
       }
-      return _exploreWords;
+      if (response.status == 500) {
+        _logger.e("Device is offline");
+        return localService.localWords;
+      }
+      throw "Something went wrong";
     } catch (_) {
       _logger.e(_.toString());
       return localService.localWords;

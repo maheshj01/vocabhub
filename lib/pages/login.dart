@@ -42,7 +42,7 @@ class _AppSignInState extends State<AppSignIn> {
             firebaseAnalytics.logNewUser(user);
           } else {
             await Settings.setIsSignedIn(false, email: existingUser.email);
-            showMessage(context, '$signInFailure');
+            NavbarNotifier.showSnackBar(context, '$signInFailure');
             _requestNotifier.value = Response(state: RequestState.done);
             throw 'failed to register new user';
           }
@@ -57,12 +57,12 @@ class _AppSignInState extends State<AppSignIn> {
           firebaseAnalytics.logSignIn(user!);
         }
       } else {
-        showMessage(context, '$signInFailure');
+        NavbarNotifier.showSnackBar(context, '$signInFailure');
         _requestNotifier.value = Response(state: RequestState.done);
         throw 'failed to register new user';
       }
     } catch (error) {
-      showMessage(context, error.toString());
+      NavbarNotifier.showSnackBar(context, error.toString());
       _requestNotifier.value = Response(state: RequestState.done);
       await Settings.setIsSignedIn(false);
     }

@@ -110,7 +110,7 @@ class _BookmarksMobileState extends State<_BookmarksMobile> {
                                       await VocabStoreService.removeBookmark(value[index].id,
                                           isBookmark: widget.isBookMark);
                                       getBookmarks();
-                                      showMessage(context, '$title removed');
+                                      NavbarNotifier.showSnackBar(context, '$title removed');
                                     },
                                   ),
                                 );

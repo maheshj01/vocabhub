@@ -37,7 +37,8 @@ class _AddWordFormState extends State<AddWordForm> {
   late TextEditingController synonymController;
   late TextEditingController mnemonicController;
 
-  Future<void> submitForm() async {
+  /// add a new word
+  Future<void> addWord() async {
     showCircularIndicator(context);
     final newWord = wordController.text.trim();
     final meaning = meaningController.text.trim();
@@ -68,8 +69,8 @@ class _AddWordFormState extends State<AddWordForm> {
       final response = await EditHistoryService.insertHistory(history);
       if (response.didSucced) {
         analytics.logWordAddSubmit(wordObject, 'success');
-        showMessage(context, 'Congrats! Your new word ${editedWord.word} is under review!',
-            duration: Duration(seconds: 3), onClosed: () {
+        NavbarNotifier.showSnackBar(
+            context, 'Congrats! Your new word ${editedWord.word} is under review!', onClosed: () {
           stopCircularIndicator(context);
           Navigate.popView(context);
         });
@@ -80,6 +81,7 @@ class _AddWordFormState extends State<AddWordForm> {
       }
     } catch (x) {
       stopCircularIndicator(context);
+      NavbarNotifier.showSnackBar(context, x.toString(), onClosed: () {});
       _requestNotifier.value = Response(state: RequestState.error, message: '$x');
     }
   }
@@ -171,10 +173,8 @@ class _AddWordFormState extends State<AddWordForm> {
         if (widget.word != editedWord) {
           final response = await EditHistoryService.insertHistory(history);
           if (response.didSucced) {
-            showMessage(
-                context,
-                duration: Duration(seconds: 3),
-                "Your edit is under review, We will notifiy you once there is an update",
+            NavbarNotifier.showSnackBar(
+                context, "Your edit is under review, We will notifiy you once there is an update",
                 onClosed: () {
               stopCircularIndicator(context);
               Navigate.popView(context);
@@ -182,12 +182,12 @@ class _AddWordFormState extends State<AddWordForm> {
           }
         } else {
           stopCircularIndicator(context);
-          showMessage(context, "No changes to update", onClosed: () {});
+          NavbarNotifier.showSnackBar(context, "No changes to update", onClosed: () {});
         }
       }
     } catch (_) {
       stopCircularIndicator(context);
-      showMessage(context, "Failed to edit word", onClosed: () {});
+      NavbarNotifier.showSnackBar(context, _.toString(), onClosed: () {});
     }
   }
 
@@ -199,17 +199,17 @@ class _AddWordFormState extends State<AddWordForm> {
         final response = await VocabStoreService.deleteById(id);
         if (response.status == 200) {
           analytics.logWordDelete(widget.word!, userProvider!.email);
-          showMessage(context, "The word \"${widget.word!.word}\" has been deleted.",
+          NavbarNotifier.showSnackBar(context, "The word \"${widget.word!.word}\" has been deleted.",
               onClosed: () => Navigate.popView(context));
         } else {
           final error = response.error;
-          showMessage(context, "Failed to delete word", onClosed: () {});
+          NavbarNotifier.showSnackBar(context, "Failed to delete word", onClosed: () {});
         }
         stopCircularIndicator(context);
       }
     } catch (_) {
       stopCircularIndicator(context);
-      showMessage(context, "Failed to delete word", onClosed: () {});
+      NavbarNotifier.showSnackBar(context, "Failed to delete word", onClosed: () {});
     }
   }
 
@@ -378,7 +378,8 @@ class _AddWordFormState extends State<AddWordForm> {
                                                   synonymController.clear();
                                                 }
                                               } else {
-                                                showMessage(context, 'You must add a word first');
+                                                NavbarNotifier.showSnackBar(
+                                                    context, 'You must add a word first');
                                                 FocusScope.of(context).requestFocus(wordFocus);
                                                 synonymController.clear();
                                               }
@@ -439,7 +440,8 @@ class _AddWordFormState extends State<AddWordForm> {
                                                     examples: [...editedWord.examples!, text]);
                                                 exampleController.clear();
                                               } else {
-                                                showMessage(context, 'Add a word first');
+                                                NavbarNotifier.showSnackBar(
+                                                    context, 'Add a word first');
                                                 FocusScope.of(context).requestFocus(wordFocus);
                                               }
                                               setState(() {});
@@ -501,7 +503,8 @@ class _AddWordFormState extends State<AddWordForm> {
                                                     mnemonics: [...editedWord.mnemonics!, text]);
                                                 mnemonicController.clear();
                                               } else {
-                                                showMessage(context, 'Add a word first');
+                                                NavbarNotifier.showSnackBar(
+                                                    context, 'Add a word first');
                                                 FocusScope.of(context).requestFocus(wordFocus);
                                               }
                                               setState(() {});
@@ -520,7 +523,7 @@ class _AddWordFormState extends State<AddWordForm> {
                           width: 120,
                           onTap: request.state == RequestState.error
                               ? null
-                              : () => widget.isEdit ? updateWord() : submitForm(),
+                              : () => widget.isEdit ? updateWord() : addWord(),
                           label: widget.isEdit ? 'Update' : 'Submit',
                         ),
                       ),

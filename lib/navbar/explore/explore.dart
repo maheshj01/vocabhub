@@ -107,7 +107,7 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
                         if (x % _scrollCountCallback == 0) {
                           widget.onScrollThresholdReached!();
                         }
-                        hideMessage(context);
+                        NavbarNotifier.hideSnackBar(context);
                       },
                       physics: ClampingScrollPhysics(),
                       scrollDirection: Axis.vertical,
@@ -166,7 +166,7 @@ class _ExploreWordsDesktopState extends State<ExploreWordsDesktop> {
                   scrollBehavior: MaterialScrollBehavior(),
                   physics: ClampingScrollPhysics(),
                   onPageChanged: (x) {
-                    hideMessage(context);
+                    NavbarNotifier.hideSnackBar(context);
                   },
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) {

@@ -66,12 +66,12 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
     try {
       final success = await VocabStoreService().downloadFile();
       if (success) {
-        showMessage(context, 'Downloaded successfully!');
+        NavbarNotifier.showSnackBar(context, 'Downloaded successfully!');
       } else {
-        showMessage(context, 'Failed to Download');
+        NavbarNotifier.showSnackBar(context, 'Failed to Download');
       }
     } catch (x) {
-      showMessage(context, '$x');
+      NavbarNotifier.showSnackBar(context, '$x');
     }
   }
 

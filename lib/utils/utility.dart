@@ -8,36 +8,41 @@ import 'package:vocabhub/models/history.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 
-/// shows a snackbar message
-void showMessage(BuildContext context, String message,
-    {Duration duration = const Duration(seconds: 2),
-    bool isRoot = false,
-    double bottom = 0,
-    void Function()? onPressed,
-    void Function()? onClosed}) {
-  ScaffoldMessenger.of(context)
-      .showSnackBar(
-        SnackBar(
-          content: Text(
-            '$message',
-          ),
-          duration: duration,
-          // margin: EdgeInsets.only(bottom: bottom),
-          action: onPressed == null
-              ? null
-              : SnackBarAction(
-                  label: 'ACTION',
-                  onPressed: onPressed,
-                ),
-        ),
-      )
-      .closed
-      .whenComplete(() => onClosed == null ? null : onClosed());
-}
+// /// shows a snackbar message
+// void showMessage(BuildContext context, String message,
+//     {bool isRoot = false,
+//     double? bottom,
+//     bool persist = false,
+//     bool showCloseIcon = true,
+//     String? actionLabel,
+//     void Function()? onPressed,
+//     void Function()? onClosed}) {
+//   ScaffoldMessenger.of(context)
+//       .showSnackBar(
+//         SnackBar(
+//           behavior: bottom != null ? SnackBarBehavior.floating : SnackBarBehavior.fixed,
+//           content: Text(
+//             '$message',
+//           ),
+//           dismissDirection: DismissDirection.none,
+//           duration: persist ? const Duration(hours: 3) : const Duration(seconds: 3),
+//           margin: bottom != null ? EdgeInsets.only(bottom: bottom) : null,
+//           showCloseIcon: showCloseIcon,
+//           action: actionLabel == null || onPressed == null
+//               ? null
+//               : SnackBarAction(
+//                   label: actionLabel ?? '',
+//                   onPressed: onPressed,
+//                 ),
+//         ),
+//       )
+//       .closed
+//       .whenComplete(() => onClosed == null ? null : onClosed());
+// }
 
-void hideMessage(context) {
-  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-}
+// void hideMessage(context) {
+//   ScaffoldMessenger.of(context).hideCurrentSnackBar();
+// }
 
 void showToast(String message) {
   Fluttertoast.showToast(

@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/notification.dart';
 import 'package:vocabhub/navbar/error_page.dart';
@@ -43,7 +44,7 @@ class _UserProfileState extends State<UserProfile> {
         }
       }
     } on Exception catch (_) {
-      showMessage(context, _.toString());
+      NavbarNotifier.showSnackBar(context, _.toString());
       userProfileNotifier.value =
           response.copyWith(didSucced: false, message: _.toString(), state: RequestState.error);
     } catch (_) {

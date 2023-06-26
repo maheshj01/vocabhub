@@ -91,7 +91,7 @@ class VocabStoreService {
       return words;
     } catch (_) {
       _logger.e("Failed to get words,error:$_");
-      return localService.localWords;
+      rethrow;
     }
   }
 

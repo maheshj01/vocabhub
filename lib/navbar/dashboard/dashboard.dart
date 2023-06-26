@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:animations/animations.dart';
@@ -30,9 +31,28 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     _dashBoardNotifier = ValueNotifier(response);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      getWords();
       publishWordOfTheDay();
     });
     super.initState();
+  }
+
+  Future<void> getWords() async {
+    try {
+      final words = await VocabStoreService.getAllWords();
+      if (words.isNotEmpty) {
+        AppStateWidget.of(context).setWords(words);
+        // updateWord(words);
+      }
+    } catch (_) {
+      final localWords = localService.localWords;
+      if (mounted) {
+        AppStateWidget.of(context).setWords(localWords);
+      }
+      if (_.runtimeType == TimeoutException) {
+        NavbarNotifier.showSnackBar(context, NETWORK_ERROR, bottom: 0);
+      }
+    }
   }
 
   /// get latest word of the day sort by descending order of created_at
@@ -56,10 +76,11 @@ class _DashboardState extends State<Dashboard> {
       if (success) {
         state.setWordOfTheDay(randomWord);
       } else {
-        showMessage(context, "Something went wrong!");
+        NavbarNotifier.showSnackBar(context, "Something went wrong!");
       }
       _dashBoardNotifier.value = response.copyWith(state: RequestState.done);
     } catch (e) {
+      NavbarNotifier.showSnackBar(context, NETWORK_ERROR);
       _dashBoardNotifier.value =
           response.copyWith(state: RequestState.error, message: e.toString());
     }

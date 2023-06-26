@@ -39,7 +39,7 @@ class _NotificationsState extends State<Notifications> {
       // data.sort((a, b) => b.edit.created_at!.compareTo(a.edit.created_at!));
       historyNotifier.value = data;
     } else {
-      showMessage(context, 'failed to get notifications');
+      NavbarNotifier.showSnackBar(context, 'failed to get notifications');
     }
   }
 
@@ -58,37 +58,37 @@ class _NotificationsState extends State<Notifications> {
       final resp = await VocabStoreService.addWord(word);
       stopCircularIndicator(context);
       if (resp.didSucced) {
-        showMessage(context, 'Word added successfully!');
+        NavbarNotifier.showSnackBar(context, 'Word added successfully!');
         isSuccess = true;
       } else {
-        showMessage(context, 'Failed to add word, Please try again!');
+        NavbarNotifier.showSnackBar(context, 'Failed to add word, Please try again!');
         return;
       }
     } else if (edit.edit_type == EditType.edit) {
       final resp = await VocabStoreService.updateWord(id: edit.word_id, word: word);
       stopCircularIndicator(context);
       if (resp.status == 200) {
-        showMessage(context, 'Word updated successfully');
+        NavbarNotifier.showSnackBar(context, 'Word updated successfully');
         isSuccess = true;
       } else {
-        showMessage(context, 'Failed to update word, please try again');
+        NavbarNotifier.showSnackBar(context, 'Failed to update word, please try again');
         return;
       }
     } else if (edit.edit_type == EditType.delete) {
       final resp = await VocabStoreService.deleteById(edit.word_id);
       stopCircularIndicator(context);
       if (resp.status == 200) {
-        showMessage(context, 'Word deleted successfully');
+        NavbarNotifier.showSnackBar(context, 'Word deleted successfully');
         isSuccess = true;
       } else {
-        showMessage(context, 'Failed to delete word, please try again');
+        NavbarNotifier.showSnackBar(context, 'Failed to delete word, please try again');
         return;
       }
     }
     if (isSuccess) {
       await updateRequest(edit, state);
     } else {
-      showMessage(
+      NavbarNotifier.showSnackBar(
         context,
         'Failed to complete the request, Please try again!',
       );
@@ -101,7 +101,7 @@ class _NotificationsState extends State<Notifications> {
     if (resp.didSucced) {
       getNotifications();
     } else {
-      showMessage(
+      NavbarNotifier.showSnackBar(
         context,
         'Something went wrong, please try again',
       );

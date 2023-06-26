@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:navbar_router/navbar_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/report.dart';
@@ -195,7 +196,7 @@ class _ReportABugMobileState extends State<ReportABugMobile> {
                             _responseNotifier.value.copyWith(state: RequestState.active);
                         final String description = _feedBackcontroller.text.trim();
                         if (description.isEmpty) {
-                          showMessage(context, 'You must enter a description of the bug');
+                          NavbarNotifier.showSnackBar(context, 'You must enter a description of the bug');
                           _responseNotifier.value =
                               _responseNotifier.value.copyWith(state: RequestState.done);
                           return;
@@ -215,19 +216,19 @@ class _ReportABugMobileState extends State<ReportABugMobile> {
                                 state: RequestState.done, message: 'Report sent successfully');
                             _responseNotifier.value =
                                 _responseNotifier.value.copyWith(state: RequestState.done);
-                            showMessage(context, 'Thanks for reporting the bug');
+                            NavbarNotifier.showSnackBar(context, 'Thanks for reporting the bug');
                             _feedBackcontroller.clear();
                             await Future.delayed(const Duration(seconds: 2));
                             Navigator.pop(context);
                           } else {
                             _responseNotifier.value = _responseNotifier.value.copyWith(
                                 state: RequestState.done, message: 'Error sending report');
-                            showMessage(context, 'Error sending report! Try again');
+                            NavbarNotifier.showSnackBar(context, 'Error sending report! Try again');
                           }
                         } catch (e) {
                           _responseNotifier.value = _responseNotifier.value
                               .copyWith(state: RequestState.done, message: 'Error sending report');
-                          showMessage(context, 'Something went wrong, try agcain');
+                          NavbarNotifier.showSnackBar(context, 'Something went wrong, try agcain');
                         }
                       },
                       isLoading: _responseNotifier.value.state == RequestState.active,

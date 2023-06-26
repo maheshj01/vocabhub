@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/user.dart';
@@ -64,7 +65,7 @@ class AuthService {
           accessToken: accessToken);
     } catch (error) {
       _logger.e(error.toString());
-      showMessage(context, 'Failed to signIn');
+      NavbarNotifier.showSnackBar(context, 'Failed to signIn');
       throw 'Failed to signIn';
     }
     return user;
@@ -76,7 +77,7 @@ class AuthService {
       return true;
     } catch (err) {
       _logger.e(err.toString());
-      showMessage(context, 'Failed to signout!');
+      NavbarNotifier.showSnackBar(context, 'Failed to signout!');
       return false;
     }
   }

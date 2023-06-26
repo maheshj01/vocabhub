@@ -125,7 +125,8 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
                   child: GestureDetector(
                     onTap: () async {
                       await Clipboard.setData(ClipboardData(text: "${widget.word!.word}"));
-                      showMessage(context, " copied ${widget.word!.word} to clipboard.");
+                      NavbarNotifier.showSnackBar(
+                          context, " copied ${widget.word!.word} to clipboard.");
                     },
                     child: FittedBox(
                       fit: BoxFit.fitWidth,
@@ -294,7 +295,8 @@ class _WordDetailDesktopState extends State<WordDetailDesktop> with SingleTicker
                   child: GestureDetector(
                     onTap: () async {
                       await Clipboard.setData(ClipboardData(text: "${widget.word!.word}"));
-                      showMessage(context, " copied ${widget.word!.word} to clipboard.");
+                      NavbarNotifier.showSnackBar(
+                          context, " copied ${widget.word!.word} to clipboard.");
                     },
                     child: MouseRegion(
                       cursor: SystemMouseCursors.click,
