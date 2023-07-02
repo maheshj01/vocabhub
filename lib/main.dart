@@ -97,10 +97,10 @@ class _VocabAppState extends State<VocabApp> {
   FirebaseAnalyticsObserver _observer = FirebaseAnalyticsObserver(analytics: firebaseAnalytics);
   @override
   void dispose() {
-    searchController.dispose();
+    searchController.disposeService();
     totalNotifier.dispose();
     listNotifier.dispose();
-    exploreController.dispose();
+    exploreController.disposeService();
     super.dispose();
   }
 

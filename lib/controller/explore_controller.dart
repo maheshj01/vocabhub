@@ -9,6 +9,23 @@ class ExploreController extends ChangeNotifier with ServiceBase {
   late DateTime _scrollMessageShownDate;
   late bool _isScrollMessageShown;
   late bool _isHidden;
+  late PageController _pageController;
+
+  PageController get pageController => _pageController;
+
+  set pageController(PageController value) {
+    _pageController = value;
+    notifyListeners();
+  }
+
+  set scrollToIndex(int index) {
+    _pageController.animateToPage(index,
+        duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
+  }
+
+  int index() {
+    return _pageController.page!.toInt();
+  }
 
   bool get isHidden => _isHidden;
 
@@ -37,6 +54,7 @@ class ExploreController extends ChangeNotifier with ServiceBase {
   Future<void> initService() async {
     _isHidden = true;
     _scrollMessageShownDate = DateTime.now();
+    _pageController = PageController();
     _exploreService = ExploreService();
     await _exploreService.initService();
     _isHidden = await _exploreService.getExploreHidden();
@@ -72,5 +90,7 @@ class ExploreController extends ChangeNotifier with ServiceBase {
   }
 
   @override
-  Future<void> disposeService() async {}
+  Future<void> disposeService() async {
+    _pageController.dispose();
+  }
 }

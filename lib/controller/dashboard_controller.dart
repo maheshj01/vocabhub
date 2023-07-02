@@ -11,8 +11,8 @@ class DashboardController extends ChangeNotifier with ServiceBase {
 
   bool get isWodPublishedToday {
     final now = DateTime.now().toUtc();
-    final differenceInDays = now.difference(_lastPublishedWord.created_at!).inHours;
-    return differenceInDays < 24;
+    final differenceInHours = now.difference(_lastPublishedWord.created_at!).inHours;
+    return differenceInHours < 24;
   }
 
   Future<void> setPublishedWord(Word word) async {

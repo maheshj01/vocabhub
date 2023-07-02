@@ -8,7 +8,7 @@ Stay motivated and inspired with our engaging 'Word of the Day' feature. Every d
 
 What sets us apart is our commitment to collaboration and community. Our app is an open-source crowd platform, welcoming contributions from every user. Join our network of language enthusiasts, and contribute to our expanding database by suggesting edits, offering alternative definitions, or sharing additional examples. Together, we can collectively improve the quality and accuracy of our word collection, fostering a community-driven platform for continuous learning.
 
-Download the app now and embark on an enriching vocabulary journey. Enhance your language skills, build your confidence, and embrace the power of words. Start expanding your linguistic repertoire today.
+Download the app now and embark on an enriching vocabulary journey. Enhance your language skills, build your confidence, and embrace the power of words. Start expanding your linguistic repert`oire today.
 
 Key Features:
 
@@ -117,3 +117,10 @@ Feel Free to contribute to this app to make the platform better.
 Design files for this project can be found here https://www.figma.com/file/xPCoi1IcW8M6TODTqjG9GZ/Vocabhub?node-id=0%3A1
 
 Data is no longer being collected into [this sheet](https://docs.google.com/spreadsheets/d/1G1RtQfsEDqHhHP4cgOpO9x_ZtQ1dYa6QrGCq3KFlu50/edit#gid=0). Contribution does not necessarily mean sending a pull request you could also contribute by improving the sheet.
+
+This problem can be solved using greedy approach. Let n be the total number of jobs  with J = {1, 2, 3, 4 … n} with their finish times C = {c1, c2, c3,... cn} and corresponding weights W = {w1, w2, w3 … wn} 
+
+
+The idea is to sort the jobs in descending order of their ratio wi/ti and then calculate the weighted sum
+
+

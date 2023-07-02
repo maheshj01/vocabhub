@@ -199,7 +199,8 @@ class _AddWordFormState extends State<AddWordForm> {
         final response = await VocabStoreService.deleteById(id);
         if (response.status == 200) {
           analytics.logWordDelete(widget.word!, userProvider!.email);
-          NavbarNotifier.showSnackBar(context, "The word \"${widget.word!.word}\" has been deleted.",
+          NavbarNotifier.showSnackBar(
+              context, "The word \"${widget.word!.word}\" has been deleted.",
               onClosed: () => Navigate.popView(context));
         } else {
           final error = response.error;

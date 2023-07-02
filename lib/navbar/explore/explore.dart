@@ -97,7 +97,7 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
                 children: [
                   PageView.builder(
                       itemCount: words.length,
-                      controller: pageController,
+                      controller: exploreController.pageController,
                       scrollBehavior: MaterialScrollBehavior(),
                       onPageChanged: (x) {
                         // if (x > max - 5) {
@@ -128,8 +128,6 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
   }
 }
 
-PageController pageController = PageController();
-
 class ExploreWordsDesktop extends StatefulWidget {
   ExploreWordsDesktop({Key? key}) : super(key: key);
 
@@ -139,6 +137,7 @@ class ExploreWordsDesktop extends StatefulWidget {
 
 class _ExploreWordsDesktopState extends State<ExploreWordsDesktop> {
   final focusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -149,9 +148,11 @@ class _ExploreWordsDesktopState extends State<ExploreWordsDesktop> {
       autofocus: true,
       onKeyEvent: (event) {
         if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-          pageController.previousPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+          exploreController.pageController
+              .previousPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
         } else if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
-          pageController.nextPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+          exploreController.pageController
+              .nextPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn);
         }
       },
       child: Material(
@@ -162,7 +163,7 @@ class _ExploreWordsDesktopState extends State<ExploreWordsDesktop> {
               padding: EdgeInsets.symmetric(horizontal: 40),
               child: PageView.builder(
                   itemCount: words.length,
-                  controller: pageController,
+                  controller: exploreController.pageController,
                   scrollBehavior: MaterialScrollBehavior(),
                   physics: ClampingScrollPhysics(),
                   onPageChanged: (x) {
@@ -179,19 +180,18 @@ class _ExploreWordsDesktopState extends State<ExploreWordsDesktop> {
               child: IconButton(
                   icon: Icon(
                     Icons.arrow_back_ios,
-                    color: Colors.black,
                     size: 42,
                   ),
-                  onPressed: () => pageController.previousPage(
-                      duration: Duration(milliseconds: 500), curve: Curves.easeIn)),
+                  onPressed: () => exploreController.pageController
+                      .previousPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn)),
             ),
             Positioned(
               top: size.height * 0.5,
               right: kNotchedNavbarHeight,
               child: IconButton(
-                  icon: Icon(Icons.arrow_forward_ios, color: Colors.black, size: 42),
-                  onPressed: () => pageController.nextPage(
-                      duration: Duration(milliseconds: 500), curve: Curves.easeIn)),
+                  icon: Icon(Icons.arrow_forward_ios, size: 42),
+                  onPressed: () => exploreController.pageController
+                      .nextPage(duration: Duration(milliseconds: 500), curve: Curves.easeIn)),
             ),
           ],
         ),
@@ -276,6 +276,7 @@ class _ExploreWordState extends State<ExploreWord>
     super.build(context);
     // Size size = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
     final userProvider = AppStateScope.of(context).user!;
     if (!userProvider.isLoggedIn) {
       _animationController.forward();
@@ -371,7 +372,7 @@ class _ExploreWordState extends State<ExploreWord>
                                       style: Theme.of(context)
                                           .textTheme
                                           .headlineMedium!
-                                          .copyWith(fontWeight: FontWeight.w400)),
+                                          .copyWith(fontSize: 20, fontWeight: FontWeight.w400)),
                                 );
                               }),
                           ExampleListBuilder(

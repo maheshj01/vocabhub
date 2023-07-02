@@ -251,8 +251,12 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                   isDesktop: !SizeUtils.isMobile,
                   destinationAnimationCurve: Curves.fastOutSlowIn,
                   destinationAnimationDuration: 0,
+                  onCurrentTabClicked: () {
+                    exploreController.scrollToIndex = 0;
+                  },
                   onChanged: (x) {
                     /// Simulate DragGesture on pageView
+                    final pageController = exploreController.pageController;
                     if (EXPLORE_INDEX == x && SizeUtils.isMobile) {
                       if (pageController.hasClients && user!.isLoggedIn) {
                         if (exploreController.shouldShowScrollMessage) {
