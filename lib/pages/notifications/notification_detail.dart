@@ -5,54 +5,54 @@ import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
-class EditDetail extends StatefulWidget {
+class NotificationDetail extends StatefulWidget {
   final EditHistory editHistory;
 
   static const String route = '/';
 
-  const EditDetail({Key? key, required this.editHistory}) : super(key: key);
+  const NotificationDetail({Key? key, required this.editHistory}) : super(key: key);
 
   @override
-  State<EditDetail> createState() => _EditDetailState();
+  State<NotificationDetail> createState() => _NotificationDetailState();
 }
 
-class _EditDetailState extends State<EditDetail> {
+class _NotificationDetailState extends State<NotificationDetail> {
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
-        desktopBuilder: (context) => EditDetailMobile(
+        desktopBuilder: (context) => NotificationDetailMobile(
               editHistory: widget.editHistory,
             ),
-        mobileBuilder: (context) => EditDetailMobile(
+        mobileBuilder: (context) => NotificationDetailMobile(
               editHistory: widget.editHistory,
             ));
   }
 }
 
-class EditDetailDesktop extends StatelessWidget {
-  const EditDetailDesktop({Key? key}) : super(key: key);
+class NotificationDetailDesktop extends StatelessWidget {
+  const NotificationDetailDesktop({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text('EditDetailDesktop'),
+        child: Text('NotificationDetailDesktop'),
       ),
     );
   }
 }
 
-class EditDetailMobile extends StatefulWidget {
-  EditDetailMobile({Key? key, required this.editHistory}) : super(key: key);
+class NotificationDetailMobile extends StatefulWidget {
+  NotificationDetailMobile({Key? key, required this.editHistory}) : super(key: key);
 
   /// current edit
   final EditHistory editHistory;
 
   @override
-  State<EditDetailMobile> createState() => _EditDetailMobileState();
+  State<NotificationDetailMobile> createState() => _NotificationDetailMobileState();
 }
 
-class _EditDetailMobileState extends State<EditDetailMobile> {
+class _NotificationDetailMobileState extends State<NotificationDetailMobile> {
   Future<void> getCurrentWord() async {
     currentEdit = Word(
         widget.editHistory.word_id, widget.editHistory.word, widget.editHistory.meaning,
@@ -99,13 +99,15 @@ class _EditDetailMobileState extends State<EditDetailMobile> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final editState = widget.editHistory.state;
+    final editType = widget.editHistory.edit_type;
     return Scaffold(
         backgroundColor: colorScheme.background,
         appBar: AppBar(
           elevation: 0,
           centerTitle: false,
           title: Text(
-            'Edit Detail',
+            'Edit Detail (${editState!.toName().capitalize()})',
             style: Theme.of(context).textTheme.titleLarge,
           ),
         ),
@@ -115,7 +117,6 @@ class _EditDetailMobileState extends State<EditDetailMobile> {
               if (value.id == '') {
                 return LoadingWidget();
               }
-
               List<Widget> _children = [
                 widget.editHistory.edit_type == EditType.edit
                     ? Column(
@@ -161,9 +162,10 @@ class _EditDetailMobileState extends State<EditDetailMobile> {
                       )
                     : SizedBox.shrink(),
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.editHistory.edit_type == EditType.add ? 'New Word' : 'New Version',
+                      editType == EditType.add ? 'New Word' : 'New Version',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     16.0.vSpacer(),

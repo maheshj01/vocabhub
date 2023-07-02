@@ -173,7 +173,7 @@ class _NotificationsState extends State<Notifications> {
                               onTap: () {
                                 Navigate.push(
                                     context,
-                                    EditDetail(
+                                    NotificationDetail(
                                       editHistory: edit,
                                     ));
                               },
@@ -192,7 +192,7 @@ class _NotificationsState extends State<Notifications> {
                       onTap: () {
                         Navigate.push(
                             context,
-                            EditDetail(
+                            NotificationDetail(
                               editHistory: edit,
                             ));
                       },
