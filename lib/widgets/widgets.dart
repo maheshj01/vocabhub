@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/navbar/profile/settings.dart';
 import 'package:vocabhub/services/analytics.dart';
+import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/size_utils.dart';
 import 'package:vocabhub/utils/utility.dart';
 
@@ -114,7 +115,7 @@ RichText differenceVisualizerByWord(String editedText, String oldText,
     text: TextSpan(
       style: TextStyle(
         fontSize: 16.0,
-        color: Colors.black,
+        color: settingsController.isDark ? Colors.white : Colors.black,
       ),
       children: <TextSpan>[
         for (int i = 0; i < minLengthList; i++)
@@ -153,6 +154,7 @@ RichText differenceVisualizerGranular(String editedText, String oldText,
     text: TextSpan(
       style: TextStyle(
         fontSize: 16.0,
+        color: settingsController.isDark ? Colors.white : Colors.black,
       ),
       children: <TextSpan>[
         for (int i = 0; i < minLength; i++)

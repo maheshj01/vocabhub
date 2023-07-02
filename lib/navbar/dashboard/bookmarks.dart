@@ -4,7 +4,6 @@ import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
@@ -110,7 +109,8 @@ class _BookmarksMobileState extends State<_BookmarksMobile> {
                                       await VocabStoreService.removeBookmark(value[index].id,
                                           isBookmark: widget.isBookMark);
                                       getBookmarks();
-                                      NavbarNotifier.showSnackBar(context, '$title removed');
+                                      NavbarNotifier.showSnackBar(context, '$title removed',
+                                          bottom: 0);
                                     },
                                   ),
                                 );

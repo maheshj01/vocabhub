@@ -97,6 +97,7 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
         ],
       ),
       body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Column(children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
@@ -181,6 +182,7 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
                     : widget.word!.mnemonics,
                 word: widget.word!.word,
               )),
+          kNavbarHeight.vSpacer()
         ]),
       ),
     );
