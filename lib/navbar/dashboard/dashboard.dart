@@ -189,7 +189,7 @@ class DashboardMobile extends StatelessWidget {
               children: [
                 Padding(
                   padding: 16.0.verticalPadding,
-                  child: heading('Word of the day(Patched)'),
+                  child: heading('Word of the day'),
                 ),
                 OpenContainer<bool>(
                     openBuilder: (BuildContext context, VoidCallback openContainer) {
