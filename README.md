@@ -1,4 +1,4 @@
-# Vocabhub 0.5.3
+# Vocabhub 0.5.4
 
 Supercharge your vocabulary with our comprehensive app designed to help you excel in English! Whether you're preparing for the GRE or simply aiming to enhance your language skills, this app is your ultimate companion. Unlock the potential of over 800 meticulously curated GRE words, carefully selected to bolster your word power.
 
@@ -118,9 +118,6 @@ Design files for this project can be found here https://www.figma.com/file/xPCoi
 
 Data is no longer being collected into [this sheet](https://docs.google.com/spreadsheets/d/1G1RtQfsEDqHhHP4cgOpO9x_ZtQ1dYa6QrGCq3KFlu50/edit#gid=0). Contribution does not necessarily mean sending a pull request you could also contribute by improving the sheet.
 
-This problem can be solved using greedy approach. Let n be the total number of jobs  with J = {1, 2, 3, 4 … n} with their finish times C = {c1, c2, c3,... cn} and corresponding weights W = {w1, w2, w3 … wn} 
-
+This problem can be solved using greedy approach. Let n be the total number of jobs with J = {1, 2, 3, 4 … n} with their finish times C = {c1, c2, c3,... cn} and corresponding weights W = {w1, w2, w3 … wn}
 
 The idea is to sort the jobs in descending order of their ratio wi/ti and then calculate the weighted sum
-
-

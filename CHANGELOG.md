@@ -1,4 +1,4 @@
-### 0.5.3+16 Jun 25, 2023 (Unreleased)
+### 0.5.3+16 Jun 25, 2023
 
 - Load explore when offline.
 - hadle network error for profile page
