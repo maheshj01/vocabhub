@@ -1,3 +1,8 @@
+### 0.5.4+17 July 02, 2023
+
+- Tap explore tab to scroll to top
+- fix Word detail and explore UI overflow
+
 ### 0.5.3+16 Jun 25, 2023
 
 - Load explore when offline.
