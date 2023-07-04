@@ -1,3 +1,7 @@
+### 0.5.5+18 July 04, 2023
+
+- Fixes:[https://github.com/maheshmnj/vocabhub/issues/30](Issue: 30) word of the day publish logic.
+
 ### 0.5.4+17 July 02, 2023
 
 - Tap explore tab to scroll to top

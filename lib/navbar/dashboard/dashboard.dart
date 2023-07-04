@@ -64,6 +64,7 @@ class _DashboardState extends State<Dashboard> {
   Future<void> publishWordOfTheDay() async {
     final state = AppStateWidget.of(context);
     try {
+      // If word of the day already published then get word of the day
       if (dashboardController.isWodPublishedToday) {
         final publishedWod = dashboardController.lastPublishedWord;
         state.setWordOfTheDay(publishedWod);
