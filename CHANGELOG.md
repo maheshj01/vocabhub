@@ -1,3 +1,7 @@
+### 0.5.6+19 July 04, 2023 (Unreleased)
+
+- Swipe up to see more words in explore page
+
 ### 0.5.5+18 July 04, 2023
 
 - Fixes:[https://github.com/maheshmnj/vocabhub/issues/30](Issue: 30) word of the day publish logic.
