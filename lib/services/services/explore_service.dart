@@ -55,7 +55,7 @@ class ExploreService extends ServiceBase {
     if (date != null) {
       return DateTime.parse(date);
     }
-    return DateTime.now();
+    return DateTime.now().subtract(Duration(days: Constants.scrollMessageShownInterval));
   }
 
   Future<void> setIsScrollMessageShown(bool value) async {

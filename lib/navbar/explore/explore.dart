@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -95,30 +96,70 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  PageView.builder(
-                      itemCount: words.length,
-                      controller: exploreController.pageController,
-                      scrollBehavior: MaterialScrollBehavior(),
-                      onPageChanged: (x) {
-                        // if (x > max - 5) {
-                        //   page++;
-                        //   exploreWords();
-                        // }
-                        if (x % _scrollCountCallback == 0) {
-                          widget.onScrollThresholdReached!();
-                        }
-                        NavbarNotifier.hideSnackBar(context);
-                      },
-                      physics: ClampingScrollPhysics(),
-                      scrollDirection: Axis.vertical,
-                      itemBuilder: (context, index) {
-                        return ExploreWord(word: words[index], index: index);
-                      }),
+                  Column(
+                    children: [
+                      Expanded(
+                        child: PageView.builder(
+                            itemCount: words.length,
+                            controller: exploreController.pageController,
+                            scrollBehavior: MaterialScrollBehavior(),
+                            onPageChanged: (x) {
+                              // if (x > max - 5) {
+                              //   page++;
+                              //   exploreWords();
+                              // }
+                              if (x % _scrollCountCallback == 0) {
+                                widget.onScrollThresholdReached!();
+                              }
+                              NavbarNotifier.hideSnackBar(context);
+                            },
+                            physics: ClampingScrollPhysics(),
+                            scrollDirection: Axis.vertical,
+                            itemBuilder: (context, index) {
+                              return ExploreWord(word: words[index], index: index);
+                            }),
+                      ),
+                      AnimatedBuilder(
+                          animation: exploreController,
+                          builder: (context, child) {
+                            return exploreController.isAnimating
+                                ? Container(
+                                    alignment: Alignment.center,
+                                    margin: EdgeInsets.only(
+                                      bottom: kBottomNavigationBarHeight + 50,
+                                    ),
+                                    // left: 120,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          CupertinoIcons.chevron_up,
+                                          size: 30,
+                                        ),
+                                        Text(
+                                          'Swipe up to see more',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ))
+                                : SizedBox.shrink();
+                          })
+                    ],
+                  ),
                   request.state == RequestState.active
                       ? Positioned(
                           bottom: kBottomNavigationBarHeight + 50,
                           left: 120,
-                          child: Text('Fetching more words'))
+                          child: Text(
+                            'Fetching more words',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey.shade600),
+                          ))
                       : SizedBox.shrink(),
                 ],
               ),
@@ -276,7 +317,6 @@ class _ExploreWordState extends State<ExploreWord>
     super.build(context);
     // Size size = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
     final userProvider = AppStateScope.of(context).user!;
     if (!userProvider.isLoggedIn) {
       _animationController.forward();

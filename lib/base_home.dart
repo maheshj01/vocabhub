@@ -254,17 +254,15 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                   onCurrentTabClicked: () {
                     exploreController.scrollToIndex = 0;
                   },
-                  onChanged: (x) {
+                  onChanged: (x) async {
                     /// Simulate DragGesture on pageView
                     final pageController = exploreController.pageController;
                     if (EXPLORE_INDEX == x && SizeUtils.isMobile) {
                       if (pageController.hasClients && user!.isLoggedIn) {
                         if (exploreController.shouldShowScrollMessage) {
-                          showToast(exploreScrollMessage);
-                          Future.delayed(Duration(seconds: 3), () {
+                          Future.delayed(Duration(seconds: 3), () async {
                             if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {
-                              pageController.animateTo(200,
-                                  duration: Duration(milliseconds: 600), curve: Curves.easeIn);
+                              exploreController.showScrollAnimation();
                             }
                             exploreController.setIsScrollMessageShown(true);
                           });

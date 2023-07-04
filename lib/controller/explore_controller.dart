@@ -10,6 +10,14 @@ class ExploreController extends ChangeNotifier with ServiceBase {
   late bool _isScrollMessageShown;
   late bool _isHidden;
   late PageController _pageController;
+  late bool _isAnimating = false;
+
+  bool get isAnimating => _isAnimating;
+
+  set isAnimating(bool value) {
+    _isAnimating = value;
+    notifyListeners();
+  }
 
   PageController get pageController => _pageController;
 
@@ -44,9 +52,8 @@ class ExploreController extends ChangeNotifier with ServiceBase {
       _shouldShowScrollMessage = true;
       return;
     }
-    final shownDate = scrollMessageShownDate;
     final now = DateTime.now();
-    final differenceInDays = shownDate.difference(now).inDays;
+    final differenceInDays = scrollMessageShownDate.difference(now).inDays;
     _shouldShowScrollMessage = differenceInDays > Constants.scrollMessageShownInterval;
   }
 
@@ -75,6 +82,21 @@ class ExploreController extends ChangeNotifier with ServiceBase {
     if (isScrollMessageShown) {
       setShouldShowScrollMessage();
     }
+  }
+
+  Future<void> showScrollAnimation() async {
+    isAnimating = true;
+    final list = List.generate(2, (index) => index).toList();
+    final currentPosition = pageController.position.pixels - 100;
+    await Future.forEach(list, (index) async {
+      await pageController
+          .animateTo(currentPosition + 150,
+              duration: Duration(milliseconds: 2000), curve: Curves.fastOutSlowIn)
+          .then((value) async {
+        await Future.delayed(Duration(milliseconds: 1000));
+      });
+    });
+    isAnimating = false;
   }
 
   void toggleHiddenExplore() {
