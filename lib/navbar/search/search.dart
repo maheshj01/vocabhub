@@ -146,8 +146,9 @@ class _MobileViewState extends State<MobileView> {
                   final List<List<Word>> wordsByAlphabet = resp.data as List<List<Word>>;
                   print(wordsByAlphabet.length);
                   return Padding(
-                    padding: kNavbarHeight.bottomPadding,
+                    padding: 8.0.horizontalPadding,
                     child: GridView.custom(
+                      padding: (kNavbarHeight * 1.1).bottomPadding,
                       gridDelegate: SliverQuiltedGridDelegate(
                         crossAxisCount: 4,
                         mainAxisSpacing: 8,
