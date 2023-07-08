@@ -1,12 +1,16 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:navbar_router/navbar_router.dart';
+import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/models.dart';
+import 'package:vocabhub/navbar/dashboard/bookmarks.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
+import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/responsive.dart';
@@ -74,6 +78,38 @@ class MobileView extends StatefulWidget {
 }
 
 class _MobileViewState extends State<MobileView> {
+  Future<void> getWordsByAlphabet() async {
+    response.value = response.value.copyWith(state: RequestState.active);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      words = await VocabStoreService.getAllWords(sort: true);
+      List<List<Word>> wordsByAlphabet = [];
+      words.forEach((element) {
+        final index = element.word[0].toUpperCase().codeUnitAt(0) - 65;
+        if (wordsByAlphabet.length <= index) {
+          wordsByAlphabet.add([element]);
+        } else {
+          wordsByAlphabet[index].add(element);
+        }
+      });
+      showToast('${words.length} Words fetched successfully');
+      response.value = response.value.copyWith(
+          data: wordsByAlphabet,
+          state: RequestState.done,
+          status: 200,
+          message: 'Words by Alphabet fetched successfully');
+    });
+  }
+
+  List<Word> words = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getWordsByAlphabet();
+  }
+
+  ValueNotifier<Response> response = ValueNotifier<Response>(Response.init());
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -81,7 +117,7 @@ class _MobileViewState extends State<MobileView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding: 16.0.horizontalPadding + 8.0.topPadding,
             child: SearchBuilder(
               ontap: () {
                 searchController.clearText();
@@ -92,14 +128,87 @@ class _MobileViewState extends State<MobileView> {
               onChanged: (x) {},
             ),
           ),
+          Padding(
+            padding: 8.0.allPadding,
+            child: heading('Words By Alphabets', fontSize: 16),
+          ),
           Expanded(
-              child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [Text('Hang Tight!\nPopular words\nComing soon!' + '🚀')],
-            ),
+              child: RefreshIndicator(
+            onRefresh: () async {
+              await getWordsByAlphabet();
+            },
+            child: ValueListenableBuilder<Response>(
+                valueListenable: response,
+                builder: (context, Response resp, child) {
+                  if (resp.state == RequestState.active) {
+                    return LoadingWidget();
+                  }
+                  final List<List<Word>> wordsByAlphabet = resp.data as List<List<Word>>;
+                  print(wordsByAlphabet.length);
+                  return Padding(
+                    padding: kNavbarHeight.bottomPadding,
+                    child: GridView.custom(
+                      gridDelegate: SliverQuiltedGridDelegate(
+                        crossAxisCount: 4,
+                        mainAxisSpacing: 8,
+                        crossAxisSpacing: 8,
+                        repeatPattern: QuiltedGridRepeatPattern.inverted,
+                        pattern: [
+                          QuiltedGridTile(1, 2),
+                          QuiltedGridTile(2, 2),
+                          QuiltedGridTile(1, 1),
+                          QuiltedGridTile(1, 1),
+                        ],
+                      ),
+                      childrenDelegate: SliverChildBuilderDelegate(
+                        childCount: wordsByAlphabet.length,
+                        (context, index) => WordTile(
+                          title: wordsByAlphabet[index][0].word[0].toUpperCase(),
+                          index: index,
+                          wordList: wordsByAlphabet[index],
+                        ),
+                      ),
+                    ),
+                  );
+                }),
           ))
         ],
+      ),
+    );
+  }
+}
+
+class WordTile extends StatelessWidget {
+  final int index;
+  final String title;
+  final List<Word>? wordList;
+
+  const WordTile({super.key, required this.title, required this.index, this.wordList});
+
+  @override
+  Widget build(BuildContext context) {
+    final randomColor = Colors.primaries[index % Colors.primaries.length].withOpacity(0.8);
+    final randomDarkColor =
+        Colors.primaries[index % Colors.primaries.length].shade900.withOpacity(0.8);
+    return Material(
+      borderRadius: BorderRadius.all(Radius.circular(16)),
+      color: settingsController.isDark ? randomDarkColor : randomColor,
+      child: InkWell(
+        onTap: () {
+          Navigate.push(
+              context,
+              WordListPage(
+                  title: "Letter $title (${wordList!.length})",
+                  hasTrailing: false,
+                  words: wordList!));
+        },
+        child: Container(
+          alignment: Alignment.center,
+          child: Text(
+            '$title',
+            style: Theme.of(context).textTheme.headlineLarge!.copyWith(color: Colors.white),
+          ),
+        ),
       ),
     );
   }
