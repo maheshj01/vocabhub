@@ -191,27 +191,29 @@ class WordTile extends StatelessWidget {
     final randomColor = Colors.primaries[index % Colors.primaries.length].withOpacity(0.8);
     final randomDarkColor =
         Colors.primaries[index % Colors.primaries.length].shade900.withOpacity(0.8);
-    return Material(
-      borderRadius: BorderRadius.all(Radius.circular(16)),
-      color: settingsController.isDark ? randomDarkColor : randomColor,
-      child: InkWell(
-        onTap: () {
-          Navigate.push(
-              context,
-              WordListPage(
-                  title: "Letter $title (${wordList!.length})",
-                  hasTrailing: false,
-                  words: wordList!));
+    return OpenContainer(
+        closedColor: Theme.of(context).colorScheme.surface,
+        openBuilder: (BuildContext context, VoidCallback openContainer) {
+          return WordListPage(
+              title: "Words With Letter $title (${wordList!.length})",
+              hasTrailing: false,
+              words: wordList!);
         },
-        child: Container(
-          alignment: Alignment.center,
-          child: Text(
-            '$title',
-            style: Theme.of(context).textTheme.headlineLarge!.copyWith(color: Colors.white),
-          ),
-        ),
-      ),
-    );
+        tappable: true,
+        transitionType: ContainerTransitionType.fadeThrough,
+        closedBuilder: (BuildContext context, VoidCallback openContainer) {
+          return Container(
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: settingsController.isDark ? randomDarkColor : randomColor,
+              borderRadius: BorderRadius.all(Radius.circular(16)),
+            ),
+            child: Text(
+              '$title',
+              style: Theme.of(context).textTheme.headlineLarge!.copyWith(color: Colors.white),
+            ),
+          );
+        });
   }
 }
 
