@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/base_home.dart';
@@ -26,15 +25,15 @@ class _AppSignInState extends State<AppSignIn> {
     try {
       _requestNotifier.value = Response(state: RequestState.active);
       user = await auth.googleSignIn(context);
-      final fcmToken = pushNotificationService.fcmToken;
-      print("FirebaseMessaging token: $fcmToken");
+      // final fcmToken = pushNotificationService.fcmToken;
+      // print("FirebaseMessaging token: $fcmToken");
       if (user != null) {
         final existingUser = await UserService.findByEmail(email: user!.email);
         if (existingUser.email.isEmpty) {
           final resp = await AuthService.registerUser(user!);
           if (resp.didSucced) {
             final user = UserModel.fromJson((resp.data as List<dynamic>)[0]);
-            state.setUser(user.copyWith(isLoggedIn: true, token: fcmToken));
+            // state.setUser(user.copyWith(isLoggedIn: true, token: fcmToken));
             _requestNotifier.value = Response(state: RequestState.done);
             Navigate.pushAndPopAll(context, AdaptiveLayout(),
                 slideTransitionType: TransitionType.ttb);
@@ -48,10 +47,10 @@ class _AppSignInState extends State<AppSignIn> {
           }
         } else {
           await Settings.setIsSignedIn(true, email: existingUser.email);
-          if (!kIsWeb) {
-            await AuthService.updateTokenOnLogin(email: existingUser.email, token: fcmToken!);
-          }
-          state.setUser(existingUser.copyWith(isLoggedIn: true, token: fcmToken));
+          // if (!kIsWeb) {
+          // await AuthService.updateTokenOnLogin(email: existingUser.email, token: fcmToken!);
+          // }
+          // state.setUser(existingUser.copyWith(isLoggedIn: true, token: fcmToken));
           _requestNotifier.value = Response(state: RequestState.done);
           Navigate.pushAndPopAll(context, AdaptiveLayout());
           firebaseAnalytics.logSignIn(user!);
@@ -87,7 +86,7 @@ class _AppSignInState extends State<AppSignIn> {
   @override
   Widget build(BuildContext context) {
     SizeUtils.size = MediaQuery.of(context).size;
-  final  colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
     Widget _heading(String text) {
       return Text(
         '$text',
