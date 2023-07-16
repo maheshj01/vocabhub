@@ -30,15 +30,14 @@ Future<void> main() async {
   localService = LocalService();
   searchController = SearchFieldController(controller: TextEditingController());
   await dashboardController.initService();
-  pushNotificationService = PushNotificationService(_firebaseMessaging);
+  // pushNotificationService = PushNotificationService(_firebaseMessaging);
   searchController.initService();
   exploreController.initService();
-  pushNotificationService.initService();
+  // pushNotificationService.initService();
   localService.initService();
   // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   Settings.init();
   settingsController.loadSettings();
-  pushNotificationService.initService();
   runApp(VocabApp());
 }
 
@@ -57,7 +56,7 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
 late SettingsController settingsController;
 late SearchFieldController searchController;
 late ExploreController exploreController;
-late PushNotificationService pushNotificationService;
+// late PushNotificationService pushNotificationService;
 late DashboardController dashboardController;
 late LocalService localService;
 final ValueNotifier<int> totalNotifier = ValueNotifier<int>(0);
@@ -76,8 +75,8 @@ class VocabApp extends StatefulWidget {
   _VocabAppState createState() => _VocabAppState();
 }
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//     FlutterLocalNotificationsPlugin();
 
 class _VocabAppState extends State<VocabApp> {
   Future<void> initializeApp() async {
@@ -86,12 +85,12 @@ class _VocabAppState extends State<VocabApp> {
     if (email.isNotEmpty) {
       await AuthService.updateLogin(email: email, isLoggedIn: true);
     }
-    flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse: (x) {
-      print('received notification');
-    }, onDidReceiveBackgroundNotificationResponse: (x) {
-      print('received background notification');
-    });
+    // flutterLocalNotificationsPlugin.initialize(initializationSettings,
+    //     onDidReceiveNotificationResponse: (x) {
+    //   print('received notification');
+    // }, onDidReceiveBackgroundNotificationResponse: (x) {
+    //   print('received background notification');
+    // });
   }
 
   FirebaseAnalyticsObserver _observer = FirebaseAnalyticsObserver(analytics: firebaseAnalytics);
@@ -100,7 +99,10 @@ class _VocabAppState extends State<VocabApp> {
     searchController.disposeService();
     totalNotifier.dispose();
     listNotifier.dispose();
+    dashboardController.disposeService();
     exploreController.disposeService();
+    // pushNotificationService.disposeService();
+
     super.dispose();
   }
 

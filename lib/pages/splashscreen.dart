@@ -2,6 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/base_home.dart';
+import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/appstate.dart';
@@ -92,11 +93,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 Positioned(
                   top: 4,
                   left: 2,
-                  child: Text('Vocabhub',
+                  child: Text(Constants.APP_TITLE,
                       style:
                           Theme.of(context).textTheme.displayMedium!.copyWith(color: Colors.grey)),
                 ),
-                Text('Vocabhub',
+                Text(Constants.APP_TITLE,
                     style:
                         Theme.of(context).textTheme.displayMedium!.copyWith(color: Colors.white)),
               ],
