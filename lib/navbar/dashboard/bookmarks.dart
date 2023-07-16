@@ -83,42 +83,116 @@ class _BookmarksMobileState extends State<_BookmarksMobile> {
               ),
               body: value.isEmpty
                   ? _emptyWidget()
-                  : ListView.builder(
-                      itemCount: value.length,
-                      padding: EdgeInsets.only(top: 16, bottom: kNotchedNavbarHeight * 1.5),
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
-                          child: OpenContainer(
-                              closedColor: Theme.of(context).colorScheme.surface,
-                              openBuilder: (BuildContext context, VoidCallback openContainer) {
-                                return WordDetail(word: value[index]);
-                              },
-                              tappable: true,
-                              transitionType: ContainerTransitionType.fadeThrough,
-                              closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                                return ListTile(
-                                  minVerticalPadding: 24,
-                                  title: Text(value[index].word),
-                                  trailing: IconButton(
-                                    icon: Icon(
-                                      Icons.bookmark,
-                                      color: Theme.of(context).colorScheme.secondary,
-                                    ),
-                                    onPressed: () async {
-                                      await VocabStoreService.removeBookmark(value[index].id,
-                                          isBookmark: widget.isBookMark);
-                                      getBookmarks();
-                                      NavbarNotifier.showSnackBar(context, '$title removed',
-                                          bottom: 0);
-                                    },
-                                  ),
-                                );
-                              }),
-                        );
+                  : WordListBuilder(
+                      words: value,
+                      onTrailingTap: (word) async {
+                        await VocabStoreService.removeBookmark(word.id,
+                            isBookmark: widget.isBookMark);
+                        getBookmarks();
+                        NavbarNotifier.showSnackBar(context, '$title removed', bottom: 0);
                       },
                     ));
         });
+  }
+}
+
+class WordListBuilder extends StatelessWidget {
+  final List<Word> words;
+  final Function(Word)? onTrailingTap;
+  final bool? hasTrailing;
+  WordListBuilder({Key? key, required this.words, this.hasTrailing = true, this.onTrailingTap})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: words.length,
+      padding: EdgeInsets.only(top: 16, bottom: kNotchedNavbarHeight * 1.5),
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
+          child: OpenContainer(
+              closedColor: Theme.of(context).colorScheme.surface,
+              openBuilder: (BuildContext context, VoidCallback openContainer) {
+                return WordDetail(word: words[index]);
+              },
+              tappable: true,
+              transitionType: ContainerTransitionType.fadeThrough,
+              closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                return ListTile(
+                  minVerticalPadding: 24,
+                  title: Text(words[index].word),
+                  trailing: hasTrailing!
+                      ? IconButton(
+                          icon: Icon(
+                            Icons.bookmark,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                          onPressed:
+                              onTrailingTap != null ? () => onTrailingTap!(words[index]) : null,
+                        )
+                      : null,
+                );
+              }),
+        );
+      },
+    );
+  }
+}
+
+class WordListPage extends StatelessWidget {
+  final String title;
+  final List<Word> words;
+  final Function(Word)? onTrailingTap;
+  final bool? hasTrailing;
+  WordListPage(
+      {Key? key,
+      required this.title,
+      required this.words,
+      this.hasTrailing = true,
+      this.onTrailingTap})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+      appBar: AppBar(
+        title: Text('$title'),
+      ),
+      body: ListView.builder(
+        itemCount: words.length,
+        padding: EdgeInsets.symmetric(vertical: 16),
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
+            child: OpenContainer(
+                closedColor: Theme.of(context).colorScheme.surface,
+                openBuilder: (BuildContext context, VoidCallback openContainer) {
+                  return WordDetail(word: words[index]);
+                },
+                tappable: true,
+                transitionType: ContainerTransitionType.fadeThrough,
+                closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                  return ListTile(
+                    minVerticalPadding: 24,
+                    title: Text(words[index].word),
+                    trailing: hasTrailing!
+                        ? IconButton(
+                            icon: Icon(
+                              Icons.bookmark,
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                            onPressed:
+                                onTrailingTap != null ? () => onTrailingTap!(words[index]) : null,
+                          )
+                        : null,
+                  );
+                }),
+          );
+        },
+      ),
+    );
   }
 }
 

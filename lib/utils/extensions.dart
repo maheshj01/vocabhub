@@ -140,6 +140,26 @@ extension ContainerPadding on double {
   EdgeInsetsGeometry get horizontalPadding => EdgeInsets.symmetric(horizontal: this);
 }
 
+// add two ContainerPadding using +
+extension ContainerPaddingAddition on EdgeInsetsGeometry {
+  //  16.0.horizontalPadding + 8.0.topPadding,
+  EdgeInsetsGeometry operator +(EdgeInsetsGeometry other) {
+    return this.add(other);
+  }
+
+  EdgeInsetsGeometry operator -(EdgeInsetsGeometry other) {
+    return this.subtract(other);
+  }
+
+  EdgeInsetsGeometry operator *(double other) {
+    return this * other;
+  }
+
+  EdgeInsetsGeometry operator /(double other) {
+    return this / other;
+  }
+}
+
 extension RoundedShape on double {
   ShapeBorder get rounded => RoundedRectangleBorder(borderRadius: BorderRadius.circular(this));
 

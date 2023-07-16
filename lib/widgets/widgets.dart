@@ -92,11 +92,11 @@ RichText buildNotification(String notification, String word, {TextStyle? style})
   return RichText(text: TextSpan(text: '', children: textSpans));
 }
 
-Widget heading(String title) {
+Widget heading(String title, {double fontSize: 20}) {
   return Text(
     title,
     style: TextStyle(
-      fontSize: 20,
+      fontSize: fontSize,
       fontWeight: FontWeight.w500,
     ),
   );

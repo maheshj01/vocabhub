@@ -7,7 +7,9 @@ import 'package:vocabhub/services/services/service_base.dart';
 class ExploreController extends ChangeNotifier with ServiceBase {
   final Duration _autoScrollDuration = Duration(seconds: 10);
   late DateTime _scrollMessageShownDate;
-  late bool _isScrollMessageShown;
+  late bool _isScrollMessageShown = false;
+  late final ExploreService _exploreService;
+
   late bool _isHidden;
   late PageController _pageController;
   late bool _isAnimating = false;
@@ -35,38 +37,34 @@ class ExploreController extends ChangeNotifier with ServiceBase {
     return _pageController.page!.toInt();
   }
 
+  /// whether the word detail is hidden on explore page
   bool get isHidden => _isHidden;
 
   DateTime get scrollMessageShownDate => _scrollMessageShownDate;
 
   bool get isScrollMessageShown => _isScrollMessageShown;
 
-  late final ExploreService _exploreService;
+  bool _shouldShowScrollAnimation = true;
 
-  bool _shouldShowScrollMessage = false;
+  bool get shouldShowScrollAnimation => _shouldShowScrollAnimation;
 
-  bool get shouldShowScrollMessage => _shouldShowScrollMessage;
-
-  void setShouldShowScrollMessage() {
-    if (!isScrollMessageShown) {
-      _shouldShowScrollMessage = true;
-      return;
-    }
+  Future<void> initShouldShowScrollAnimation() async {
     final now = DateTime.now();
-    final differenceInDays = scrollMessageShownDate.difference(now).inDays;
-    _shouldShowScrollMessage = differenceInDays > Constants.scrollMessageShownInterval;
+    _isScrollMessageShown = await _exploreService.getIsScrollMessageShown();
+    _scrollMessageShownDate = now;
+    _scrollMessageShownDate = await _exploreService.getScrollMessageShownDate();
+    final differenceInDays = now.difference(scrollMessageShownDate).inDays;
+    _shouldShowScrollAnimation = differenceInDays >= Constants.scrollMessageShownInterval;
   }
 
   @override
   Future<void> initService() async {
     _isHidden = true;
-    _scrollMessageShownDate = DateTime.now();
     _pageController = PageController();
     _exploreService = ExploreService();
     await _exploreService.initService();
     _isHidden = await _exploreService.getExploreHidden();
-    setIsScrollMessageShown(await _exploreService.getIsScrollMessageShown());
-    _scrollMessageShownDate = await _exploreService.getScrollMessageShownDate();
+    initShouldShowScrollAnimation();
   }
 
   Future<void> hideExplore(bool value) async {
@@ -75,28 +73,28 @@ class ExploreController extends ChangeNotifier with ServiceBase {
     await _exploreService.setExploreHidden(value);
   }
 
-  Future<void> setIsScrollMessageShown(bool value) async {
-    _isScrollMessageShown = value;
-    notifyListeners();
-    await _exploreService.setIsScrollMessageShown(value);
-    if (isScrollMessageShown) {
-      setShouldShowScrollMessage();
-    }
-  }
-
   Future<void> showScrollAnimation() async {
     isAnimating = true;
     final list = List.generate(2, (index) => index).toList();
     final currentPosition = pageController.position.pixels - 100;
     await Future.forEach(list, (index) async {
       await pageController
-          .animateTo(currentPosition + 150,
+          .animateTo(currentPosition + 300,
               duration: Duration(milliseconds: 2000), curve: Curves.fastOutSlowIn)
           .then((value) async {
         await Future.delayed(Duration(milliseconds: 1000));
       });
     });
     isAnimating = false;
+    rememberLastScroll();
+  }
+
+  Future<void> rememberLastScroll() async {
+    _scrollMessageShownDate = DateTime.now();
+    _isScrollMessageShown = true;
+    await _exploreService.setScrollMessageShownDate(_scrollMessageShownDate);
+    await _exploreService.setIsScrollMessageShown(true);
+    notifyListeners();
   }
 
   void toggleHiddenExplore() {

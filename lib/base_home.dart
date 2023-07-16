@@ -258,13 +258,12 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
                     /// Simulate DragGesture on pageView
                     final pageController = exploreController.pageController;
                     if (EXPLORE_INDEX == x && SizeUtils.isMobile) {
-                      if (pageController.hasClients && user!.isLoggedIn) {
-                        if (exploreController.shouldShowScrollMessage) {
+                      if (pageController.hasClients) {
+                        if (exploreController.shouldShowScrollAnimation) {
                           Future.delayed(Duration(seconds: 3), () async {
                             if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {
                               exploreController.showScrollAnimation();
                             }
-                            exploreController.setIsScrollMessageShown(true);
                           });
                         }
                       }
