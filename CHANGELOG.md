@@ -2,6 +2,7 @@
 
 - Swipe up to see more words in explore page
 - Search Page now shows words by alphabets
+- Use RiverPod for user state management
 
 ### 0.5.5+18 July 04, 2023
 
