@@ -1,8 +1,12 @@
-### 0.5.6+19 July 04, 2023 (Unreleased)
+### 0.5.7+20 July 16, 2023
+
+- Use RiverPod for user state management
+- Fix login state maintain
+
+### 0.5.6+19 July 04, 2023
 
 - Swipe up to see more words in explore page
 - Search Page now shows words by alphabets
-- Use RiverPod for user state management
 
 ### 0.5.5+18 July 04, 2023
 
