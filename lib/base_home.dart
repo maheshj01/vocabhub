@@ -4,6 +4,7 @@ import 'package:animations/animations.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -25,14 +26,14 @@ import 'pages/notifications/notifications.dart';
 
 const appBarDesktopHeight = 128.0;
 
-class AdaptiveLayout extends StatefulWidget {
+class AdaptiveLayout extends ConsumerStatefulWidget {
   const AdaptiveLayout({Key? key}) : super(key: key);
 
   @override
-  State<AdaptiveLayout> createState() => _AdaptiveLayoutState();
+  _AdaptiveLayoutState createState() => _AdaptiveLayoutState();
 }
 
-class _AdaptiveLayoutState extends State<AdaptiveLayout> {
+class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
   @override
   void initState() {
     super.initState();
@@ -124,9 +125,11 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
           actionLabel: action,
           onActionPressed: onActionPressed,
           duration: persist ? Duration(days: 1) : Duration(seconds: 3), onClosed: () {
-        setState(() {
-          hideFloatingActionButton = false;
-        });
+        if (mounted) {
+          setState(() {
+            hideFloatingActionButton = false;
+          });
+        }
       });
     });
   }
@@ -168,7 +171,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout> {
       },
     };
 
-    user = AppStateScope.of(context).user;
+    user = ref.watch(userNotifierProvider);
     if (user!.isLoggedIn) {
       _routes.addAll({
         3: {

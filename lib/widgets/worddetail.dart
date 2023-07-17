@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:share_plus/share_plus.dart';
@@ -10,7 +11,6 @@ import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/analytics.dart';
-import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -61,16 +61,16 @@ class _WordDetailState extends State<WordDetail> {
   }
 }
 
-class WordDetailMobile extends StatefulWidget {
+class WordDetailMobile extends ConsumerStatefulWidget {
   final Word? word;
   final String? title;
   const WordDetailMobile({Key? key, required this.word, this.title}) : super(key: key);
 
   @override
-  State<WordDetailMobile> createState() => _WordDetailMobileState();
+  _WordDetailMobileState createState() => _WordDetailMobileState();
 }
 
-class _WordDetailMobileState extends State<WordDetailMobile> {
+class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
   String selectedWord = '';
   int length = 0;
   late String meaning;
@@ -79,7 +79,7 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = AppStateScope.of(context).user!;
+    final userProvider = ref.watch(userNotifierProvider);
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: colorScheme.background,
@@ -189,7 +189,7 @@ class _WordDetailMobileState extends State<WordDetailMobile> {
   }
 }
 
-class WordDetailDesktop extends StatefulWidget {
+class WordDetailDesktop extends ConsumerStatefulWidget {
   final Word? word;
   final bool isWod;
   WordDetailDesktop({
@@ -202,7 +202,8 @@ class WordDetailDesktop extends StatefulWidget {
   _WordDetailDesktopState createState() => _WordDetailDesktopState();
 }
 
-class _WordDetailDesktopState extends State<WordDetailDesktop> with SingleTickerProviderStateMixin {
+class _WordDetailDesktopState extends ConsumerState<WordDetailDesktop>
+    with SingleTickerProviderStateMixin {
   late Animation<int> _animation;
   late Tween<int> _tween;
   late AnimationController _animationController;
@@ -267,7 +268,7 @@ class _WordDetailDesktopState extends State<WordDetailDesktop> with SingleTicker
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    userProvider = AppStateScope.of(context).user!;
+    userProvider = ref.watch(userNotifierProvider);
     return widget.word == null
         ? EmptyWord()
         : Material(

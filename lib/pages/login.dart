@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/analytics.dart';
-import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
 
-class AppSignIn extends StatefulWidget {
+class AppSignIn extends ConsumerStatefulWidget {
   const AppSignIn({Key? key}) : super(key: key);
 
   @override
   _AppSignInState createState() => _AppSignInState();
 }
 
-class _AppSignInState extends State<AppSignIn> {
+class _AppSignInState extends ConsumerState<AppSignIn> {
   AuthService auth = AuthService();
 
   Future<void> _handleSignIn(BuildContext context) async {
-    final state = AppStateWidget.of(context);
+    final _userNotifier = ref.read(userNotifierProvider);
     try {
       _requestNotifier.value = Response(state: RequestState.active);
       user = await auth.googleSignIn(context);
@@ -32,25 +32,23 @@ class _AppSignInState extends State<AppSignIn> {
         if (existingUser.email.isEmpty) {
           final resp = await AuthService.registerUser(user!);
           if (resp.didSucced) {
-            final user = UserModel.fromJson((resp.data as List<dynamic>)[0]);
+            final UserModel registeredUser = UserModel.fromJson((resp.data as List<dynamic>)[0]);
             // state.setUser(user.copyWith(isLoggedIn: true, token: fcmToken));
-            _requestNotifier.value = Response(state: RequestState.done);
+            registeredUser.loggedIn = true;
+            _userNotifier.setUser(registeredUser);
+            _requestNotifier.value = Response(state: RequestState.done, data: registeredUser);
             Navigate.pushAndPopAll(context, AdaptiveLayout(),
                 slideTransitionType: TransitionType.ttb);
-            await Settings.setIsSignedIn(true, email: user.email);
-            firebaseAnalytics.logNewUser(user);
+            firebaseAnalytics.logNewUser(registeredUser);
           } else {
-            await Settings.setIsSignedIn(false, email: existingUser.email);
+            _userNotifier.loggedIn = false;
             NavbarNotifier.showSnackBar(context, '$signInFailure');
             _requestNotifier.value = Response(state: RequestState.done);
             throw 'failed to register new user';
           }
         } else {
-          await Settings.setIsSignedIn(true, email: existingUser.email);
-          // if (!kIsWeb) {
-          // await AuthService.updateTokenOnLogin(email: existingUser.email, token: fcmToken!);
-          // }
-          // state.setUser(existingUser.copyWith(isLoggedIn: true, token: fcmToken));
+          existingUser.loggedIn = true;
+          _userNotifier.setUser(existingUser);
           _requestNotifier.value = Response(state: RequestState.done);
           Navigate.pushAndPopAll(context, AdaptiveLayout());
           firebaseAnalytics.logSignIn(user!);
@@ -63,7 +61,7 @@ class _AppSignInState extends State<AppSignIn> {
     } catch (error) {
       NavbarNotifier.showSnackBar(context, error.toString());
       _requestNotifier.value = Response(state: RequestState.done);
-      await Settings.setIsSignedIn(false);
+      _userNotifier.loggedIn = false;
     }
   }
 

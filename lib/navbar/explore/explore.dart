@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/constants/constants.dart';
@@ -34,16 +35,16 @@ class ExploreWords extends StatelessWidget {
   }
 }
 
-class ExploreWordsMobile extends StatefulWidget {
+class ExploreWordsMobile extends ConsumerStatefulWidget {
   final VoidCallback? onScrollThresholdReached;
 
   const ExploreWordsMobile({Key? key, this.onScrollThresholdReached}) : super(key: key);
 
   @override
-  State<ExploreWordsMobile> createState() => _ExploreWordsMobileState();
+  _ExploreWordsMobileState createState() => _ExploreWordsMobileState();
 }
 
-class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
+class _ExploreWordsMobileState extends ConsumerState<ExploreWordsMobile> {
   @override
   void initState() {
     super.initState();
@@ -54,7 +55,7 @@ class _ExploreWordsMobileState extends State<ExploreWordsMobile> {
 
   Future<void> exploreWords() async {
     _request.value = Response(state: RequestState.active);
-    final user = AppStateScope.of(context).user;
+    final user = ref.watch(userNotifierProvider);
     final newWords = await exploreController.exploreWords(user!.email, page: page);
     newWords.shuffle();
     max = newWords.length;
@@ -241,7 +242,7 @@ class _ExploreWordsDesktopState extends State<ExploreWordsDesktop> {
   }
 }
 
-class ExploreWord extends StatefulWidget {
+class ExploreWord extends ConsumerStatefulWidget {
   final Word? word;
   final int index;
   const ExploreWord({Key? key, this.word, required this.index}) : super(key: key);
@@ -250,7 +251,7 @@ class ExploreWord extends StatefulWidget {
   _ExploreWordState createState() => _ExploreWordState();
 }
 
-class _ExploreWordState extends State<ExploreWord>
+class _ExploreWordState extends ConsumerState<ExploreWord>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   late AnimationController _animationController;
   late Animation<int> _animation;
@@ -317,7 +318,7 @@ class _ExploreWordState extends State<ExploreWord>
     super.build(context);
     // Size size = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
-    final userProvider = AppStateScope.of(context).user!;
+    final userProvider = ref.watch(userNotifierProvider);
     if (!userProvider.isLoggedIn) {
       _animationController.forward();
     }

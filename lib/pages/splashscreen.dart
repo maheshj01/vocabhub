@@ -1,22 +1,22 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/constants/constants.dart';
-import 'package:vocabhub/models/models.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/pages/login.dart';
-import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/size_utils.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     duration: const Duration(milliseconds: 1500),
     vsync: this,
@@ -42,22 +42,14 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   }
 
   Future<void> handleNavigation() async {
-    UserModel? user = AppStateScope.of(context).user;
-    final String _email = await Settings.email;
-    final int count = await Settings.skipCount + 1;
-    if (user == null) {
-      user = UserModel.init();
-    }
-    user.email = _email;
-    if (_email.isNotEmpty) {
-      user.isLoggedIn = true;
-      AppStateWidget.of(context).setUser(user);
+    final user = ref.watch(userNotifierProvider);
+    final String _email = user.email;
+    if (_email.isNotEmpty && user.isLoggedIn) {
       Navigate.pushReplace(context, AdaptiveLayout());
     } else {
-      user.isLoggedIn = false;
-      AppStateWidget.of(context).setUser(user);
+      final int count = await Settings.skipCount + 1;
+      Settings.setSkipCount = count;
       if (count % 3 != 0) {
-        Settings.setSkipCount = count;
         Navigate.pushReplace(context, AdaptiveLayout());
       } else {
         Navigate.pushReplace(context, AppSignIn());

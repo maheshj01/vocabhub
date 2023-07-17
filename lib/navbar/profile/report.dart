@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vocabhub/constants/constants.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/report.dart';
 import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/services/appstate.dart';
@@ -135,14 +137,14 @@ class _ViewBugReportsState extends State<ViewBugReports> {
   }
 }
 
-class ReportABugMobile extends StatefulWidget {
+class ReportABugMobile extends ConsumerStatefulWidget {
   static const String route = '/report';
 
   @override
-  State<ReportABugMobile> createState() => _ReportABugMobileState();
+  _ReportABugMobileState createState() => _ReportABugMobileState();
 }
 
-class _ReportABugMobileState extends State<ReportABugMobile> {
+class _ReportABugMobileState extends ConsumerState<ReportABugMobile> {
   ValueNotifier<Response> _responseNotifier = ValueNotifier(Response.init());
 
   @override
@@ -167,7 +169,7 @@ class _ReportABugMobileState extends State<ReportABugMobile> {
 
   @override
   Widget build(BuildContext context) {
-    final user = AppStateScope.of(context).user;
+    final user = ref.watch(userNotifierProvider);
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: colorScheme.background,
@@ -196,7 +198,8 @@ class _ReportABugMobileState extends State<ReportABugMobile> {
                             _responseNotifier.value.copyWith(state: RequestState.active);
                         final String description = _feedBackcontroller.text.trim();
                         if (description.isEmpty) {
-                          NavbarNotifier.showSnackBar(context, 'You must enter a description of the bug');
+                          NavbarNotifier.showSnackBar(
+                              context, 'You must enter a description of the bug');
                           _responseNotifier.value =
                               _responseNotifier.value.copyWith(state: RequestState.done);
                           return;

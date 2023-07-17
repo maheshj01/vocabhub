@@ -1,5 +1,6 @@
 import 'package:supabase/supabase.dart';
 import 'package:vocabhub/constants/constants.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/utils/logger.dart';
@@ -14,12 +15,16 @@ class UserService {
     return response;
   }
 
-  static Future<UserModel> findByEmail({required String email}) async {
+  /// if cache is true, the user will be cached in the app state and local storage
+  static Future<UserModel> findByEmail({required String email, bool cache = false}) async {
     try {
       final response = await DatabaseService.findSingleRowByColumnValue(email,
           columnName: Constants.USER_EMAIL_COLUMN, tableName: _tableName);
       if (response.status == 200) {
         final user = UserModel.fromJson(response.data);
+        if (cache) {
+          await authController.setUser(user);
+        }
         return user;
       } else {
         _logger.d('existing user not found');

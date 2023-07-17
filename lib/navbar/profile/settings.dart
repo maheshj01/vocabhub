@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/exports.dart';
+import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/navbar/profile/about.dart';
 import 'package:vocabhub/navbar/profile/report.dart';
 import 'package:vocabhub/navbar/profile/webview.dart';
@@ -43,14 +45,14 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 }
 
-class SettingsPageMobile extends StatefulWidget {
+class SettingsPageMobile extends ConsumerStatefulWidget {
   const SettingsPageMobile({Key? key}) : super(key: key);
 
   @override
-  State<SettingsPageMobile> createState() => _SettingsPageMobileState();
+  _SettingsPageMobileState createState() => _SettingsPageMobileState();
 }
 
-class _SettingsPageMobileState extends State<SettingsPageMobile> {
+class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
   Widget settingTile(String label, {String? description, Function? onTap, IconData? trailingIcon}) {
     return ListTile(
       minVerticalPadding: 24.0,
@@ -99,8 +101,14 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
 
   @override
   Widget build(BuildContext context) {
-    final user = AppStateScope.of(context).user;
     final colorScheme = Theme.of(context).colorScheme;
+    final user = ref.watch(userNotifierProvider);
+    ref.listen<UserModel>(userNotifierProvider, (UserModel? userOld, UserModel? userNew) {
+      if (userNew != null) {
+        user.setUser(userNew);
+      }
+    });
+
     return Scaffold(
       backgroundColor: colorScheme.background,
       appBar: AppBar(
@@ -181,7 +189,7 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
             },
           ),
           hLine(),
-          !user!.isAdmin
+          !user.isAdmin
               ? const SizedBox.shrink()
               : settingTile(
                   'Reports and Feedbacks',
@@ -208,8 +216,7 @@ class _SettingsPageMobileState extends State<SettingsPageMobile> {
           }),
           hLine(),
           settingTile('Logout', trailingIcon: Icons.logout, onTap: () async {
-            await Settings.clear();
-            await AuthService.updateLogin(email: user.email, isLoggedIn: false);
+            authController.logout(context);
             Navigate.pushAndPopAll(context, AppSignIn());
           }),
           hLine(),

@@ -5,8 +5,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:vocabhub/controller/auth_controller.dart';
 import 'package:vocabhub/controller/controllers.dart';
+import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/profile/webview.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
@@ -19,6 +22,9 @@ import 'package:vocabhub/utils/firebase_options.dart';
 import 'constants/constants.dart';
 import 'utils/settings.dart';
 
+final userNotifierProvider = Provider<UserModel>((ref) {
+  return UserModel.init();
+});
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -28,6 +34,7 @@ Future<void> main() async {
   settingsController = SettingsController();
   exploreController = ExploreController();
   localService = LocalService();
+  authController = AuthController();
   searchController = SearchFieldController(controller: TextEditingController());
   await dashboardController.initService();
   // pushNotificationService = PushNotificationService(_firebaseMessaging);
@@ -38,7 +45,9 @@ Future<void> main() async {
   // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   Settings.init();
   settingsController.loadSettings();
-  runApp(VocabApp());
+  runApp(ProviderScope(
+    child: VocabApp(),
+  ));
 }
 
 @pragma('vm:entry-point')
@@ -58,6 +67,8 @@ late SearchFieldController searchController;
 late ExploreController exploreController;
 // late PushNotificationService pushNotificationService;
 late DashboardController dashboardController;
+late AuthController authController;
+
 late LocalService localService;
 final ValueNotifier<int> totalNotifier = ValueNotifier<int>(0);
 final ValueNotifier<List<Word>?> listNotifier = ValueNotifier<List<Word>>([]);
@@ -70,7 +81,7 @@ final InitializationSettings initializationSettings = InitializationSettings(
     iOS: null,
     macOS: null);
 
-class VocabApp extends StatefulWidget {
+class VocabApp extends ConsumerStatefulWidget {
   @override
   _VocabAppState createState() => _VocabAppState();
 }
@@ -78,19 +89,34 @@ class VocabApp extends StatefulWidget {
 // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 //     FlutterLocalNotificationsPlugin();
 
-class _VocabAppState extends State<VocabApp> {
+class _VocabAppState extends ConsumerState<VocabApp> {
   Future<void> initializeApp() async {
     firebaseAnalytics.logAppOpen();
-    final email = await Settings.email;
-    if (email.isNotEmpty) {
-      await AuthService.updateLogin(email: email, isLoggedIn: true);
+    await authController.initService();
+    final localUser = authController.user;
+    final user = ref.watch(userNotifierProvider);
+    if (localUser.email.isNotEmpty) {
+      if (localUser.isLoggedIn) {
+        await autoLogin(localUser);
+      }
     }
-    // flutterLocalNotificationsPlugin.initialize(initializationSettings,
-    //     onDidReceiveNotificationResponse: (x) {
-    //   print('received notification');
-    // }, onDidReceiveBackgroundNotificationResponse: (x) {
-    //   print('received background notification');
-    // });
+
+    /// user details not found locally
+    /// set default user to local state
+    user.setUser(localUser);
+  }
+
+  Future<void> autoLogin(UserModel localUser) async {
+    final resp = await AuthService.updateLogin(email: localUser.email, isLoggedIn: true);
+    final userProvider = ref.watch(userNotifierProvider);
+
+    /// if login success, update local user details
+    if (resp.status == Status.success) {
+      final user = await UserService.findByEmail(email: localUser.email, cache: true);
+      userProvider.setUser(user);
+    } else {
+      userProvider.setUser(localUser);
+    }
   }
 
   FirebaseAnalyticsObserver _observer = FirebaseAnalyticsObserver(analytics: firebaseAnalytics);

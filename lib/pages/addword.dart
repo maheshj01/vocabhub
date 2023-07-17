@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/history.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
@@ -16,7 +18,7 @@ import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
-class AddWordForm extends StatefulWidget {
+class AddWordForm extends ConsumerStatefulWidget {
   final bool isEdit;
   final Word? word;
   static const String route = '/addword';
@@ -27,7 +29,7 @@ class AddWordForm extends StatefulWidget {
   _AddWordFormState createState() => _AddWordFormState();
 }
 
-class _AddWordFormState extends State<AddWordForm> {
+class _AddWordFormState extends ConsumerState<AddWordForm> {
   late Size size;
   VocabStoreService supaStore = VocabStoreService();
 
@@ -263,7 +265,7 @@ class _AddWordFormState extends State<AddWordForm> {
       );
     }
 
-    userProvider = AppStateScope.of(context).user!;
+    userProvider = ref.watch(userNotifierProvider);
     final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),

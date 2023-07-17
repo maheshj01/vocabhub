@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/notification.dart';
 import 'package:vocabhub/pages/notifications/notification_detail.dart';
@@ -14,20 +16,20 @@ import 'package:vocabhub/widgets/circle_avatar.dart';
 import 'package:vocabhub/widgets/icon.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
-class Notifications extends StatefulWidget {
+class Notifications extends ConsumerStatefulWidget {
   static const String route = '/notifications';
   const Notifications({Key? key}) : super(key: key);
 
   @override
-  State<Notifications> createState() => _NotificationsState();
+  _NotificationsState createState() => _NotificationsState();
 }
 
-class _NotificationsState extends State<Notifications> {
+class _NotificationsState extends ConsumerState<Notifications> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      user = AppStateScope.of(context).user!;
+      user = ref.watch(userNotifierProvider);
       getNotifications();
     });
   }

@@ -1,13 +1,12 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:navbar_router/navbar_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/notification.dart';
 import 'package:vocabhub/navbar/error_page.dart';
 import 'package:vocabhub/navbar/pageroute.dart';
 import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/navbar/profile/settings.dart';
-import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
@@ -15,43 +14,44 @@ import 'package:vocabhub/widgets/icon.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
-class UserProfile extends StatefulWidget {
+class UserProfile extends ConsumerStatefulWidget {
   static const String route = '/';
   const UserProfile({Key? key}) : super(key: key);
 
   @override
-  State<UserProfile> createState() => _UserProfileState();
+  _UserProfileState createState() => _UserProfileState();
 }
 
-class _UserProfileState extends State<UserProfile> {
+class _UserProfileState extends ConsumerState<UserProfile> {
   @override
   void initState() {
     super.initState();
     userProfileNotifier = ValueNotifier<Response>(response);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      getUser();
+      // getUser();
     });
   }
 
-  Future<void> getUser() async {
-    try {
-      final userState = AppStateScope.of(context).user;
-      if (userState!.isLoggedIn) {
-        final user = await UserService.findByEmail(email: userState.email);
-        if (user.email.isNotEmpty) {
-          AppStateWidget.of(context).setUser(user);
-          userProfileNotifier.value = response.copyWith(didSucced: true, data: user);
-        }
-      }
-    } on Exception catch (_) {
-      NavbarNotifier.showSnackBar(context, _.toString());
-      userProfileNotifier.value =
-          response.copyWith(didSucced: false, message: _.toString(), state: RequestState.error);
-    } catch (_) {
-      userProfileNotifier.value =
-          response.copyWith(didSucced: false, message: _.toString(), state: RequestState.error);
-    }
-  }
+  // Future<void> getUser() async {
+  //   try {
+  //     final userState = ref.watch(userNotifierProvider);
+
+  //     if (userState.isLoggedIn) {
+  //       final user = await UserService.findByEmail(email: userState.email);
+  //       if (user.email.isNotEmpty) {
+  //         AppStateWidget.of(context).setUser(user);
+  //         userProfileNotifier.value = response.copyWith(didSucced: true, data: user);
+  //       }
+  //     }
+  //   } on Exception catch (_) {
+  //     NavbarNotifier.showSnackBar(context, _.toString());
+  //     userProfileNotifier.value =
+  //         response.copyWith(didSucced: false, message: _.toString(), state: RequestState.error);
+  //   } catch (_) {
+  //     userProfileNotifier.value =
+  //         response.copyWith(didSucced: false, message: _.toString(), state: RequestState.error);
+  //   }
+  // }
 
   late final ValueNotifier<Response> userProfileNotifier;
   final response = Response.init();
@@ -65,7 +65,11 @@ class _UserProfileState extends State<UserProfile> {
   Future<void> _retry() async {
     userProfileNotifier.value =
         response.copyWith(state: RequestState.active, message: "Loading...");
-    await getUser();
+    final user = ref.watch(userNotifierProvider);
+    final updatedUser = await UserService.findByEmail(email: user.email, cache: true);
+    user.setUser(updatedUser);
+    userProfileNotifier.value = response.copyWith(
+        state: RequestState.done, message: "Success", data: updatedUser, didSucced: true);
   }
 
   @override
@@ -88,7 +92,7 @@ class _UserProfileState extends State<UserProfile> {
                   }
                   return UserProfileMobile(
                     onRefresh: () async {
-                      await getUser();
+                      await _retry();
                     },
                   );
                 });
@@ -97,18 +101,18 @@ class _UserProfileState extends State<UserProfile> {
   }
 }
 
-class UserProfileMobile extends StatefulWidget {
+class UserProfileMobile extends ConsumerStatefulWidget {
   const UserProfileMobile({Key? key, this.onRefresh}) : super(key: key);
   final VoidCallback? onRefresh;
 
   @override
-  State<UserProfileMobile> createState() => _UserProfileMobileState();
+  _UserProfileMobileState createState() => _UserProfileMobileState();
 }
 
-class _UserProfileMobileState extends State<UserProfileMobile> {
+class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
   Future<void> getEditStats() async {
-    final user = AppStateScope.of(context).user;
-    final resp = await EditHistoryService.getUserContributions(user!);
+    final user = ref.watch(userNotifierProvider);
+    final resp = await EditHistoryService.getUserContributions(user);
     stats = [0, 0, 0];
     if (resp.didSucced && resp.data != null) {
       final editHistory = resp.data as List<NotificationModel>;
@@ -151,7 +155,7 @@ class _UserProfileMobileState extends State<UserProfileMobile> {
 
   @override
   Widget build(BuildContext context) {
-    final user = AppStateScope.of(context).user;
+    final user = ref.watch(userNotifierProvider);
     final size = MediaQuery.of(context).size;
     final colorScheme = Theme.of(context).colorScheme;
     return ValueListenableBuilder<List<int>>(

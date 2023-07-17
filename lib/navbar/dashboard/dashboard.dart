@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/word.dart';
@@ -129,13 +130,13 @@ class _DashboardState extends State<Dashboard> {
   }
 }
 
-class DashboardMobile extends StatelessWidget {
+class DashboardMobile extends ConsumerWidget {
   static String route = '/';
   DashboardMobile({Key? key}) : super(key: key);
   final analytics = Analytics.instance;
   @override
-  Widget build(BuildContext context) {
-    final user = AppStateScope.of(context).user;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userNotifierProvider);
     final word = AppStateScope.of(context).wordOfTheDay;
 
     if (word == null) {
@@ -160,7 +161,7 @@ class DashboardMobile extends StatelessWidget {
               ),
             ),
             actions: [
-              user!.isLoggedIn
+              user.isLoggedIn
                   ? IconButton(
                       onPressed: () {
                         Navigate.pushNamed(context, Notifications.route, isRootNavigator: true);

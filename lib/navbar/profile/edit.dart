@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/user.dart';
@@ -33,22 +34,22 @@ class _EditProfileState extends State<EditProfile> {
   }
 }
 
-class EditProfileMobile extends StatefulWidget {
+class EditProfileMobile extends ConsumerStatefulWidget {
   final VoidCallback? onClose;
 
   const EditProfileMobile({Key? key, this.onClose}) : super(key: key);
 
   @override
-  State<EditProfileMobile> createState() => _EditProfileMobileState();
+  _EditProfileMobileState createState() => _EditProfileMobileState();
 }
 
-class _EditProfileMobileState extends State<EditProfileMobile> {
+class _EditProfileMobileState extends ConsumerState<EditProfileMobile> {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      final user = AppStateScope.of(context).user;
-      _nameController.text = user!.name;
+      final user = ref.watch(userNotifierProvider);
+      _nameController.text = user.name;
       _usernameController.text = user.username;
       _emailController.text = user.email;
       _joinedController.text = user.created_at!.formatDate();
@@ -89,11 +90,9 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
     }
   }
 
-  UserModel? user;
   @override
   Widget build(BuildContext context) {
-    final appState = AppStateWidget.of(context);
-    user = AppStateScope.of(context).user;
+    UserModel user = ref.watch(userNotifierProvider);
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: colorScheme.background,
@@ -145,7 +144,7 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                               controller: _usernameController,
                               onChanged: (username) {
                                 print(username);
-                                user = AppStateScope.of(context).user;
+                                user = ref.watch(userNotifierProvider);
                                 if (user!.username == username) {
                                   _validNotifier.value = null;
                                   return;
@@ -195,7 +194,7 @@ class _EditProfileMobileState extends State<EditProfileMobile> {
                               _responseNotifier.value =
                                   Response(state: RequestState.done, didSucced: true);
                               _validNotifier.value = null;
-                              appState.setUser(editedUser);
+                              user.setUser(editedUser);
                               NavbarNotifier.showSnackBar(context, 'success updating user! ');
                             } else {
                               _responseNotifier.value =

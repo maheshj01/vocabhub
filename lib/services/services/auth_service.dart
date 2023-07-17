@@ -1,13 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:navbar_router/navbar_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/services/database.dart';
+import 'package:vocabhub/services/services/service_base.dart';
 import 'package:vocabhub/utils/utility.dart';
 
-class AuthService {
+class AuthService extends ServiceBase {
+  static const userKey = 'userKey';
+
+  late SharedPreferences _sharedPreferences;
   GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: <String>[
       'email',
@@ -130,5 +137,32 @@ class AuthService {
       _logger.e("Error updating token $_");
       return ResponseObject(_.toString(), UserModel.init(), Status.error);
     }
+  }
+
+  Future<void> setUser(UserModel user) async {
+    final userToJson = user.toJson();
+    final encodeString = json.encode(userToJson);
+    await _sharedPreferences.setString('$userKey', encodeString);
+  }
+
+  Future<UserModel> getUser() async {
+    final userString = _sharedPreferences.getString('$userKey') ?? '';
+    if (userString.isEmpty) return UserModel.init();
+    final userJson = json.decode(userString);
+    return UserModel.fromJson(userJson);
+  }
+
+  Future<void> logOut(BuildContext context, UserModel user) async {
+    await AuthService.updateLogin(email: user.email, isLoggedIn: false);
+    await googleSignOut(context);
+    await Settings.clear();
+  }
+
+  @override
+  Future<void> disposeService() async {}
+
+  @override
+  Future<void> initService() async {
+    _sharedPreferences = await SharedPreferences.getInstance();
   }
 }

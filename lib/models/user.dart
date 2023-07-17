@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/models.dart';
 
 part 'user.g.dart';
@@ -126,24 +127,26 @@ class UserModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  set user(UserModel? user) {
-    if (user == null) {
-      avatarUrl = null;
-      accessToken = null;
-      idToken = null;
-      name = '';
-      email = '';
-      token = '';
-      isLoggedIn = false;
-    } else {
-      avatarUrl = user.avatarUrl;
-      accessToken = user.accessToken;
-      idToken = user.idToken;
-      name = user.name;
-      email = user.email;
-      token = user.token;
-      isLoggedIn = true;
-    }
+  set loggedIn(bool m) {
+    isLoggedIn = m;
+    notifyListeners();
+  }
+
+  UserModel get user => this;
+
+  // updates local state and also stores in local storage
+  setUser(UserModel user) {
+    this.name = user.name;
+    this.email = user.email;
+    this.avatarUrl = user.avatarUrl;
+    this.idToken = user.idToken;
+    this.accessToken = user.accessToken;
+    this.isAdmin = user.isAdmin;
+    this.username = user.username;
+    this.token = user.token;
+    this.created_at = user.created_at;
+    this.isLoggedIn = user.isLoggedIn;
+    authController.setUser(this);
     notifyListeners();
   }
 }

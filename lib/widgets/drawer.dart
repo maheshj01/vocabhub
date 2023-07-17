@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:vocabhub/constants/constants.dart';
@@ -16,7 +17,7 @@ import 'package:vocabhub/widgets/wordscount.dart';
 
 bool isAnimated = false;
 
-class DrawerBuilder extends StatefulWidget {
+class DrawerBuilder extends ConsumerStatefulWidget {
   final Function(String)? onMenuTap;
 
   const DrawerBuilder({Key? key, this.onMenuTap}) : super(key: key);
@@ -25,7 +26,7 @@ class DrawerBuilder extends StatefulWidget {
   _DrawerBuilderState createState() => _DrawerBuilderState();
 }
 
-class _DrawerBuilderState extends State<DrawerBuilder> {
+class _DrawerBuilderState extends ConsumerState<DrawerBuilder> {
   Widget subTitle(String text) {
     return Text(
       '$text',
@@ -77,7 +78,7 @@ class _DrawerBuilderState extends State<DrawerBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = AppStateScope.of(context).user!;
+    final userProvider = ref.watch(userNotifierProvider);
     Widget trailingIcon(IconData data) {
       return Icon(
         data,
