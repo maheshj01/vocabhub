@@ -204,10 +204,10 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                   onTap: () {
                     Navigate.push(
                         context,
-                        ViewGroupedBugReports(
+                        ViewReportsByUser(
                           email: user.email,
                           reports: [],
-                          isRetry: true,
+                          shouldFetchReport: true,
                           title: 'My Bug Reports',
                         ));
                   },

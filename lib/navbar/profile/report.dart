@@ -6,6 +6,7 @@ import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/report.dart';
 import 'package:vocabhub/navbar/profile/edit.dart';
+import 'package:vocabhub/navbar/profile/profile.dart';
 import 'package:vocabhub/services/services/report_service.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -123,10 +124,11 @@ class _ViewBugReportsState extends State<ViewBugReports> {
                       onTap: () {
                         Navigate.push(
                             context,
-                            ViewGroupedBugReports(
+                            ViewReportsByUser(
                               email: keys[index],
                               reports: values[index],
                               title: values[index].first.name,
+                              shouldFetchReport: false,
                             ));
                       },
                     );
@@ -136,21 +138,33 @@ class _ViewBugReportsState extends State<ViewBugReports> {
   }
 }
 
-class ViewGroupedBugReports extends StatefulWidget {
+/// View reports by a user
+/// [shouldFetchReport] if true, fetch reports from the server
+/// or use the reports passed in [reports] and [email]
+/// [reports] is the list of reports to display
+/// [email] is the email of the user
+class ViewReportsByUser extends StatefulWidget {
   final List<ReportModel> reports;
   final String email;
-  final bool isRetry;
+
+  /// If true, fetch reports from the server
+  /// else use the reports passed in [reports]
+  final bool shouldFetchReport;
   final String title;
 
-  const ViewGroupedBugReports(
-      {Key? key, required this.reports, required this.email, this.isRetry = false, this.title = ''})
+  const ViewReportsByUser(
+      {Key? key,
+      required this.reports,
+      required this.email,
+      this.shouldFetchReport = false,
+      this.title = ''})
       : super(key: key);
 
   @override
-  State<ViewGroupedBugReports> createState() => _ViewGroupedBugReportsState();
+  State<ViewReportsByUser> createState() => _ViewReportsByUserState();
 }
 
-class _ViewGroupedBugReportsState extends State<ViewGroupedBugReports> {
+class _ViewReportsByUserState extends State<ViewReportsByUser> {
   final ValueNotifier<Response> _responseNotifier = ValueNotifier(Response.init());
 
   Future<void> getReportsByEmail(bool isRetry) async {
@@ -174,7 +188,7 @@ class _ViewGroupedBugReportsState extends State<ViewGroupedBugReports> {
   @override
   void initState() {
     super.initState();
-    getReportsByEmail(widget.isRetry);
+    getReportsByEmail(widget.shouldFetchReport);
   }
 
   @override
@@ -182,7 +196,27 @@ class _ViewGroupedBugReportsState extends State<ViewGroupedBugReports> {
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
-          title: Text('${widget.title}'),
+          title: GestureDetector(
+              onTap: () {
+                if (widget.shouldFetchReport) return;
+
+                /// admin can view user profile
+                Navigate.push(
+                    context,
+                    Scaffold(
+                        appBar: AppBar(
+                          elevation: 0,
+                          centerTitle: false,
+                          title: Text(
+                            'Profile',
+                          ),
+                        ),
+                        body: UserProfile(
+                          email: widget.email,
+                          isReadOnly: true,
+                        )));
+              },
+              child: Text('${widget.title}')),
         ),
         body: ValueListenableBuilder<Response>(
             valueListenable: _responseNotifier,
@@ -318,7 +352,7 @@ class _ReportABugMobileState extends ConsumerState<ReportABugMobile> {
                         try {
                           final report = ReportModel(
                               feedback: description,
-                              email: user!.email,
+                              email: user.email,
                               created_at: DateTime.now(),
                               id: Uuid().v4(),
                               name: user.name);
