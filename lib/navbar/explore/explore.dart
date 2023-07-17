@@ -59,7 +59,6 @@ class _ExploreWordsMobileState extends ConsumerState<ExploreWordsMobile> {
     final newWords = await exploreController.exploreWords(user!.email, page: page);
     newWords.shuffle();
     max = newWords.length;
-    print(max);
     if (mounted) {
       _request.value = _request.value.copyWith(data: newWords, state: RequestState.done);
     }

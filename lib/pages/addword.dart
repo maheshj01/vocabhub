@@ -284,11 +284,9 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
                   // update button state
                   editedWord = buildWordFromFields()!;
                   if (widget.word != null && widget.word!.equals(editedWord)) {
-                    print("equal");
                     _requestNotifier.value = _requestNotifier.value
                         .copyWith(message: 'No changes made', state: RequestState.error);
                   } else {
-                    print("unequal");
                     _requestNotifier.value =
                         _requestNotifier.value.copyWith(state: RequestState.none);
                   }

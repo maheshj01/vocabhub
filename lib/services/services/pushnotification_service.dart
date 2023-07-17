@@ -43,7 +43,6 @@ class PushNotificationService extends ServiceBase {
 //   pushNotificationService!.showFlutterNotification(message);
 //   // If you're going to use other Firebase services in the background, such as Firestore,
 //   // make sure you call `initializeApp` before using other Firebase services.
-//   print('Handling a background message ${message.messageId}');
 // }
 
   Future<void> sendNotification() async {
@@ -102,7 +101,6 @@ class PushNotificationService extends ServiceBase {
         macOS: null);
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse: (x) {
-      print('received notification');
     }, onDidReceiveBackgroundNotificationResponse: notificationTapBackground);
 
     scheduleDailyNotification();
@@ -138,7 +136,6 @@ class PushNotificationService extends ServiceBase {
 
 //   Future<void> selectNotification(String? payload) async {
 //     if (payload != null) {
-//       debugPrint('notification payload: $payload');
 //     }
 //     // await Navigator.push(
 //     //   context,
@@ -176,7 +173,6 @@ class PushNotificationService extends ServiceBase {
 //     });
 
 //     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-//       print('A new onMessageOpenedApp event was published!');
 //     });
 
 //     await _firebaseMessaging.requestPermission(

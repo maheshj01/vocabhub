@@ -18,6 +18,7 @@ import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/local_service.dart';
 import 'package:vocabhub/utils/firebase_options.dart';
+import 'package:vocabhub/utils/logger.dart';
 
 import 'constants/constants.dart';
 import 'utils/settings.dart';
@@ -58,7 +59,7 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
       ' payload: ${notificationResponse.payload}');
   if (notificationResponse.input?.isNotEmpty ?? false) {
     // ignore: avoid_print
-    print('notification action tapped with input: ${notificationResponse.input}');
+    logger.d('notification action tapped with input: ${notificationResponse.input}');
   }
 }
 
@@ -68,7 +69,7 @@ late ExploreController exploreController;
 // late PushNotificationService pushNotificationService;
 late DashboardController dashboardController;
 late AuthController authController;
-
+Logger logger = Logger('main.dart');
 late LocalService localService;
 final ValueNotifier<int> totalNotifier = ValueNotifier<int>(0);
 final ValueNotifier<List<Word>?> listNotifier = ValueNotifier<List<Word>>([]);

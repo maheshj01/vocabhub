@@ -144,7 +144,6 @@ class _MobileViewState extends State<MobileView> {
                     return LoadingWidget();
                   }
                   final List<List<Word>> wordsByAlphabet = resp.data as List<List<Word>>;
-                  print(wordsByAlphabet.length);
                   return Padding(
                     padding: 8.0.horizontalPadding,
                     child: GridView.custom(

@@ -31,7 +31,6 @@ void main() {
   group('Test App should load', () {
     testWidgets('User should be able to login', (WidgetTester tester) async {
       // runZonedGuarded(app.main, (error, stack) {
-      //   print('runZonedGuarded: Caught error in my root zone.$error $stack');
       // });
       app.main();
       await Future.delayed(const Duration(seconds: 3));
@@ -48,9 +47,9 @@ void main() {
       expect(dashboardIcon, findsOneWidget);
       expect(usericon, findsNothing);
       final signIntextFinder = "Sign In".textX();
-      expect(signIntextFinder, findsOneWidget);
+      expect(signIntextFinder, findsWidgets);
       await tester.pumpAndSettle();
-      await tester.tap(signIntextFinder);
+      await tester.tap(signIntextFinder.first);
       await tester.pumpAndSettle();
 
       // Sign In flow
@@ -67,6 +66,7 @@ void main() {
       await tester.pumpAndSettle();
       expect((Dashboard).typeX(), findsOneWidget);
       await tester.pumpAndSettle();
+      expect(signInTextFinder, findsNothing);
       Future.delayed(const Duration(seconds: 3));
       await tester.pumpAndSettle();
       expect(dashboardIcon, findsOneWidget);

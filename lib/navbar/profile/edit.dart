@@ -143,9 +143,8 @@ class _EditProfileMobileState extends ConsumerState<EditProfileMobile> {
                               isReadOnly: request.state == RequestState.active,
                               controller: _usernameController,
                               onChanged: (username) {
-                                print(username);
                                 user = ref.watch(userNotifierProvider);
-                                if (user!.username == username) {
+                                if (user.username == username) {
                                   _validNotifier.value = null;
                                   return;
                                 }

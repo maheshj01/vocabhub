@@ -25,8 +25,6 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
     try {
       _requestNotifier.value = Response(state: RequestState.active);
       user = await auth.googleSignIn(context);
-      // final fcmToken = pushNotificationService.fcmToken;
-      // print("FirebaseMessaging token: $fcmToken");
       if (user != null) {
         final existingUser = await UserService.findByEmail(email: user!.email);
         if (existingUser.email.isEmpty) {
