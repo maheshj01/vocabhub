@@ -112,3 +112,4 @@ ios/Flutter/Release.xcconfig
 lib/utils/firebase_options.dart
 ios/Flutter/flutter_export_environment.sh
 ios/build/Pods.build
+release.md
