@@ -126,6 +126,7 @@ class _ViewBugReportsState extends State<ViewBugReports> {
                             ViewGroupedBugReports(
                               email: keys[index],
                               reports: values[index],
+                              title: values[index].first.name,
                             ));
                       },
                     );
@@ -138,8 +139,11 @@ class _ViewBugReportsState extends State<ViewBugReports> {
 class ViewGroupedBugReports extends StatefulWidget {
   final List<ReportModel> reports;
   final String email;
+  final bool isRetry;
+  final String title;
 
-  const ViewGroupedBugReports({Key? key, required this.reports, required this.email})
+  const ViewGroupedBugReports(
+      {Key? key, required this.reports, required this.email, this.isRetry = false, this.title = ''})
       : super(key: key);
 
   @override
@@ -149,7 +153,7 @@ class ViewGroupedBugReports extends StatefulWidget {
 class _ViewGroupedBugReportsState extends State<ViewGroupedBugReports> {
   final ValueNotifier<Response> _responseNotifier = ValueNotifier(Response.init());
 
-  Future<void> getReportsByEmail({bool isRetry = false}) async {
+  Future<void> getReportsByEmail(bool isRetry) async {
     if (!isRetry) {
       _responseNotifier.value = _responseNotifier.value
           .copyWith(state: RequestState.done, message: 'Loaded', data: widget.reports);
@@ -170,16 +174,15 @@ class _ViewGroupedBugReportsState extends State<ViewGroupedBugReports> {
   @override
   void initState() {
     super.initState();
-    getReportsByEmail();
+    getReportsByEmail(widget.isRetry);
   }
 
   @override
   Widget build(BuildContext context) {
-    final name = widget.reports.first.name;
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
-          title: Text('$name'),
+          title: Text('${widget.title}'),
         ),
         body: ValueListenableBuilder<Response>(
             valueListenable: _responseNotifier,
@@ -193,7 +196,7 @@ class _ViewGroupedBugReportsState extends State<ViewGroupedBugReports> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton(
-                        onPressed: getReportsByEmail,
+                        onPressed: () => getReportsByEmail(true),
                         child: const Text('Try Again'),
                       ),
                       Text(request.message),
@@ -209,7 +212,7 @@ class _ViewGroupedBugReportsState extends State<ViewGroupedBugReports> {
               }
               return RefreshIndicator(
                 onRefresh: () async {
-                  await getReportsByEmail(isRetry: true);
+                  await getReportsByEmail(true);
                 },
                 child: Padding(
                   padding: 16.0.allPadding,

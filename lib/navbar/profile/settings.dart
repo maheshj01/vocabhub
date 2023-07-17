@@ -10,7 +10,6 @@ import 'package:vocabhub/navbar/profile/report.dart';
 import 'package:vocabhub/navbar/profile/webview.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
-import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/theme_selector.dart';
 import 'package:vocabhub/widgets/button.dart';
@@ -195,6 +194,22 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                   'Reports and Feedbacks',
                   onTap: () {
                     Navigate.push(context, const ViewBugReports());
+                  },
+                ),
+          !user.isAdmin ? const SizedBox.shrink() : hLine(),
+          user.isAdmin
+              ? const SizedBox.shrink()
+              : settingTile(
+                  'My Bug Reports',
+                  onTap: () {
+                    Navigate.push(
+                        context,
+                        ViewGroupedBugReports(
+                          email: user.email,
+                          reports: [],
+                          isRetry: true,
+                          title: 'My Bug Reports',
+                        ));
                   },
                 ),
           !user.isAdmin ? const SizedBox.shrink() : hLine(),
