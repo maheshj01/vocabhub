@@ -104,8 +104,13 @@ class DatabaseService {
   // }
 
   static Future<PostgrestResponse> findAll(
-      {String tableName = '${Constants.VOCAB_TABLE_NAME}'}) async {
-    return await _supabase.from(tableName).select().execute().timeout(Constants.timeoutDuration);
+      {String tableName = '${Constants.VOCAB_TABLE_NAME}', bool sort = false}) async {
+    return await _supabase
+        .from(tableName)
+        .select()
+        .order('created_at', ascending: sort)
+        .execute()
+        .timeout(Constants.timeoutDuration);
   }
 
   /// fetch words sorted by created_at column

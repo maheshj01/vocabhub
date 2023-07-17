@@ -6,7 +6,6 @@ import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/report.dart';
 import 'package:vocabhub/navbar/profile/edit.dart';
-import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/report_service.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -121,7 +120,7 @@ class _ViewBugReportsState extends State<ViewBugReports> {
                                     padding: 16.0.allPadding,
                                     child: Text(reports[index].feedback,
                                         style:
-                                            const TextStyle(fontSize: 16, color: Colors.black87)),
+                                            const TextStyle(fontSize: 16)),
                                   ),
                                 ],
                               ),

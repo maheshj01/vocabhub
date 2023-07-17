@@ -6,10 +6,14 @@ import 'package:vocabhub/services/services/database.dart';
 class ReportService {
   static final String _tableName = Constants.FEEDBACK_TABLE_NAME;
   static final Logger _logger = Logger('ReportService');
+
   static Future<List<ReportModel>>? getReports() async {
-    final resp = await DatabaseService.findAll(tableName: _tableName);
+    final resp = await DatabaseService.findAll(tableName: _tableName, sort: true);
     if (resp.status == 200) {
-      return (resp.data as List).map((e) => ReportModel.fromJson(e)).toList();
+      List<ReportModel> results = (resp.data as List).map((e) => ReportModel.fromJson(e)).toList();
+      // sort by date
+      results.sort((a, b) => b.created_at.compareTo(a.created_at));
+      return results;
     } else {
       throw Exception('Error fetching reports');
     }
@@ -28,7 +32,7 @@ class ReportService {
     }
   }
 
-static Future<PostgrestResponse> addReport(ReportModel report) async {
+  static Future<PostgrestResponse> addReport(ReportModel report) async {
     try {
       final resp = await DatabaseService.insertIntoTable(
         report.toJson(),
@@ -46,5 +50,3 @@ static Future<PostgrestResponse> addReport(ReportModel report) async {
     }
   }
 }
-
-
