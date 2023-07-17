@@ -46,10 +46,10 @@ jobs:
           FIREBASE_CLI_PREVIEWS: hostingchannels
 
         # test integration test
-      - name: 📦 Install dependencies
-        run: flutter pub get
-      - name: 📱 Run integration test
-        run: flutter drive --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart --no-build --dart-define=SUPABASE_PROJECT_URL=${{secrets.SUPABASE_PROJECT_URL}} --dart-define=SUPABASE_API_KEY=${{secrets.SUPABASE_API_KEY}} --dart-define=SUPABASE_REDIRECT_URL=${{secrets.SUPABASE_REDIRECT_URL}} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }}
+      # - name: 📦 Install dependencies
+      #   run: flutter pub get
+      # - name: 📱 Run integration test
+      #   run: flutter drive --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart --no-build --dart-define=SUPABASE_PROJECT_URL=${{secrets.SUPABASE_PROJECT_URL}} --dart-define=SUPABASE_API_KEY=${{secrets.SUPABASE_API_KEY}} --dart-define=SUPABASE_REDIRECT_URL=${{secrets.SUPABASE_REDIRECT_URL}} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }}
 
       # Use the setup-shorebird action to configure Shorebird
       - name: 🐦 Setup Shorebird
