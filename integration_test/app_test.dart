@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -28,12 +30,14 @@ extension FindIcon on IconData {
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
+  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
+      as IntegrationTestWidgetsFlutterBinding;
   group('Test App should load', () {
     testWidgets('User should be able to login', (WidgetTester tester) async {
       // runZonedGuarded(app.main, (error, stack) {
       // });
       app.main();
+      await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
       await tester.pumpAndSettle();
       expect((app.VocabApp).typeX(), findsOneWidget);
@@ -73,10 +77,14 @@ void main() {
       await tester.pumpAndSettle();
       expect(dashboardIcon, findsOneWidget);
       expect(usericon, findsOneWidget);
+      final bytes = await binding.takeScreenshot('test-1');
+      final File image = File('./screenshots/test-1.png');
+      image.writeAsBytesSync(bytes);
     });
 
     testWidgets("User stays loggedIn", (widgetTester) async {
       app.main();
+      await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
       await widgetTester.pumpAndSettle();
       expect((Dashboard).typeX(), findsOneWidget);
@@ -90,10 +98,14 @@ void main() {
       expect(notificationIcon, findsOneWidget);
       expect(dashboardIcon, findsOneWidget);
       expect(usericon, findsOneWidget);
+      final bytes = await binding.takeScreenshot('test-2');
+      final File image = File('./screenshots/test-2.png');
+      image.writeAsBytesSync(bytes);
     });
 
     testWidgets("Ensure all navbar widgets load", (widgetTester) async {
       app.main();
+      await binding.convertFlutterSurfaceToImage();
       final List<Widget> baseWidgets = [
         Dashboard(),
         Search(),
@@ -136,6 +148,9 @@ void main() {
       await widgetTester.tap(items[3].iconData.iconX());
       await widgetTester.pumpAndSettle();
       expect(profile, findsOneWidget);
+      final bytes = await binding.takeScreenshot('test-3');
+      final File image = File('screenshots/test-3.png');
+      image.writeAsBytesSync(bytes);
     });
   });
 }
