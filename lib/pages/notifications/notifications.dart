@@ -5,8 +5,8 @@ import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/notification.dart';
+import 'package:vocabhub/navbar/profile/profile.dart';
 import 'package:vocabhub/pages/notifications/notification_detail.dart';
-import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/edit_history.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
@@ -165,6 +165,14 @@ class _NotificationsState extends ConsumerState<Notifications> {
                           : AdminNotificationTile(
                               edit: edit,
                               user: editor,
+                              onAvatarTap: () {
+                                // Navigate.push(
+                                //     context,
+                                //     UserProfile(
+                                //       email: editor.email,
+                                //       isReadOnly: true,
+                                //     ));
+                              },
                               onAction: (approved) async {
                                 if (approved) {
                                   updateGlobalDatabase(edit, EditState.approved);
@@ -303,8 +311,16 @@ class AdminNotificationTile extends StatelessWidget {
   final Function? onTap;
   final EditHistory edit;
   final UserModel user;
-  const AdminNotificationTile(
-      {super.key, required this.edit, required this.onAction, required this.user, this.onTap});
+  final Function onAvatarTap;
+
+  const AdminNotificationTile({
+    super.key,
+    required this.edit,
+    required this.onAction,
+    required this.user,
+    required this.onAvatarTap,
+    this.onTap,
+  });
 
   Widget circle({Color color = Colors.red, double size = 16}) {
     return Container(
@@ -318,29 +334,32 @@ class AdminNotificationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     /// Approve or reject card
     final colorScheme = Theme.of(context).colorScheme;
-    return InkWell(
-      onTap: () {
-        onTap?.call();
-      },
-      child: Container(
-        height: 120,
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceVariant,
-          borderRadius: BorderRadius.circular(4),
-          boxShadow: [VocabTheme.notificationCardShadow],
-        ),
-        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        padding: EdgeInsets.symmetric(vertical: 4),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              CircularAvatar(
-                url: user.avatarUrl,
-                name: user.name,
-              ),
-              8.0.hSpacer(),
-              Expanded(
+    return Container(
+      height: 120,
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceVariant,
+        borderRadius: BorderRadius.circular(4),
+        boxShadow: [VocabTheme.notificationCardShadow],
+      ),
+      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: 4),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            CircularAvatar(
+              url: user.avatarUrl,
+              name: user.name,
+              onTap: () {
+                onAvatarTap();
+              },
+            ),
+            8.0.hSpacer(),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  onTap?.call();
+                },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -410,8 +429,8 @@ class AdminNotificationTile extends StatelessWidget {
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
