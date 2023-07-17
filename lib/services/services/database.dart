@@ -8,9 +8,14 @@ class DatabaseService {
 
   static Future<PostgrestResponse> findRowByColumnValue(String columnValue,
       {String columnName = '${Constants.ID_COLUMN}',
-      String tableName = '${Constants.VOCAB_TABLE_NAME}'}) async {
-    final response =
-        await _supabase.from(tableName).select().eq('$columnName', columnValue).execute();
+      String tableName = '${Constants.VOCAB_TABLE_NAME}',
+      bool sort = false}) async {
+    final response = await _supabase
+        .from(tableName)
+        .select()
+        .eq('$columnName', columnValue)
+        .order('${Constants.CREATED_AT_COLUMN}', ascending: sort)
+        .execute();
     return response;
   }
 
@@ -105,12 +110,16 @@ class DatabaseService {
 
   static Future<PostgrestResponse> findAll(
       {String tableName = '${Constants.VOCAB_TABLE_NAME}', bool sort = false}) async {
-    return await _supabase
-        .from(tableName)
-        .select()
-        .order('created_at', ascending: sort)
-        .execute()
-        .timeout(Constants.timeoutDuration);
+    final resp =
+        await _supabase.from(tableName).select().execute().timeout(Constants.timeoutDuration);
+    return resp;
+  }
+
+  static Future<PostgrestResponse> findReports(
+      {String tableName = '${Constants.VOCAB_TABLE_NAME}', bool sort = false}) async {
+    final resp =
+        await _supabase.from(tableName).select().order('created_at', ascending: false).execute();
+    return resp;
   }
 
   /// fetch words sorted by created_at column

@@ -95,42 +95,148 @@ class _ViewBugReportsState extends State<ViewBugReports> {
                   ),
                 );
               }
+              Map<String, List<ReportModel>> reports =
+                  request.data as Map<String, List<ReportModel>>;
+              if (reports.isEmpty) {
+                return const Center(
+                  child: Text('No reports yet'),
+                );
+              }
+              final List<String> keys = reports.keys.toList();
+              final List<List<ReportModel>> values = reports.values.toList();
+              return ListView.builder(
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text('${reports.values.elementAt(index).first.name}',
+                          style: Theme.of(context).textTheme.titleMedium),
+                      subtitle: Text(reports.values.elementAt(index).first.email,
+                          style: Theme.of(context).textTheme.bodyMedium),
+                      trailing: CircleAvatar(
+                        backgroundColor: Theme.of(context).colorScheme.secondary,
+                        maxRadius: 16,
+                        child: Text(
+                          '${reports.values.elementAt(index).length}',
+                          style: TextStyle(
+                              fontSize: 18, color: Theme.of(context).colorScheme.onSecondary),
+                        ),
+                      ),
+                      onTap: () {
+                        Navigate.push(
+                            context,
+                            ViewGroupedBugReports(
+                              email: keys[index],
+                              reports: values[index],
+                            ));
+                      },
+                    );
+                  },
+                  itemCount: reports.length);
+            }));
+  }
+}
+
+class ViewGroupedBugReports extends StatefulWidget {
+  final List<ReportModel> reports;
+  final String email;
+
+  const ViewGroupedBugReports({Key? key, required this.reports, required this.email})
+      : super(key: key);
+
+  @override
+  State<ViewGroupedBugReports> createState() => _ViewGroupedBugReportsState();
+}
+
+class _ViewGroupedBugReportsState extends State<ViewGroupedBugReports> {
+  final ValueNotifier<Response> _responseNotifier = ValueNotifier(Response.init());
+
+  Future<void> getReportsByEmail({bool isRetry = false}) async {
+    if (!isRetry) {
+      _responseNotifier.value = _responseNotifier.value
+          .copyWith(state: RequestState.done, message: 'Loaded', data: widget.reports);
+      return;
+    }
+    try {
+      _responseNotifier.value = _responseNotifier.value
+          .copyWith(state: RequestState.active, message: 'Loading', data: null);
+      final reports = await ReportService.getReportByEmail(widget.email);
+      _responseNotifier.value = _responseNotifier.value
+          .copyWith(state: RequestState.done, message: 'Success', data: reports);
+    } catch (e) {
+      _responseNotifier.value =
+          _responseNotifier.value.copyWith(state: RequestState.error, message: e.toString());
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getReportsByEmail();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final name = widget.reports.first.name;
+    return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        appBar: AppBar(
+          title: Text('$name'),
+        ),
+        body: ValueListenableBuilder<Response>(
+            valueListenable: _responseNotifier,
+            builder: (BuildContext context, Response request, Widget? child) {
+              if (request.state == RequestState.active) {
+                return const LoadingWidget();
+              }
+              if (request.state == RequestState.error) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: getReportsByEmail,
+                        child: const Text('Try Again'),
+                      ),
+                      Text(request.message),
+                    ],
+                  ),
+                );
+              }
               List<ReportModel> reports = request.data as List<ReportModel>;
               if (reports.isEmpty) {
                 return const Center(
                   child: Text('No reports yet'),
                 );
               }
-              return Column(
-                children: [
-                  Expanded(
-                    child: AnimatedList(
-                        itemBuilder: (context, index, animation) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ExpansionTile(
-                                subtitle: Text(
-                                    '${reports[index].created_at.standardDate()} ${reports[index].created_at.standardTime()}'),
-                                title: Text(reports[index].name),
-                                expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                                expandedAlignment: Alignment.centerLeft,
-                                children: [
-                                  Padding(
-                                    padding: 16.0.allPadding,
-                                    child: Text(reports[index].feedback,
-                                        style:
-                                            const TextStyle(fontSize: 16)),
-                                  ),
-                                ],
+              return RefreshIndicator(
+                onRefresh: () async {
+                  await getReportsByEmail(isRetry: true);
+                },
+                child: Padding(
+                  padding: 16.0.allPadding,
+                  child: AnimatedList(
+                      itemBuilder: (context, index, animation) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                '${reports[index].created_at.standardDate()} ${reports[index].created_at.standardTime()}'),
+                            4.0.vSpacer(),
+                            Container(
+                              padding: 16.0.allPadding,
+                              decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.secondary,
+                                  borderRadius: BorderRadius.circular(8)),
+                              child: Text(
+                                '${reports[index].feedback}',
+                                style: TextStyle(color: Theme.of(context).colorScheme.onSecondary),
                               ),
-                            ],
-                          );
-                        },
-                        initialItemCount: (request.data as List).length),
-                  ),
-                  24.0.vSpacer()
-                ],
+                            ),
+                            16.0.vSpacer(),
+                          ],
+                        );
+                      },
+                      initialItemCount: (request.data as List).length),
+                ),
               );
             }));
   }
@@ -198,7 +304,8 @@ class _ReportABugMobileState extends ConsumerState<ReportABugMobile> {
                         final String description = _feedBackcontroller.text.trim();
                         if (description.isEmpty) {
                           NavbarNotifier.showSnackBar(
-                              context, 'You must enter a description of the bug');
+                              context, 'You must enter a description of the bug',
+                              bottom: 0);
                           _responseNotifier.value =
                               _responseNotifier.value.copyWith(state: RequestState.done);
                           return;
