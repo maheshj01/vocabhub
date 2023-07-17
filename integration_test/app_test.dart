@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -77,9 +75,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(dashboardIcon, findsOneWidget);
       expect(usericon, findsOneWidget);
-      final bytes = await binding.takeScreenshot('test-1');
-      final File image = File('./screenshots/test-1.png');
-      image.writeAsBytesSync(bytes);
+      // final bytes = await binding.takeScreenshot('test-1');
+      // final File image = File('./screenshots/test-1.png');
+      // image.writeAsBytesSync(bytes);
     });
 
     testWidgets("User stays loggedIn", (widgetTester) async {
@@ -98,9 +96,9 @@ void main() {
       expect(notificationIcon, findsOneWidget);
       expect(dashboardIcon, findsOneWidget);
       expect(usericon, findsOneWidget);
-      final bytes = await binding.takeScreenshot('test-2');
-      final File image = File('./screenshots/test-2.png');
-      image.writeAsBytesSync(bytes);
+      // final bytes = await binding.takeScreenshot('test-2');
+      // final File image = File('./screenshots/test-2.png');
+      // image.writeAsBytesSync(bytes);
     });
 
     testWidgets("Ensure all navbar widgets load", (widgetTester) async {
@@ -148,9 +146,9 @@ void main() {
       await widgetTester.tap(items[3].iconData.iconX());
       await widgetTester.pumpAndSettle();
       expect(profile, findsOneWidget);
-      final bytes = await binding.takeScreenshot('test-3');
-      final File image = File('screenshots/test-3.png');
-      image.writeAsBytesSync(bytes);
+      // final bytes = await binding.takeScreenshot('test-3');
+      // final File image = File('screenshots/test-3.png');
+      // image.writeAsBytesSync(bytes);
     });
   });
 }

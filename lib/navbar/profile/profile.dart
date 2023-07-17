@@ -2,6 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vocabhub/exports.dart';
+import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/notification.dart';
 import 'package:vocabhub/navbar/error_page.dart';
 import 'package:vocabhub/navbar/pageroute.dart';
@@ -14,9 +15,12 @@ import 'package:vocabhub/widgets/icon.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
+/// when specidying readOnly as true, email must be provided
 class UserProfile extends ConsumerStatefulWidget {
   static const String route = '/';
-  const UserProfile({Key? key}) : super(key: key);
+  final bool isReadOnly;
+  final String email;
+  UserProfile({Key? key, this.isReadOnly = false, this.email = ''}) : super(key: key);
 
   @override
   _UserProfileState createState() => _UserProfileState();
@@ -28,30 +32,9 @@ class _UserProfileState extends ConsumerState<UserProfile> {
     super.initState();
     userProfileNotifier = ValueNotifier<Response>(response);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // getUser();
+      _fetchUser();
     });
   }
-
-  // Future<void> getUser() async {
-  //   try {
-  //     final userState = ref.watch(userNotifierProvider);
-
-  //     if (userState.isLoggedIn) {
-  //       final user = await UserService.findByEmail(email: userState.email);
-  //       if (user.email.isNotEmpty) {
-  //         AppStateWidget.of(context).setUser(user);
-  //         userProfileNotifier.value = response.copyWith(didSucced: true, data: user);
-  //       }
-  //     }
-  //   } on Exception catch (_) {
-  //     NavbarNotifier.showSnackBar(context, _.toString());
-  //     userProfileNotifier.value =
-  //         response.copyWith(didSucced: false, message: _.toString(), state: RequestState.error);
-  //   } catch (_) {
-  //     userProfileNotifier.value =
-  //         response.copyWith(didSucced: false, message: _.toString(), state: RequestState.error);
-  //   }
-  // }
 
   late final ValueNotifier<Response> userProfileNotifier;
   final response = Response.init();
@@ -62,14 +45,20 @@ class _UserProfileState extends ConsumerState<UserProfile> {
     super.dispose();
   }
 
-  Future<void> _retry() async {
+  Future<void> _fetchUser() async {
     userProfileNotifier.value =
         response.copyWith(state: RequestState.active, message: "Loading...");
-    final user = ref.watch(userNotifierProvider);
-    final updatedUser = await UserService.findByEmail(email: user.email, cache: true);
-    user.setUser(updatedUser);
-    userProfileNotifier.value = response.copyWith(
-        state: RequestState.done, message: "Success", data: updatedUser, didSucced: true);
+    if (!widget.isReadOnly) {
+      final user = ref.watch(userNotifierProvider);
+      final updatedUser = await UserService.findByEmail(email: user.email, cache: true);
+      user.setUser(updatedUser);
+      userProfileNotifier.value = response.copyWith(
+          state: RequestState.done, message: "Success", data: updatedUser, didSucced: true);
+    } else {
+      final user = await UserService.findByEmail(email: widget.email, cache: false);
+      userProfileNotifier.value = response.copyWith(
+          state: RequestState.done, message: "Success", data: user, didSucced: true);
+    }
   }
 
   @override
@@ -80,19 +69,21 @@ class _UserProfileState extends ConsumerState<UserProfile> {
           builder: (context, response, child) {
             if (response.state == RequestState.error) {
               return ErrorPage(
-                onRetry: _retry,
+                onRetry: _fetchUser,
                 errorMessage: response.message,
               );
             }
             return ResponsiveBuilder(
                 desktopBuilder: (context) => UserProfileDesktop(),
                 mobileBuilder: (context) {
-                  if (response.state == RequestState.active) {
+                  if (response.state == RequestState.active || response.data == null) {
                     return LoadingWidget();
                   }
                   return UserProfileMobile(
+                    user: response.data as UserModel,
+                    isReadOnly: widget.isReadOnly,
                     onRefresh: () async {
-                      await _retry();
+                      await _fetchUser();
                     },
                   );
                 });
@@ -102,8 +93,11 @@ class _UserProfileState extends ConsumerState<UserProfile> {
 }
 
 class UserProfileMobile extends ConsumerStatefulWidget {
-  const UserProfileMobile({Key? key, this.onRefresh}) : super(key: key);
+  const UserProfileMobile({Key? key, this.onRefresh, required this.user, this.isReadOnly = false})
+      : super(key: key);
   final VoidCallback? onRefresh;
+  final UserModel user;
+  final bool isReadOnly;
 
   @override
   _UserProfileMobileState createState() => _UserProfileMobileState();
@@ -111,7 +105,7 @@ class UserProfileMobile extends ConsumerStatefulWidget {
 
 class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
   Future<void> getEditStats() async {
-    final user = ref.watch(userNotifierProvider);
+    final user = widget.user;
     final resp = await EditHistoryService.getUserContributions(user);
     stats = [0, 0, 0];
     if (resp.didSucced && resp.data != null) {
@@ -155,7 +149,7 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userNotifierProvider);
+    final user = widget.user;
     final size = MediaQuery.of(context).size;
     final colorScheme = Theme.of(context).colorScheme;
     return ValueListenableBuilder<List<int>>(
@@ -184,22 +178,7 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                         padding: 18.0.verticalPadding,
                         child: Column(
                           children: [
-                            // Container(
-                            //     alignment: Alignment.topRight,
-                            //     padding: EdgeInsets.only(right: 16),
-                            //     child: IconButton(
-                            //       onPressed: () {
-                            //         if (VocabTheme.isDark) {
-                            //           Settings.setTheme(ThemeMode.light);
-                            //         } else {
-                            //           Settings.setTheme(ThemeMode.dark);
-                            //         }
-                            //       },
-                            //       icon: VocabTheme.isDark
-                            //           ? const Icon(Icons.light_mode)
-                            //           : const Icon(Icons.dark_mode),
-                            //     )),
-                            size.width > 600
+                            size.width > 600 || widget.isReadOnly
                                 ? SizedBox.shrink()
                                 : Container(
                                     alignment: Alignment.topRight,
@@ -216,7 +195,6 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                                       ),
                                     ),
                                   ),
-
                             Stack(
                               children: [
                                 Padding(
@@ -225,28 +203,30 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                                       radius: 46,
                                       backgroundColor: colorScheme.primary.withOpacity(0.2),
                                       child: CircularAvatar(
-                                        url: '${user!.avatarUrl}',
+                                        url: '${user.avatarUrl}',
                                         radius: 40,
                                       )),
                                 ),
-                                Positioned(
-                                    right: 8,
-                                    bottom: 16,
-                                    child: VHIcon(
-                                      Icons.edit,
-                                      size: 30,
-                                      onTap: () {
-                                        Navigator.of(context, rootNavigator: true)
-                                            .push(PageRoutes.sharedAxis(
-                                                EditProfile(
-                                                  user: user,
-                                                  onClose: () async {
-                                                    setState(() {});
-                                                  },
-                                                ),
-                                                SharedAxisTransitionType.scaled));
-                                      },
-                                    ))
+                                widget.isReadOnly
+                                    ? SizedBox.shrink()
+                                    : Positioned(
+                                        right: 8,
+                                        bottom: 16,
+                                        child: VHIcon(
+                                          Icons.edit,
+                                          size: 30,
+                                          onTap: () {
+                                            Navigator.of(context, rootNavigator: true)
+                                                .push(PageRoutes.sharedAxis(
+                                                    EditProfile(
+                                                      user: user,
+                                                      onClose: () async {
+                                                        setState(() {});
+                                                      },
+                                                    ),
+                                                    SharedAxisTransitionType.scaled));
+                                          },
+                                        ))
                               ],
                             ),
                             Padding(
@@ -334,11 +314,12 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
   }
 }
 
-class UserProfileDesktop extends StatelessWidget {
+class UserProfileDesktop extends ConsumerWidget {
   const UserProfileDesktop({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userNotifierProvider);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
@@ -346,7 +327,10 @@ class UserProfileDesktop extends StatelessWidget {
       ),
       body: Row(
         children: [
-          Expanded(child: UserProfileMobile()),
+          Expanded(
+              child: UserProfileMobile(
+            user: user,
+          )),
           Expanded(child: SettingsPageMobile()),
         ],
       ),

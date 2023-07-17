@@ -166,12 +166,20 @@ class _NotificationsState extends ConsumerState<Notifications> {
                               edit: edit,
                               user: editor,
                               onAvatarTap: () {
-                                // Navigate.push(
-                                //     context,
-                                //     UserProfile(
-                                //       email: editor.email,
-                                //       isReadOnly: true,
-                                //     ));
+                                Navigate.push(
+                                    context,
+                                    Scaffold(
+                                        appBar: AppBar(
+                                          elevation: 0,
+                                          centerTitle: false,
+                                          title: Text(
+                                            'Profile',
+                                          ),
+                                        ),
+                                        body: UserProfile(
+                                          email: editor.email,
+                                          isReadOnly: true,
+                                        )));
                               },
                               onAction: (approved) async {
                                 if (approved) {
