@@ -10,7 +10,6 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:vocabhub/controller/auth_controller.dart';
 import 'package:vocabhub/controller/controllers.dart';
 import 'package:vocabhub/models/user.dart';
-import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/profile/webview.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/pages/splashscreen.dart';
@@ -71,8 +70,6 @@ late DashboardController dashboardController;
 late AuthController authController;
 Logger logger = Logger('main.dart');
 late LocalService localService;
-final ValueNotifier<int> totalNotifier = ValueNotifier<int>(0);
-final ValueNotifier<List<Word>?> listNotifier = ValueNotifier<List<Word>>([]);
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 late FirebaseAnalytics firebaseAnalytics;
 final InitializationSettings initializationSettings = InitializationSettings(
@@ -124,8 +121,6 @@ class _VocabAppState extends ConsumerState<VocabApp> {
   @override
   void dispose() {
     searchController.disposeService();
-    totalNotifier.dispose();
-    listNotifier.dispose();
     dashboardController.disposeService();
     exploreController.disposeService();
     // pushNotificationService.disposeService();
