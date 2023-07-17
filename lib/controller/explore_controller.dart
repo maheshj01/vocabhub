@@ -92,6 +92,7 @@ class ExploreController extends ChangeNotifier with ServiceBase {
   Future<void> rememberLastScroll() async {
     _scrollMessageShownDate = DateTime.now();
     _isScrollMessageShown = true;
+    _shouldShowScrollAnimation = false;
     await _exploreService.setScrollMessageShownDate(_scrollMessageShownDate);
     await _exploreService.setIsScrollMessageShown(true);
     notifyListeners();
