@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "An App to help build your vocabulary.",
+    "description": "Your ultimate vocabulary companion to excel in English. With 800+ meticulously curated GRE words, progress tracking, 'Word of the Day,' and a collaborative community, enhance your language skills and embrace the power of words",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
@@ -15,8 +15,8 @@
             "type": "image/png"
         },
         {
-            "src": "icons/Icon-512.png",
-            "sizes": "512x512",
+            "src": "icons/Icon-144.png",
+            "sizes": "144x144",
             "type": "image/png"
         }
     ]
