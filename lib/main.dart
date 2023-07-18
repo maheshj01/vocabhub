@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 // import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,6 +49,14 @@ Future<void> main() async {
   runApp(ProviderScope(
     child: VocabApp(),
   ));
+}
+
+class AppScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
 }
 
 @pragma('vm:entry-point')
@@ -143,6 +152,7 @@ class _VocabAppState extends ConsumerState<VocabApp> {
             final colorScheme = ColorScheme.fromSeed(seedColor: settingsController.themeSeed);
             return MaterialApp(
               title: Constants.APP_TITLE,
+              scrollBehavior: AppScrollBehavior(),
               navigatorObservers: [_observer],
               debugShowCheckedModeBanner: !kDebugMode,
               darkTheme: ThemeData.dark(

@@ -5,6 +5,7 @@ import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/onboarding/onboarding.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/size_utils.dart';
@@ -36,7 +37,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
     _controller.forward();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        handleNavigation();
+        if (settingsController.isOnboarded && SizeUtils.isMobile) {
+          handleNavigation();
+        } else {
+          Navigate.pushReplace(context, OnboardingPage());
+        }
       }
     });
   }

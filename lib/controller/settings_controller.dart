@@ -9,8 +9,11 @@ class SettingsController extends ChangeNotifier {
   ThemeMode get theme => _theme;
   bool _ratedOnPlayStore = false;
   DateTime _lastRatedDate = DateTime.now();
+  bool _isOnboarded = false;
 
   bool get hasRatedOnPlaystore => _ratedOnPlayStore;
+
+  bool get isOnboarded => _isOnboarded;
 
   bool get isDark => _theme == ThemeMode.dark;
   Color _themeSeed = VocabTheme.colorSeeds[1];
@@ -25,12 +28,23 @@ class SettingsController extends ChangeNotifier {
 
   DateTime get lastRatedDate => _lastRatedDate;
 
+  Future<bool> getOnBoarded() async {
+    _isOnboarded = await _settingsService!.getOnboarded();
+    return _isOnboarded;
+  }
+
   /// Returns the last rated sheet shown date
   /// this time does not indicate the user has rated the app
   /// it only indicates the last time the user was shown the rate sheet
   Future<DateTime> getLastRatedShown() async {
     _lastRatedDate = await _settingsService!.getLastRatedShownDate();
     return _lastRatedDate;
+  }
+
+  set onBoarded(bool value) {
+    _isOnboarded = value;
+    notifyListeners();
+    _settingsService!.setOnboarded(value);
   }
 
   set themeSeed(Color value) {
@@ -73,6 +87,7 @@ class SettingsController extends ChangeNotifier {
     _themeSeed = await getThemeSeed();
     _ratedOnPlayStore = getRatedOnPlaystore();
     _lastRatedDate = await getLastRatedShown();
+    _isOnboarded = await getOnBoarded();
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     version = packageInfo.version;
     notifyListeners();

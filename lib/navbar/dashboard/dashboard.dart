@@ -374,7 +374,6 @@ class DashboardDesktop extends StatelessWidget {
             ),
           ),
           Container(
-              // height: SizeUtils.size.height * 0.95,
               padding: EdgeInsets.symmetric(vertical: 16.0),
               width: 400,
               child: Column(
