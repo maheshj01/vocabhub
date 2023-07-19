@@ -8,6 +8,7 @@ class SettingsService {
   final String kThemeSeedKey = 'kThemeSeedKey';
   final String kRatedOnPlaystore = 'kRatedOnPlaystore';
   final String kLastRatedDate = 'kLastRatedDate';
+  final String kOnboardedKey = 'kOnboardedKey';
 
   void setTheme(ThemeMode value) {
     _sharedPreferences.setBool(kThemeKey, value == ThemeMode.dark);
@@ -16,6 +17,14 @@ class SettingsService {
   Future<ThemeMode> getTheme() async {
     final bool theme = _sharedPreferences.getBool(kThemeKey) ?? true;
     return theme == true ? ThemeMode.dark : ThemeMode.light;
+  }
+
+  Future<void> setOnboarded(bool value) async {
+    await _sharedPreferences.setBool(kOnboardedKey, value);
+  }
+
+  Future<bool> getOnboarded() async {
+    return _sharedPreferences.getBool(kOnboardedKey) ?? false;
   }
 
   /// Returns the last rated sheet shown date

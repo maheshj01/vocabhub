@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocabhub/exports.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/services/database.dart';
@@ -156,6 +157,7 @@ class AuthService extends ServiceBase {
     await AuthService.updateLogin(email: user.email, isLoggedIn: false);
     await googleSignOut(context);
     await Settings.clear();
+    settingsController.onBoarded = true;
   }
 
   @override

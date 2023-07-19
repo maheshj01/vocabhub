@@ -4,6 +4,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/main.dart' as app;
 import 'package:vocabhub/navbar/navbar.dart';
+import 'package:vocabhub/onboarding/onboarding.dart';
 import 'package:vocabhub/pages/login.dart';
 
 extension FindText on String {
@@ -30,12 +31,62 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
       as IntegrationTestWidgetsFlutterBinding;
-  group('Test App should load', () {
+  group('Test App should load:', () {
+    testWidgets('New User should be onboarded', (WidgetTester tester) async {
+      await app.main();
+      // await binding.convertFlutterSurfaceToImage();
+      await Future.delayed(const Duration(seconds: 3));
+      await tester.pumpAndSettle();
+      expect((app.VocabApp).typeX(), findsOneWidget);
+      await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
+      expect((WelcomePage).typeX(), findsOneWidget);
+      // final title = "Welcome\nto\nVocabhub".textX();
+      // expect(title, findsOneWidget);
+      await tester.pumpAndSettle();
+      final takeATour = "Take a tour".textX();
+      expect(takeATour, findsOneWidget);
+      await tester.pumpAndSettle();
+      await tester.tap(takeATour);
+      await tester.pumpAndSettle();
+      expect((OnboardingPage).typeX(), findsOneWidget);
+      await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 3));
+      final title1 = 'A Crowd Sourced platform'.textX();
+      expect(title1, findsOneWidget);
+      final list = List.generate(3, (index) => index).toList();
+      double offset = 400;
+      await for (final item in Stream.fromIterable(list)) {
+        await tester.timedDragFrom(
+            Offset(offset, 800), Offset(-offset, 800), Duration(milliseconds: 500));
+        await tester.pumpAndSettle();
+        offset += 400;
+      }
+      // await Future.delayed(const Duration(seconds: 1));
+      // final title2 = 'Word of the Day'.textX();
+      // expect(title2, findsOneWidget);
+      // await Future.delayed(const Duration(seconds: 1));
+      // await tester.dragFrom(Offset(400, 800), const Offset(-400, 800));
+      // // await tester.drag(pageView, const Offset(-400, 400));
+      // await tester.pumpAndSettle();
+      // final title3 = 'Explore curated words'.textX();
+      // expect(title3, findsOneWidget);
+      // await tester.dragFrom(Offset(400, 800), const Offset(-400, 800));
+      await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
+      final getStartedText = "Get Started".textX();
+      expect(getStartedText, findsOneWidget);
+      await tester.pumpAndSettle();
+      await tester.tap(getStartedText);
+      await tester.pumpAndSettle();
+      expect((AppSignIn).typeX(), findsOneWidget);
+    });
+
     testWidgets('User should be able to login', (WidgetTester tester) async {
       // runZonedGuarded(app.main, (error, stack) {
       // });
-      app.main();
-      await binding.convertFlutterSurfaceToImage();
+      await app.main();
+      // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
       await tester.pumpAndSettle();
       expect((app.VocabApp).typeX(), findsOneWidget);
@@ -81,8 +132,8 @@ void main() {
     });
 
     testWidgets("User stays loggedIn", (widgetTester) async {
-      app.main();
-      await binding.convertFlutterSurfaceToImage();
+      await app.main();
+      // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
       await widgetTester.pumpAndSettle();
       expect((Dashboard).typeX(), findsOneWidget);
@@ -102,7 +153,7 @@ void main() {
     });
 
     testWidgets("Ensure all navbar widgets load", (widgetTester) async {
-      app.main();
+      await app.main();
       await binding.convertFlutterSurfaceToImage();
       final List<Widget> baseWidgets = [
         Dashboard(),

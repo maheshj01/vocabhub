@@ -9,6 +9,8 @@ import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/size_utils.dart';
 
+import '../onboarding/welcome.dart';
+
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -36,7 +38,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
     _controller.forward();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        handleNavigation();
+        if (settingsController.isOnboarded && SizeUtils.isMobile) {
+          handleNavigation();
+        } else {
+          Navigate.pushReplace(
+              context,
+              WelcomePage(
+                title: 'Welcome to VocabHub',
+                description: 'Your companion to learn new words everyday',
+              ));
+        }
       }
     });
   }
