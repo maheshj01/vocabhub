@@ -33,7 +33,7 @@ class _WelcomePageState extends State<WelcomePage> {
     final themeData = VocabTheme.getThemeFromSeed(Colors.blue);
     return Material(
       child: Container(
-        color: themeData.colorScheme.background,
+        color: Colors.black,
         alignment: Alignment.center,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -55,7 +55,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         style: GoogleFonts.quicksand(
                           fontSize: 40,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
                       TextSpan(
@@ -63,7 +63,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         style: GoogleFonts.quicksand(
                           fontSize: 38,
                           fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 175, 191, 0),
+                          color: Color.fromARGB(255, 243, 255, 106),
                         ),
                       )
                     ]),

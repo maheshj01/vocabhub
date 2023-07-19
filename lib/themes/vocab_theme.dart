@@ -59,6 +59,8 @@ class VocabTheme {
   ));
 
   static ThemeData getThemeFromSeed(Color seed) {
-    return ThemeData(useMaterial3: true, colorScheme: ColorScheme.fromSeed(seedColor: seed));
+    return ThemeData.dark(
+      useMaterial3: true,
+    ).copyWith(colorScheme: ColorScheme.fromSeed(seedColor: seed));
   }
 }

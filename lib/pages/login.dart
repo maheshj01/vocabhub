@@ -96,6 +96,7 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
           alignment: Alignment.center,
           child: VHButton(
             width: 300,
+            foregroundColor: Colors.blue[50],
             label: 'Continue as a Guest',
             onTap: () {
               Navigate.pushReplace(context, AdaptiveLayout(),
@@ -113,6 +114,7 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
                 alignment: Alignment.center,
                 child: VHButton(
                   width: 300,
+                  foregroundColor: Colors.black,
                   leading: Image.asset('$GOOGLE_ASSET_PATH', height: 32),
                   label: 'Sign In with Google',
                   isLoading: request.state == RequestState.active,

@@ -1,7 +1,8 @@
-### 0.5.8+21 July 17, 2023
+### 0.5.8+21 July 19, 2023
 
 - Make User Profile publicly visible
 - Add ability to see my past bug reports
+- Add User onboarding
 
 ### 0.5.7+20 July 16, 2023
 
