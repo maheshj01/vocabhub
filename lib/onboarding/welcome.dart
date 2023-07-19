@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/pages/login.dart';
+import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
 
@@ -24,13 +26,14 @@ class _WelcomePageState extends State<WelcomePage> {
   Future<void> startOnBoarding() async {}
 
   bool isLoading = false;
-  String title = 'Welcome to VocabHub';
+  String title = 'Welcome to Vocabhub';
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final themeData = VocabTheme.getThemeFromSeed(Colors.blue);
     return Material(
       child: Container(
-        color: Color.fromARGB(255, 87, 169, 110),
+        color: themeData.colorScheme.background,
         alignment: Alignment.center,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -40,27 +43,27 @@ class _WelcomePageState extends State<WelcomePage> {
               child: RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                    text: widget.title.split(' ')[0],
-                    style: TextStyle(
-                      fontSize: 48,
+                    text: title.split(' ')[0],
+                    style: GoogleFonts.quicksand(
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Color.fromARGB(255, 87, 169, 110),
                     ),
                     children: [
                       TextSpan(
-                        text: '\n${widget.title.split(' ')[1]}',
-                        style: TextStyle(
-                          fontSize: 48,
+                        text: '\n${title.split(' ')[1]}',
+                        style: GoogleFonts.quicksand(
+                          fontSize: 40,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
                       TextSpan(
-                        text: '\n${widget.title.split(' ')[2]}',
-                        style: TextStyle(
-                          fontSize: 48,
+                        text: '\n${title.split(' ')[2]}',
+                        style: GoogleFonts.quicksand(
+                          fontSize: 38,
                           fontWeight: FontWeight.bold,
-                          color: Colors.indigo,
+                          color: Color.fromARGB(255, 175, 191, 0),
                         ),
                       )
                     ]),

@@ -127,7 +127,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
               padding: const EdgeInsets.only(bottom: 100.0),
               child: index == 3
                   ? VHButton(
-                      height: 48, isLoading: isLoading, onTap: onBoardComplete, label: 'Lets Go')
+                      height: 48,
+                      isLoading: isLoading,
+                      onTap: onBoardComplete,
+                      label: 'Get Started')
                   : SizedBox.shrink(),
             )),
         Align(

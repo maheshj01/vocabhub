@@ -57,4 +57,8 @@ class VocabTheme {
     titleMedium: GoogleFonts.quicksand(fontSize: 20, fontWeight: FontWeight.w300),
     titleSmall: GoogleFonts.quicksand(fontSize: 16, fontWeight: FontWeight.w300),
   ));
+
+  static ThemeData getThemeFromSeed(Color seed) {
+    return ThemeData(useMaterial3: true, colorScheme: ColorScheme.fromSeed(seedColor: seed));
+  }
 }
