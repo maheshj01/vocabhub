@@ -91,7 +91,9 @@ class _MobileViewState extends State<MobileView> {
           wordsByAlphabet[index].add(element);
         }
       });
-      showToast('${words.length} Words fetched successfully');
+      if (NavbarNotifier.currentIndex == SEARCH_INDEX) {
+        showToast('${words.length} Words fetched successfully');
+      }
       response.value = response.value.copyWith(
           data: wordsByAlphabet,
           state: RequestState.done,

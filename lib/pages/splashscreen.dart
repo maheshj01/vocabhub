@@ -5,10 +5,11 @@ import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
-import 'package:vocabhub/onboarding/onboarding.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/size_utils.dart';
+
+import '../onboarding/welcome.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -40,7 +41,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
         if (settingsController.isOnboarded && SizeUtils.isMobile) {
           handleNavigation();
         } else {
-          Navigate.pushReplace(context, OnboardingPage());
+          Navigate.pushReplace(
+              context,
+              WelcomePage(
+                title: 'Welcome to VocabHub',
+                description: 'Your companion to learn new words everyday',
+              ));
         }
       }
     });
