@@ -36,16 +36,18 @@ class DashboardService extends ServiceBase {
   /// updated record from the database in UTC.
   Future<Word> getLastPublishedWod() async {
     try {
-      // final String? wordString = _sharedPreferences.getString(kLastPublishedWord);
-      // if (wordString != null) {
-      //   // decode the json string to word object
-      //   final decodedString = jsonDecode(wordString);
-      //   final Word word = Word.fromJson(decodedString as Map<String, dynamic>);
-      //   return word;
-      // }
-      final Word lastWod = await VocabStoreService.getLastUpdatedRecord();
-      setPublishedWord(lastWod);
-      return lastWod;
+      final String? wordString = _sharedPreferences.getString(kLastPublishedWord) ?? '';
+      if (wordString != null || wordString!.isNotEmpty) {
+        // decode the json string to word object
+        final decodedString = jsonDecode(wordString);
+        final Word word = Word.fromJson(decodedString as Map<String, dynamic>);
+        setPublishedWord(word);
+        return word;
+      } else {
+        final Word wodFromServer = await VocabStoreService.getLastUpdatedRecord();
+        setPublishedWord(wodFromServer);
+        return wodFromServer;
+      }
     } catch (e) {
       _logger.e(e.toString());
       rethrow;

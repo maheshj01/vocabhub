@@ -50,7 +50,7 @@ class _DashboardState extends State<Dashboard> {
       if (mounted) {
         AppStateWidget.of(context).setWords(localWords);
       }
-      if (_.runtimeType == TimeoutException) {
+      if (_.runtimeType == TimeoutException && mounted) {
         NavbarNotifier.showSnackBar(context, NETWORK_ERROR, bottom: 0);
       }
     }
@@ -63,12 +63,14 @@ class _DashboardState extends State<Dashboard> {
 
   /// todo word of the day
   Future<void> publishWordOfTheDay() async {
+    _dashBoardNotifier.value = response.copyWith(state: RequestState.active, message: "Loading...");
     final state = AppStateWidget.of(context);
     try {
       // If word of the day already published then get word of the day
       if (dashboardController.isWodPublishedToday) {
         final publishedWod = dashboardController.lastPublishedWord;
         state.setWordOfTheDay(publishedWod);
+        _dashBoardNotifier.value = response.copyWith(state: RequestState.done);
         return;
       }
       final allWords = await VocabStoreService.getAllWords();
@@ -82,7 +84,7 @@ class _DashboardState extends State<Dashboard> {
       }
       _dashBoardNotifier.value = response.copyWith(state: RequestState.done);
     } catch (e) {
-      NavbarNotifier.showSnackBar(context, NETWORK_ERROR);
+      NavbarNotifier.showSnackBar(context, NETWORK_ERROR, bottom: 0);
       _dashBoardNotifier.value =
           response.copyWith(state: RequestState.error, message: e.toString());
     }
@@ -99,6 +101,7 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    final state = AppStateWidget.of(context);
     return Material(
         child: ValueListenableBuilder<Response>(
             valueListenable: _dashBoardNotifier,
@@ -106,8 +109,8 @@ class _DashboardState extends State<Dashboard> {
               if (response.state == RequestState.error) {
                 return ErrorPage(
                   onRetry: () async {
-                    _dashBoardNotifier.value =
-                        response.copyWith(state: RequestState.active, message: "Loading...");
+                    await dashboardController.initService();
+                    state.setWordOfTheDay(dashboardController.lastPublishedWord);
                     await publishWordOfTheDay();
                   },
                   errorMessage: response.message,
@@ -121,6 +124,8 @@ class _DashboardState extends State<Dashboard> {
                   }
                   return RefreshIndicator(
                       onRefresh: () async {
+                        await dashboardController.getLastPublishedWord();
+                        state.setWordOfTheDay(dashboardController.lastPublishedWord);
                         await publishWordOfTheDay();
                       },
                       child: DashboardMobile());

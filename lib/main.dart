@@ -37,7 +37,7 @@ Future<void> main() async {
   localService = LocalService();
   authController = AuthController();
   searchController = SearchFieldController(controller: TextEditingController());
-  await dashboardController.initService();
+  dashboardController.initService();
   // pushNotificationService = PushNotificationService(_firebaseMessaging);
   searchController.initService();
   exploreController.initService();
