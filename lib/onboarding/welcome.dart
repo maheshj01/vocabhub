@@ -77,7 +77,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       Navigate.push(context, OnboardingPage(),
                           transitionType: TransitionType.reveal);
                     },
-                    label: 'Take a Tour'),
+                    label: 'Take a tour'),
                 16.0.vSpacer(),
                 VHButton(
                     width: 200,
