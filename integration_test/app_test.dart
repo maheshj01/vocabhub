@@ -34,13 +34,13 @@ void main() {
   group('Test App should load:', () {
     testWidgets('New User should be onboarded', (WidgetTester tester) async {
       await app.main();
-      await binding.convertFlutterSurfaceToImage();
+      // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
       await tester.pumpAndSettle();
       expect((app.VocabApp).typeX(), findsOneWidget);
       await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
       expect((WelcomePage).typeX(), findsOneWidget);
-      await tester.pumpAndSettle();
       // final title = "Welcome\nto\nVocabhub".textX();
       // expect(title, findsOneWidget);
       await tester.pumpAndSettle();
@@ -51,13 +51,29 @@ void main() {
       await tester.pumpAndSettle();
       expect((OnboardingPage).typeX(), findsOneWidget);
       await tester.pumpAndSettle();
-      // simulate Drag left
-      await tester.drag(find.byType(PageView), const Offset(-600, 0));
+      await Future.delayed(const Duration(seconds: 3));
+      final title1 = 'A Crowd Sourced platform'.textX();
+      expect(title1, findsOneWidget);
+      final list = List.generate(3, (index) => index).toList();
+      double offset = 400;
+      await for (final item in Stream.fromIterable(list)) {
+        await tester.timedDragFrom(
+            Offset(offset, 800), Offset(-offset, 800), Duration(milliseconds: 500));
+        await tester.pumpAndSettle();
+        offset += 400;
+      }
+      // await Future.delayed(const Duration(seconds: 1));
+      // final title2 = 'Word of the Day'.textX();
+      // expect(title2, findsOneWidget);
+      // await Future.delayed(const Duration(seconds: 1));
+      // await tester.dragFrom(Offset(400, 800), const Offset(-400, 800));
+      // // await tester.drag(pageView, const Offset(-400, 400));
+      // await tester.pumpAndSettle();
+      // final title3 = 'Explore curated words'.textX();
+      // expect(title3, findsOneWidget);
+      // await tester.dragFrom(Offset(400, 800), const Offset(-400, 800));
       await tester.pumpAndSettle();
-      await tester.drag(find.byType(PageView), const Offset(-600, 0));
-      await tester.pumpAndSettle();
-      await tester.drag(find.byType(PageView), const Offset(-600, 0));
-      await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
       final getStartedText = "Get Started".textX();
       expect(getStartedText, findsOneWidget);
       await tester.pumpAndSettle();
@@ -70,7 +86,7 @@ void main() {
       // runZonedGuarded(app.main, (error, stack) {
       // });
       await app.main();
-      await binding.convertFlutterSurfaceToImage();
+      // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
       await tester.pumpAndSettle();
       expect((app.VocabApp).typeX(), findsOneWidget);
@@ -117,7 +133,7 @@ void main() {
 
     testWidgets("User stays loggedIn", (widgetTester) async {
       await app.main();
-      await binding.convertFlutterSurfaceToImage();
+      // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
       await widgetTester.pumpAndSettle();
       expect((Dashboard).typeX(), findsOneWidget);

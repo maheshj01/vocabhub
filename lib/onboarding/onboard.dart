@@ -128,6 +128,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               child: index == 3
                   ? VHButton(
                       height: 48,
+                      width: 160,
                       isLoading: isLoading,
                       onTap: onBoardComplete,
                       label: 'Get Started')
