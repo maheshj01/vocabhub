@@ -231,6 +231,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
           }),
           hLine(),
           settingTile('Logout', trailingIcon: Icons.logout, onTap: () async {
+            user.loggedIn = false;
             authController.logout(context);
             Navigate.pushAndPopAll(context, AppSignIn());
           }),

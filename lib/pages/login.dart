@@ -47,6 +47,7 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
         } else {
           existingUser.loggedIn = true;
           _userNotifier.setUser(existingUser);
+          await AuthService.updateLogin(email: existingUser.email, isLoggedIn: true);
           _requestNotifier.value = Response(state: RequestState.done);
           Navigate.pushAndPopAll(context, AdaptiveLayout());
           firebaseAnalytics.logSignIn(user!);
