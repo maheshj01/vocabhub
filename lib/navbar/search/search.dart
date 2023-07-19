@@ -1,11 +1,14 @@
+import 'dart:async';
+
 import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:navbar_router/navbar_router.dart';
-import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/navbar/dashboard/bookmarks.dart';
+import 'package:vocabhub/navbar/error_page.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
@@ -81,24 +84,35 @@ class _MobileViewState extends State<MobileView> {
   Future<void> getWordsByAlphabet() async {
     response.value = response.value.copyWith(state: RequestState.active);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      words = await VocabStoreService.getAllWords(sort: true);
-      List<List<Word>> wordsByAlphabet = [];
-      words.forEach((element) {
-        final index = element.word[0].toUpperCase().codeUnitAt(0) - 65;
-        if (wordsByAlphabet.length <= index) {
-          wordsByAlphabet.add([element]);
-        } else {
-          wordsByAlphabet[index].add(element);
+      try {
+        words = await VocabStoreService.getAllWords(sort: true);
+        List<List<Word>> wordsByAlphabet = [];
+        words.forEach((element) {
+          final index = element.word[0].toUpperCase().codeUnitAt(0) - 65;
+          if (wordsByAlphabet.length <= index) {
+            wordsByAlphabet.add([element]);
+          } else {
+            wordsByAlphabet[index].add(element);
+          }
+        });
+        if (NavbarNotifier.currentIndex == SEARCH_INDEX) {
+          showToast('${words.length} Words fetched successfully');
         }
-      });
-      if (NavbarNotifier.currentIndex == SEARCH_INDEX) {
-        showToast('${words.length} Words fetched successfully');
+        response.value = response.value.copyWith(
+            data: wordsByAlphabet,
+            state: RequestState.done,
+            status: 200,
+            message: 'Words by Alphabet fetched successfully');
+      } catch (_) {
+        NavbarNotifier.showSnackBar(context, NETWORK_ERROR, bottom: 0);
+        if (_.runtimeType == TimeoutException) {
+          response.value =
+              response.value.copyWith(state: RequestState.error, message: NETWORK_ERROR);
+        } else {
+          response.value =
+              response.value.copyWith(state: RequestState.error, message: _.toString());
+        }
       }
-      response.value = response.value.copyWith(
-          data: wordsByAlphabet,
-          state: RequestState.done,
-          status: 200,
-          message: 'Words by Alphabet fetched successfully');
     });
   }
 
@@ -144,6 +158,17 @@ class _MobileViewState extends State<MobileView> {
                 builder: (context, Response resp, child) {
                   if (resp.state == RequestState.active) {
                     return LoadingWidget();
+                  }
+                  if (resp.state == RequestState.error) {
+                    return Container(
+                      padding: 16.0.allPadding,
+                      child: ErrorPage(
+                        onRetry: () async {
+                          getWordsByAlphabet();
+                        },
+                        errorMessage: resp.message,
+                      ),
+                    );
                   }
                   final List<List<Word>> wordsByAlphabet = resp.data as List<List<Word>>;
                   return Padding(

@@ -16,12 +16,16 @@ class ErrorPage extends StatelessWidget {
         children: [
           Text(
             errorMessage,
+            textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           SizedBox(height: 16),
           Text(
             "Tap to retry",
-            style: Theme.of(context).textTheme.titleMedium,
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(color: Theme.of(context).colorScheme.primary),
           ),
         ],
       )),
