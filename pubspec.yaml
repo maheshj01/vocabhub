@@ -33,7 +33,7 @@ dependencies:
   pull_to_refresh: ^2.0.0
   realtime_client: ^0.1.15
   share_plus: ^4.1.0
-  shared_preferences: ^2.0.16
+  shared_preferences: ^2.2.0
   smooth_page_indicator: ^1.1.0
   supabase: ^0.3.6
   url_launcher: ^6.1.8

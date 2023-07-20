@@ -32,6 +32,24 @@ void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
       as IntegrationTestWidgetsFlutterBinding;
   group('Test App should load:', () {
+    testWidgets('Skip Onboarding', (WidgetTester tester) async {
+      await app.main();
+      // await binding.convertFlutterSurfaceToImage();
+      await Future.delayed(const Duration(seconds: 3));
+      await tester.pumpAndSettle();
+      expect((app.VocabApp).typeX(), findsOneWidget);
+      await tester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
+      expect((WelcomePage).typeX(), findsOneWidget);
+      await tester.pumpAndSettle();
+      final skipForNow = "Skip for now".textX();
+      expect(skipForNow, findsOneWidget);
+      await tester.pumpAndSettle();
+      await tester.tap(skipForNow);
+      await tester.pumpAndSettle();
+      expect((AppSignIn).typeX(), findsOneWidget);
+    });
+
     testWidgets('New User should be onboarded', (WidgetTester tester) async {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
@@ -41,8 +59,6 @@ void main() {
       await tester.pumpAndSettle();
       await Future.delayed(const Duration(seconds: 1));
       expect((WelcomePage).typeX(), findsOneWidget);
-      // final title = "Welcome\nto\nVocabhub".textX();
-      // expect(title, findsOneWidget);
       await tester.pumpAndSettle();
       final takeATour = "Take a tour".textX();
       expect(takeATour, findsOneWidget);
@@ -51,32 +67,27 @@ void main() {
       await tester.pumpAndSettle();
       expect((OnboardingPage).typeX(), findsOneWidget);
       await tester.pumpAndSettle();
-      await Future.delayed(const Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 2));
       final title1 = 'A Crowd Sourced platform'.textX();
       expect(title1, findsOneWidget);
-      final list = List.generate(3, (index) => index).toList();
-      double offset = 400;
-      await for (final item in Stream.fromIterable(list)) {
-        await tester.timedDragFrom(
-            Offset(offset, 800), Offset(-offset, 800), Duration(milliseconds: 500));
-        await tester.pumpAndSettle();
-        offset += 400;
-      }
-      // await Future.delayed(const Duration(seconds: 1));
-      // final title2 = 'Word of the Day'.textX();
-      // expect(title2, findsOneWidget);
-      // await Future.delayed(const Duration(seconds: 1));
-      // await tester.dragFrom(Offset(400, 800), const Offset(-400, 800));
-      // // await tester.drag(pageView, const Offset(-400, 400));
-      // await tester.pumpAndSettle();
-      // final title3 = 'Explore curated words'.textX();
-      // expect(title3, findsOneWidget);
-      // await tester.dragFrom(Offset(400, 800), const Offset(-400, 800));
-      await tester.pumpAndSettle();
+      await tester.dragFrom(Offset(400, 0), const Offset(-400, 0));
+      await tester.pump(Duration(seconds: 2));
       await Future.delayed(const Duration(seconds: 1));
+      final title2 = 'Word of the Day'.textX();
+      expect(title2, findsOneWidget);
+      await Future.delayed(const Duration(seconds: 2));
+      await tester.pump(Duration(seconds: 2));
+      await tester.dragFrom(Offset(400, 0), const Offset(-400, 0));
+      await Future.delayed(const Duration(seconds: 1));
+      final title3 = 'Explore curated words'.textX();
+      expect(title3, findsOneWidget);
+      await Future.delayed(const Duration(seconds: 1));
+      await tester.dragFrom(Offset(400, 0),
+          const Offset(-400, 0)); // // await tester.drag(pageView, const Offset(-400, 400));
+      await Future.delayed(const Duration(seconds: 1));
+      await tester.pump(Duration(seconds: 2));
       final getStartedText = "Get Started".textX();
       expect(getStartedText, findsOneWidget);
-      await tester.pumpAndSettle();
       await tester.tap(getStartedText);
       await tester.pumpAndSettle();
       expect((AppSignIn).typeX(), findsOneWidget);
@@ -112,9 +123,11 @@ void main() {
       await tester.pumpAndSettle();
       expect((Dashboard).typeX(), findsNothing);
       await tester.pumpAndSettle();
-
       final signInTextFinder = "Sign In with Google".textX();
       expect(signInTextFinder, findsOneWidget);
+      final closeIcon = (Icons.close).iconX();
+      expect(closeIcon, findsOneWidget);
+      await tester.tap(closeIcon);
       await tester.pumpAndSettle();
       await tester.tap(signInTextFinder);
       await tester.pumpAndSettle();
@@ -163,6 +176,7 @@ void main() {
         ),
         UserProfile(),
       ];
+
       final List<NavbarItem> items = [
         NavbarItem(Icons.dashboard, 'Dashboard'),
         NavbarItem(Icons.search, 'Search'),
@@ -172,6 +186,7 @@ void main() {
 
       await Future.delayed(const Duration(seconds: 3));
       await widgetTester.pumpAndSettle();
+
       for (int i = 0; i < items.length; i++) {
         final icon = items[i].iconData.iconX();
         expect(icon, findsOneWidget);
@@ -182,21 +197,24 @@ void main() {
       final profile = baseWidgets[3].runtimeType.typeX();
 
       expect(dashBoard, findsOneWidget);
-
+      await Future.delayed(const Duration(seconds: 1));
       await widgetTester.pumpAndSettle();
       await widgetTester.tap(items[1].iconData.iconX());
       await widgetTester.pumpAndSettle();
       expect(search, findsOneWidget);
+      await Future.delayed(const Duration(seconds: 1));
 
       await widgetTester.pumpAndSettle();
       await widgetTester.tap(items[2].iconData.iconX());
       await widgetTester.pumpAndSettle();
       expect(explore, findsOneWidget);
+      await Future.delayed(const Duration(seconds: 1));
 
       await widgetTester.pumpAndSettle();
       await widgetTester.tap(items[3].iconData.iconX());
       await widgetTester.pumpAndSettle();
       expect(profile, findsOneWidget);
+      await Future.delayed(const Duration(seconds: 1));
       // final bytes = await binding.takeScreenshot('test-3');
       // final File image = File('screenshots/test-3.png');
       // image.writeAsBytesSync(bytes);

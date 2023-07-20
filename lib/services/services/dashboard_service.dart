@@ -37,7 +37,7 @@ class DashboardService extends ServiceBase {
   Future<Word> getLastPublishedWod() async {
     try {
       final String? wordString = _sharedPreferences.getString(kLastPublishedWord) ?? '';
-      if (wordString != null || wordString!.isNotEmpty) {
+      if (wordString != null && wordString.isNotEmpty) {
         // decode the json string to word object
         final decodedString = jsonDecode(wordString);
         final Word word = Word.fromJson(decodedString as Map<String, dynamic>);
