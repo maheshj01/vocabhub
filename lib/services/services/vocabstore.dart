@@ -84,9 +84,9 @@ class VocabStoreService {
         if (sort) {
           words.sort((a, b) => a.word.compareTo(b.word));
         }
-        localService.setLocalWords(words);
+        dashboardController.words = words;
       } else {
-        return localService.localWords;
+        return dashboardController.words;
       }
       return words;
     } catch (_) {

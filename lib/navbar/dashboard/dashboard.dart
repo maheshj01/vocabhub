@@ -40,13 +40,13 @@ class _DashboardState extends State<Dashboard> {
 
   Future<void> getWords() async {
     try {
-      final words = await VocabStoreService.getAllWords();
+      final words = dashboardController.words;
       if (words.isNotEmpty) {
         AppStateWidget.of(context).setWords(words);
         // updateWord(words);
       }
     } catch (_) {
-      final localWords = localService.localWords;
+      final localWords = dashboardController.words;
       if (mounted) {
         AppStateWidget.of(context).setWords(localWords);
       }

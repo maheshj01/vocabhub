@@ -53,13 +53,15 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
 
   Future<void> getWords() async {
     try {
-      final words = await VocabStoreService.getAllWords();
+      final words = dashboardController.words;
       if (words.isNotEmpty) {
         AppStateWidget.of(context).setWords(words);
-        // updateWord(words);
+      } else {
+        final localWords = dashboardController.words;
+        AppStateWidget.of(context).setWords(localWords);
       }
     } catch (_) {
-      final localWords = localService.localWords;
+      final localWords = dashboardController.words;
       AppStateWidget.of(context).setWords(localWords);
       if (_.runtimeType == TimeoutException) {
         showSnackBar(NETWORK_ERROR);

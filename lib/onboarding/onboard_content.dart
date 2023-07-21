@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:navbar_router/navbar_router.dart';
 import 'package:rive/rive.dart';
-import 'package:vocabhub/main.dart';
-import 'package:vocabhub/pages/login.dart';
+import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/utils/extensions.dart';
 
 class OnboardingContentPage extends StatefulWidget {
@@ -30,7 +28,6 @@ class OnboardingContentPage extends StatefulWidget {
 class _OnboardingContentPageState extends State<OnboardingContentPage> {
   @override
   void didUpdateWidget(covariant OnboardingContentPage oldWidget) {
-    // TODO: implement didUpdateWidget
     print(oldWidget.index == widget.index);
     super.didUpdateWidget(oldWidget);
   }
@@ -58,6 +55,9 @@ class _OnboardingContentPageState extends State<OnboardingContentPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    if (widget.index == 4) {
+      return WordAnimationWidget();
+    }
     return Container(
       color: widget.color,
       alignment: Alignment.center,
@@ -105,5 +105,21 @@ class _OnboardingContentPageState extends State<OnboardingContentPage> {
         ],
       ),
     );
+  }
+}
+
+class WordAnimationWidget extends StatefulWidget {
+  const WordAnimationWidget({super.key});
+
+  @override
+  State<WordAnimationWidget> createState() => _WordAnimationWidgetState();
+}
+
+class _WordAnimationWidgetState extends State<WordAnimationWidget> {
+  @override
+  Widget build(BuildContext context) {
+    final words = AppStateScope.of(context).words;
+    print(words!.length);
+    return const Placeholder();
   }
 }

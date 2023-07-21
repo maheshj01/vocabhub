@@ -9,6 +9,7 @@ import 'package:vocabhub/utils/logger.dart';
 class DashboardService extends ServiceBase {
   late SharedPreferences _sharedPreferences;
   final kLastPublishedWord = 'kLastPublishedWord';
+  final kWords = 'kWords';
   late Logger _logger;
 
 //   Future<void> setWodPublished(bool value) async {
@@ -51,6 +52,21 @@ class DashboardService extends ServiceBase {
     } catch (e) {
       _logger.e(e.toString());
       rethrow;
+    }
+  }
+
+  Future<void> setWords(List<Word> words) async {
+    final List<String> wordsString = words.map((e) => jsonEncode(e.toJson())).toList();
+    await _sharedPreferences.setStringList(kWords, wordsString);
+  }
+
+  Future<List<Word>> getWords() async {
+    final List<String>? wordsString = _sharedPreferences.getStringList(kWords);
+    if (wordsString != null && wordsString.isNotEmpty) {
+      final List<Word> words = wordsString.map((e) => Word.fromJson(jsonDecode(e))).toList();
+      return words;
+    } else {
+      return await VocabStoreService.getAllWords();
     }
   }
 

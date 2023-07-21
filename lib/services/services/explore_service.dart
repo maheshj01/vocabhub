@@ -37,12 +37,12 @@ class ExploreService extends ServiceBase {
       }
       if (response.status == 500) {
         _logger.e("Device is offline");
-        return localService.localWords;
+        return dashboardController.words;
       }
       throw "Something went wrong";
     } catch (_) {
       _logger.e(_.toString());
-      return localService.localWords;
+      return dashboardController.words;
     }
   }
 
