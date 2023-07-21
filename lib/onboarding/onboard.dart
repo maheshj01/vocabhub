@@ -26,56 +26,55 @@ class _OnboardingPageState extends State<OnboardingPage> {
     Navigate.pushAndPopAll(context, AppSignIn());
   }
 
-  final List<Widget> pages = [
-    OnboardingContentPage(
-      index: 0,
-      title: 'A Crowd Sourced platform',
-      assetPath: 'assets/rive/team-work.gif',
-      description: 'We are a community of learners, Your contribution helps everyone',
-      animations: [],
-      color: Colors.white,
-    ),
-    OnboardingContentPage(
-      index: 1,
-      title: 'Word of the Day',
-      assetPath: 'assets/rive/wod.riv',
-      description: 'Learn a new word everyday throught out the year',
-      color: Color.fromRGBO(10, 6, 17, 1.0),
-      animations: [
-        'Animation 1',
-      ],
-    ),
-    // Add your onboarding pages here
-    OnboardingContentPage(
-      index: 2,
-      title: 'Explore curated words',
-      description:
-          'Explore personalized words and definitions everytime you scroll through the explore page',
-      color: Color(0xffA8C9F8),
-      assetPath: 'assets/rive/balloon.riv',
-      animations: [
-        'Balloon Rotation',
-        'Cloud Rotation',
-        'Cloud 1',
-        'Cloud 2',
-        'Cloud 3',
-        'Cloud 4',
-      ],
-    ),
-    OnboardingContentPage(
-      index: 3,
-      title: 'Dark Mode',
-      assetPath: 'assets/rive/dark.riv',
-      description: 'Dark mode is here to save your eyes',
-      animations: [
-        'orbitAnimation',
-      ],
-      color: Color(0xff151421),
-    ),
-  ];
   bool isLoading = false;
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      OnboardingContentPage(
+        index: 0,
+        assetPath: 'assets/rive/dark.riv',
+        animations: [
+          'orbitAnimation',
+        ],
+        color: Color.fromARGB(255, 180, 255, 254),
+      ),
+      OnboardingContentPage(
+        index: 1,
+        assetPath: 'assets/rive/team-work.gif',
+        animations: [],
+        color: Colors.white,
+      ),
+      OnboardingContentPage(
+        index: 2,
+        assetPath: 'assets/rive/wod.riv',
+        color: Color.fromRGBO(10, 6, 17, 1.0),
+        animations: [
+          'Animation 1',
+        ],
+      ),
+      // Add your onboarding pages here
+      OnboardingContentPage(
+        index: 3,
+        color: Color(0xffA8C9F8),
+        assetPath: 'assets/rive/balloon.riv',
+        animations: [
+          'Balloon Rotation',
+          'Cloud Rotation',
+          'Cloud 1',
+          'Cloud 2',
+          'Cloud 3',
+          'Cloud 4',
+        ],
+      ),
+      OnboardingContentPage(
+        index: 4,
+        assetPath: 'assets/rive/dark.riv',
+        animations: [
+          'orbitAnimation',
+        ],
+        color: Color(0xff151421),
+      ),
+    ];
     return Scaffold(
         body: Stack(
       children: [
@@ -125,7 +124,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: const EdgeInsets.only(bottom: 100.0),
-              child: index == 3
+              child: index == 4
                   ? VHButton(
                       height: 48,
                       width: 160,

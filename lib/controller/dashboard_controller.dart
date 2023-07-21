@@ -11,6 +11,7 @@ class DashboardController extends ChangeNotifier with ServiceBase {
   List<Word> get words => _words;
 
   set words(List<Word> words) {
+    _words.clear();
     _words.addAll(words);
     notifyListeners();
   }

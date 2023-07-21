@@ -35,3 +35,19 @@ const String ratingDescription =
 const String exploreScrollMessage = 'Swipe up to explore more words';
 
 const String NETWORK_ERROR = 'Please check your internet connectivity!';
+
+List<String> onBoardingTitles = [
+  'Word Power Unleashed',
+  'Collaborative Learning Community',
+  'Word of the Day',
+  'Explore curated words',
+  'Dark Mode and color themes'
+];
+
+List<String> onBoardingDescriptions = [
+  "Supercharge your vocabulary with 800+ curated GRE words, synonyms, mnemonics, and examples for comprehensive language learning.",
+  'Join our language community, contribute words, suggest edits, and share examples to build a platform for continuous learning and improvement.',
+  'Stay inspired with our captivating "Word of the Day" feature, discovering intriguing new words with definitions, examples, and insights every day, all year long.',
+  "Explore a diverse range of captivating words in the 'Explore' section. We curate personalized learning experiences, empowering you to effectively expand your vocabulary and master new words.",
+  "Personalize your app experience with Dark Mode and personalized color schemes. Enjoy a learning journey that's uniquely yours, with an app that matches your style and feels tailor-made for you"
+];

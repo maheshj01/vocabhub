@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/pages/login.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
 
@@ -29,8 +28,6 @@ class _WelcomePageState extends State<WelcomePage> {
   String title = 'Welcome to Vocabhub';
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final themeData = VocabTheme.getThemeFromSeed(Colors.blue);
     return Material(
       child: Container(
         color: Colors.black,
