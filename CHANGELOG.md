@@ -1,3 +1,9 @@
+### 0.5.9+22 July 21, 2023
+
+- Fix onboarding page
+- And adds basic integration tests
+- Fix app blocked at splashscreen when offline
+
 ### 0.5.8+21 July 19, 2023
 
 - Make User Profile publicly visible
