@@ -36,7 +36,7 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
             _userNotifier.setUser(registeredUser);
             _requestNotifier.value = Response(state: RequestState.done, data: registeredUser);
             Navigate.pushAndPopAll(context, AdaptiveLayout(),
-                slideTransitionType: TransitionType.ttb);
+                transitionType: TransitionType.ttb);
             firebaseAnalytics.logNewUser(registeredUser);
           } else {
             _userNotifier.loggedIn = false;
@@ -99,8 +99,7 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
             foregroundColor: Colors.blue[50],
             label: 'Continue as a Guest',
             onTap: () {
-              Navigate.pushReplace(context, AdaptiveLayout(),
-                  slideTransitionType: TransitionType.scale);
+              Navigate.pushReplace(context, AdaptiveLayout(), transitionType: TransitionType.scale);
               Settings.setSkipCount = Settings.maxSkipCount;
             }, // _handleSignIn(context),
           ));

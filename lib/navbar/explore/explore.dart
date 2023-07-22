@@ -56,7 +56,7 @@ class _ExploreWordsMobileState extends ConsumerState<ExploreWordsMobile> {
   Future<void> exploreWords() async {
     _request.value = Response(state: RequestState.active);
     final user = ref.watch(userNotifierProvider);
-    final newWords = await exploreController.exploreWords(user!.email, page: page);
+    final newWords = await exploreController.exploreWords(user.email, page: page);
     newWords.shuffle();
     max = newWords.length;
     if (mounted) {

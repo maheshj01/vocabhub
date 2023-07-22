@@ -72,6 +72,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     width: 160,
                     onTap: () {
                       Navigate.push(context, OnboardingPage(),
+                          transitionDuration: Duration(milliseconds: 500),
                           transitionType: TransitionType.reveal);
                     },
                     label: 'Take a tour'),
