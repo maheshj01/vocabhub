@@ -12,48 +12,28 @@ import 'package:vocabhub/navbar/error_page.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/services/analytics.dart';
-import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
 
-class Dashboard extends StatefulWidget {
+class Dashboard extends ConsumerStatefulWidget {
   static String route = '/';
   const Dashboard({Key? key}) : super(key: key);
 
   @override
-  State<Dashboard> createState() => _DashboardState();
+  ConsumerState<Dashboard> createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class _DashboardState extends ConsumerState<Dashboard> {
   @override
   void initState() {
     _dashBoardNotifier = ValueNotifier(response);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      getWords();
       publishWordOfTheDay();
     });
     super.initState();
-  }
-
-  Future<void> getWords() async {
-    try {
-      final words = dashboardController.words;
-      if (words.isNotEmpty) {
-        AppStateWidget.of(context).setWords(words);
-        // updateWord(words);
-      }
-    } catch (_) {
-      final localWords = dashboardController.words;
-      if (mounted) {
-        AppStateWidget.of(context).setWords(localWords);
-      }
-      if (_.runtimeType == TimeoutException && mounted) {
-        NavbarNotifier.showSnackBar(context, NETWORK_ERROR, bottom: 0);
-      }
-    }
   }
 
   /// get latest word of the day sort by descending order of created_at
@@ -64,25 +44,24 @@ class _DashboardState extends State<Dashboard> {
   /// todo word of the day
   Future<void> publishWordOfTheDay() async {
     _dashBoardNotifier.value = response.copyWith(state: RequestState.active, message: "Loading...");
-    final state = AppStateWidget.of(context);
     try {
       // If word of the day already published then get word of the day
       if (dashboardController.isWodPublishedToday) {
-        final publishedWod = dashboardController.lastPublishedWord;
-        state.setWordOfTheDay(publishedWod);
-        _dashBoardNotifier.value = response.copyWith(state: RequestState.done);
+        final publishedWod = dashboardController.wordOfTheDay;
+        _dashBoardNotifier.value = response.copyWith(data: publishedWod, state: RequestState.done);
         return;
       }
-      final allWords = await VocabStoreService.getAllWords();
+      final allWords = dashboardController.words;
       final random = Random();
       final randomWord = allWords[random.nextInt(allWords.length)];
       final success = await dashboardController.publishWod(randomWord);
       if (success) {
-        state.setWordOfTheDay(randomWord);
+        _dashBoardNotifier.value = response.copyWith(state: RequestState.done);
       } else {
         NavbarNotifier.showSnackBar(context, "Something went wrong!");
+        _dashBoardNotifier.value =
+            response.copyWith(state: RequestState.error, message: "Something went wrong!");
       }
-      _dashBoardNotifier.value = response.copyWith(state: RequestState.done);
     } catch (e) {
       NavbarNotifier.showSnackBar(context, NETWORK_ERROR, bottom: 0);
       _dashBoardNotifier.value =
@@ -101,7 +80,6 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    final state = AppStateWidget.of(context);
     return Material(
         child: ValueListenableBuilder<Response>(
             valueListenable: _dashBoardNotifier,
@@ -110,7 +88,6 @@ class _DashboardState extends State<Dashboard> {
                 return ErrorPage(
                   onRetry: () async {
                     await dashboardController.initService();
-                    state.setWordOfTheDay(dashboardController.lastPublishedWord);
                     await publishWordOfTheDay();
                   },
                   errorMessage: response.message,
@@ -124,8 +101,7 @@ class _DashboardState extends State<Dashboard> {
                   }
                   return RefreshIndicator(
                       onRefresh: () async {
-                        await dashboardController.getLastPublishedWord();
-                        state.setWordOfTheDay(dashboardController.lastPublishedWord);
+                        await dashboardController.initService();
                         await publishWordOfTheDay();
                       },
                       child: DashboardMobile());
@@ -142,12 +118,7 @@ class DashboardMobile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userNotifierProvider);
-    final word = AppStateScope.of(context).wordOfTheDay;
-
-    if (word == null) {
-      return LoadingWidget();
-    }
-
+    final word = dashboardController.wordOfTheDay;
     return CustomScrollView(
       physics: BouncingScrollPhysics(),
       slivers: <Widget>[
@@ -194,28 +165,32 @@ class DashboardMobile extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: 16.0.verticalPadding,
-                  child: heading('Word of the day'),
-                ),
-                OpenContainer<bool>(
-                    openBuilder: (BuildContext context, VoidCallback openContainer) {
-                      return WordDetail(
-                        word: word,
-                        isWod: true,
-                        title: 'Word of the Day',
-                      );
-                    },
-                    tappable: true,
-                    closedShape: 16.0.rounded,
-                    transitionType: ContainerTransitionType.fadeThrough,
-                    closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                      return WoDCard(
-                        word: word,
-                        color: Colors.green.shade300,
-                        title: '${word.word}'.toUpperCase(),
-                      );
-                    }),
+                word.word.isEmpty
+                    ? SizedBox.shrink()
+                    : Padding(
+                        padding: 16.0.verticalPadding,
+                        child: heading('Word of the day'),
+                      ),
+                word.word.isEmpty
+                    ? SizedBox.shrink()
+                    : OpenContainer<bool>(
+                        openBuilder: (BuildContext context, VoidCallback openContainer) {
+                          return WordDetail(
+                            word: word,
+                            isWod: true,
+                            title: 'Word of the Day',
+                          );
+                        },
+                        tappable: true,
+                        closedShape: 16.0.rounded,
+                        transitionType: ContainerTransitionType.fadeThrough,
+                        closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                          return WoDCard(
+                            word: word,
+                            color: Colors.green.shade300,
+                            title: '${word.word}'.toUpperCase(),
+                          );
+                        }),
                 Padding(
                   padding: 6.0.verticalPadding,
                 ),
@@ -327,18 +302,17 @@ class WoDCard extends StatelessWidget {
   }
 }
 
-class DashboardDesktop extends StatelessWidget {
+class DashboardDesktop extends ConsumerWidget {
   static String route = '/';
   const DashboardDesktop({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final word = AppStateScope.of(context).wordOfTheDay;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dashBoardRef = ref.watch(dashBoardNotifier);
     final colorScheme = Theme.of(context).colorScheme;
-    if (word == null) {
-      return LoadingWidget();
-    }
     final size = MediaQuery.of(context).size;
+    final word = dashBoardRef.wordOfTheDay;
+
     return Scaffold(
       backgroundColor: colorScheme.background,
       body: Row(

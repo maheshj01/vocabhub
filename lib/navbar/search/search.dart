@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:animations/animations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/constants/constants.dart';
@@ -11,7 +12,6 @@ import 'package:vocabhub/navbar/dashboard/bookmarks.dart';
 import 'package:vocabhub/navbar/error_page.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/analytics.dart';
-import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
@@ -22,15 +22,15 @@ import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/word_list_tile.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
 
-class Search extends StatefulWidget {
+class Search extends ConsumerStatefulWidget {
   static String route = '/';
   const Search({Key? key}) : super(key: key);
 
   @override
-  State<Search> createState() => _SearchState();
+  ConsumerState<Search> createState() => _SearchState();
 }
 
-class _SearchState extends State<Search> {
+class _SearchState extends ConsumerState<Search> {
   Word? selectedWord;
   int selectedIndex = 0;
   TextEditingController searchController = TextEditingController();
@@ -43,11 +43,8 @@ class _SearchState extends State<Search> {
   final analytics = Analytics.instance;
   @override
   Widget build(BuildContext context) {
-    final words = AppStateScope.of(context).words;
+    final words = ref.watch(dashBoardNotifier).words;
     return ResponsiveBuilder(desktopBuilder: (context) {
-      if (words == null) {
-        return LoadingWidget();
-      }
       return Row(
         children: [
           Flexible(
@@ -65,9 +62,6 @@ class _SearchState extends State<Search> {
         ],
       );
     }, mobileBuilder: (BuildContext context) {
-      if (words == null) {
-        return LoadingWidget();
-      }
       return MobileView();
     });
   }
@@ -136,9 +130,13 @@ class _MobileViewState extends State<MobileView> {
             padding: 16.0.horizontalPadding + 8.0.topPadding,
             child: SearchBuilder(
               ontap: () {
+                final size = MediaQuery.of(context).size;
                 searchController.clearText();
                 Navigate.push(context, SearchView(),
-                    transitionType: TransitionType.fade, isRootNavigator: true);
+                    offset: Offset(size.width / 2, 100),
+                    transitionDuration: Duration(milliseconds: 500),
+                    transitionType: TransitionType.reveal,
+                    isRootNavigator: true);
               },
               readOnly: true,
               onChanged: (x) {},
@@ -243,43 +241,6 @@ class WordTile extends StatelessWidget {
   }
 }
 
-class TOP10WordsCard extends StatefulWidget {
-  const TOP10WordsCard({super.key});
-
-  @override
-  State<TOP10WordsCard> createState() => _TOP10WordsCardState();
-}
-
-class _TOP10WordsCardState extends State<TOP10WordsCard> {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        children: [
-          ListTile(
-            title: Text('Top 10 Words'),
-            trailing: IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {},
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text('Word $index'),
-                  subtitle: Text('Meaning $index'),
-                );
-              },
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-
 class SearchView extends StatefulWidget {
   static String route = '/searchview';
 
@@ -331,7 +292,7 @@ class _SearchViewState extends State<SearchView> {
 
   @override
   Widget build(BuildContext context) {
-    words = AppStateScope.of(context).words!;
+    words = dashboardController.words;
     final colorScheme = Theme.of(context).colorScheme;
     return Material(
       child: SafeArea(
@@ -522,7 +483,7 @@ class _WordListState extends State<WordList> {
     widget.controller ??= ScrollController();
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _words = AppStateScope.of(context).words!;
+      _words = dashboardController.words;
       wordsNotifier.value = _words;
     });
   }
@@ -558,7 +519,6 @@ class _WordListState extends State<WordList> {
 
   @override
   Widget build(BuildContext context) {
-    final state = AppStateWidget.of(context);
     return ValueListenableBuilder<List<Word>>(
         valueListenable: wordsNotifier,
         builder: (BuildContext context, List<Word> value, Widget? child) {
@@ -579,11 +539,10 @@ class _WordListState extends State<WordList> {
                         },
                         onChanged: (x) {
                           // /// Searching on the Web
-                          _words = AppStateScope.of(context).words!;
+                          _words = dashboardController.words;
                           // wordsNotifier.value = _words;
                           if (x.isEmpty) {
                             wordsNotifier.value = _words;
-                            state.setWords(_words);
                             return;
                           }
                           // final List<Word> result = [];

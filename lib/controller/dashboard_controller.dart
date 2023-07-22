@@ -4,7 +4,7 @@ import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/service_base.dart';
 
 class DashboardController extends ChangeNotifier with ServiceBase {
-  Word? _lastPublishedWord;
+  Word? _wordOfTheDay;
   late final DashboardService _dashboardService;
   final List<Word> _words = [];
 
@@ -16,39 +16,35 @@ class DashboardController extends ChangeNotifier with ServiceBase {
     notifyListeners();
   }
 
-  Word get lastPublishedWord => _lastPublishedWord ?? Word.init();
+  Word get wordOfTheDay => _wordOfTheDay ?? Word.init();
 
   bool get isWodPublishedToday {
     final now = DateTime.now().toUtc();
-    final differenceInHours = now.difference(_lastPublishedWord!.created_at!).inHours;
+    final differenceInHours = now.difference(_wordOfTheDay!.created_at!).inHours;
     return differenceInHours < 24;
   }
 
-  Future<void> setPublishedWord(Word word) async {
-    _lastPublishedWord = word;
-    notifyListeners();
-    _dashboardService.setPublishedWord(word);
-  }
-
   Future<bool> publishWod(Word word) async {
+    _wordOfTheDay = word;
+    notifyListeners();
     return await _dashboardService.publishWod(word);
   }
 
   Future<Word> getLastPublishedWord() async {
     final _lastWord = await _dashboardService.getLastPublishedWod();
-    await setPublishedWord(_lastWord);
+    await _dashboardService.setPublishedWord(_lastWord);
     return _lastWord;
   }
 
   @override
   Future<void> initService() async {
     try {
-      if (_lastPublishedWord == null) {
-        _lastPublishedWord = Word.init();
+      if (_wordOfTheDay == null) {
+        _wordOfTheDay = Word.init();
       }
       _dashboardService = DashboardService();
       await _dashboardService.initService();
-      _lastPublishedWord = await getLastPublishedWord();
+      _wordOfTheDay = await getLastPublishedWord();
       words = await _dashboardService.getWords();
     } catch (e) {
       rethrow;

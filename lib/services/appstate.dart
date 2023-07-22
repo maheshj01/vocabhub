@@ -3,11 +3,10 @@ import 'package:vocabhub/controller/settings_controller.dart';
 import 'package:vocabhub/models/models.dart';
 
 class AppState {
-  final List<Word>? words;
   final Word? wordOfTheDay;
   final SettingsController? settingsController;
 
-  const AppState({this.words, this.wordOfTheDay, this.settingsController});
+  const AppState({this.wordOfTheDay, this.settingsController});
 
   AppState copyWith({
     List<Word>? words,
@@ -15,14 +14,14 @@ class AppState {
     Word? wordOfTheDay,
     SettingsController? settingsController,
   }) {
-    return AppState(words: words ?? this.words, wordOfTheDay: wordOfTheDay ?? this.wordOfTheDay);
+    return AppState(wordOfTheDay: wordOfTheDay ?? this.wordOfTheDay);
   }
 }
 
 class AppStateScope extends InheritedWidget {
   AppStateScope(this.data, {Key? key, required Widget child}) : super(key: key, child: child);
 
-  AppState data = AppState(words: []);
+  AppState data = AppState();
 
   static AppState of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<AppStateScope>()!.data;
@@ -30,8 +29,7 @@ class AppStateScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(AppStateScope oldWidget) {
-    return data.words != oldWidget.data.words ||
-        data.settingsController != oldWidget.data.settingsController ||
+    return data.settingsController != oldWidget.data.settingsController ||
         data.wordOfTheDay != oldWidget.data.wordOfTheDay;
   }
 }
@@ -53,24 +51,6 @@ class AppStateWidget extends StatefulWidget {
 
 class AppStateWidgetState extends State<AppStateWidget> {
   AppState _data = AppState();
-
-  void setWords(List<Word> words) {
-    if (words != _data.words) {
-      setState(() {
-        _data = _data.copyWith(
-          words: words,
-        );
-      });
-    }
-  }
-
-  void setWordOfTheDay(Word word) {
-    setState(() {
-      _data = _data.copyWith(
-        wordOfTheDay: word,
-      );
-    });
-  }
 
   void setSettings(SettingsController settings) {
     setState(() {

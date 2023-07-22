@@ -8,7 +8,6 @@ import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/controller/explore_controller.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/addword.dart';
-import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/word_state_service.dart';
 import 'package:vocabhub/utils/extensions.dart';
@@ -182,8 +181,8 @@ class _ExploreWordsDesktopState extends State<ExploreWordsDesktop> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final words = AppStateScope.of(context).words;
-    if (words == null || words.isEmpty) return SizedBox.shrink();
+    final words = dashboardController.words;
+    if (words.isEmpty) return SizedBox.shrink();
     return KeyboardListener(
       focusNode: focusNode,
       autofocus: true,

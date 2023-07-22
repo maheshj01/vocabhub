@@ -8,7 +8,7 @@ import 'package:vocabhub/utils/logger.dart';
 
 class DashboardService extends ServiceBase {
   late SharedPreferences _sharedPreferences;
-  final kLastPublishedWord = 'kLastPublishedWord';
+  final kwordOfTheDay = 'kwordOfTheDay';
   final kWords = 'kWords';
   late Logger _logger;
 
@@ -21,7 +21,7 @@ class DashboardService extends ServiceBase {
 //   }
 
   Future<void> setPublishedWord(Word word) async {
-    await _sharedPreferences.setString(kLastPublishedWord, jsonEncode(word.toJson()));
+    await _sharedPreferences.setString(kwordOfTheDay, jsonEncode(word.toJson()));
   }
 
   Future<bool> publishWod(Word word) async {
@@ -37,7 +37,7 @@ class DashboardService extends ServiceBase {
   /// updated record from the database in UTC.
   Future<Word> getLastPublishedWod() async {
     try {
-      final String? wordString = _sharedPreferences.getString(kLastPublishedWord) ?? '';
+      final String? wordString = _sharedPreferences.getString(kwordOfTheDay) ?? '';
       if (wordString != null && wordString.isNotEmpty) {
         // decode the json string to word object
         final decodedString = jsonDecode(wordString);

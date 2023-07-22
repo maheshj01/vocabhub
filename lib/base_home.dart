@@ -37,8 +37,8 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
   @override
   void initState() {
     super.initState();
+    Future.delayed(const Duration(seconds: 5), askForRating);
     Future.wait([
-      getWords(),
       isUpdateAvailable(),
     ]).then((value) {
       if (!user!.isLoggedIn) {
@@ -51,29 +51,11 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     });
   }
 
-  Future<void> getWords() async {
-    try {
-      final words = dashboardController.words;
-      if (words.isNotEmpty) {
-        AppStateWidget.of(context).setWords(words);
-      } else {
-        final localWords = dashboardController.words;
-        AppStateWidget.of(context).setWords(localWords);
-      }
-    } catch (_) {
-      final localWords = dashboardController.words;
-      AppStateWidget.of(context).setWords(localWords);
-      if (_.runtimeType == TimeoutException) {
-        showSnackBar(NETWORK_ERROR);
-      }
-    }
-    Future.delayed(const Duration(seconds: 5), askForRating);
-  }
-
   Future<void> askForRating() async {
     if (!settingsController.hasRatedOnPlaystore && !kIsWeb) {
       final lastRatedAskDate = await settingsController.getLastRatedShown();
-      final diff = DateTime.now().difference(lastRatedAskDate).inDays;
+      final now = DateTime.now();
+      final diff = now.difference(lastRatedAskDate).inDays;
       if (diff > Constants.ratingAskInterval) {
         settingsController.lastRatedDate = DateTime.now();
         showRatingsBottomSheet(context);

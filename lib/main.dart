@@ -25,6 +25,7 @@ import 'utils/settings.dart';
 final userNotifierProvider = Provider<UserModel>((ref) {
   return UserModel.init();
 });
+final dashBoardNotifier = Provider<DashboardController>((ref) => DashboardController());
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
