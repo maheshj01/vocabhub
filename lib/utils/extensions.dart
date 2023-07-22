@@ -69,6 +69,11 @@ extension DateHelper on DateTime {
     final formatter = DateFormat(Constants.dateFormatter);
     return formatter.format(this);
   }
+
+  String standardDateTime() {
+    final formatter = DateFormat(Constants.dateTimeFormatter);
+    return formatter.format(this);
+  }
 }
 
 extension ContainerBorderRadius on double {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CircularAvatar extends StatelessWidget {
   final String? name;
-  final Function()? onTap;
+  final void Function()? onTap;
   final String? url;
   final double radius;
 

@@ -10,6 +10,7 @@ import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
+import 'package:vocabhub/pages/notifications/notification_detail.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
@@ -79,6 +80,7 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
   Widget build(BuildContext context) {
     final userProvider = ref.watch(userNotifierProvider);
     final colorScheme = Theme.of(context).colorScheme;
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: colorScheme.background,
       appBar: AppBar(
@@ -149,7 +151,18 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
               }
             },
           ),
-          50.0.vSpacer(),
+          16.0.vSpacer(),
+          TextButton(
+            child: Text("show edit History"),
+            onPressed: () {
+              showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) => SizedBox(
+                      height: size.height * 0.9,
+                      child: NotificationDetailMobile(word: widget.word!.word)));
+            },
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(

@@ -11,7 +11,8 @@ NotificationModel _$NotificationModelFromJson(Map<String, dynamic> json) => Noti
       EditHistory.fromJson(json),
     );
 
-Map<String, dynamic> _$NotificationModelToJson(NotificationModel instance) => <String, dynamic>{
+Map<String, dynamic> _$NotificationModelToJson(NotificationModel instance) =>
+    <String, dynamic>{
       'user': instance.user,
       'edit': instance.edit,
     };

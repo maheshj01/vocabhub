@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 
 part 'history.g.dart';
@@ -26,6 +27,9 @@ class EditHistory {
   EditState? state;
   EditType? edit_type;
 
+  /// edit details of user (property should be table name)
+  UserModel? users_mobile;
+
   EditHistory(
       {this.edit_id,
       required this.word_id,
@@ -37,10 +41,10 @@ class EditHistory {
       this.created_at,
       this.synonyms = const [],
       this.examples = const [],
+      this.users_mobile,
       this.mnemonics = const []});
 
-  factory EditHistory.fromJson(Map<String, dynamic> json) =>
-      _$EditHistoryFromJson(json);
+  factory EditHistory.fromJson(Map<String, dynamic> json) => _$EditHistoryFromJson(json);
 
   EditHistory copyWith({
     String? edit_id,
@@ -54,6 +58,7 @@ class EditHistory {
     DateTime? created_at,
     EditState? state,
     EditType? edit_type,
+    UserModel? users_mobile,
   }) {
     return EditHistory(
       edit_id: edit_id ?? this.edit_id,
@@ -67,6 +72,7 @@ class EditHistory {
       created_at: created_at ?? this.created_at,
       state: state ?? this.state,
       edit_type: edit_type ?? this.edit_type,
+      users_mobile: users_mobile ?? this.users_mobile,
     );
   }
 

@@ -88,7 +88,7 @@ class _NotificationsState extends ConsumerState<Notifications> {
       }
     }
     if (isSuccess) {
-      await updateRequest(edit, state);
+      await updateEditRequest(edit, state);
     } else {
       NavbarNotifier.showSnackBar(
         context,
@@ -97,7 +97,7 @@ class _NotificationsState extends ConsumerState<Notifications> {
     }
   }
 
-  Future<void> updateRequest(EditHistory edit, EditState state) async {
+  Future<void> updateEditRequest(EditHistory edit, EditState state) async {
     showCircularIndicator(context);
     final resp = await EditHistoryService.updateRequest(edit.edit_id!, state: state);
     if (resp.didSucced) {
@@ -159,7 +159,7 @@ class _NotificationsState extends ConsumerState<Notifications> {
                               user: editor,
                               onTap: () {},
                               onCancel: () {
-                                updateRequest(edit, EditState.cancelled);
+                                updateEditRequest(edit, EditState.cancelled);
                               },
                             )
                           : AdminNotificationTile(
@@ -185,7 +185,7 @@ class _NotificationsState extends ConsumerState<Notifications> {
                                 if (approved) {
                                   updateGlobalDatabase(edit, EditState.approved);
                                 } else {
-                                  updateRequest(edit, EditState.rejected);
+                                  updateEditRequest(edit, EditState.rejected);
                                 }
                               },
                               onTap: () {
@@ -215,7 +215,7 @@ class _NotificationsState extends ConsumerState<Notifications> {
                             ));
                       },
                       onCancel: () async {
-                        updateRequest(edit, EditState.cancelled);
+                        updateEditRequest(edit, EditState.cancelled);
                       },
                     );
                   },
@@ -319,7 +319,7 @@ class AdminNotificationTile extends StatelessWidget {
   final Function? onTap;
   final EditHistory edit;
   final UserModel user;
-  final Function onAvatarTap;
+  final Function() onAvatarTap;
 
   const AdminNotificationTile({
     super.key,
@@ -358,9 +358,7 @@ class AdminNotificationTile extends StatelessWidget {
             CircularAvatar(
               url: user.avatarUrl,
               name: user.name,
-              onTap: () {
-                onAvatarTap();
-              },
+              onTap: onAvatarTap,
             ),
             8.0.hSpacer(),
             Expanded(

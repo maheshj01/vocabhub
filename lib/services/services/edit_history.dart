@@ -27,9 +27,14 @@ class EditHistoryService {
     return response;
   }
 
+  /// Fetch all edits of a word
   static Future<PostgrestResponse> findPreviousEditsByWord(String word) async {
-    final response = await DatabaseService.findRowByColumnValue(word,
-        columnName: Constants.WORD_COLUMN, tableName: _tableName);
+    final response = await DatabaseService.innerJoinTwoTables(word,
+        columnName: Constants.WORD_COLUMN,
+        table1: _tableName,
+        table2: Constants.USER_TABLE_NAME,
+        innerJoincolumn: Constants.USER_EMAIL_COLUMN,
+        sort: false);
     return response;
   }
 
@@ -52,6 +57,7 @@ class EditHistoryService {
     final data = history.toJson();
     data['edit_id'] = Uuid().v1();
     data['created_at'] = DateTime.now().toIso8601String();
+    data.remove(Constants.USER_TABLE_NAME);
     final response = await DatabaseService.insertIntoTable(data, table: _tableName);
     vocabresponse.status = response.status;
     if (response.status == 201) {
@@ -59,6 +65,7 @@ class EditHistoryService {
       vocabresponse.message = 'Success';
       vocabresponse.data = history.copyWith(edit_id: response.data[0]['edit_id']);
     } else {
+      vocabresponse.status = response.status;
       vocabresponse.message = response.error!.message;
     }
     return vocabresponse;

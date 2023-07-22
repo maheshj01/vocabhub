@@ -92,12 +92,11 @@ class _UserProfileState extends ConsumerState<UserProfile> {
             return ResponsiveBuilder(
                 desktopBuilder: (context) => UserProfileDesktop(),
                 mobileBuilder: (context) {
-                  if ((response.state == RequestState.active || response.data == null) &&
-                      userRef.email.isEmpty) {
+                  if (response.state == RequestState.active || response.data == null) {
                     return LoadingWidget();
                   }
                   return UserProfileMobile(
-                    user: userRef ?? response.data as UserModel,
+                    user: response.data as UserModel,
                     isReadOnly: widget.isReadOnly,
                     onRefresh: () async {
                       await _fetchUser();

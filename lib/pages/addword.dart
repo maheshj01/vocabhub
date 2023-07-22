@@ -9,7 +9,6 @@ import 'package:vocabhub/models/history.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/analytics.dart';
-import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services/edit_history.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
@@ -169,7 +168,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
     final meaning = meaningController.text.trim();
     try {
       if (newWord.isNotEmpty && meaning.isNotEmpty) {
-        editedWord = editedWord.copyWith(word: newWord, meaning: meaning);
+        editedWord = editedWord.copyWith(id: widget.word!.id, word: newWord, meaning: meaning);
         var history = EditHistory.fromWord(editedWord, userProvider!.email);
         history = history.copyWith(edit_type: EditType.edit);
         if (widget.word != editedWord) {
@@ -181,6 +180,10 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
               stopCircularIndicator(context);
               Navigate.popView(context);
             });
+          } else {
+            stopCircularIndicator(context);
+            NavbarNotifier.showSnackBar(context, "Failed to update word. Try again later!  ",
+                onClosed: () {});
           }
         } else {
           stopCircularIndicator(context);

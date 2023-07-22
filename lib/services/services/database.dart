@@ -6,6 +6,23 @@ class DatabaseService {
   static SupabaseClient _supabase =
       SupabaseClient("${Constants.SUPABASE_URL}", "${Constants.SUPABASE_API_KEY}");
 
+  // fetches data from table1 based on eq condition `columnValue`
+  // and inner joins on table2 (returns all rows) based on innerJoincolumn
+  static Future<PostgrestResponse> innerJoinTwoTables(String columnValue,
+      {String columnName = '${Constants.WORD_COLUMN}',
+      String innerJoincolumn = '${Constants.USER_EMAIL_COLUMN}',
+      String table1 = '${Constants.EDIT_HISTORY_TABLE}',
+      String table2 = '${Constants.USER_TABLE_NAME}',
+      bool sort = false}) async {
+    final response = await _supabase
+        .from(table1)
+        .select('*, $table2:$innerJoincolumn, $table2(*)')
+        .eq('$columnName', columnValue)
+        .order('${Constants.CREATED_AT_COLUMN}', ascending: sort)
+        .execute();
+    return response;
+  }
+
   static Future<PostgrestResponse> findRowByColumnValue(String columnValue,
       {String columnName = '${Constants.ID_COLUMN}',
       String tableName = '${Constants.VOCAB_TABLE_NAME}',
@@ -212,7 +229,6 @@ class DatabaseService {
         .eq("$columnName", "$colValue")
         .execute()
         .timeout(Constants.timeoutDuration);
-    ;
     return response;
   }
 

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:navbar_router/navbar_router.dart';
+import 'package:supabase/supabase.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/models.dart';
+import 'package:vocabhub/navbar/profile/profile.dart';
 import 'package:vocabhub/services/services.dart';
+import 'package:vocabhub/utils/utility.dart';
+import 'package:vocabhub/widgets/circle_avatar.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
@@ -21,10 +26,10 @@ class _NotificationDetailState extends State<NotificationDetail> {
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
         desktopBuilder: (context) => NotificationDetailMobile(
-              editHistory: widget.editHistory,
+              word: widget.editHistory.word,
             ),
         mobileBuilder: (context) => NotificationDetailMobile(
-              editHistory: widget.editHistory,
+              word: widget.editHistory.word,
             ));
   }
 }
@@ -43,10 +48,12 @@ class NotificationDetailDesktop extends StatelessWidget {
 }
 
 class NotificationDetailMobile extends StatefulWidget {
-  NotificationDetailMobile({Key? key, required this.editHistory}) : super(key: key);
+  String word;
 
-  /// current edit
-  final EditHistory editHistory;
+  NotificationDetailMobile({
+    Key? key,
+    required this.word,
+  }) : super(key: key);
 
   @override
   State<NotificationDetailMobile> createState() => _NotificationDetailMobileState();
@@ -54,42 +61,81 @@ class NotificationDetailMobile extends StatefulWidget {
 
 class _NotificationDetailMobileState extends State<NotificationDetailMobile> {
   Future<void> getCurrentWord() async {
-    currentEdit = Word(
-        widget.editHistory.word_id, widget.editHistory.word, widget.editHistory.meaning,
-        synonyms: widget.editHistory.synonyms,
-        examples: widget.editHistory.examples,
-        mnemonics: widget.editHistory.mnemonics);
+    currentWordNotifier.value = Response(
+        state: RequestState.active,
+        didSucced: false,
+        message: 'Failed',
+        status: 400,
+        data: Word('', '', ''));
+    PostgrestResponse<dynamic> resp;
+    List<EditHistory> list;
+    // if edit is pending
+    // type: add -> show previous approved and current pending
+    // type: edit -> show previous approved and current pending
+    // type: delete -> show previous approved and current pending
+
+    // if edit is rejected
+    //
+    // if edit is add then show current add
+    // if edit is delete then show previous approved and current delete
 
     // find previous approved word
-    final resp = await EditHistoryService.findPreviousEditsByWord(widget.editHistory.word);
+    resp = await EditHistoryService.findPreviousEditsByWord(widget.word);
     // findById(widget.edit_history.word_id);
     if (resp.status == 200) {
-      final list = resp.data as List;
-      // case when word is added and deleted
-      // The difference should show the word was added/deleted
-      for (int i = 0; i < list.length; i++) {
-        final data = list[i];
-        final history = EditHistory.fromJson(data);
-        if (history.edit_id == widget.editHistory.edit_id) {
-          if (i == 0) {
-            lastEdit = Word.fromEditHistoryJson(data);
-          } else {
-            lastEdit = Word.fromEditHistoryJson(list[i - 1]);
-          }
-        }
-      }
+      list = (resp.data as List).map((e) => EditHistory.fromJson(e)).toList();
+      currentWordNotifier.value = currentWordNotifier.value.copyWith(
+          state: RequestState.done, didSucced: true, message: 'Success', status: 200, data: list);
     } else {
-      lastEdit = Word('', '', '');
+      lastApprovedEdit = Word('', '', '');
+      currentWordNotifier.value = currentWordNotifier.value.copyWith(
+          state: RequestState.error,
+          didSucced: false,
+          message: 'Failed',
+          status: resp.status,
+          data: lastApprovedEdit);
     }
-    currentWordNotifier.value = lastEdit;
   }
 
-  ValueNotifier<Word> currentWordNotifier = ValueNotifier(Word('', '', ''));
+  Word getLastApprovedEdit(List<dynamic> list) {
+    Word wordToCompare = Word('', '', '');
+
+    for (int i = 0; i < list.length; i++) {
+      final data = list[i];
+      final history = EditHistory.fromJson(data);
+      if (history.word.toLowerCase() == widget.word.toLowerCase() &&
+          history.state == EditState.approved) {
+        wordToCompare = Word.fromEditHistoryJson(data);
+        // break;
+      }
+    }
+    return wordToCompare;
+  }
+
+  Word getSecondLastApproved(List<dynamic> list) {
+    Word wordToCompare = Word('', '', '');
+    int count = 0;
+    for (int i = 0; i < list.length; i++) {
+      final data = list[i];
+      final history = EditHistory.fromJson(data);
+      if (history.word.toLowerCase() == widget.word.toLowerCase() &&
+          history.state == EditState.approved) {
+        count += 1;
+        if (count == 1) {
+          wordToCompare = Word.fromEditHistoryJson(data);
+          break;
+        }
+      }
+    }
+    return wordToCompare;
+  }
+
+  ValueNotifier<Response> currentWordNotifier = ValueNotifier<Response>(
+      Response(didSucced: false, message: 'Failed', status: 400, data: Word('', '', '')));
 
   /// edit from database before the current edit
-  late Word lastEdit;
+  late Word lastApprovedEdit = Word('', '', '');
 
-  late Word currentEdit;
   @override
   void initState() {
     super.initState();
@@ -99,119 +145,187 @@ class _NotificationDetailMobileState extends State<NotificationDetailMobile> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final editState = widget.editHistory.state;
-    final editType = widget.editHistory.edit_type;
     return Scaffold(
         backgroundColor: colorScheme.background,
         appBar: AppBar(
           elevation: 0,
           centerTitle: false,
           title: Text(
-            'Edit Detail (${editState!.toName().capitalize()})',
+            'Edit Detail',
             style: Theme.of(context).textTheme.titleLarge,
           ),
         ),
-        body: ValueListenableBuilder<Word>(
+        body: ValueListenableBuilder<Response>(
             valueListenable: currentWordNotifier,
-            builder: (context, Word value, Widget? child) {
-              if (value.id == '') {
+            builder: (context, Response value, Widget? child) {
+              if (value.state == RequestState.active) {
                 return LoadingWidget();
               }
-              List<Widget> _children = [
-                widget.editHistory.edit_type == EditType.edit
-                    ? Column(
+              List<EditHistory> list = (value.data as List<EditHistory>);
+              return ListView.builder(
+                  itemCount: list.length,
+                  itemBuilder: (context, index) {
+                    final editHistory = list[index];
+                    print('word_id: ${editHistory.word_id}');
+                    return ExpansionTile(
+                      leading: CircularAvatar(
+                        name: editHistory.users_mobile!.name,
+                        url: editHistory.users_mobile!.avatarUrl,
+                      ),
+                      title: Text(editHistory.word),
+                      iconColor: Colors.red,
+                      onExpansionChanged: (x) {},
+                      subtitle: Text(editHistory.created_at!.standardDateTime()),
+                      trailing: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Old Version',
-                            style: Theme.of(context).textTheme.titleLarge,
+                            'Status: ${editHistory.state!.name.capitalize()!}',
+                            style: TextStyle(
+                              color: stateToIconColor(editHistory.state!),
+                            ),
                           ),
-                          16.0.vSpacer(),
-                          heading('Word'),
-                          8.0.vSpacer(),
-                          differenceVisualizerGranular(currentEdit.word, lastEdit.word,
-                              isOldVersion: true),
-                          8.0.vSpacer(),
-                          heading('Meaning'),
-                          8.0.vSpacer(),
-                          differenceVisualizerGranular(currentEdit.meaning, lastEdit.meaning,
-                              isOldVersion: true),
-                          8.0.vSpacer(),
-                          heading('Synonyms'),
-                          8.0.vSpacer(),
-                          differenceVisualizerGranular(
-                              currentEdit.synonyms!.join(','), lastEdit.synonyms!.join(','),
-                              isOldVersion: true),
-                          8.0.vSpacer(),
-                          heading('Examples'),
-                          8.0.vSpacer(),
-                          differenceVisualizerGranular(
-                              currentEdit.examples!.join(','), lastEdit.examples!.join(','),
-                              isOldVersion: true),
-                          8.0.vSpacer(),
-                          heading('Mnemonics'),
-                          8.0.vSpacer(),
-                          differenceVisualizerGranular(
-                              currentEdit.mnemonics!.join(','), lastEdit.mnemonics!.join(','),
-                              isOldVersion: true),
-                          Padding(
-                            padding: 8.0.verticalPadding,
-                            child: hLine(),
-                          ),
+                          Text('Type: ${editHistory.edit_type!.name.capitalize()!}'),
                         ],
-                      )
-                    : SizedBox.shrink(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      editType == EditType.add ? 'New Word' : 'New Version',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    16.0.vSpacer(),
-                    heading('Word'),
-                    8.0.vSpacer(),
-                    differenceVisualizerGranular(currentEdit.word, lastEdit.word,
-                        isOldVersion: false),
-                    8.0.vSpacer(),
-                    heading('Meaning'),
-                    8.0.vSpacer(),
-                    differenceVisualizerGranular(currentEdit.meaning, lastEdit.meaning,
-                        isOldVersion: false),
-                    8.0.vSpacer(),
-                    heading('Synonyms'),
-                    8.0.vSpacer(),
-                    differenceVisualizerGranular(
-                        currentEdit.synonyms!.join(','), lastEdit.synonyms!.join(','),
-                        isOldVersion: false),
-                    8.0.vSpacer(),
-                    heading('Examples'),
-                    8.0.vSpacer(),
-                    differenceVisualizerGranular(
-                        currentEdit.examples!.join(','), lastEdit.examples!.join(','),
-                        isOldVersion: false),
-                    8.0.vSpacer(),
-                    heading('Mnemonics'),
-                    8.0.vSpacer(),
-                    differenceVisualizerGranular(
-                        currentEdit.mnemonics!.join(','), lastEdit.mnemonics!.join(','),
-                        isOldVersion: false),
-                    8.0.vSpacer(),
-                  ],
-                )
-              ];
-              return Padding(
-                  padding: 12.0.horizontalPadding,
-                  child: SingleChildScrollView(
-                    scrollDirection: SizeUtils.isDesktop ? Axis.horizontal : Axis.vertical,
-                    child: SizeUtils.isMobile
-                        ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: _children)
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: _children,
-                          ),
-                  ));
+                      ),
+                      children: [
+                        ListTile(
+                          title: Text('Meaning'),
+                          subtitle: Text(editHistory.meaning),
+                        ),
+                        ListTile(
+                          title: Text('Synonyms'),
+                          subtitle: Text(editHistory.synonyms!.join(',')),
+                        ),
+                        ListTile(
+                          title: Text('Examples'),
+                          subtitle: Text(editHistory.examples!.join(',')),
+                        ),
+                        ListTile(
+                          title: Text('Mnemonics'),
+                          subtitle: Text(editHistory.mnemonics!.join(',')),
+                        ),
+                        ListTile(
+                            title: Text('Edited By'),
+                            subtitle: Text(editHistory.users_mobile!.name),
+                            onTap: () {
+                              Navigate.push(
+                                  context,
+                                  Scaffold(
+                                      appBar: AppBar(
+                                        elevation: 0,
+                                        centerTitle: false,
+                                        title: Text(
+                                          'Profile',
+                                        ),
+                                      ),
+                                      body: UserProfile(
+                                        email: editHistory.users_mobile!.email,
+                                        isReadOnly: true,
+                                      )));
+                            },
+                            trailing: Icon(
+                              Icons.arrow_forward_ios,
+                            )),
+                      ],
+                    );
+                  });
+              // List<Widget> _children = [
+              //   widget.editHistory.edit_type == EditType.edit
+              //       ? Column(
+              //           crossAxisAlignment: CrossAxisAlignment.start,
+              //           children: [
+              //             Text(
+              //               'Old Version',
+              //               style: Theme.of(context).textTheme.titleLarge,
+              //             ),
+              //             16.0.vSpacer(),
+              //             heading('Word'),
+              //             8.0.vSpacer(),
+              //             differenceVisualizerGranular(currentEdit.word, lastApprovedEdit.word,
+              //                 isOldVersion: true),
+              //             8.0.vSpacer(),
+              //             heading('Meaning'),
+              //             8.0.vSpacer(),
+              //             differenceVisualizerGranular(
+              //                 currentEdit.meaning, lastApprovedEdit.meaning,
+              //                 isOldVersion: true),
+              //             8.0.vSpacer(),
+              //             heading('Synonyms'),
+              //             8.0.vSpacer(),
+              //             differenceVisualizerGranular(
+              //                 currentEdit.synonyms!.join(','), lastApprovedEdit.synonyms!.join(','),
+              //                 isOldVersion: true),
+              //             8.0.vSpacer(),
+              //             heading('Examples'),
+              //             8.0.vSpacer(),
+              //             differenceVisualizerGranular(
+              //                 currentEdit.examples!.join(','), lastApprovedEdit.examples!.join(','),
+              //                 isOldVersion: true),
+              //             8.0.vSpacer(),
+              //             heading('Mnemonics'),
+              //             8.0.vSpacer(),
+              //             differenceVisualizerGranular(currentEdit.mnemonics!.join(','),
+              //                 lastApprovedEdit.mnemonics!.join(','),
+              //                 isOldVersion: true),
+              //             Padding(
+              //               padding: 8.0.verticalPadding,
+              //               child: hLine(),
+              //             ),
+              //           ],
+              //         )
+              //       : SizedBox.shrink(),
+              //   Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Text(
+              //         editType == EditType.add ? 'New Word' : 'New Version',
+              //         style: Theme.of(context).textTheme.titleLarge,
+              //       ),
+              //       16.0.vSpacer(),
+              //       heading('Word'),
+              //       8.0.vSpacer(),
+              //       differenceVisualizerGranular(currentEdit.word, lastApprovedEdit.word,
+              //           isOldVersion: false),
+              //       8.0.vSpacer(),
+              //       heading('Meaning'),
+              //       8.0.vSpacer(),
+              //       differenceVisualizerGranular(currentEdit.meaning, lastApprovedEdit.meaning,
+              //           isOldVersion: false),
+              //       8.0.vSpacer(),
+              //       heading('Synonyms'),
+              //       8.0.vSpacer(),
+              //       differenceVisualizerGranular(
+              //           currentEdit.synonyms!.join(','), lastApprovedEdit.synonyms!.join(','),
+              //           isOldVersion: false),
+              //       8.0.vSpacer(),
+              //       heading('Examples'),
+              //       8.0.vSpacer(),
+              //       differenceVisualizerGranular(
+              //           currentEdit.examples!.join(','), lastApprovedEdit.examples!.join(','),
+              //           isOldVersion: false),
+              //       8.0.vSpacer(),
+              //       heading('Mnemonics'),
+              //       8.0.vSpacer(),
+              //       differenceVisualizerGranular(
+              //           currentEdit.mnemonics!.join(','), lastApprovedEdit.mnemonics!.join(','),
+              //           isOldVersion: false),
+              //       8.0.vSpacer(),
+              //     ],
+              //   )
+              // ];
+              // return Padding(
+              //     padding: 12.0.horizontalPadding,
+              //     child: SingleChildScrollView(
+              //       scrollDirection: SizeUtils.isDesktop ? Axis.horizontal : Axis.vertical,
+              //       child: SizeUtils.isMobile
+              //           ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: _children)
+              //           : Row(
+              //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //               crossAxisAlignment: CrossAxisAlignment.start,
+              //               children: _children,
+              //             ),
+              //     ));
             }));
   }
 }
