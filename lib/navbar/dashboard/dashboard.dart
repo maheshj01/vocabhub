@@ -101,7 +101,6 @@ class _DashboardState extends ConsumerState<Dashboard> {
                   }
                   return RefreshIndicator(
                       onRefresh: () async {
-                        await dashboardController.initService();
                         await publishWordOfTheDay();
                       },
                       child: DashboardMobile());
