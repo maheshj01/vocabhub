@@ -37,6 +37,8 @@ const String exploreScrollMessage = 'Swipe up to explore more words';
 const String NETWORK_ERROR = 'Please check your internet connectivity!';
 const String SOMETHING_WENT_WRONG = 'Something Went Wrong!';
 
+const String WORD_SUBMITTED =
+    'Your edit is under review, We will notifiy you once there is an update';
 List<String> onBoardingTitles = [
   'Word Power Unleashed',
   'Collaborative Learning Community',

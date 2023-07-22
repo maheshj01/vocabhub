@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:uuid/uuid.dart';
-import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/history.dart';
 import 'package:vocabhub/models/user.dart';
@@ -16,6 +15,8 @@ import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/widgets.dart';
+
+import '../constants/constants.dart';
 
 class AddWordForm extends ConsumerStatefulWidget {
   final bool isEdit;
@@ -174,9 +175,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
         if (widget.word != editedWord) {
           final response = await EditHistoryService.insertHistory(history);
           if (response.didSucced) {
-            NavbarNotifier.showSnackBar(
-                context, "Your edit is under review, We will notifiy you once there is an update",
-                onClosed: () {
+            NavbarNotifier.showSnackBar(context, "$WORD_SUBMITTED", onClosed: () {
               stopCircularIndicator(context);
               Navigate.popView(context);
             });
@@ -360,7 +359,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
                                     maxlength: 16,
                                     inputFormatters: [
                                       FilteringTextInputFormatter.allow(RegExp('[A-Z-a-z]+')),
-                                      FilteringTextInputFormatter.deny(wordController.text)
+                                      // FilteringTextInputFormatter.deny(wordController.text)
                                     ],
                                     controller: synonymController,
                                   ),
@@ -372,6 +371,14 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
                                         child: IconButton(
                                             onPressed: () {
                                               final String newSynonym = synonymController.text;
+                                              if (newSynonym.toLowerCase() ==
+                                                  editedWord.word.toLowerCase()) {
+                                                NavbarNotifier.showSnackBar(
+                                                    context, 'Synonym cannot be same as word',
+                                                    bottom: 0);
+                                                synonymController.clear();
+                                                return;
+                                              }
                                               if (editedWord.word.isNotEmpty) {
                                                 if (newSynonym.isNotEmpty &&
                                                     !editedWord.synonyms!.contains(newSynonym)) {

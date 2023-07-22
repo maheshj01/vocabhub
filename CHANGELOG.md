@@ -1,3 +1,7 @@
+### 0.6.0+23 July 21, 2023 (Unreleased)
+
+- Edit History is now transparent and public
+
 ### 0.5.9+22 July 21, 2023
 
 - Fix onboarding page

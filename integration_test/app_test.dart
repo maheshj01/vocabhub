@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:navbar_router/navbar_router.dart';
-import 'package:vocabhub/constants/strings.dart';
+import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/main.dart' as app;
 import 'package:vocabhub/navbar/navbar.dart';
 import 'package:vocabhub/onboarding/onboarding.dart';
+import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/login.dart';
+import 'package:vocabhub/pages/notifications/notifications.dart';
 
 extension FindText on String {
   Finder textX() => find.text(this);
@@ -32,8 +34,10 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
       as IntegrationTestWidgetsFlutterBinding;
+
+  bool skip = false;
   group('Test App should load:', () {
-    testWidgets('Skip Onboarding', (WidgetTester tester) async {
+    testWidgets('Skip Onboarding', skip: skip, (WidgetTester tester) async {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
@@ -51,7 +55,7 @@ void main() {
       expect((AppSignIn).typeX(), findsOneWidget);
     });
 
-    testWidgets('New User should be onboarded', (WidgetTester tester) async {
+    testWidgets('New User should be onboarded', skip: skip, (WidgetTester tester) async {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
@@ -103,7 +107,7 @@ void main() {
       expect((AppSignIn).typeX(), findsOneWidget);
     });
 
-    testWidgets('User should be able to login', (WidgetTester tester) async {
+    testWidgets('User should be able to login', skip: skip, (WidgetTester tester) async {
       // runZonedGuarded(app.main, (error, stack) {
       // });
       await app.main();
@@ -154,7 +158,7 @@ void main() {
       // image.writeAsBytesSync(bytes);
     });
 
-    testWidgets("User stays loggedIn", (widgetTester) async {
+    testWidgets("User stays loggedIn", skip: skip, (widgetTester) async {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
@@ -175,9 +179,9 @@ void main() {
       // image.writeAsBytesSync(bytes);
     });
 
-    testWidgets("Ensure all navbar widgets load", (widgetTester) async {
+    testWidgets("Ensure all navbar widgets load", skip: skip, (widgetTester) async {
       await app.main();
-      await binding.convertFlutterSurfaceToImage();
+      // await binding.convertFlutterSurfaceToImage();
       final List<Widget> baseWidgets = [
         Dashboard(),
         Search(),
@@ -228,6 +232,119 @@ void main() {
       // final bytes = await binding.takeScreenshot('test-3');
       // final File image = File('screenshots/test-3.png');
       // image.writeAsBytesSync(bytes);
+    });
+
+    testWidgets('Users should be able to add a new word', (widgetTester) async {
+      await app.main();
+      // await binding.convertFlutterSurfaceToImage();
+      await Future.delayed(const Duration(seconds: 3));
+      await widgetTester.pumpAndSettle();
+      expect((Dashboard).typeX(), findsOneWidget);
+      await widgetTester.pumpAndSettle();
+      final floatingIcon = Icons.add.iconX();
+      expect(floatingIcon, findsOneWidget);
+      await widgetTester.tap(floatingIcon);
+      await widgetTester.pumpAndSettle();
+      expect((AddWordForm).typeX(), findsOneWidget);
+      await widgetTester.pumpAndSettle();
+
+      final addWordTitle = "Add word".textX();
+      expect(addWordTitle, findsOneWidget);
+
+      final inputFields = (VocabField).typeX();
+      expect(inputFields.evaluate().length, 5);
+
+      await widgetTester.enterText(inputFields.at(0), "testWord");
+      await widgetTester.pumpAndSettle();
+      await widgetTester.enterText(inputFields.at(1), "this is a meaning of testWord");
+      await widgetTester.tap(addWordTitle);
+      await widgetTester.pumpAndSettle();
+      await widgetTester.drag(find.byType(AddWordForm), const Offset(0, -100));
+
+      await widgetTester.pumpAndSettle();
+      await widgetTester.enterText(inputFields.at(2), "synoymOne");
+      await widgetTester.pumpAndSettle();
+      final doneIcon = Icons.done.iconX();
+      expect(doneIcon, findsOneWidget);
+      await widgetTester.tap(doneIcon);
+      await widgetTester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
+
+      await widgetTester.enterText(inputFields.at(2), "synoymTwo");
+      await widgetTester.pumpAndSettle();
+      expect(doneIcon, findsOneWidget);
+      await widgetTester.tap(doneIcon);
+      await widgetTester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
+      await widgetTester.pumpAndSettle();
+      await widgetTester.enterText(inputFields.at(2), "synoymThree");
+      await widgetTester.pumpAndSettle();
+      expect(doneIcon, findsOneWidget);
+      await widgetTester.tap(doneIcon);
+      await widgetTester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
+      await widgetTester.tap(addWordTitle);
+      await widgetTester.pumpAndSettle();
+      await widgetTester.dragFrom(Offset(0, 100), const Offset(0, -100));
+
+      await widgetTester.enterText(
+          inputFields.at(3), "This is an example sentence using testWord as an example");
+      await widgetTester.pumpAndSettle();
+      expect(doneIcon, findsOneWidget);
+      await widgetTester.tap(doneIcon);
+      await widgetTester.pumpAndSettle();
+      await widgetTester.tap(addWordTitle);
+      await widgetTester.pumpAndSettle();
+      await widgetTester.dragFrom(Offset(0, 100), const Offset(0, -100));
+
+      await Future.delayed(const Duration(seconds: 3));
+
+      await widgetTester.enterText(inputFields.at(4), "This is a mnemonic for testWord");
+      await widgetTester.pumpAndSettle();
+
+      expect(doneIcon, findsOneWidget);
+      await widgetTester.tap(doneIcon);
+      await widgetTester.pumpAndSettle();
+
+      await Future.delayed(const Duration(seconds: 3));
+      // remove focus from the textfield
+      await widgetTester.tap(addWordTitle);
+      await widgetTester.pumpAndSettle();
+      await widgetTester.dragFrom(Offset(0, 100), const Offset(0, -200));
+
+      final submitButton = "Submit".textX();
+      expect(submitButton, findsOneWidget);
+      await widgetTester.tap(submitButton);
+      await widgetTester.tap(addWordTitle);
+      await widgetTester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 3));
+      // final snackBar = (SnackBar).typeX();
+      // expect(snackBar, findsOneWidget);
+      // await Future.delayed(const Duration(seconds: 3));
+      expect((Dashboard).typeX(), findsOneWidget);
+    });
+
+    testWidgets('Reject the added test word', (widgetTester) async {
+      await app.main();
+      // await binding.convertFlutterSurfaceToImage();
+      await Future.delayed(const Duration(seconds: 3));
+      await widgetTester.pumpAndSettle();
+      expect((Dashboard).typeX(), findsOneWidget);
+      final notificationIcon = (Icons.notifications_on).iconX();
+      expect(notificationIcon, findsOneWidget);
+      await widgetTester.tap(notificationIcon);
+      await widgetTester.pumpAndSettle();
+      expect((Notifications).typeX(), findsOneWidget);
+      await widgetTester.pumpAndSettle();
+      final notificationTitle = "Notifications".textX();
+      expect(notificationTitle, findsOneWidget);
+      await widgetTester.pumpAndSettle();
+      "You requested to add a new word".textX();
+      await widgetTester.pumpAndSettle();
+      final rejectIcon = Icons.close.iconX();
+      expect(rejectIcon, findsOneWidget);
+      await widgetTester.tap(rejectIcon);
+      await widgetTester.pumpAndSettle();
     });
   });
 }
