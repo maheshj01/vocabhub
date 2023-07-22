@@ -11,6 +11,8 @@ class Constants {
   static const AMAZON_APP_STORE_URL = 'http://www.amazon.com/gp/mas/dl/android?p=com.vocabhub.app';
   static const REPORT_URL = 'https://github.com/maheshmnj/vocabhub/issues/new/choose';
   static const String SIGN_IN_SCOPE_URL = 'https://www.googleapis.com/auth/contacts.readonly';
+  static const String teamworkAsset =
+      'https://github.com/maheshmnj/vocabhub/assets/31410839/8288f317-f3cb-433f-94d6-83644cb0cb05';
 // static const SHEET_URL =
 //     'https://docs.google.com/spreadsheets/d/1G1RtQfsEDqHhHP4cgOpO9x_ZtQ1dYa6QrGCq3KFlu50';
   /// API KEYS

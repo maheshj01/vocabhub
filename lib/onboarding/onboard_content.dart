@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 import 'package:vocabhub/constants/strings.dart';
@@ -86,8 +87,8 @@ class _OnboardingContentPageState extends State<OnboardingContentPage> {
                     )
                   : SizedBox(
                       height: size.height * 0.5,
-                      child: Image.asset(
-                        '${widget.assetPath}',
+                      child: CachedNetworkImage(
+                        imageUrl: '${widget.assetPath}',
                       )),
           32.0.vSpacer(),
           Padding(

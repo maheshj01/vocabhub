@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/widgets/button.dart';
@@ -40,7 +41,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       ),
       OnboardingContentPage(
         index: 1,
-        assetPath: 'assets/rive/team-work.gif',
+        assetPath: Constants.teamworkAsset,
         animations: [],
         color: Colors.white,
       ),
