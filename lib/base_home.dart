@@ -40,7 +40,8 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     Future.delayed(const Duration(seconds: 5), askForRating);
     Future.wait([
       isUpdateAvailable(),
-    ]).then((value) {
+    ]);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (!user!.isLoggedIn) {
         showSnackBar("Sign in for better experience", action: 'Sign In', persist: true,
             onActionPressed: () async {
@@ -68,22 +69,27 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     if (SizeUtils.isDesktop) {
       return;
     }
-    final packageInfo = await PackageInfo.fromPlatform();
-    final String appVersion = packageInfo.version;
-    final int appBuildNumber = int.parse(packageInfo.buildNumber);
-    final remoteConfig = FirebaseRemoteConfig.instance;
-    await remoteConfig.setConfigSettings(RemoteConfigSettings(
-      fetchTimeout: const Duration(minutes: 1),
-      minimumFetchInterval: const Duration(seconds: 1),
-    ));
-    await remoteConfig.fetchAndActivate();
-    final version = remoteConfig.getString('${Constants.VERSION_KEY}');
-    final buildNumber = remoteConfig.getInt('${Constants.BUILD_NUMBER_KEY}');
-    if (appVersion != version || buildNumber > appBuildNumber) {
-      showSnackBar("New Update Available", action: 'Update', persist: true, onActionPressed: () {
-        analytics.logAppUpdate(settingsController.version!);
-        launchUrl(Uri.parse(Constants.PLAY_STORE_URL), mode: LaunchMode.externalApplication);
-      });
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      final String appVersion = packageInfo.version;
+      final int appBuildNumber = int.parse(packageInfo.buildNumber);
+      final remoteConfig = FirebaseRemoteConfig.instance;
+      await remoteConfig.setConfigSettings(RemoteConfigSettings(
+        fetchTimeout: const Duration(minutes: 1),
+        minimumFetchInterval: const Duration(seconds: 1),
+      ));
+      await remoteConfig.fetchAndActivate();
+      final version = remoteConfig.getString('${Constants.VERSION_KEY}');
+      final buildNumber = remoteConfig.getInt('${Constants.BUILD_NUMBER_KEY}');
+      if (appVersion != version || buildNumber > appBuildNumber) {
+        showSnackBar("New Update Available", action: 'Update', persist: true, onActionPressed: () {
+          analytics.logAppUpdate(settingsController.version!);
+          launchUrl(Uri.parse(Constants.PLAY_STORE_URL), mode: LaunchMode.externalApplication);
+        });
+      }
+    } catch (_) {
+      print("exception caught $_");
+      setState(() {});
     }
   }
 

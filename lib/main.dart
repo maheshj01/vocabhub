@@ -20,7 +20,6 @@ import 'package:vocabhub/utils/firebase_options.dart';
 import 'package:vocabhub/utils/logger.dart';
 
 import 'constants/constants.dart';
-import 'utils/settings.dart';
 
 final userNotifierProvider = Provider<UserModel>((ref) {
   return UserModel.init();
@@ -42,7 +41,6 @@ Future<void> main() async {
   exploreController.initService();
   // pushNotificationService.initService();
   // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-  Settings.init();
   settingsController.loadSettings();
   runApp(ProviderScope(
     child: VocabApp(),
@@ -100,14 +98,15 @@ class _VocabAppState extends ConsumerState<VocabApp> {
     final localUser = authController.user;
     final user = ref.watch(userNotifierProvider);
     if (localUser.email.isNotEmpty) {
+      user.setUser(localUser);
       if (localUser.isLoggedIn) {
         await autoLogin(localUser);
       }
     }
+    user.setUser(localUser);
 
     /// user details not found locally
     /// set default user to local state
-    user.setUser(localUser);
   }
 
   Future<void> autoLogin(UserModel localUser) async {

@@ -19,8 +19,6 @@ import 'package:vocabhub/widgets/examplebuilder.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
 
-import 'wordscount.dart';
-
 class WordDetail extends StatefulWidget {
   static String routeName = '/worddetail';
   final Word word;
@@ -398,7 +396,6 @@ class _EmptyWordState extends State<EmptyWord> {
           16.0.vSpacer(),
           Text('Tip: ${tips[randIndex]}',
               textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
-          WordsCountAnimator(),
           Expanded(child: Container()),
           Padding(padding: EdgeInsets.symmetric(vertical: 16), child: VersionBuilder()),
           40.0.vSpacer(),

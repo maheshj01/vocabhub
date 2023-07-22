@@ -14,6 +14,7 @@ class DashboardController extends ChangeNotifier with ServiceBase {
     _words.clear();
     _words.addAll(words);
     notifyListeners();
+    _dashboardService.setWords(words);
   }
 
   Word get wordOfTheDay => _wordOfTheDay ?? Word.init();

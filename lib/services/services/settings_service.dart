@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vocabhub/services/services/service_base.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 
-class SettingsService {
+class SettingsService extends ServiceBase {
   late SharedPreferences _sharedPreferences;
   final String kThemeKey = 'kThemeKey';
   final String kThemeSeedKey = 'kThemeSeedKey';
   final String kRatedOnPlaystore = 'kRatedOnPlaystore';
   final String kLastRatedDate = 'kLastRatedDate';
   final String kOnboardedKey = 'kOnboardedKey';
+  static const skipCountKey = 'skipCount';
+
+  void setSkipCount(int value) {
+    _sharedPreferences.setInt('$skipCountKey', value);
+  }
+
+  Future<int> get skipCount async {
+    final int count = _sharedPreferences.getInt('$skipCountKey') ?? 0;
+    return count;
+  }
 
   void setTheme(ThemeMode value) {
     _sharedPreferences.setBool(kThemeKey, value == ThemeMode.dark);
@@ -45,10 +56,6 @@ class SettingsService {
     return Color(color);
   }
 
-  Future<void> init() async {
-    _sharedPreferences = await SharedPreferences.getInstance();
-  }
-
   Future<void> setRatedOnPlaystore(bool value) async {
     await _sharedPreferences.setBool(kRatedOnPlaystore, value);
 
@@ -58,5 +65,13 @@ class SettingsService {
 
   bool getRatedOnPlaystore() {
     return _sharedPreferences.getBool(kRatedOnPlaystore) ?? false;
+  }
+
+  @override
+  Future<void> disposeService() async {}
+
+  @override
+  Future<void> initService() async {
+    _sharedPreferences = await SharedPreferences.getInstance();
   }
 }

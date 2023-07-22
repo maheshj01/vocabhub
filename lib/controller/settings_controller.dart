@@ -10,6 +10,8 @@ class SettingsController extends ChangeNotifier {
   bool _ratedOnPlayStore = false;
   DateTime _lastRatedDate = DateTime.now();
   bool _isOnboarded = false;
+  int _skipCount = 0;
+  int maxSkipCount = 3;
 
   bool get hasRatedOnPlaystore => _ratedOnPlayStore;
 
@@ -20,6 +22,19 @@ class SettingsController extends ChangeNotifier {
   String? version;
 
   Color get themeSeed => _themeSeed;
+
+  int get skipCount => _skipCount;
+
+  set setSkipCount(int value) {
+    _skipCount = value;
+    notifyListeners();
+    _settingsService!.setSkipCount(value);
+  }
+
+  Future<int> getSkipCount() async {
+    _skipCount = await _settingsService!.skipCount;
+    return _skipCount;
+  }
 
   set lastRatedDate(DateTime value) {
     _lastRatedDate = value;
@@ -82,14 +97,19 @@ class SettingsController extends ChangeNotifier {
 
   Future<void> loadSettings() async {
     _settingsService = SettingsService();
-    await _settingsService!.init();
+    await _settingsService!.initService();
     _theme = await getTheme();
     _themeSeed = await getThemeSeed();
     _ratedOnPlayStore = getRatedOnPlaystore();
     _lastRatedDate = await getLastRatedShown();
     _isOnboarded = await getOnBoarded();
+    _skipCount = await getSkipCount();
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     version = packageInfo.version;
     notifyListeners();
+  }
+
+  Future<void> clearSettings() async {
+    onBoarded = true;
   }
 }

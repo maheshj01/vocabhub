@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/notification.dart';
@@ -48,21 +51,34 @@ class _UserProfileState extends ConsumerState<UserProfile> {
   Future<void> _fetchUser() async {
     userProfileNotifier.value =
         response.copyWith(state: RequestState.active, message: "Loading...");
-    if (!widget.isReadOnly) {
-      final user = ref.watch(userNotifierProvider);
-      final updatedUser = await UserService.findByEmail(email: user.email, cache: true);
-      user.setUser(updatedUser);
-      userProfileNotifier.value = response.copyWith(
-          state: RequestState.done, message: "Success", data: updatedUser, didSucced: true);
-    } else {
-      final user = await UserService.findByEmail(email: widget.email, cache: false);
-      userProfileNotifier.value = response.copyWith(
-          state: RequestState.done, message: "Success", data: user, didSucced: true);
+    try {
+      if (!widget.isReadOnly) {
+        final user = ref.watch(userNotifierProvider);
+        final updatedUser = await UserService.findByEmail(email: user.email, cache: true);
+        user.setUser(updatedUser);
+        userProfileNotifier.value = response.copyWith(
+            state: RequestState.done, message: "Success", data: updatedUser, didSucced: true);
+      } else {
+        final user = await UserService.findByEmail(email: widget.email, cache: false);
+        userProfileNotifier.value = response.copyWith(
+            state: RequestState.done, message: "Success", data: user, didSucced: true);
+      }
+    } catch (_) {
+      if (_.runtimeType == TimeoutException) {
+        NavbarNotifier.showSnackBar(context, NETWORK_ERROR);
+        userProfileNotifier.value = response.copyWith(
+            state: RequestState.error, message: NETWORK_ERROR, data: null, didSucced: false);
+      } else {
+        NavbarNotifier.showSnackBar(context, SOMETHING_WENT_WRONG);
+        userProfileNotifier.value = response.copyWith(
+            state: RequestState.error, message: SOMETHING_WENT_WRONG, data: null, didSucced: false);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final userRef = ref.watch(userNotifierProvider);
     return Material(
       child: ValueListenableBuilder<Response>(
           valueListenable: userProfileNotifier,
@@ -76,11 +92,12 @@ class _UserProfileState extends ConsumerState<UserProfile> {
             return ResponsiveBuilder(
                 desktopBuilder: (context) => UserProfileDesktop(),
                 mobileBuilder: (context) {
-                  if (response.state == RequestState.active || response.data == null) {
+                  if ((response.state == RequestState.active || response.data == null) &&
+                      userRef.email.isEmpty) {
                     return LoadingWidget();
                   }
                   return UserProfileMobile(
-                    user: response.data as UserModel,
+                    user: userRef ?? response.data as UserModel,
                     isReadOnly: widget.isReadOnly,
                     onRefresh: () async {
                       await _fetchUser();
@@ -106,24 +123,32 @@ class UserProfileMobile extends ConsumerStatefulWidget {
 class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
   Future<void> getEditStats() async {
     final user = widget.user;
-    final resp = await EditHistoryService.getUserContributions(user);
-    stats = [0, 0, 0];
-    if (resp.didSucced && resp.data != null) {
-      final editHistory = resp.data as List<NotificationModel>;
-      for (var history in editHistory) {
-        if (history.edit.state == EditState.approved) {
-          if (history.edit.edit_type == EditType.add) {
-            stats[0]++;
-          } else if (history.edit.edit_type == EditType.edit) {
-            stats[1]++;
+    try {
+      final resp = await EditHistoryService.getUserContributions(user);
+      stats = [0, 0, 0];
+      if (resp.didSucced && resp.data != null) {
+        final editHistory = resp.data as List<NotificationModel>;
+        for (var history in editHistory) {
+          if (history.edit.state == EditState.approved) {
+            if (history.edit.edit_type == EditType.add) {
+              stats[0]++;
+            } else if (history.edit.edit_type == EditType.edit) {
+              stats[1]++;
+            }
+          } else if (history.edit.state == EditState.pending) {
+            stats[2]++;
           }
-        } else if (history.edit.state == EditState.pending) {
-          stats[2]++;
+        }
+        if (mounted) {
+          _statsNotifier.value = stats;
         }
       }
-    }
-    if (mounted) {
-      _statsNotifier.value = stats;
+    } catch (_) {
+      if (_.runtimeType == TimeoutException) {
+        NavbarNotifier.showSnackBar(context, NETWORK_ERROR);
+      } else {
+        NavbarNotifier.showSnackBar(context, SOMETHING_WENT_WRONG);
+      }
     }
   }
 
@@ -204,6 +229,7 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                                       backgroundColor: colorScheme.primary.withOpacity(0.2),
                                       child: CircularAvatar(
                                         url: '${user.avatarUrl}',
+                                        name: '${user.name.initals()}',
                                         radius: 40,
                                       )),
                                 ),

@@ -6,7 +6,6 @@ import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/pages/login.dart';
-import 'package:vocabhub/utils/settings.dart';
 import 'package:vocabhub/utils/size_utils.dart';
 
 import '../onboarding/welcome.dart';
@@ -58,8 +57,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
     if (_email.isNotEmpty && user.isLoggedIn) {
       Navigate.pushReplace(context, AdaptiveLayout());
     } else {
-      final int count = await Settings.skipCount + 1;
-      Settings.setSkipCount = count;
+      final int count = settingsController.skipCount + 1;
+      settingsController.setSkipCount = count;
       if (count % 3 != 0) {
         Navigate.pushReplace(context, AdaptiveLayout());
       } else {

@@ -98,7 +98,7 @@ class _MobileViewState extends State<MobileView> {
             status: 200,
             message: 'Words by Alphabet fetched successfully');
       } catch (_) {
-        NavbarNotifier.showSnackBar(context, NETWORK_ERROR, bottom: 0);
+        NavbarNotifier.showSnackBar(context, NETWORK_ERROR, bottom: kNavbarHeight);
         if (_.runtimeType == TimeoutException) {
           response.value =
               response.value.copyWith(state: RequestState.error, message: NETWORK_ERROR);

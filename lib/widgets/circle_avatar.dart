@@ -6,38 +6,40 @@ class CircularAvatar extends StatelessWidget {
   final String? url;
   final double radius;
 
-  const CircularAvatar(
-      {Key? key, this.name, this.onTap, this.url, this.radius = 32.0})
+  const CircularAvatar({Key? key, this.name, this.onTap, this.url, this.radius = 32.0})
       : assert(name != null || url != null, 'name or url cannot be null'),
         super(key: key);
 
-  ImageProvider getImageProvider(String imagePath) {
-    if (imagePath.contains('assets/')) {
-      return AssetImage(imagePath);
-    } else {
-      return NetworkImage(imagePath);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final Widget nameText = Text(name!, style: Theme.of(context).textTheme.headlineLarge!);
+    Widget getImageProvider(String imagePath) {
+      if (imagePath.contains('assets/')) {
+        return Image.asset(imagePath);
+      } else {
+        return Image.network(
+          url!,
+          errorBuilder: (x, y, z) {
+            return nameText;
+          },
+        );
+      }
+    }
+
     return GestureDetector(
-      onTap: onTap,
-      child: CircleAvatar(
-          radius: radius,
-          foregroundColor: Colors.white,
-          backgroundColor: Colors.grey,
-          backgroundImage: url == null ? null : getImageProvider(url!),
-          child: url == null
-              ? Text(name!,
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium!
-                      .copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20))
-              : null),
-    );
+        onTap: onTap,
+        child: Container(
+            height: radius * 2,
+            width: radius * 2,
+            decoration: BoxDecoration(
+                color: Colors.grey,
+                border: Border.all(width: 2, color: Colors.grey),
+                shape: BoxShape.circle),
+            alignment: Alignment.center,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(radius),
+              child: url == null ? nameText : getImageProvider(url!),
+            ))
+        );
   }
 }

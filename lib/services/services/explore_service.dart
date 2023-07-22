@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/word.dart';
@@ -9,14 +11,17 @@ class ExploreService extends ServiceBase {
   final _logger = Logger('ExploreService');
   late SharedPreferences _sharedPreferences;
   final kExploreHiddenKey = 'kExploreHiddenKey';
+  final kExploreWordsKey = 'kExploreWordsKey';
   final kScrollMessageShownDateKey = 'kScrollMessageShownDateKey';
   final kIsScrollMessageShownKey = 'kIsScrollMessageShownKey';
+
   @override
   Future<void> initService() async {
     _sharedPreferences = await SharedPreferences.getInstance();
   }
 
-  Future<List<Word>> exploreWords(String email, {int page = 0}) async {
+  /// This method is used to fetch explore words from the database.
+  Future<List<Word>> getExploreWords(String email, {int page = 0}) async {
     try {
       // get All words
       final response = await DatabaseService.findLimitedWords(sort: false);
@@ -33,6 +38,7 @@ class ExploreService extends ServiceBase {
             _exploreWords.add(element);
           }
         });
+        setExploreWords(_exploreWords);
         return _exploreWords;
       }
       if (response.status == 500) {
@@ -43,6 +49,21 @@ class ExploreService extends ServiceBase {
     } catch (_) {
       _logger.e(_.toString());
       return dashboardController.words;
+    }
+  }
+
+  Future<void> setExploreWords(List<Word> words) async {
+    final List<String> wordsString = words.map((e) => jsonEncode(e.toJson())).toList();
+    await _sharedPreferences.setStringList(kExploreWordsKey, wordsString);
+  }
+
+  Future<List<Word>> exploreLocalWords() async {
+    final List<String>? wordsString = _sharedPreferences.getStringList(kExploreWordsKey);
+    if (wordsString != null && wordsString.isNotEmpty) {
+      final List<Word> words = wordsString.map((e) => Word.fromJson(jsonDecode(e))).toList();
+      return words;
+    } else {
+      return await VocabStoreService.getAllWords();
     }
   }
 

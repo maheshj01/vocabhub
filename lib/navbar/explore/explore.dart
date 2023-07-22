@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +9,7 @@ import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/controller/explore_controller.dart';
 import 'package:vocabhub/models/models.dart';
+import 'package:vocabhub/navbar/empty_page.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/word_state_service.dart';
@@ -53,13 +56,30 @@ class _ExploreWordsMobileState extends ConsumerState<ExploreWordsMobile> {
   }
 
   Future<void> exploreWords() async {
-    _request.value = Response(state: RequestState.active);
-    final user = ref.watch(userNotifierProvider);
-    final newWords = await exploreController.exploreWords(user.email, page: page);
-    newWords.shuffle();
-    max = newWords.length;
-    if (mounted) {
-      _request.value = _request.value.copyWith(data: newWords, state: RequestState.done);
+    try {
+      _request.value = Response(state: RequestState.active);
+      final user = ref.watch(userNotifierProvider);
+      final newWords = await exploreController.getExploreWords(user.email, page: page);
+      newWords.shuffle();
+      max = newWords.length;
+      if (mounted) {
+        _request.value = _request.value.copyWith(data: newWords, state: RequestState.done);
+      }
+    } catch (_) {
+      if (_.runtimeType == TimeoutException) {
+        NavbarNotifier.showSnackBar(context, NETWORK_ERROR, bottom: kNavbarHeight);
+        final exploreWords = exploreController.exploreWords;
+        if (exploreWords.isNotEmpty) {
+          _request.value = _request.value.copyWith(data: exploreWords, state: RequestState.done);
+        } else {
+          _request.value =
+              _request.value.copyWith(state: RequestState.error, message: NETWORK_ERROR);
+        }
+      } else {
+        NavbarNotifier.showSnackBar(context, SOMETHING_WENT_WRONG, bottom: kNavbarHeight);
+        _request.value =
+            _request.value.copyWith(state: RequestState.error, message: SOMETHING_WENT_WRONG);
+      }
     }
   }
 
@@ -84,7 +104,12 @@ class _ExploreWordsMobileState extends ConsumerState<ExploreWordsMobile> {
           if (request == null || (request.data == null)) {
             return LoadingWidget();
           } else if ((request.data as List<dynamic>).isEmpty) {
-            return SizedBox.shrink();
+            return Padding(
+              padding: 16.0.horizontalPadding,
+              child: EmptyPage(
+                message: 'Uh oh! Looks like we ran out of words. Try again later.',
+              ),
+            );
           }
           final words = request.data as List<Word>;
           return Material(

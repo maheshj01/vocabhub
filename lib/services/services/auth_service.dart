@@ -156,8 +156,7 @@ class AuthService extends ServiceBase {
   Future<void> logOut(BuildContext context, UserModel user) async {
     await AuthService.updateLogin(email: user.email, isLoggedIn: false);
     await googleSignOut(context);
-    await Settings.clear();
-    settingsController.onBoarded = true;
+    await settingsController.clearSettings();
   }
 
   @override
