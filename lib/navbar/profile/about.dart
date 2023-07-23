@@ -18,7 +18,7 @@ class _AboutVocabhubState extends State<AboutVocabhub> {
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
-        desktopBuilder: (context) => AboutVocabhubDesktop(),
+        desktopBuilder: (context) => AboutVocabhubMobile(),
         mobileBuilder: (context) => AboutVocabhubMobile());
   }
 }

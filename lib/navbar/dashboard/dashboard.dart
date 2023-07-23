@@ -136,7 +136,7 @@ class DashboardMobile extends ConsumerWidget {
               ),
             ),
             actions: [
-              user.isLoggedIn
+              user.isLoggedIn && SizeUtils.isMobile
                   ? IconButton(
                       onPressed: () {
                         Navigate.pushNamed(context, Notifications.route, isRootNavigator: true);
@@ -202,25 +202,28 @@ class DashboardMobile extends ConsumerWidget {
                             padding: 12.0.verticalPadding,
                             child: heading('Progress'),
                           ),
-                          OpenContainer<bool>(
-                              openBuilder: (BuildContext context, VoidCallback openContainer) {
-                                return BookmarksPage(
-                                  isBookMark: true,
-                                  user: user,
-                                );
-                              },
-                              closedShape: 16.0.rounded,
-                              tappable: true,
-                              transitionType: ContainerTransitionType.fadeThrough,
-                              closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                                return WoDCard(
-                                  word: word,
-                                  height: 180,
-                                  fontSize: 42,
-                                  color: Colors.amberAccent.shade400,
-                                  title: 'Bookmarks',
-                                );
-                              }),
+                          word.word.isEmpty
+                              ? SizedBox.shrink()
+                              : OpenContainer<bool>(
+                                  openBuilder: (BuildContext context, VoidCallback openContainer) {
+                                    return BookmarksPage(
+                                      isBookMark: true,
+                                      user: user,
+                                    );
+                                  },
+                                  closedShape: 16.0.rounded,
+                                  tappable: true,
+                                  transitionType: ContainerTransitionType.fadeThrough,
+                                  closedBuilder:
+                                      (BuildContext context, VoidCallback openContainer) {
+                                    return WoDCard(
+                                      word: word,
+                                      height: 180,
+                                      fontSize: 42,
+                                      color: Colors.amberAccent.shade400,
+                                      title: 'Bookmarks',
+                                    );
+                                  }),
                           Padding(
                             padding: 6.0.verticalPadding,
                           ),
@@ -307,10 +310,10 @@ class DashboardDesktop extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dashBoardRef = ref.watch(dashBoardNotifier);
+    // final dashBoardRef = ref.watch(dashBoardNotifier);
     final colorScheme = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
-    final word = dashBoardRef.wordOfTheDay;
+    final word = dashboardController.wordOfTheDay;
 
     return Scaffold(
       backgroundColor: colorScheme.background,
@@ -318,47 +321,15 @@ class DashboardDesktop extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: Column(
-              children: [
-                32.0.vSpacer(),
-                AppBar(
-                  elevation: 0,
-                  centerTitle: true,
-                  title: Text(
-                    'Word of The Day',
-                  ),
+              flex: 3,
+              child: Container(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: 600,
+                  child: DashboardMobile(),
                 ),
-                InkWell(
-                  onTap: () {
-                    Navigate.push(
-                      context,
-                      WordDetail(
-                        word: word,
-                        isWod: true,
-                        title: 'Word of the Day',
-                      ),
-                      isRootNavigator: false,
-                    );
-                  },
-                  child: WoDCard(
-                    height: size.width * 0.2,
-                    width: size.width * 0.5,
-                    word: word,
-                    color: Colors.green.shade300,
-                    title: '${word.word}'.toUpperCase(),
-                  ),
-                )
-              ],
-            ),
-          ),
-          Container(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              width: 400,
-              child: Column(
-                children: [
-                  Expanded(child: Notifications()),
-                ],
-              ))
+              )),
+          Expanded(flex: 2, child: Notifications()),
         ],
       ),
     );

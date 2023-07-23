@@ -140,7 +140,9 @@ class _WordAnimationWidgetState extends State<WordAnimationWidget>
 
     words = dashboardController.words;
     Future.delayed(Duration(seconds: 2)).then((value) {
-      _controller.forward();
+      if (mounted) {
+        _controller.forward();
+      }
     });
     words.shuffle();
   }
@@ -157,7 +159,6 @@ class _WordAnimationWidgetState extends State<WordAnimationWidget>
   @override
   Widget build(BuildContext context) {
     final words = dashboardController.words;
-    print(words.length);
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:animations/animations.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -43,23 +42,25 @@ class _SearchState extends ConsumerState<Search> {
   final analytics = Analytics.instance;
   @override
   Widget build(BuildContext context) {
-    final words = ref.watch(dashBoardNotifier).words;
+    final words = dashboardController.words;
     return ResponsiveBuilder(desktopBuilder: (context) {
-      return Row(
-        children: [
-          Flexible(
-            child: WordList(
-              controller: ScrollController(),
-              onSelected: (word) {
-                setState(() {
-                  selectedWord = word;
-                  selectedIndex = words.indexOf(word);
-                });
-              },
+      return SafeArea(
+        child: Row(
+          children: [
+            Flexible(
+              child: WordList(
+                controller: ScrollController(),
+                onSelected: (word) {
+                  setState(() {
+                    selectedWord = word;
+                    selectedIndex = words.indexOf(word);
+                  });
+                },
+              ),
             ),
-          ),
-          Expanded(flex: 2, child: WordDetail(word: selectedWord ?? words.first)),
-        ],
+            Expanded(flex: 2, child: WordDetail(word: selectedWord ?? words.first)),
+          ],
+        ),
       );
     }, mobileBuilder: (BuildContext context) {
       return MobileView();
@@ -529,7 +530,7 @@ class _WordListState extends State<WordList> {
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: kIsWeb ? 16.0 : 0.0),
+                      padding: 16.0.horizontalPadding,
                       child: SearchBuilder(
                         controller: searchController.controller,
                         ontap: () {
