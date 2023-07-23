@@ -212,6 +212,8 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                         ));
                   },
                 ),
+          hLine(),
+
           !user.isAdmin ? const SizedBox.shrink() : hLine(),
           settingTile(Constants.PRIVACY_POLICY_TITLE, onTap: () {
             Navigate.pushNamed(context, WebViewPage.routeName, isRootNavigator: true);

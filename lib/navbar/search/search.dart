@@ -172,7 +172,7 @@ class _MobileViewState extends State<MobileView> {
                   return Padding(
                     padding: 8.0.horizontalPadding,
                     child: GridView.custom(
-                      padding: (kNavbarHeight * 1.1).bottomPadding,
+                      padding: (kNavbarHeight * 1.2).bottomPadding,
                       gridDelegate: SliverQuiltedGridDelegate(
                         crossAxisCount: 4,
                         mainAxisSpacing: 8,

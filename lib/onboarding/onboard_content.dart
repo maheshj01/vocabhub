@@ -27,7 +27,6 @@ class OnboardingContentPage extends StatefulWidget {
 class _OnboardingContentPageState extends State<OnboardingContentPage> {
   @override
   void didUpdateWidget(covariant OnboardingContentPage oldWidget) {
-    print(oldWidget.index == widget.index);
     super.didUpdateWidget(oldWidget);
   }
 

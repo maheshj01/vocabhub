@@ -88,7 +88,6 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
         });
       }
     } catch (_) {
-      print("exception caught $_");
       setState(() {});
     }
   }

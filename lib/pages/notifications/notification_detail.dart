@@ -49,9 +49,11 @@ class NotificationDetailDesktop extends StatelessWidget {
 
 class NotificationDetailMobile extends StatefulWidget {
   String word;
+  String title;
 
   NotificationDetailMobile({
     Key? key,
+    this.title = 'Edit Detail',
     required this.word,
   }) : super(key: key);
 
@@ -151,7 +153,7 @@ class _NotificationDetailMobileState extends State<NotificationDetailMobile> {
           elevation: 0,
           centerTitle: false,
           title: Text(
-            'Edit Detail',
+            widget.title,
             style: Theme.of(context).textTheme.titleLarge,
           ),
         ),
@@ -166,7 +168,6 @@ class _NotificationDetailMobileState extends State<NotificationDetailMobile> {
                   itemCount: list.length,
                   itemBuilder: (context, index) {
                     final editHistory = list[index];
-                    print('word_id: ${editHistory.word_id}');
                     return ExpansionTile(
                       leading: CircularAvatar(
                         name: editHistory.users_mobile!.name,

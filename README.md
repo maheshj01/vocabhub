@@ -18,6 +18,7 @@ Key Features:
 - Supports dark mode and offers various themes to make learning an enjoyable experience
 - Supports offline mode to help you learn on the go.
 - Ability to suggest edits to improve the words on the platform
+- Edits made for all words are transparent and can be viewed by all users.
 - Regular updates with new words and features to keep your vocabulary journey exciting and dynamic.
 
 <a href="https://play.google.com/store/apps/details?id=com.vocabhub.app" target="_blank">
