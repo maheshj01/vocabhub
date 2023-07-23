@@ -18,6 +18,7 @@ Key Features:
 - Supports dark mode and offers various themes to make learning an enjoyable experience
 - Supports offline mode to help you learn on the go.
 - Ability to suggest edits to improve the words on the platform
+- Contributions on the platform are transparent and can be viewed by all users.
 - Edits made for all words are transparent and can be viewed by all users.
 - Regular updates with new words and features to keep your vocabulary journey exciting and dynamic.
 
@@ -39,17 +40,21 @@ Key Features:
 
 ### Mobile
 
-|                    Preview 1     |   Preview 2   |  Preview 3       |
-| :-------------------------: | :--------------------: | :-----------------------: |
+|                         Preview 1                          |                         Preview 2                          |                         Preview 3                          |
+| :--------------------------------------------------------: | :--------------------------------------------------------: | :--------------------------------------------------------: |
 | <img src="screenshots/previews/preview 1.png" width="600"> | <img src="screenshots/previews/preview 2.png" width="600"> | <img src="screenshots/previews/preview 3.png" width="600"> |
 
-|      Preview 4         |      Preview 5    |     Preview 6     |
-| :--------------: | :------------------: | :------------------: |
+|                         Preview 4                          |                         Preview 5                          |                         Preview 6                          |
+| :--------------------------------------------------------: | :--------------------------------------------------------: | :--------------------------------------------------------: |
 | <img src="screenshots/previews/preview 4.png" width="600"> | <img src="screenshots/previews/preview 5.png" width="600"> | <img src="screenshots/previews/preview 6.png" width="600"> |
 
-|   Preview 7    |   Preview 8  |   Preview 9  |
-| :-----------------------: | :-------------------: | :-------------------: |
-|  <img src="screenshots/previews/preview 7.png"> |  <img src="screenshots/previews/preview 8.png"> | <img src="screenshots/previews/preview 9.png"> |
+|                   Preview 7                    |                   Preview 8                    |                   Preview 9                    |
+| :--------------------------------------------: | :--------------------------------------------: | :--------------------------------------------: |
+| <img src="screenshots/previews/preview 7.png"> | <img src="screenshots/previews/preview 8.png"> | <img src="screenshots/previews/preview 9.png"> |
+
+### Design
+
+The app is designed using [Material Design](https://m3.material.io/) guidelines. The design files can be found [here](https://www.figma.com/file/xPCoi1IcW8M6TODTqjG9GZ/Vocabhub?type=design&node-id=0%3A1&mode=design&t=Lw5GoQIP0v9W0JQj-1)
 
 ### Running the app
 
