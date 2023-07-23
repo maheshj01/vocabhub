@@ -58,7 +58,7 @@ class _OnboardingContentPageState extends State<OnboardingContentPage> {
       alignment: Alignment.center,
       child: Column(
         children: [
-          32.0.vSpacer(),
+          40.0.vSpacer(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(

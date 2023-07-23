@@ -157,6 +157,11 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
             onPressed: () {
               showModalBottomSheet(
                   context: context,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(13),
+                    topRight: Radius.circular(13),
+                  )),
                   isScrollControlled: true,
                   builder: (context) => SizedBox(
                       height: size.height * 0.6,

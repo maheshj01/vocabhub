@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
@@ -37,15 +38,19 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
     _controller.forward();
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        if (settingsController.isOnboarded && SizeUtils.isMobile) {
+        if (!SizeUtils.isMobile && kIsWeb) {
           handleNavigation();
         } else {
-          Navigate.pushReplace(
-              context,
-              WelcomePage(
-                title: 'Welcome to VocabHub',
-                description: 'Your companion to learn new words everyday',
-              ));
+          if (settingsController.isOnboarded && SizeUtils.isMobile) {
+            handleNavigation();
+          } else {
+            Navigate.pushReplace(
+                context,
+                WelcomePage(
+                  title: 'Welcome to VocabHub',
+                  description: 'Your companion to learn new words everyday',
+                ));
+          }
         }
       }
     });

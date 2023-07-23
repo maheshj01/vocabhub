@@ -148,78 +148,88 @@ class _NotificationsState extends ConsumerState<Notifications> {
                 );
               }
               if (user!.isAdmin) {
-                return ListView.builder(
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    await getNotifications();
+                  },
+                  child: ListView.builder(
+                      padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight),
+                      itemBuilder: (context, index) {
+                        final edit = value[index].edit;
+                        final editor = value[index].user;
+                        return !user!.isAdmin
+                            ? UserNotificationTile(
+                                edit: edit,
+                                user: editor,
+                                onTap: () {},
+                                onCancel: () {
+                                  updateEditRequest(edit, EditState.cancelled);
+                                },
+                              )
+                            : AdminNotificationTile(
+                                edit: edit,
+                                user: editor,
+                                onAvatarTap: () {
+                                  Navigate.push(
+                                      context,
+                                      Scaffold(
+                                          appBar: AppBar(
+                                            elevation: 0,
+                                            centerTitle: false,
+                                            title: Text(
+                                              'Profile',
+                                            ),
+                                          ),
+                                          body: UserProfile(
+                                            email: editor.email,
+                                            isReadOnly: true,
+                                          )));
+                                },
+                                onAction: (approved) async {
+                                  if (approved) {
+                                    updateGlobalDatabase(edit, EditState.approved);
+                                  } else {
+                                    updateEditRequest(edit, EditState.rejected);
+                                  }
+                                },
+                                onTap: () {
+                                  Navigate.push(
+                                      context,
+                                      NotificationDetail(
+                                        editHistory: edit,
+                                      ));
+                                },
+                              );
+                      },
+                      itemCount: value.length),
+                );
+              }
+              return RefreshIndicator(
+                onRefresh: () async {
+                  await getNotifications();
+                },
+                child: ListView.builder(
                     padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight),
                     itemBuilder: (context, index) {
                       final edit = value[index].edit;
-                      final editor = value[index].user;
-                      return !user!.isAdmin
-                          ? UserNotificationTile(
-                              edit: edit,
-                              user: editor,
-                              onTap: () {},
-                              onCancel: () {
-                                updateEditRequest(edit, EditState.cancelled);
-                              },
-                            )
-                          : AdminNotificationTile(
-                              edit: edit,
-                              user: editor,
-                              onAvatarTap: () {
-                                Navigate.push(
-                                    context,
-                                    Scaffold(
-                                        appBar: AppBar(
-                                          elevation: 0,
-                                          centerTitle: false,
-                                          title: Text(
-                                            'Profile',
-                                          ),
-                                        ),
-                                        body: UserProfile(
-                                          email: editor.email,
-                                          isReadOnly: true,
-                                        )));
-                              },
-                              onAction: (approved) async {
-                                if (approved) {
-                                  updateGlobalDatabase(edit, EditState.approved);
-                                } else {
-                                  updateEditRequest(edit, EditState.rejected);
-                                }
-                              },
-                              onTap: () {
-                                Navigate.push(
-                                    context,
-                                    NotificationDetail(
-                                      editHistory: edit,
-                                    ));
-                              },
-                            );
+                      final editUser = value[index].user;
+                      return UserNotificationTile(
+                        edit: edit,
+                        user: editUser,
+                        onTap: () {
+                          Navigate.push(
+                              context,
+                              NotificationDetail(
+                                editHistory: edit,
+                              ));
+                        },
+                        onCancel: () async {
+                          updateEditRequest(edit, EditState.cancelled);
+                        },
+                      );
                     },
-                    itemCount: value.length);
-              }
-              return ListView.builder(
-                  padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight),
-                  itemBuilder: (context, index) {
-                    final edit = value[index].edit;
-                    final editUser = value[index].user;
-                    return UserNotificationTile(
-                      edit: edit,
-                      user: editUser,
-                      onTap: () {
-                        Navigate.push(
-                            context,
-                            NotificationDetail(
-                              editHistory: edit,
-                            ));
-                      },
-                      onCancel: () async {
-                        updateEditRequest(edit, EditState.cancelled);
-                      },
-                    );
-                  },
-                  itemCount: value.length);
+                    itemCount: value.length),
+              );
             }));
   }
 }

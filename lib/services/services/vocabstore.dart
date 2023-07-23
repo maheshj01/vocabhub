@@ -46,10 +46,13 @@ class VocabStoreService {
         vocabresponse.message = 'Success';
         final word = Word.fromJson(response.data[0]);
         vocabresponse.data = word;
+        vocabresponse.status = response.status;
+      } else {
+        vocabresponse.status = response.status;
+        vocabresponse.message = response.error!.message;
       }
-      vocabresponse.status = response.status;
-      vocabresponse.message = response.error!.message;
     } catch (_) {
+      _logger.e("Failed to add word,error:$_");
       throw "Failed to add word,error:$_";
     }
     return vocabresponse;
