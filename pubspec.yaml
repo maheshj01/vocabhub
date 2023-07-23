@@ -1,7 +1,7 @@
 name: vocabhub
 description: An App to help you build vocabulary.
 publish_to: "none"
-version: 0.5.9+22
+version: 0.6.0+23
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
@@ -9,7 +9,7 @@ environment:
 dependencies:
   animations: ^2.0.7
   cupertino_icons: ^1.0.5
-  firebase_analytics: ^10.1.0
+  firebase_analytics: ^10.4.4
   firebase_core: ^2.4.1
   cached_network_image: ^3.2.3
   firebase_messaging: ^14.2.1
