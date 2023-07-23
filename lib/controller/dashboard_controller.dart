@@ -19,6 +19,11 @@ class DashboardController extends ChangeNotifier with ServiceBase {
 
   Word get wordOfTheDay => _wordOfTheDay ?? Word.init();
 
+  set wordOfTheDay(Word word) {
+    _wordOfTheDay = word;
+    notifyListeners();
+  }
+
   bool get isWodPublishedToday {
     final now = DateTime.now().toUtc();
     final differenceInHours = now.difference(_wordOfTheDay!.created_at!).inHours;

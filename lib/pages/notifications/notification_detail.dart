@@ -207,6 +207,10 @@ class _NotificationDetailMobileState extends State<NotificationDetailMobile> {
                           subtitle: Text(editHistory.mnemonics!.join(',')),
                         ),
                         ListTile(
+                          title: Text('Comments'),
+                          subtitle: Text(editHistory.comments),
+                        ),
+                        ListTile(
                             title: Text('Edited By'),
                             subtitle: Text(editHistory.users_mobile!.name),
                             onTap: () {

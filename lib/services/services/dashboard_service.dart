@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vocabhub/constants/strings.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/service_base.dart';
@@ -37,17 +38,21 @@ class DashboardService extends ServiceBase {
   /// updated record from the database in UTC.
   Future<Word> getLastPublishedWod() async {
     try {
-      final String? wordString = _sharedPreferences.getString(kwordOfTheDay) ?? '';
-      if (wordString != null && wordString.isNotEmpty) {
-        // decode the json string to word object
-        final decodedString = jsonDecode(wordString);
-        final Word word = Word.fromJson(decodedString as Map<String, dynamic>);
-        setPublishedWord(word);
-        return word;
-      } else {
-        final Word wodFromServer = await VocabStoreService.getLastUpdatedRecord();
-        setPublishedWord(wodFromServer);
+      final Word wodFromServer = await VocabStoreService.getLastUpdatedRecord();
+      if (wodFromServer.word.isNotEmpty) {
+        await setPublishedWord(wodFromServer);
         return wodFromServer;
+      } else {
+        final String? wordString = _sharedPreferences.getString(kwordOfTheDay) ?? '';
+        if (wordString != null && wordString.isNotEmpty) {
+          // decode the json string to word object
+          final decodedString = jsonDecode(wordString);
+          final Word word = Word.fromJson(decodedString as Map<String, dynamic>);
+          setPublishedWord(word);
+          return word;
+        } else {
+          throw SOMETHING_WENT_WRONG;
+        }
       }
     } catch (e) {
       _logger.e(e.toString());

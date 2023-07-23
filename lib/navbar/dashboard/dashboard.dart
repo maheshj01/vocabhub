@@ -42,11 +42,17 @@ class _DashboardState extends ConsumerState<Dashboard> {
   /// else publish a new word of the day
 
   /// todo word of the day
-  Future<void> publishWordOfTheDay() async {
+  Future<void> publishWordOfTheDay({bool isRefresh = false}) async {
     _dashBoardNotifier.value = response.copyWith(state: RequestState.active, message: "Loading...");
     try {
       // If word of the day already published then get word of the day
       if (dashboardController.isWodPublishedToday) {
+        if (isRefresh) {
+          final word = await dashboardController.getLastPublishedWord();
+          dashboardController.wordOfTheDay = word;
+          _dashBoardNotifier.value = response.copyWith(data: word, state: RequestState.done);
+          return;
+        }
         final publishedWod = dashboardController.wordOfTheDay;
         _dashBoardNotifier.value = response.copyWith(data: publishedWod, state: RequestState.done);
         return;
@@ -87,8 +93,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
               if (response.state == RequestState.error) {
                 return ErrorPage(
                   onRetry: () async {
-                    await dashboardController.initService();
-                    await publishWordOfTheDay();
+                    await publishWordOfTheDay(isRefresh: true);
                   },
                   errorMessage: response.message,
                 );
@@ -101,7 +106,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
                   }
                   return RefreshIndicator(
                       onRefresh: () async {
-                        await publishWordOfTheDay();
+                        await publishWordOfTheDay(isRefresh: true);
                       },
                       child: DashboardMobile());
                 },

@@ -38,6 +38,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
   late TextEditingController exampleController;
   late TextEditingController synonymController;
   late TextEditingController mnemonicController;
+  late TextEditingController commentController;
 
   /// add a new word
   Future<void> addWord() async {
@@ -129,6 +130,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
     exampleController = TextEditingController();
     synonymController = TextEditingController();
     mnemonicController = TextEditingController();
+    commentController = TextEditingController();
     wordFocus = FocusNode(canRequestFocus: true);
     meaningFocus = FocusNode(canRequestFocus: true);
     _title = 'Lets add a new word';
@@ -170,8 +172,11 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
     try {
       if (newWord.isNotEmpty && meaning.isNotEmpty) {
         editedWord = editedWord.copyWith(id: widget.word!.id, word: newWord, meaning: meaning);
+        final comments = commentController.text.trim();
         var history = EditHistory.fromWord(editedWord, userProvider!.email);
-        history = history.copyWith(edit_type: EditType.edit);
+        history = history.copyWith(
+            edit_type: EditType.edit,
+            comments: comments.isEmpty ? 'Edited word: ${editedWord.word}' : comments);
         if (widget.word != editedWord) {
           final response = await EditHistoryService.insertHistory(history);
           if (response.didSucced) {
@@ -462,7 +467,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
                                     : Container(),
                               ],
                             )
-                          : Container(),
+                          : SizedBox.shrink(),
                       ...List.generate(editedWord.mnemonics!.length, (index) {
                         return Container(
                           margin: EdgeInsets.symmetric(horizontal: SizeUtils.isMobile ? 16 : 24.0),
@@ -526,6 +531,12 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
                               ],
                             )
                           : Container(),
+                      widget.isEdit
+                          ? VocabField(
+                              hint: 'Briefly explain about your changes',
+                              maxlines: 3,
+                              controller: commentController)
+                          : SizedBox.shrink(),
                       50.0.hSpacer(),
                       Align(
                         alignment: Alignment.center,

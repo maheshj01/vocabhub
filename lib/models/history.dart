@@ -26,6 +26,7 @@ class EditHistory {
   DateTime? created_at;
   EditState? state;
   EditType? edit_type;
+  String comments;
 
   /// edit details of user (property should be table name)
   UserModel? users_mobile;
@@ -36,6 +37,7 @@ class EditHistory {
       required this.email,
       required this.word,
       required this.meaning,
+      this.comments = '',
       this.state = EditState.pending,
       this.edit_type = EditType.edit,
       this.created_at,
@@ -58,6 +60,7 @@ class EditHistory {
     DateTime? created_at,
     EditState? state,
     EditType? edit_type,
+    String? comments,
     UserModel? users_mobile,
   }) {
     return EditHistory(
@@ -71,6 +74,7 @@ class EditHistory {
       mnemonics: mnemonics!.isEmpty ? this.mnemonics : mnemonics,
       created_at: created_at ?? this.created_at,
       state: state ?? this.state,
+      comments: comments ?? this.comments,
       edit_type: edit_type ?? this.edit_type,
       users_mobile: users_mobile ?? this.users_mobile,
     );
@@ -78,15 +82,15 @@ class EditHistory {
 
   factory EditHistory.fromWord(Word word, String email) {
     return EditHistory(
-      word: word.word,
-      created_at: word.created_at,
-      email: email,
-      meaning: word.meaning,
-      examples: word.examples,
-      mnemonics: word.mnemonics,
-      synonyms: word.synonyms,
-      word_id: word.id,
-    );
+        word: word.word,
+        created_at: word.created_at,
+        email: email,
+        meaning: word.meaning,
+        examples: word.examples,
+        mnemonics: word.mnemonics,
+        synonyms: word.synonyms,
+        word_id: word.id,
+        comments: '');
   }
 
   @override
@@ -101,6 +105,7 @@ class EditHistory {
           state == other.state &&
           email == other.email &&
           word_id == other.word_id &&
+          comments == other.comments &&
           edit_type == other.edit_type;
 
   @override
@@ -108,3 +113,4 @@ class EditHistory {
 
   Map<String, dynamic> toJson() => _$EditHistoryToJson(this);
 }
+

@@ -12,6 +12,7 @@ EditHistory _$EditHistoryFromJson(Map<String, dynamic> json) => EditHistory(
       email: json['email'] as String,
       word: json['word'] as String,
       meaning: json['meaning'] as String,
+      comments: json['comments'] as String? ?? '',
       state: $enumDecodeNullable(_$EditStateEnumMap, json['state']) ??
           EditState.pending,
       edit_type: $enumDecodeNullable(_$EditTypeEnumMap, json['edit_type']) ??
@@ -49,6 +50,7 @@ Map<String, dynamic> _$EditHistoryToJson(EditHistory instance) =>
       'created_at': instance.created_at?.toIso8601String(),
       'state': _$EditStateEnumMap[instance.state],
       'edit_type': _$EditTypeEnumMap[instance.edit_type],
+      'comments': instance.comments,
       'users_mobile': instance.users_mobile,
     };
 
