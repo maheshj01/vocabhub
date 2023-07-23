@@ -126,6 +126,7 @@ class _NotificationsState extends ConsumerState<Notifications> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final userRef = ref.watch(userNotifierProvider);
     return Scaffold(
         backgroundColor: colorScheme.surface,
         key: notificationsKey,
@@ -142,7 +143,7 @@ class _NotificationsState extends ConsumerState<Notifications> {
               if (value == null || user == null) {
                 return LoadingWidget();
               }
-              if (value.isEmpty) {
+              if (value.isEmpty || !userRef.isLoggedIn) {
                 return Center(
                   child: Text('No notifications'),
                 );
