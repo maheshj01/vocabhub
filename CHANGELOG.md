@@ -4,6 +4,7 @@
 - Fix Responsiveness on desktop
 - Save unpublished word to drafts
 - Load word from drafts
+- Add Granular Difference visualizer for word edits
 
 ### 0.5.9+22 July 21, 2023
 
