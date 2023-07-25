@@ -153,7 +153,7 @@ RichText differenceVisualizerGranular(String editedText, String oldText,
     textAlign: textAlign,
     text: TextSpan(
       style: TextStyle(
-        fontSize: 16.0,
+        fontSize: 14.0,
         color: settingsController.isDark ? Colors.white : Colors.black,
       ),
       children: <TextSpan>[

@@ -170,6 +170,13 @@ class _NotificationDetailMobileState extends State<NotificationDetailMobile> {
               return ListView.builder(
                   itemCount: list.length,
                   itemBuilder: (context, index) {
+                    EditHistory lastApprovedEdit;
+                    EditHistory currentEdit = list[index];
+                    if (index == list.length - 1 || list.length == 1) {
+                      lastApprovedEdit = currentEdit;
+                    } else {
+                      lastApprovedEdit = list[index + 1];
+                    }
                     final editHistory = list[index];
                     return ExpansionTile(
                       leading: CircularAvatar(
@@ -193,22 +200,26 @@ class _NotificationDetailMobileState extends State<NotificationDetailMobile> {
                         ],
                       ),
                       children: [
-                        ListTile(
-                          title: Text('Meaning'),
-                          subtitle: Text(editHistory.meaning),
-                        ),
-                        ListTile(
-                          title: Text('Synonyms'),
-                          subtitle: Text(editHistory.synonyms!.join(',')),
-                        ),
-                        ListTile(
-                          title: Text('Examples'),
-                          subtitle: Text(editHistory.examples!.join(',')),
-                        ),
-                        ListTile(
-                          title: Text('Mnemonics'),
-                          subtitle: Text(editHistory.mnemonics!.join(',')),
-                        ),
+                        DifferenceVisualizer(
+                            title: 'Word',
+                            newVersion: currentEdit.word,
+                            oldVersion: lastApprovedEdit.word),
+                        DifferenceVisualizer(
+                            title: 'Meaning',
+                            newVersion: currentEdit.meaning,
+                            oldVersion: lastApprovedEdit.meaning),
+                        DifferenceVisualizer(
+                            title: 'Synonyms',
+                            newVersion: currentEdit.synonyms!.join(','),
+                            oldVersion: lastApprovedEdit.synonyms!.join(',')),
+                        DifferenceVisualizer(
+                            title: 'Examples',
+                            newVersion: currentEdit.examples!.join(','),
+                            oldVersion: lastApprovedEdit.examples!.join(',')),
+                        DifferenceVisualizer(
+                            title: 'Mnemonics',
+                            newVersion: currentEdit.mnemonics!.join(','),
+                            oldVersion: lastApprovedEdit.mnemonics!.join(',')),
                         ListTile(
                           title: Text('Comments'),
                           subtitle: Text(editHistory.comments),
@@ -238,103 +249,49 @@ class _NotificationDetailMobileState extends State<NotificationDetailMobile> {
                       ],
                     );
                   });
-              // List<Widget> _children = [
-              //   widget.editHistory.edit_type == EditType.edit
-              //       ? Column(
-              //           crossAxisAlignment: CrossAxisAlignment.start,
-              //           children: [
-              //             Text(
-              //               'Old Version',
-              //               style: Theme.of(context).textTheme.titleLarge,
-              //             ),
-              //             16.0.vSpacer(),
-              //             heading('Word'),
-              //             8.0.vSpacer(),
-              //             differenceVisualizerGranular(currentEdit.word, lastApprovedEdit.word,
-              //                 isOldVersion: true),
-              //             8.0.vSpacer(),
-              //             heading('Meaning'),
-              //             8.0.vSpacer(),
-              //             differenceVisualizerGranular(
-              //                 currentEdit.meaning, lastApprovedEdit.meaning,
-              //                 isOldVersion: true),
-              //             8.0.vSpacer(),
-              //             heading('Synonyms'),
-              //             8.0.vSpacer(),
-              //             differenceVisualizerGranular(
-              //                 currentEdit.synonyms!.join(','), lastApprovedEdit.synonyms!.join(','),
-              //                 isOldVersion: true),
-              //             8.0.vSpacer(),
-              //             heading('Examples'),
-              //             8.0.vSpacer(),
-              //             differenceVisualizerGranular(
-              //                 currentEdit.examples!.join(','), lastApprovedEdit.examples!.join(','),
-              //                 isOldVersion: true),
-              //             8.0.vSpacer(),
-              //             heading('Mnemonics'),
-              //             8.0.vSpacer(),
-              //             differenceVisualizerGranular(currentEdit.mnemonics!.join(','),
-              //                 lastApprovedEdit.mnemonics!.join(','),
-              //                 isOldVersion: true),
-              //             Padding(
-              //               padding: 8.0.verticalPadding,
-              //               child: hLine(),
-              //             ),
-              //           ],
-              //         )
-              //       : SizedBox.shrink(),
-              //   Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Text(
-              //         editType == EditType.add ? 'New Word' : 'New Version',
-              //         style: Theme.of(context).textTheme.titleLarge,
-              //       ),
-              //       16.0.vSpacer(),
-              //       heading('Word'),
-              //       8.0.vSpacer(),
-              //       differenceVisualizerGranular(currentEdit.word, lastApprovedEdit.word,
-              //           isOldVersion: false),
-              //       8.0.vSpacer(),
-              //       heading('Meaning'),
-              //       8.0.vSpacer(),
-              //       differenceVisualizerGranular(currentEdit.meaning, lastApprovedEdit.meaning,
-              //           isOldVersion: false),
-              //       8.0.vSpacer(),
-              //       heading('Synonyms'),
-              //       8.0.vSpacer(),
-              //       differenceVisualizerGranular(
-              //           currentEdit.synonyms!.join(','), lastApprovedEdit.synonyms!.join(','),
-              //           isOldVersion: false),
-              //       8.0.vSpacer(),
-              //       heading('Examples'),
-              //       8.0.vSpacer(),
-              //       differenceVisualizerGranular(
-              //           currentEdit.examples!.join(','), lastApprovedEdit.examples!.join(','),
-              //           isOldVersion: false),
-              //       8.0.vSpacer(),
-              //       heading('Mnemonics'),
-              //       8.0.vSpacer(),
-              //       differenceVisualizerGranular(
-              //           currentEdit.mnemonics!.join(','), lastApprovedEdit.mnemonics!.join(','),
-              //           isOldVersion: false),
-              //       8.0.vSpacer(),
-              //     ],
-              //   )
-              // ];
-              // return Padding(
-              //     padding: 12.0.horizontalPadding,
-              //     child: SingleChildScrollView(
-              //       scrollDirection: SizeUtils.isDesktop ? Axis.horizontal : Axis.vertical,
-              //       child: SizeUtils.isMobile
-              //           ? Column(crossAxisAlignment: CrossAxisAlignment.start, children: _children)
-              //           : Row(
-              //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //               crossAxisAlignment: CrossAxisAlignment.start,
-              //               children: _children,
-              //             ),
-              //     ));
             }));
+  }
+}
+
+class DifferenceVisualizer extends StatelessWidget {
+  const DifferenceVisualizer(
+      {super.key, required this.newVersion, required this.oldVersion, required this.title});
+
+  final String newVersion;
+  final String oldVersion;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    if (oldVersion.isEmpty && newVersion.isEmpty) {
+      return SizedBox.shrink();
+    }
+
+    bool hasChange = newVersion != oldVersion;
+    if (!hasChange) {
+      return ListTile(
+        title: Text(
+          title,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        ),
+        subtitle: Text(
+          newVersion,
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+        ),
+      );
+    }
+
+    return ListTile(
+      title: Text(title),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          differenceVisualizerGranular(newVersion, oldVersion, isOldVersion: false),
+          8.0.vSpacer(),
+          differenceVisualizerGranular(newVersion, oldVersion, isOldVersion: true),
+        ],
+      ),
+    );
   }
 }
 
