@@ -7,6 +7,7 @@ import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/history.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
+import 'package:vocabhub/pages/drafts.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/services/edit_history.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
@@ -120,7 +121,6 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
       ValueNotifier<Response>(Response(message: '', state: RequestState.error));
   Word? currentWordFromDatabase;
   late String _title;
-  bool autoFocus = false;
 
   @override
   void initState() {
@@ -136,18 +136,8 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
     meaningFocus = FocusNode(canRequestFocus: true);
     _title = 'Lets add a new word';
     if (widget.isEdit) {
-      autoFocus = true;
-      _populateData();
+      _populateData(word: widget.word);
       _title = 'Editing Word';
-    } else {
-      if (addWordController.hasDrafts) {
-        autoFocus = false;
-        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-          showLoadDraftsDialog();
-        });
-      } else {
-        autoFocus = true;
-      }
     }
     exampleController.addListener(_rebuild);
     synonymController.addListener(_rebuild);
@@ -155,9 +145,8 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
   }
 
   void _populateData({Word? word}) {
-    editedWord = word != null ? word.deepCopy() : widget.word!.deepCopy();
-    wordController.text = editedWord.word;
-    meaningController.text = editedWord.meaning;
+    wordController.text = word!.word;
+    meaningController.text = word.meaning;
   }
 
   /// when field contains some info and user has not clicked on tick
@@ -274,8 +263,8 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
               Navigator.of(context).pop();
             },
             onAction2: () async {
-              await addWordController.saveDrafts(editedWord);
               shouldExit = true;
+              await addWordController.saveDrafts(editedWord);
               Navigator.of(context).pop();
             }));
     return shouldExit;
@@ -294,7 +283,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
               Navigator.of(context).pop();
             },
             onAction2: () async {
-              _populateData(word: addWordController.drafts);
+              // _populateData(word: addWordController.drafts);
               Navigator.of(context).pop();
             }));
   }
@@ -344,6 +333,20 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
                 backgroundColor: colorScheme.background,
                 appBar: AppBar(
                   title: Text(widget.isEdit ? 'Edit Word' : 'Add word'),
+                  elevation: 5,
+                  actions: [
+                    if (!widget.isEdit)
+                      IconButton(
+                          onPressed: () async {
+                            removeFocus(context);
+                            Word selectedDraft = await Navigate.push(context, Drafts(),
+                                transitionType: TransitionType.rtl);
+                            if (selectedDraft != null) {
+                              _populateData(word: selectedDraft);
+                            }
+                          },
+                          icon: Icon(Icons.drafts)),
+                  ],
                 ),
                 body: Form(
                   key: _formKey,
@@ -365,7 +368,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
                         25.0.vSpacer(),
                         VocabField(
                           fieldKey: _formFieldKeys[0],
-                          autofocus: autoFocus,
+                          autofocus: true,
                           fontSize: 30,
                           maxlength: 20,
                           hint: 'e.g Ambivalent',

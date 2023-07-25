@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/pages/login.dart';
@@ -24,7 +25,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
     setState(() {
       isLoading = false;
     });
-    Navigate.pushAndPopAll(context, AppSignIn());
+    if (authController.user.isLoggedIn) {
+      Navigate.pushAndPopAll(context, AdaptiveLayout());
+    } else {
+      Navigate.pushAndPopAll(context, AppSignIn());
+    }
   }
 
   bool isLoading = false;

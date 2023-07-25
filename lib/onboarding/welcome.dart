@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:navbar_router/navbar_router.dart';
+import 'package:vocabhub/base_home.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
 
 import 'onboard.dart';
 
-class WelcomePage extends StatefulWidget {
+class WelcomePage extends ConsumerStatefulWidget {
   final String title;
   final String description;
 
@@ -18,16 +21,17 @@ class WelcomePage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<WelcomePage> createState() => _WelcomePageState();
+  ConsumerState<WelcomePage> createState() => _WelcomePageState();
 }
 
-class _WelcomePageState extends State<WelcomePage> {
+class _WelcomePageState extends ConsumerState<WelcomePage> {
   Future<void> startOnBoarding() async {}
 
   bool isLoading = false;
   String title = 'Welcome to Vocabhub';
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userNotifierProvider);
     return Material(
       child: Container(
         color: Colors.black,
@@ -80,7 +84,11 @@ class _WelcomePageState extends State<WelcomePage> {
                 VHButton(
                     width: 200,
                     onTap: () {
-                      Navigate.push(context, AppSignIn(), transitionType: TransitionType.scale);
+                      if (user.isLoggedIn) {
+                        Navigate.pushAndPopAll(context, AdaptiveLayout());
+                      } else {
+                        Navigate.push(context, AppSignIn(), transitionType: TransitionType.scale);
+                      }
                     },
                     label: 'Skip for now'),
               ],

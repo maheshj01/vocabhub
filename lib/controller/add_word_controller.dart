@@ -5,22 +5,30 @@ import 'package:vocabhub/services/services/service_base.dart';
 import 'package:vocabhub/utils/utils.dart';
 
 class AddWordController extends ChangeNotifier with ServiceBase {
-  late Word _drafts;
+  late List<Word> _drafts;
   late AddWordService _addWordService;
   late bool hasDrafts = false;
 
-  Word get drafts => _drafts;
+  List<Word> get drafts => _drafts;
 
   Future<void> saveDrafts(Word word) async {
-    _drafts = word;
+    if (word.isWordEmpty()) return;
+    _drafts.add(word);
     hasDrafts = true;
-    await _addWordService.setWordToDraft(word);
+    await _addWordService.setWordToDraft(_drafts);
     notifyListeners();
   }
 
-  Future<void> loadDrafts() async {
+  Future<List<Word>> loadDrafts() async {
     _drafts = _addWordService.getWordFromDraft();
-    hasDrafts = !_drafts.isWordEmpty();
+    hasDrafts = _drafts.isNotEmpty;
+    return _drafts;
+  }
+
+  Future<void> removeDraft(Word word) async {
+    _drafts.removeWhere((element) => element.equals(word));
+    await _addWordService.setWordToDraft(_drafts);
+    notifyListeners();
   }
 
   @override
@@ -30,7 +38,7 @@ class AddWordController extends ChangeNotifier with ServiceBase {
 
   @override
   Future<void> initService() async {
-    _drafts = Word.init();
+    _drafts = [];
     _addWordService = AddWordService();
     await _addWordService.initService();
     await loadDrafts();

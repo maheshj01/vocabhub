@@ -4,9 +4,11 @@ import 'package:integration_test/integration_test.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/main.dart' as app;
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/navbar/navbar.dart';
 import 'package:vocabhub/onboarding/onboarding.dart';
 import 'package:vocabhub/pages/addword.dart';
+import 'package:vocabhub/pages/drafts.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
 
@@ -71,35 +73,29 @@ void main() {
       await tester.tap(takeATour);
       await tester.pumpAndSettle();
       expect((OnboardingPage).typeX(), findsOneWidget);
-      await tester.pumpAndSettle();
-      await Future.delayed(const Duration(seconds: 2));
+      await tester.pump(Duration(seconds: 2));
       final title0 = (onBoardingTitles[0]).textX();
       expect(title0, findsOneWidget);
       await tester.dragFrom(Offset(400, 0), const Offset(-400, 0));
-      await Future.delayed(const Duration(seconds: 1));
       await tester.pump(Duration(seconds: 2));
       final title1 = (onBoardingTitles[1]).textX();
       expect(title1, findsOneWidget);
-      await Future.delayed(const Duration(seconds: 1));
+      await tester.pump(Duration(seconds: 1));
       await tester.dragFrom(Offset(400, 0), const Offset(-400, 0));
-      await Future.delayed(const Duration(seconds: 1));
       await tester.pump(Duration(seconds: 2));
       final title2 = (onBoardingTitles[2]).textX();
       expect(title2, findsOneWidget);
-      await Future.delayed(const Duration(seconds: 2));
       await tester.pump(Duration(seconds: 2));
       await tester.dragFrom(Offset(400, 0), const Offset(-400, 0));
-      await Future.delayed(const Duration(seconds: 1));
       await tester.pump(Duration(seconds: 2));
       final title3 = (onBoardingTitles[3]).textX();
       expect(title3, findsOneWidget);
-      await Future.delayed(const Duration(seconds: 1));
+      await tester.pump(Duration(seconds: 1));
       await tester.dragFrom(Offset(400, 0), const Offset(-400, 0));
-      await Future.delayed(const Duration(seconds: 1));
       await tester.pump(Duration(seconds: 2));
       final title4 = (onBoardingTitles[4]).textX();
       expect(title4, findsOneWidget);
-      await Future.delayed(const Duration(seconds: 1));
+      await tester.pump(Duration(seconds: 2));
       final getStartedText = "Get Started".textX();
       expect(getStartedText, findsOneWidget);
       await tester.tap(getStartedText);
@@ -234,7 +230,7 @@ void main() {
       // image.writeAsBytesSync(bytes);
     });
 
-    testWidgets('Users should be able to add a new word', (widgetTester) async {
+    testWidgets('Unpublished Word should be saved to drafts', skip: skip, (widgetTester) async {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
@@ -297,7 +293,162 @@ void main() {
       await widgetTester.pumpAndSettle();
       await widgetTester.dragFrom(Offset(0, 100), const Offset(0, -100));
 
+      await Future.delayed(const Duration(seconds: 1));
+
+      await widgetTester.enterText(inputFields.at(4), "This is a mnemonic for testWord");
+      await widgetTester.pumpAndSettle();
+
+      expect(doneIcon, findsOneWidget);
+      await widgetTester.tap(doneIcon);
+      await widgetTester.pumpAndSettle();
+
       await Future.delayed(const Duration(seconds: 3));
+      // remove focus from the textfield
+      await widgetTester.tap(addWordTitle);
+      await widgetTester.pumpAndSettle();
+      await widgetTester.dragFrom(Offset(0, 100), const Offset(0, -200));
+
+      final backButton = Icons.arrow_back.iconX();
+      expect(backButton, findsOneWidget);
+      await widgetTester.tap(backButton);
+      await widgetTester.tap(addWordTitle);
+      await widgetTester.pumpAndSettle();
+      final drafts = addWordController.drafts;
+      expect(drafts.length, 0);
+      await widgetTester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 3));
+      final dialog = (VocabAlert).typeX();
+      expect(dialog, findsOneWidget);
+      await widgetTester.pumpAndSettle();
+      final title = 'Save word to drafts?';
+      expect(title.textX(), findsOneWidget);
+      await widgetTester.pumpAndSettle();
+      final save = 'Save'.textX();
+      expect(save, findsOneWidget);
+      await widgetTester.tap(save);
+      await widgetTester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 3));
+      expect((Dashboard).typeX(), findsOneWidget);
+      await widgetTester.pumpAndSettle();
+      expect(drafts.length, 1);
+    });
+
+    testWidgets('load Unpublished word from drafts', (widgetTester) async {
+      await app.main();
+      // await binding.convertFlutterSurfaceToImage();
+      await Future.delayed(const Duration(seconds: 3));
+      await widgetTester.pumpAndSettle();
+      expect((Dashboard).typeX(), findsOneWidget);
+      await widgetTester.pumpAndSettle();
+      final floatingIcon = Icons.add.iconX();
+      expect(floatingIcon, findsOneWidget);
+      await widgetTester.tap(floatingIcon);
+      await widgetTester.pumpAndSettle();
+      expect((AddWordForm).typeX(), findsOneWidget);
+      await widgetTester.pumpAndSettle();
+
+      final addWordTitle = "Add word".textX();
+      expect(addWordTitle, findsOneWidget);
+      expect(addWordController.drafts.length, 1);
+
+      final draftIcon = Icons.drafts.iconX();
+      expect(draftIcon, findsOneWidget);
+      await widgetTester.tap(draftIcon);
+      await widgetTester.pumpAndSettle();
+      expect((Drafts).typeX(), findsOneWidget);
+      await widgetTester.pumpAndSettle();
+      final draftWord = addWordController.drafts[0];
+      final wordText = draftWord.word.textX();
+      expect(wordText, findsOneWidget);
+      await widgetTester.tap(wordText);
+      await widgetTester.pumpAndSettle();
+      expect(addWordController.drafts.length, 0);
+      expect((AddWordForm).typeX(), findsOneWidget);
+      await widgetTester.tap(addWordTitle);
+      await widgetTester.pumpAndSettle(Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 3));
+
+      /// scroll to the bottom of the page
+      final inputFields = (VocabField).typeX();
+      expect(inputFields.evaluate().length, 5);
+      await widgetTester.drag(inputFields.at(3), const Offset(0, -200));
+      await widgetTester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
+      final submitButton = "Submit".textX();
+      expect(submitButton, findsOneWidget);
+      await widgetTester.tap(submitButton);
+      await widgetTester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 3));
+      // final snackBar = (SnackBar).typeX();
+      // expect(snackBar, findsOneWidget);
+      // await Future.delayed(const Duration(seconds: 3));
+      expect((Dashboard).typeX(), findsOneWidget);
+    });
+
+    testWidgets('Users should be able to add a new word', skip: skip, (widgetTester) async {
+      await app.main();
+      // await binding.convertFlutterSurfaceToImage();
+      await Future.delayed(const Duration(seconds: 3));
+      await widgetTester.pumpAndSettle();
+      expect((Dashboard).typeX(), findsOneWidget);
+      await widgetTester.pumpAndSettle();
+      final floatingIcon = Icons.add.iconX();
+      expect(floatingIcon, findsOneWidget);
+      await widgetTester.tap(floatingIcon);
+      await widgetTester.pumpAndSettle();
+      expect((AddWordForm).typeX(), findsOneWidget);
+      await widgetTester.pumpAndSettle();
+
+      final addWordTitle = "Add word".textX();
+      expect(addWordTitle, findsOneWidget);
+
+      final inputFields = (VocabField).typeX();
+      expect(inputFields.evaluate().length, 5);
+
+      await widgetTester.enterText(inputFields.at(0), "testWord");
+      await widgetTester.pumpAndSettle();
+      await widgetTester.enterText(inputFields.at(1), "this is a meaning of testWord");
+      await widgetTester.tap(addWordTitle);
+      await widgetTester.pumpAndSettle();
+      await widgetTester.drag(find.byType(AddWordForm), const Offset(0, -100));
+
+      await widgetTester.pumpAndSettle();
+      await widgetTester.enterText(inputFields.at(2), "synoymOne");
+      await widgetTester.pumpAndSettle();
+      final doneIcon = Icons.done.iconX();
+      expect(doneIcon, findsOneWidget);
+      await widgetTester.tap(doneIcon);
+      await widgetTester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
+
+      await widgetTester.enterText(inputFields.at(2), "synoymTwo");
+      await widgetTester.pumpAndSettle();
+      expect(doneIcon, findsOneWidget);
+      await widgetTester.tap(doneIcon);
+      await widgetTester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
+      await widgetTester.pumpAndSettle();
+      await widgetTester.enterText(inputFields.at(2), "synoymThree");
+      await widgetTester.pumpAndSettle();
+      expect(doneIcon, findsOneWidget);
+      await widgetTester.tap(doneIcon);
+      await widgetTester.pumpAndSettle();
+      await Future.delayed(const Duration(seconds: 1));
+      await widgetTester.tap(addWordTitle);
+      await widgetTester.pumpAndSettle();
+      await widgetTester.dragFrom(Offset(0, 100), const Offset(0, -100));
+
+      await widgetTester.enterText(
+          inputFields.at(3), "This is an example sentence using testWord as an example");
+      await widgetTester.pumpAndSettle();
+      expect(doneIcon, findsOneWidget);
+      await widgetTester.tap(doneIcon);
+      await widgetTester.pumpAndSettle();
+      await widgetTester.tap(addWordTitle);
+      await widgetTester.pumpAndSettle();
+      await widgetTester.dragFrom(Offset(0, 100), const Offset(0, -100));
+
+      await Future.delayed(const Duration(seconds: 1));
 
       await widgetTester.enterText(inputFields.at(4), "This is a mnemonic for testWord");
       await widgetTester.pumpAndSettle();
@@ -324,7 +475,7 @@ void main() {
       expect((Dashboard).typeX(), findsOneWidget);
     });
 
-    testWidgets('Reject the added test word', (widgetTester) async {
+    testWidgets('Reject the added test word', skip: skip, (widgetTester) async {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
@@ -342,8 +493,9 @@ void main() {
       "You requested to add a new word".textX();
       await widgetTester.pumpAndSettle();
       final rejectIcon = Icons.close.iconX();
-      expect(rejectIcon, findsOneWidget);
-      await widgetTester.tap(rejectIcon);
+      expect(rejectIcon, findsWidgets);
+      await widgetTester.tap(rejectIcon.at(0));
+      await widgetTester.tap(rejectIcon.at(1));
       await widgetTester.pumpAndSettle();
     });
   });

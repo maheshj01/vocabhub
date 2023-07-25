@@ -9,18 +9,22 @@ class AddWordService extends ServiceBase {
 
   final kWordDraft = 'kWordDraft';
 
-  Word getWordFromDraft() {
-    final wordString = _sharedPreferences.getString(kWordDraft) ?? '';
-    if (wordString.isEmpty) {
-      return Word.init();
-    } else {
-      final decoded = json.decode(wordString);
-      return Word.fromJson(decoded);
+  List<Word> getWordFromDraft() {
+    try {
+      final wordString = _sharedPreferences.getString(kWordDraft) ?? '';
+      if (wordString.isEmpty) {
+        return [];
+      } else {
+        final decoded = json.decode(wordString);
+        return decoded.map<Word>((e) => Word.fromJson(e)).toList();
+      }
+    } catch (_) {
+      throw "Failed to load drafts";
     }
   }
 
-  Future<void> setWordToDraft(Word word) async {
-    final encoded = json.encode(word.toJson());
+  Future<void> setWordToDraft(List<Word> words) async {
+    final encoded = json.encode(words);
     await _sharedPreferences.setString(kWordDraft, encoded);
   }
 
