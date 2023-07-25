@@ -120,6 +120,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
       ValueNotifier<Response>(Response(message: '', state: RequestState.error));
   Word? currentWordFromDatabase;
   late String _title;
+  bool autoFocus = false;
 
   @override
   void initState() {
@@ -135,16 +136,26 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
     meaningFocus = FocusNode(canRequestFocus: true);
     _title = 'Lets add a new word';
     if (widget.isEdit) {
+      autoFocus = true;
       _populateData();
       _title = 'Editing Word';
+    } else {
+      if (addWordController.hasDrafts) {
+        autoFocus = false;
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+          showLoadDraftsDialog();
+        });
+      } else {
+        autoFocus = true;
+      }
     }
     exampleController.addListener(_rebuild);
     synonymController.addListener(_rebuild);
     mnemonicController.addListener(_rebuild);
   }
 
-  void _populateData() {
-    editedWord = widget.word!.deepCopy();
+  void _populateData({Word? word}) {
+    editedWord = word != null ? word.deepCopy() : widget.word!.deepCopy();
     wordController.text = editedWord.word;
     meaningController.text = editedWord.meaning;
   }
@@ -229,11 +240,11 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
         barrierDismissible: false,
         builder: (BuildContext context) => VocabAlert(
             title: 'Are you sure you want to delete this word?',
-            onConfirm: () {
+            onAction1: () {
               Navigator.of(context).pop();
               deleteWord();
             },
-            onCancel: () {
+            onAction2: () {
               Navigate.popView(context);
             }));
   }
@@ -247,6 +258,45 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
     mnemonicController.dispose();
     _requestNotifier.dispose();
     super.dispose();
+  }
+
+  Future<bool> showUnSavedDialog() async {
+    bool shouldExit = false;
+    await showDialog(
+        context: context,
+        builder: (x) => VocabAlert(
+            title: 'Save word to drafts?',
+            subtitle: 'We will pull up this word from drafts, next time you try to add a word',
+            actionTitle1: 'Discard & Close',
+            actionTitle2: 'Save',
+            onAction1: () {
+              shouldExit = true;
+              Navigator.of(context).pop();
+            },
+            onAction2: () async {
+              await addWordController.saveDrafts(editedWord);
+              shouldExit = true;
+              Navigator.of(context).pop();
+            }));
+    return shouldExit;
+  }
+
+  Future<void> showLoadDraftsDialog() async {
+    // drafts found in local storage
+    await showDialog(
+        context: context,
+        builder: (x) => VocabAlert(
+            title: 'Load Word from Drafts',
+            subtitle: 'We will pull up this word from drafts, next time you try to add a word',
+            actionTitle1: 'Add New Word',
+            actionTitle2: 'Load UnPublished Word',
+            onAction1: () {
+              Navigator.of(context).pop();
+            },
+            onAction2: () async {
+              _populateData(word: addWordController.drafts);
+              Navigator.of(context).pop();
+            }));
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -279,306 +329,321 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
       child: ValueListenableBuilder<Response>(
           valueListenable: _requestNotifier,
           builder: (BuildContext context, Response request, Widget? child) {
-            return Scaffold(
-              resizeToAvoidBottomInset: true,
-              backgroundColor: colorScheme.background,
-              appBar: AppBar(
-                title: Text(widget.isEdit ? 'Edit Word' : 'Add word'),
-              ),
-              body: Form(
-                key: _formKey,
-                onChanged: () {
-                  // update button state
-                  editedWord = buildWordFromFields()!;
-                  if (widget.word != null && widget.word!.equals(editedWord)) {
-                    _requestNotifier.value = _requestNotifier.value
-                        .copyWith(message: 'No changes made', state: RequestState.error);
-                  } else {
-                    _requestNotifier.value =
-                        _requestNotifier.value.copyWith(state: RequestState.none);
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ListView(
-                    children: [
-                      25.0.vSpacer(),
-                      VocabField(
-                        fieldKey: _formFieldKeys[0],
-                        autofocus: true,
-                        fontSize: 30,
-                        maxlength: 20,
-                        hint: 'e.g Ambivalent',
-                        onChange: (x) async {
-                          editedWord = editedWord.copyWith(word: x);
-                          if (!widget.isEdit) {
-                            final currentWordFromDatabase =
-                                await VocabStoreService.findByWord(editedWord.word.capitalize()!);
-                            if (currentWordFromDatabase != null) {
-                              _requestNotifier.value = Response(
-                                  state: RequestState.error, message: 'Word already exists');
-                            } else {
-                              _requestNotifier.value = Response(state: RequestState.done);
+            return WillPopScope(
+              onWillPop: () async {
+                removeFocus(context);
+                final bool isEmpty = editedWord.isWordEmpty();
+                if (!isEmpty) {
+                  bool shouldExit = await showUnSavedDialog();
+                  return shouldExit;
+                }
+                return Future.value(true);
+              },
+              child: Scaffold(
+                resizeToAvoidBottomInset: true,
+                backgroundColor: colorScheme.background,
+                appBar: AppBar(
+                  title: Text(widget.isEdit ? 'Edit Word' : 'Add word'),
+                ),
+                body: Form(
+                  key: _formKey,
+                  onChanged: () {
+                    // update button state
+                    editedWord = buildWordFromFields()!;
+                    if (widget.word != null && widget.word!.equals(editedWord)) {
+                      _requestNotifier.value = _requestNotifier.value
+                          .copyWith(message: 'No changes made', state: RequestState.error);
+                    } else {
+                      _requestNotifier.value =
+                          _requestNotifier.value.copyWith(state: RequestState.none);
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: ListView(
+                      children: [
+                        25.0.vSpacer(),
+                        VocabField(
+                          fieldKey: _formFieldKeys[0],
+                          autofocus: autoFocus,
+                          fontSize: 30,
+                          maxlength: 20,
+                          hint: 'e.g Ambivalent',
+                          onChange: (x) async {
+                            editedWord = editedWord.copyWith(word: x);
+                            if (!widget.isEdit) {
+                              final currentWordFromDatabase =
+                                  await VocabStoreService.findByWord(editedWord.word.capitalize()!);
+                              if (currentWordFromDatabase != null) {
+                                _requestNotifier.value = Response(
+                                    state: RequestState.error, message: 'Word already exists');
+                              } else {
+                                _requestNotifier.value = Response(state: RequestState.done);
+                              }
+                              setState(() {});
                             }
-                            setState(() {});
-                          }
-                        },
-                        focusNode: wordFocus,
-                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[A-Z-a-z]+'))],
-                        controller: wordController,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: VocabField(
-                          fieldKey: _formFieldKeys[1],
-                          hint: 'What does ' +
-                              '${editedWord.word.isEmpty ? 'it mean?' : '${editedWord.word} mean?'}',
-                          controller: meaningController,
-                          focusNode: meaningFocus,
-                          maxlines: 4,
+                          },
+                          focusNode: wordFocus,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp('[A-Z-a-z]+'))
+                          ],
+                          controller: wordController,
                         ),
-                      ),
-                      Wrap(
-                        direction: Axis.horizontal,
-                        alignment: WrapAlignment.center,
-                        spacing: 8,
-                        runSpacing: 2,
-                        children: List.generate(editedWord.synonyms!.length, (index) {
-                          return synonymChip(editedWord.synonyms![index], () {
-                            editedWord.synonyms!.remove(editedWord.synonyms![index]);
-                            setState(() {});
-                          });
-                        }),
-                      ),
-                      editedWord.synonyms!.length == maxSynonymCount
-                          ? SizedBox.shrink()
-                          : Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 150,
-                                  child: VocabField(
-                                    fontSize: 16,
-                                    hint: 'add synonym',
-                                    maxlength: 16,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(RegExp('[A-Z-a-z]+')),
-                                      // FilteringTextInputFormatter.deny(wordController.text)
-                                    ],
-                                    controller: synonymController,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: VocabField(
+                            fieldKey: _formFieldKeys[1],
+                            hint: 'What does ' +
+                                '${editedWord.word.isEmpty ? 'it mean?' : '${editedWord.word} mean?'}',
+                            controller: meaningController,
+                            focusNode: meaningFocus,
+                            maxlines: 4,
+                          ),
+                        ),
+                        Wrap(
+                          direction: Axis.horizontal,
+                          alignment: WrapAlignment.center,
+                          spacing: 8,
+                          runSpacing: 2,
+                          children: List.generate(editedWord.synonyms!.length, (index) {
+                            return synonymChip(editedWord.synonyms![index], () {
+                              editedWord.synonyms!.remove(editedWord.synonyms![index]);
+                              setState(() {});
+                            });
+                          }),
+                        ),
+                        editedWord.synonyms!.length == maxSynonymCount
+                            ? SizedBox.shrink()
+                            : Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 150,
+                                    child: VocabField(
+                                      fontSize: 16,
+                                      hint: 'add synonym',
+                                      maxlength: 16,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(RegExp('[A-Z-a-z]+')),
+                                        // FilteringTextInputFormatter.deny(wordController.text)
+                                      ],
+                                      controller: synonymController,
+                                    ),
                                   ),
-                                ),
-                                synonymController.text.isNotEmpty
-                                    ? Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 16.0, right: 16, top: 8),
-                                        child: IconButton(
-                                            onPressed: () {
-                                              final String newSynonym = synonymController.text;
-                                              if (newSynonym.toLowerCase() ==
-                                                  editedWord.word.toLowerCase()) {
-                                                NavbarNotifier.showSnackBar(
-                                                    context, 'Synonym cannot be same as word',
-                                                    bottom: 0);
-                                                synonymController.clear();
-                                                return;
-                                              }
-                                              if (editedWord.word.isNotEmpty) {
-                                                if (newSynonym.isNotEmpty &&
-                                                    !editedWord.synonyms!.contains(newSynonym)) {
-                                                  editedWord = editedWord.copyWith(synonyms: [
-                                                    ...editedWord.synonyms!,
-                                                    newSynonym
-                                                  ]);
+                                  synonymController.text.isNotEmpty
+                                      ? Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 16.0, right: 16, top: 8),
+                                          child: IconButton(
+                                              onPressed: () {
+                                                final String newSynonym = synonymController.text;
+                                                if (newSynonym.toLowerCase() ==
+                                                    editedWord.word.toLowerCase()) {
+                                                  NavbarNotifier.showSnackBar(
+                                                      context, 'Synonym cannot be same as word',
+                                                      bottom: 0);
+                                                  synonymController.clear();
+                                                  return;
+                                                }
+                                                if (editedWord.word.isNotEmpty) {
+                                                  if (newSynonym.isNotEmpty &&
+                                                      !editedWord.synonyms!.contains(newSynonym)) {
+                                                    editedWord = editedWord.copyWith(synonyms: [
+                                                      ...editedWord.synonyms!,
+                                                      newSynonym
+                                                    ]);
+                                                    synonymController.clear();
+                                                  }
+                                                } else {
+                                                  NavbarNotifier.showSnackBar(
+                                                      context, 'You must add a word first');
+                                                  FocusScope.of(context).requestFocus(wordFocus);
                                                   synonymController.clear();
                                                 }
-                                              } else {
-                                                NavbarNotifier.showSnackBar(
-                                                    context, 'You must add a word first');
-                                                FocusScope.of(context).requestFocus(wordFocus);
-                                                synonymController.clear();
-                                              }
-                                            },
-                                            icon: Icon(Icons.done, size: 32)),
-                                      )
-                                    : Container(),
+                                              },
+                                              icon: Icon(Icons.done, size: 32)),
+                                        )
+                                      : Container(),
+                                ],
+                              ),
+                        30.0.hSpacer(),
+                        ...List.generate(editedWord.examples!.length, (index) {
+                          return Container(
+                            margin:
+                                EdgeInsets.symmetric(horizontal: SizeUtils.isMobile ? 16 : 24.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                    child:
+                                        buildExample(editedWord.examples![index], editedWord.word)),
+                                GestureDetector(
+                                    onTap: () {
+                                      editedWord.examples!
+                                          .remove(editedWord.examples!.elementAt(index));
+                                      setState(() {});
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: Icon(Icons.delete),
+                                    )),
                               ],
                             ),
-                      30.0.hSpacer(),
-                      ...List.generate(editedWord.examples!.length, (index) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(horizontal: SizeUtils.isMobile ? 16 : 24.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                  child:
-                                      buildExample(editedWord.examples![index], editedWord.word)),
-                              GestureDetector(
-                                  onTap: () {
-                                    editedWord.examples!
-                                        .remove(editedWord.examples!.elementAt(index));
-                                    setState(() {});
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                    child: Icon(Icons.delete),
-                                  )),
-                            ],
-                          ),
-                        );
-                      }),
-                      editedWord.examples!.length < maxExampleCount
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Flexible(
-                                  child: VocabField(
-                                    fieldKey: _formFieldKeys[2],
-                                    hint:
-                                        'An example sentence ${editedWord.word.isEmpty ? "" : "with ${editedWord.word}"} (Optional)',
-                                    controller: exampleController,
-                                    maxlines: 4,
+                          );
+                        }),
+                        editedWord.examples!.length < maxExampleCount
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Flexible(
+                                    child: VocabField(
+                                      fieldKey: _formFieldKeys[2],
+                                      hint:
+                                          'An example sentence ${editedWord.word.isEmpty ? "" : "with ${editedWord.word}"} (Optional)',
+                                      controller: exampleController,
+                                      maxlines: 4,
+                                    ),
                                   ),
-                                ),
-                                exampleController.text.isNotEmpty
-                                    ? Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 16.0, right: 16, top: 8),
-                                        child: IconButton(
-                                            onPressed: () {
-                                              final String text = exampleController.text;
-                                              if (editedWord.word.isNotEmpty) {
-                                                editedWord = editedWord.copyWith(
-                                                    examples: [...editedWord.examples!, text]);
-                                                exampleController.clear();
-                                              } else {
-                                                NavbarNotifier.showSnackBar(
-                                                    context, 'Add a word first');
-                                                FocusScope.of(context).requestFocus(wordFocus);
-                                              }
-                                              setState(() {});
-                                            },
-                                            icon: Icon(Icons.done, size: 32)),
-                                      )
-                                    : Container(),
-                              ],
-                            )
-                          : SizedBox.shrink(),
-                      ...List.generate(editedWord.mnemonics!.length, (index) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(horizontal: SizeUtils.isMobile ? 16 : 24.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                  child:
-                                      buildExample(editedWord.mnemonics![index], editedWord.word)),
-                              GestureDetector(
-                                  onTap: () {
-                                    editedWord.mnemonics!
-                                        .remove(editedWord.mnemonics!.elementAt(index));
-                                    setState(() {});
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                    child: Icon(Icons.delete),
-                                  )),
-                            ],
-                          ),
-                        );
-                      }),
-                      24.0.vSpacer(),
-                      editedWord.mnemonics!.length < maxMnemonicCount
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  exampleController.text.isNotEmpty
+                                      ? Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 16.0, right: 16, top: 8),
+                                          child: IconButton(
+                                              onPressed: () {
+                                                final String text = exampleController.text;
+                                                if (editedWord.word.isNotEmpty) {
+                                                  editedWord = editedWord.copyWith(
+                                                      examples: [...editedWord.examples!, text]);
+                                                  exampleController.clear();
+                                                } else {
+                                                  NavbarNotifier.showSnackBar(
+                                                      context, 'Add a word first');
+                                                  FocusScope.of(context).requestFocus(wordFocus);
+                                                }
+                                                setState(() {});
+                                              },
+                                              icon: Icon(Icons.done, size: 32)),
+                                        )
+                                      : Container(),
+                                ],
+                              )
+                            : SizedBox.shrink(),
+                        ...List.generate(editedWord.mnemonics!.length, (index) {
+                          return Container(
+                            margin:
+                                EdgeInsets.symmetric(horizontal: SizeUtils.isMobile ? 16 : 24.0),
+                            child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Flexible(
-                                  child: VocabField(
-                                    fieldKey: _formFieldKeys[3],
-                                    hint:
-                                        'A mnemonic to help remember ${editedWord.word} (Optional)',
-                                    controller: mnemonicController,
-                                    maxlines: 4,
-                                  ),
-                                ),
-                                mnemonicController.text.isNotEmpty
-                                    ? Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 16.0, right: 16, top: 8),
-                                        child: IconButton(
-                                            onPressed: () {
-                                              final String text = mnemonicController.text;
-                                              if (text.isNotEmpty) {
-                                                editedWord = editedWord.copyWith(
-                                                    mnemonics: [...editedWord.mnemonics!, text]);
-                                                mnemonicController.clear();
-                                              } else {
-                                                NavbarNotifier.showSnackBar(
-                                                    context, 'Add a word first');
-                                                FocusScope.of(context).requestFocus(wordFocus);
-                                              }
-                                              setState(() {});
-                                            },
-                                            icon: Icon(Icons.done, size: 32)),
-                                      )
-                                    : Container(),
+                                Expanded(
+                                    child: buildExample(
+                                        editedWord.mnemonics![index], editedWord.word)),
+                                GestureDetector(
+                                    onTap: () {
+                                      editedWord.mnemonics!
+                                          .remove(editedWord.mnemonics!.elementAt(index));
+                                      setState(() {});
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: Icon(Icons.delete),
+                                    )),
                               ],
-                            )
-                          : Container(),
-                      widget.isEdit
-                          ? VocabField(
-                              hint: 'Briefly explain about your changes',
-                              maxlines: 3,
-                              controller: commentController)
-                          : SizedBox.shrink(),
-                      50.0.hSpacer(),
-                      Align(
-                        alignment: Alignment.center,
-                        child: VHButton(
-                          height: 44,
-                          width: 120,
-                          onTap: request.state == RequestState.error
-                              ? null
-                              : () => widget.isEdit ? updateWord() : addWord(),
-                          label: widget.isEdit ? 'Update' : 'Submit',
-                        ),
-                      ),
-                      16.0.vSpacer(),
-                      if (request.state == RequestState.error &&
-                          _requestNotifier.value.message.isNotEmpty)
+                            ),
+                          );
+                        }),
+                        24.0.vSpacer(),
+                        editedWord.mnemonics!.length < maxMnemonicCount
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Flexible(
+                                    child: VocabField(
+                                      fieldKey: _formFieldKeys[3],
+                                      hint:
+                                          'A mnemonic to help remember ${editedWord.word} (Optional)',
+                                      controller: mnemonicController,
+                                      maxlines: 4,
+                                    ),
+                                  ),
+                                  mnemonicController.text.isNotEmpty
+                                      ? Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 16.0, right: 16, top: 8),
+                                          child: IconButton(
+                                              onPressed: () {
+                                                final String text = mnemonicController.text;
+                                                if (text.isNotEmpty) {
+                                                  editedWord = editedWord.copyWith(
+                                                      mnemonics: [...editedWord.mnemonics!, text]);
+                                                  mnemonicController.clear();
+                                                } else {
+                                                  NavbarNotifier.showSnackBar(
+                                                      context, 'Add a word first');
+                                                  FocusScope.of(context).requestFocus(wordFocus);
+                                                }
+                                                setState(() {});
+                                              },
+                                              icon: Icon(Icons.done, size: 32)),
+                                        )
+                                      : Container(),
+                                ],
+                              )
+                            : Container(),
+                        widget.isEdit
+                            ? VocabField(
+                                hint: 'Briefly explain about your changes',
+                                maxlines: 3,
+                                controller: commentController)
+                            : SizedBox.shrink(),
+                        50.0.hSpacer(),
                         Align(
                           alignment: Alignment.center,
-                          child: Text(
-                            '${_requestNotifier.value.message}',
+                          child: VHButton(
+                            height: 44,
+                            width: 120,
+                            onTap: request.state == RequestState.error
+                                ? null
+                                : () => widget.isEdit ? updateWord() : addWord(),
+                            label: widget.isEdit ? 'Update' : 'Submit',
                           ),
                         ),
-                      16.0.vSpacer(),
-                      Align(
-                        alignment: Alignment.center,
-                        child: SizedBox(
-                          height: 40,
-                          width: 150,
-                          child: widget.isEdit && userProvider!.isAdmin
-                              ? TextButton(
-                                  onPressed: _showAlert,
-                                  child: Text(
-                                    'Delete',
-                                    style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                                        color: colorScheme.error,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600),
-                                  ))
-                              : SizedBox.shrink(),
+                        16.0.vSpacer(),
+                        if (request.state == RequestState.error &&
+                            _requestNotifier.value.message.isNotEmpty)
+                          Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              '${_requestNotifier.value.message}',
+                            ),
+                          ),
+                        16.0.vSpacer(),
+                        Align(
+                          alignment: Alignment.center,
+                          child: SizedBox(
+                            height: 40,
+                            width: 150,
+                            child: widget.isEdit && userProvider!.isAdmin
+                                ? TextButton(
+                                    onPressed: _showAlert,
+                                    child: Text(
+                                      'Delete',
+                                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                          color: colorScheme.error,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600),
+                                    ))
+                                : SizedBox.shrink(),
+                          ),
                         ),
-                      ),
-                      40.0.vSpacer(),
-                    ],
+                        40.0.vSpacer(),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -659,28 +724,39 @@ class VocabFieldState extends State<VocabField> {
 
 class VocabAlert extends StatelessWidget {
   final String title;
-  final Function()? onConfirm;
-  final Function()? onCancel;
+  final String actionTitle1;
+  final String actionTitle2;
+  final Function()? onAction1;
+  final Function()? onAction2;
+  final String? subtitle;
 
-  const VocabAlert({Key? key, required this.title, required this.onConfirm, required this.onCancel})
+  const VocabAlert(
+      {Key? key,
+      required this.title,
+      this.subtitle,
+      this.actionTitle1 = 'Delete',
+      this.actionTitle2 = 'Cancel',
+      required this.onAction1,
+      required this.onAction2})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      content: Text(title),
+      title: Text(title),
+      content: subtitle != null ? Text(subtitle!) : null,
       actions: [
         TextButton(
-          onPressed: onConfirm,
+          onPressed: onAction1,
           child: Text(
-            'Delete',
+            actionTitle1,
             style: TextStyle(color: VocabTheme.errorColor),
           ),
         ),
         TextButton(
-          onPressed: onCancel,
+          onPressed: onAction2,
           child: Text(
-            'Cancel',
+            actionTitle2,
           ),
         ),
       ],

@@ -23,6 +23,14 @@ extension WordEquals on Word {
       listEquals(synonyms, other.synonyms) &&
       listEquals(examples, other.examples) &&
       listEquals(mnemonics, other.mnemonics);
+
+  bool isWordEmpty() {
+    return word.isEmpty &&
+        meaning.isEmpty &&
+        synonyms!.isEmpty &&
+        examples!.isEmpty &&
+        mnemonics!.isEmpty;
+  }
 }
 
 extension ListContains on List<Word> {

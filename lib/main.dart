@@ -34,14 +34,16 @@ Future<void> main() async {
   settingsController = SettingsController();
   exploreController = ExploreController();
   authController = AuthController();
+  addWordController = AddWordController();
   searchController = SearchFieldController(controller: TextEditingController());
+  settingsController.loadSettings();
   dashboardController.initService();
   // pushNotificationService = PushNotificationService(_firebaseMessaging);
   searchController.initService();
   exploreController.initService();
   // pushNotificationService.initService();
   // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-  settingsController.loadSettings();
+  addWordController.initService();
   runApp(ProviderScope(
     child: VocabApp(),
   ));
@@ -73,6 +75,7 @@ late ExploreController exploreController;
 // late PushNotificationService pushNotificationService;
 late DashboardController dashboardController;
 late AuthController authController;
+late AddWordController addWordController;
 Logger logger = Logger('main.dart');
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 late FirebaseAnalytics firebaseAnalytics;
