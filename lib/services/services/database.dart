@@ -60,7 +60,8 @@ class DatabaseService {
     final response = await _supabase
         .from(tableName)
         .select()
-        .ilike('$columnName', "%$columnValue%")
+        // .ilike('$columnName', "%$columnValue%")
+        .or('word.ilike.%$columnValue%,meaning.ilike.%$columnValue%')
         //TODO
         .execute();
     return response;

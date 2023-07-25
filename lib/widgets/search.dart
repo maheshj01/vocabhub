@@ -76,7 +76,7 @@ class _SearchBuilderState extends State<SearchBuilder> {
                       _searchController.clear();
                     }
                   }),
-              hintText: "Search for a word"),
+              hintText: "Search by word, meaning"),
         ));
   }
 }
