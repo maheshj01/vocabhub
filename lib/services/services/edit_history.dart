@@ -28,14 +28,25 @@ class EditHistoryService {
   }
 
   /// Fetch all edits of a word
-  static Future<PostgrestResponse> findPreviousEditsByWord(String word) async {
-    final response = await DatabaseService.innerJoinTwoTables(word,
-        columnName: Constants.WORD_COLUMN,
-        table1: _tableName,
-        table2: Constants.USER_TABLE_NAME,
-        innerJoincolumn: Constants.USER_EMAIL_COLUMN,
-        sort: false);
-    return response;
+  static Future<PostgrestResponse> findPreviousEditsByWord(String word,
+      {bool isNotification = false}) async {
+    if (!isNotification) {
+      final response = await DatabaseService.findApprovedEdits(word,
+          columnName: Constants.WORD_COLUMN,
+          table1: _tableName,
+          table2: Constants.USER_TABLE_NAME,
+          innerJoincolumn: Constants.USER_EMAIL_COLUMN,
+          sort: false);
+      return response;
+    } else {
+      final response = await DatabaseService.innerJoinTwoTables(word,
+          columnName: Constants.WORD_COLUMN,
+          table1: _tableName,
+          table2: Constants.USER_TABLE_NAME,
+          innerJoincolumn: Constants.USER_EMAIL_COLUMN,
+          sort: false);
+      return response;
+    }
   }
 
   /// approve/reject an edit by updating the state to [EditState]

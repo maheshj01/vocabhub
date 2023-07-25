@@ -166,7 +166,7 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
                   builder: (context) => SizedBox(
                       height: size.height * 0.6,
                       child: NotificationDetailMobile(
-                          title: "Edit History", word: widget.word!.word)));
+                          title: "Edit History", isNotification: false, word: widget.word!.word)));
             },
           ),
           Padding(

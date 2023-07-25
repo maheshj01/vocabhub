@@ -50,10 +50,12 @@ class NotificationDetailDesktop extends StatelessWidget {
 class NotificationDetailMobile extends StatefulWidget {
   String word;
   String title;
+  bool isNotification;
 
   NotificationDetailMobile({
     Key? key,
     this.title = 'Edit Detail',
+    this.isNotification = true,
     required this.word,
   }) : super(key: key);
 
@@ -82,7 +84,8 @@ class _NotificationDetailMobileState extends State<NotificationDetailMobile> {
     // if edit is delete then show previous approved and current delete
 
     // find previous approved word
-    resp = await EditHistoryService.findPreviousEditsByWord(widget.word);
+    resp = await EditHistoryService.findPreviousEditsByWord(widget.word,
+        isNotification: widget.isNotification);
     // findById(widget.edit_history.word_id);
     if (resp.status == 200) {
       list = (resp.data as List).map((e) => EditHistory.fromJson(e)).toList();

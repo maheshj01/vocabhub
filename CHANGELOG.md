@@ -1,4 +1,4 @@
-### 0.6.0+23 July 21, 2023 (Unreleased)
+### 0.6.0+23 July 25, 2023
 
 - Edit History is now transparent and public
 - Fix Responsiveness on desktop
