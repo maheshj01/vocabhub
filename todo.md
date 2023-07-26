@@ -1,9 +1,3 @@
-Toggle is Admin 
-
-// lib/services/services/edit_history.dart
-// lib/navbar/notifications.dart
-// lib/utils/utility.dart
-
 [X] - Done
 [ ] - yet to be done
 [T] - To be tested
