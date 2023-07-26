@@ -286,9 +286,13 @@ class DifferenceVisualizer extends StatelessWidget {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          differenceVisualizerGranular(newVersion, oldVersion, isOldVersion: false),
-          8.0.vSpacer(),
-          differenceVisualizerGranular(newVersion, oldVersion, isOldVersion: true),
+          newVersion.isEmpty
+              ? SizedBox()
+              : differenceVisualizerGranular(newVersion, oldVersion, isOldVersion: false),
+          oldVersion.isEmpty ? SizedBox.shrink() : 8.0.vSpacer(),
+          oldVersion.isEmpty
+              ? SizedBox.shrink()
+              : differenceVisualizerGranular(newVersion, oldVersion, isOldVersion: true),
         ],
       ),
     );
