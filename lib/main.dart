@@ -113,7 +113,12 @@ class _VocabAppState extends ConsumerState<VocabApp> {
   }
 
   Future<void> autoLogin(UserModel localUser) async {
-    final resp = await AuthService.updateLogin(email: localUser.email, isLoggedIn: true);
+    final resp = await AuthService.updateLogin(
+      data: {
+        Constants.USER_LOGGEDIN_COLUMN: true,
+      },
+      email: localUser.email,
+    );
     final userProvider = ref.watch(userNotifierProvider);
 
     /// if login success, update local user details

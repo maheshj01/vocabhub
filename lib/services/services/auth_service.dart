@@ -90,14 +90,15 @@ class AuthService extends ServiceBase {
     }
   }
 
-  static Future<ResponseObject> updateLogin(
-      {required String email, bool isLoggedIn = false}) async {
+  static Future<ResponseObject> updateLogin({
+    required String email,
+    required Map<String, dynamic> data,
+  }) async {
     try {
-      final response = await DatabaseService.updateColumn(
+      final response = await DatabaseService.updateByColumn(
           searchColumn: Constants.USER_EMAIL_COLUMN,
           searchValue: email,
-          columnValue: isLoggedIn,
-          columnName: Constants.USER_LOGGEDIN_COLUMN,
+          data: data,
           tableName: _tableName);
 
       if (response.status == 200) {
@@ -154,7 +155,10 @@ class AuthService extends ServiceBase {
   }
 
   Future<void> logOut(BuildContext context, UserModel user) async {
-    await AuthService.updateLogin(email: user.email, isLoggedIn: false);
+    await AuthService.updateLogin(
+      email: user.email,
+      data: {Constants.USER_LOGGEDIN_COLUMN: false},
+    );
     await googleSignOut(context);
     await settingsController.clearSettings();
   }

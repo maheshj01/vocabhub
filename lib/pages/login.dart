@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
@@ -19,15 +20,21 @@ class AppSignIn extends ConsumerStatefulWidget {
 
 class _AppSignInState extends ConsumerState<AppSignIn> {
   AuthService auth = AuthService();
-
+  FirebaseMessaging _messaging = FirebaseMessaging.instance;
   Future<void> _handleSignIn(BuildContext context) async {
     final _userNotifier = ref.read(userNotifierProvider);
     try {
+      final token = await _messaging.getToken();
+      print("token = $token");
+
       _requestNotifier.value = Response(state: RequestState.active);
       user = await auth.googleSignIn(context);
       if (user != null) {
         final existingUser = await UserService.findByEmail(email: user!.email);
         if (existingUser.email.isEmpty) {
+          user = user!.copyWith(
+            token: token,
+          );
           final resp = await AuthService.registerUser(user!);
           if (resp.didSucced) {
             final UserModel registeredUser = UserModel.fromJson((resp.data as List<dynamic>)[0]);
@@ -46,7 +53,16 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
         } else {
           existingUser.loggedIn = true;
           _userNotifier.setUser(existingUser);
-          await AuthService.updateLogin(email: existingUser.email, isLoggedIn: true);
+          user = user!.copyWith(
+            token: token,
+          );
+          await AuthService.updateLogin(
+            data: {
+              Constants.USER_LOGGEDIN_COLUMN: true,
+              Constants.USER_TOKEN_COLUMN: token,
+            },
+            email: existingUser.email,
+          );
           _requestNotifier.value = Response(state: RequestState.done);
           Navigate.pushAndPopAll(context, AdaptiveLayout());
           firebaseAnalytics.logSignIn(user!);

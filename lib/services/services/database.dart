@@ -254,15 +254,14 @@ class DatabaseService {
   /// updates a value in a column
   /// update `ColumnName` to `columnValue` in `tableName where
   /// `searchColumn` = `searchValue`
-  static Future<PostgrestResponse> updateColumn(
+  static Future<PostgrestResponse> updateByColumn(
       {required String searchColumn,
       required String searchValue,
-      required String columnName,
-      required dynamic columnValue,
+      required Map<String, dynamic> data,
       required String tableName}) async {
     final response = await _supabase
         .from(tableName)
-        .update({columnName: columnValue})
+        .update(data)
         .eq("$searchColumn", "$searchValue")
         .execute()
         .timeout(Constants.timeoutDuration);

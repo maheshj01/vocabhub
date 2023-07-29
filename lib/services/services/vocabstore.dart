@@ -115,11 +115,12 @@ class VocabStoreService {
   }
 
   static removeBookmark(String id, {bool isBookmark = true}) async {
-    final response = await DatabaseService.updateColumn(
+    final response = await DatabaseService.updateByColumn(
         searchColumn: 'word_id',
         searchValue: id,
-        columnName: 'state',
-        columnValue: isBookmark ? 'known' : 'unknown',
+        data: {
+          'state': isBookmark ? 'known' : 'unknown',
+        },
         tableName: '${Constants.WORD_STATE_TABLE_NAME}');
     return response;
   }
@@ -203,11 +204,12 @@ class VocabStoreService {
     required String id,
     required Word word,
   }) async {
-    final response = await DatabaseService.updateColumn(
+    final response = await DatabaseService.updateByColumn(
         searchColumn: Constants.ID_COLUMN,
         searchValue: id,
-        columnValue: word.meaning,
-        columnName: Constants.MEANING_COLUMN,
+        data: {
+          Constants.MEANING_COLUMN: word.meaning,
+        },
         tableName: tableName);
     return response;
   }
