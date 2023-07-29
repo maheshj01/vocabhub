@@ -1,9 +1,3 @@
-Toggle is Admin 
-
-// lib/services/services/edit_history.dart
-// lib/navbar/notifications.dart
-// lib/utils/utility.dart
-
 [X] - Done
 [ ] - yet to be done
 [T] - To be tested
@@ -22,9 +16,9 @@ PRE(=E;Rel)
 - [X] Add a new word should be intelligent to recognize duplicates dynamically.
 - [X] Add a about section for the app
 - [ ] Notification detail for desktop and after approval do not popup.
-- [ ] Create onBoarding screens for app tour.
+- [X] Create onBoarding screens for app tour.
 - [ ] Add a way to add a new service
-- [ ] Difference is not shown correctly
+- [X] Difference is not shown correctly
 - [ ] Implement notification system
 - [ ] Send report via email add subject in link
 - [ ] Before adding to history check if duplicate edit exists.
@@ -45,11 +39,11 @@ In Progress
 
 ### Release (Issues/Warnings during release)
 
-- [ ] "You must complete the advertising ID declaration before you can release an app that targets Android 13 (API 33). We'll use this declaration to provide safeguards in Play Console to accommodate changes to advertising ID in Android 13.
+- [X] "You must complete the advertising ID declaration before you can release an app that targets Android 13 (API 33). We'll use this declaration to provide safeguards in Play Console to accommodate changes to advertising ID in Android 13.
 
 Apps targeting Android 13 or above and use advertising ID must include the com.google.android.gms.permission.AD_ID permission in the manifest."
 
-- [ ] Dark/Color schemes for the app.
+- [X] Dark/Color schemes for the app.
 - [X] Add a feature to notify app update.
 - [ ] Push ntifications should be triggered on  requests made by user and on approval or denial.
 - [ ] App review should be posted to playstore from app
@@ -84,23 +78,23 @@ Ans:
 
 ### Word Detail Page
 
-- [ ] Add typewriter animation to meaning of the word.
-- [ ] Ability to see history of edits made for that word.
+- [-] Add typewriter animation to meaning of the word.
+- [X] Ability to see history of edits made for that word.
 
 ### Search
 
-- [ ] Redesign Search.
+- [X] Redesign Search.
 - [X] Going to search tab should have a dummy search bar.
-- [ ] Initial content will be some random words and popular words on platform.
+- [X] Initial content will be some random words and popular words on platform.
 - [X] Tapping on search bar should show recent searches and execute search.
-- [ ] Search should be intelligent to allow searching by word, meaning, synonyms, antonyms, etc.
+- [X] Search should be intelligent to allow searching by word, meaning, synonyms, antonyms, etc.
 
 ### explore page
 
 - [X] Explore should fetch words in pagination from by querying 20 words at a time.(Configurable number)
 - [X] Initially random 20 words will be fetched and then on scroll 20 more words will be fetched But the known words should not be repeated (Unknown status and random only).
-- [ ] If user is not logged In, user can simply swipe all words and a login prompt should be shown on every 5th or 10th word.
-- [ ] Scroll Animation should be shown only for the first time user visits the explore page.
+- [X] If user is not logged In, user can simply swipe all words and a login prompt should be shown on every 5th or 10th word.
+- [X] Scroll Animation should be shown only for the first time user visits the explore page.
 - [ ] Improve the card UI and add autoscrolling to the explore page.
 
 ### User Profile
@@ -111,7 +105,7 @@ Ans:
 - [ ] Stats should show contribution details of the user. e.g tapping on under review should
 redirect to new page with all the edits.
 - [ ] Tapping on each contribution should redirect to the edit visualizer.
-- [ ] Pull down to refresh.
+- [X] Pull down to refresh.
 
 #### Contributions
 
