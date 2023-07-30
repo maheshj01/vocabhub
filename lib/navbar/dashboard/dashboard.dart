@@ -124,7 +124,10 @@ class DashboardMobile extends ConsumerWidget {
     final user = ref.watch(userNotifierProvider);
     final word = dashboardController.wordOfTheDay;
     return CustomScrollView(
-      physics: BouncingScrollPhysics(),
+      scrollBehavior: const MaterialScrollBehavior().copyWith(overscroll: true),
+      physics: BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
       slivers: <Widget>[
         SliverAppBar(
             pinned: false,
@@ -170,27 +173,27 @@ class DashboardMobile extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                        padding: 16.0.verticalPadding,
-                        child: heading('Word of the day'),
-                      ),
+                  padding: 16.0.verticalPadding,
+                  child: heading('Word of the day'),
+                ),
                 OpenContainer<bool>(
-                        openBuilder: (BuildContext context, VoidCallback openContainer) {
-                          return WordDetail(
-                            word: word,
-                            isWod: true,
-                            title: 'Word of the Day',
-                          );
-                        },
-                        tappable: true,
-                        closedShape: 16.0.rounded,
-                        transitionType: ContainerTransitionType.fadeThrough,
-                        closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                          return WoDCard(
-                            word: word,
-                            color: Colors.green.shade300,
-                            title: '${word.word}'.toUpperCase(),
-                          );
-                        }),
+                    openBuilder: (BuildContext context, VoidCallback openContainer) {
+                      return WordDetail(
+                        word: word,
+                        isWod: true,
+                        title: 'Word of the Day',
+                      );
+                    },
+                    tappable: true,
+                    closedShape: 16.0.rounded,
+                    transitionType: ContainerTransitionType.fadeThrough,
+                    closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                      return WoDCard(
+                        word: word,
+                        color: Colors.green.shade300,
+                        title: '${word.word}'.toUpperCase(),
+                      );
+                    }),
                 Padding(
                   padding: 6.0.verticalPadding,
                 ),
