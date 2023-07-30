@@ -20,12 +20,13 @@ class Constants {
   static const SUPABASE_URL = String.fromEnvironment('SUPABASE_PROJECT_URL');
   static const REDIRECT_URL = String.fromEnvironment('SUPABASE_REDIRECT_URL');
   static const FIREBASE_VAPID_KEY = String.fromEnvironment('FIREBASE_VAPID_KEY');
+  static const FCM_SERVER_KEY = String.fromEnvironment('FCM_SERVER_KEY');
   static const PRIVACY_POLICY_TITLE = 'Privacy Policy';
 
   static const PRIVACY_POLICY = 'https://maheshjamdade.com/vocabhub/privacy';
   static const String PROFILE_AVATAR_ASSET = 'assets/profile.png';
   static const Duration wordCountAnimationDuration = Duration(seconds: 3);
-  static const FEEDBACK_EMAIL_TO = 'maheshmn121@gmail.com';
+  static const FEEDBACK_EMAIL_TO = String.fromEnvironment('ADMIN_EMAIL');
 
   /// TABLES
   static const VOCAB_TABLE_NAME = 'vocabsheet_mobile';
@@ -68,7 +69,9 @@ class Constants {
   static const String timeFormatter = 'hh:mm a';
   static const int ratingAskInterval = 7;
   static const int scrollMessageShownInterval = 7;
-  static const Duration timeoutDuration = Duration(seconds: 6);
+  static const Duration timeoutDuration = Duration(seconds: 10);
+
+  static const String LAUNCHER_ICON = '@mipmap/launcher_icon';
 }
 
 enum EditState {
@@ -91,13 +94,19 @@ enum WordState { known, unknown, unanswered }
 
 enum EditType {
   /// request to add a new word
-  add,
+  add("added"),
 
   /// request to edit an existing word
-  edit,
+  edit("edited"),
 
   /// request to delete an existing word
-  delete,
+  delete("deleted");
+
+  final String pastTense;
+
+  const EditType(this.pastTense);
+
+  String toPastTense() => "$pastTense";
 }
 
 enum Status { success, notfound, error }

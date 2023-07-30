@@ -72,7 +72,11 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
       );
       final response = await EditHistoryService.insertHistory(history);
       if (response.didSucced) {
+        history = history.copyWith(
+          users_mobile: userProvider!,
+        );
         analytics.logWordAddSubmit(wordObject, 'success');
+        pushNotificationService.sendNotification(history, EditState.pending, isEditStatus: false);
         NavbarNotifier.showSnackBar(
             context, 'Congrats! Your new word ${editedWord.word} is under review!', onClosed: () {
           stopCircularIndicator(context);
@@ -145,6 +149,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
   }
 
   void _populateData({Word? word}) {
+    editedWord = widget.word!.deepCopy();
     wordController.text = word!.word;
     meaningController.text = word.meaning;
   }
@@ -179,7 +184,12 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
             comments: comments.isEmpty ? 'Edited word: ${editedWord.word}' : comments);
         if (widget.word != editedWord) {
           final response = await EditHistoryService.insertHistory(history);
+          history = history.copyWith(
+            users_mobile: userProvider!,
+          );
           if (response.didSucced) {
+            pushNotificationService.sendNotification(history, EditState.pending,
+                isEditStatus: false);
             NavbarNotifier.showSnackBar(context, "$WORD_SUBMITTED", onClosed: () {
               stopCircularIndicator(context);
               Navigate.popView(context);

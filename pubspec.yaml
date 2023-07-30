@@ -28,7 +28,7 @@ dependencies:
   intl: ^0.18.0
   json_annotation: ^4.6.0
   navbar_router:
-    ^0.5.9
+    ^0.6.0
     # git:
     #   url: https://github.com/maheshmnj/navbar_router.git
   package_info_plus: ^4.0.1

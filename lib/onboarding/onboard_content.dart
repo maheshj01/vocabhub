@@ -159,6 +159,7 @@ class _WordAnimationWidgetState extends State<WordAnimationWidget>
   @override
   Widget build(BuildContext context) {
     final words = dashboardController.words;
+    if (words.isEmpty) return SizedBox();
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {

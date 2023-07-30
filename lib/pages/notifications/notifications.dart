@@ -45,7 +45,7 @@ class _NotificationsState extends ConsumerState<Notifications> {
     }
   }
 
-  Future<void> updateGlobalDatabase(EditHistory edit, EditState state) async {
+  Future<void> updateGlobalDatabase(EditHistory edit, EditState state, UserModel editor) async {
     showCircularIndicator(context);
     bool isSuccess = false;
     final Word word = Word(
@@ -88,7 +88,7 @@ class _NotificationsState extends ConsumerState<Notifications> {
       }
     }
     if (isSuccess) {
-      await updateEditRequest(edit, state);
+      await updateEditRequest(edit, state, editor);
     } else {
       NavbarNotifier.showSnackBar(
         context,
@@ -97,11 +97,12 @@ class _NotificationsState extends ConsumerState<Notifications> {
     }
   }
 
-  Future<void> updateEditRequest(EditHistory edit, EditState state) async {
+  Future<void> updateEditRequest(EditHistory edit, EditState state, UserModel user) async {
     showCircularIndicator(context);
     final resp = await EditHistoryService.updateRequest(edit.edit_id!, state: state);
     if (resp.didSucced) {
       getNotifications();
+      pushNotificationService.sendNotification(edit, state, isEditStatus: true, token: user.token);
     } else {
       NavbarNotifier.showSnackBar(
         context,
@@ -164,7 +165,7 @@ class _NotificationsState extends ConsumerState<Notifications> {
                                 user: editor,
                                 onTap: () {},
                                 onCancel: () {
-                                  updateEditRequest(edit, EditState.cancelled);
+                                  updateEditRequest(edit, EditState.cancelled, editor);
                                 },
                               )
                             : AdminNotificationTile(
@@ -188,9 +189,9 @@ class _NotificationsState extends ConsumerState<Notifications> {
                                 },
                                 onAction: (approved) async {
                                   if (approved) {
-                                    updateGlobalDatabase(edit, EditState.approved);
+                                    updateGlobalDatabase(edit, EditState.approved, editor);
                                   } else {
-                                    updateEditRequest(edit, EditState.rejected);
+                                    updateEditRequest(edit, EditState.rejected, editor);
                                   }
                                 },
                                 onTap: () {
@@ -225,7 +226,7 @@ class _NotificationsState extends ConsumerState<Notifications> {
                               ));
                         },
                         onCancel: () async {
-                          updateEditRequest(edit, EditState.cancelled);
+                          updateEditRequest(edit, EditState.cancelled, editUser);
                         },
                       );
                     },
@@ -282,10 +283,11 @@ class UserNotificationTile extends StatelessWidget {
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: buildNotification(
-                          editTypeToUserNotification(edit, user),
-                          edit.word,
-                        ),
+                        child: buildNotification(editTypeToUserNotification(edit, user), edit.word,
+                            style: TextStyle(
+                                color: colorScheme.onSurfaceVariant,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500)),
                       ),
                     ),
                     Expanded(

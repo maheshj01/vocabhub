@@ -24,9 +24,7 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
   Future<void> _handleSignIn(BuildContext context) async {
     final _userNotifier = ref.read(userNotifierProvider);
     try {
-      final token = await _messaging.getToken();
-      print("token = $token");
-
+      final token = pushNotificationService.fcmToken;
       _requestNotifier.value = Response(state: RequestState.active);
       user = await auth.googleSignIn(context);
       if (user != null) {

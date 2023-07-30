@@ -141,7 +141,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                 AnimatedBuilder(
                     animation: settingsController,
                     builder: (context, child) {
-                      return Switch(
+                      return VocabSwitch(
                           value: settingsController.isDark,
                           onChanged: (x) {
                             settingsController.setTheme(x ? ThemeMode.dark : ThemeMode.light);
@@ -161,26 +161,87 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
               }),
           20.0.vSpacer(),
           hLine(),
-          Stack(
-            children: [
-              settingTile(
-                'Hide Explore Words',
-                description: 'When enabled, words will be hidden in explore page',
-              ),
-              Positioned(
-                top: 10,
-                right: 16,
-                child: Switch(
-                    value: exploreController.isHidden,
-                    onChanged: (x) {
-                      setState(() {
-                        exploreController.toggleHiddenExplore();
-                      });
+          AnimatedBuilder(
+              animation: exploreController,
+              builder: (context, child) {
+                return Stack(
+                  children: [
+                    settingTile('Hide Explore Words',
+                        description: 'When enabled, words will be hidden in explore page',
+                        onTap: () {
+                      exploreController.toggleHiddenExplore();
                     }),
-              )
-            ],
-          ),
+                    Positioned(
+                      top: 10,
+                      right: 16,
+                      child: VocabSwitch(
+                          value: exploreController.isHidden,
+                          onChanged: (x) {
+                            exploreController.toggleHiddenExplore();
+                          }),
+                    )
+                  ],
+                );
+              }),
           hLine(),
+          // AnimatedBuilder(
+          //     animation: pushNotificationService,
+          //     builder: (context, child) {
+          //       return Stack(
+          //         children: [
+          //           ExpansionTile(
+          //             title: Text(
+          //               'Notifications',
+          //             ),
+          //             subtitle: Text(
+          //               'Enable or disable notifications',
+          //               style: TextStyle(
+          //                 fontSize: 14,
+          //                 fontWeight: FontWeight.w400,
+          //               ),
+          //             ),
+          //             childrenPadding: 20.0.rightPadding,
+          //             children: [
+          //               ListTile(
+          //                 title: Text('Word of the day'),
+          //                 subtitle: Text('Get notified for a new word everyday'),
+          //                 trailing: VocabSwitch(
+          //                     value: pushNotificationService.notifications[0],
+          //                     onChanged: (x) {
+          //                       pushNotificationService.subscribeToNotifications(0, x);
+          //                     }),
+          //               ),
+          //               ListTile(
+          //                   title: Text('Daily Reminder'),
+          //                   subtitle: Text('Get notified to learn new words everyday'),
+          //                   trailing: VocabSwitch(
+          //                       value: pushNotificationService.notifications[1],
+          //                       onChanged: (x) {
+          //                         pushNotificationService.subscribeToNotifications(1, x);
+          //                       })),
+          //               ListTile(
+          //                   title: Text('App Updates'),
+          //                   subtitle: Text('Get notified for app updates'),
+          //                   trailing: VocabSwitch(
+          //                       value: pushNotificationService.notifications[2],
+          //                       onChanged: (x) {
+          //                         pushNotificationService.subscribeToNotifications(2, x);
+          //                       }))
+          //             ],
+          //           ),
+          //           // Positioned(
+          //           //   top: 10,
+          //           //   right: 16,
+          //           //   child: VocabSwitch(
+          //           //       value: pushNotificationService.notify,
+          //           //       onChanged: (x) {
+          //           //         pushNotificationService.subscribeToNotifications(x);
+          //           //       }),
+          //           // )
+          //         ],
+          //       );
+          //     }),
+          // hLine(),
           settingTile(
             'Report a bug',
             onTap: () {
@@ -213,7 +274,6 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                   },
                 ),
           hLine(),
-
           !user.isAdmin ? const SizedBox.shrink() : hLine(),
           settingTile(Constants.PRIVACY_POLICY_TITLE, onTap: () {
             Navigate.pushNamed(context, WebViewPage.routeName, isRootNavigator: true);
@@ -259,6 +319,22 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
         ],
       ),
     );
+  }
+}
+
+class VocabSwitch extends StatelessWidget {
+  final bool value;
+  final Function(bool)? onChanged;
+  const VocabSwitch({super.key, required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Switch(
+        inactiveThumbColor: colorScheme.primary,
+        trackOutlineColor: MaterialStateColor.resolveWith((states) => colorScheme.primary),
+        value: value,
+        onChanged: onChanged);
   }
 }
 

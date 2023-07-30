@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:supabase/supabase.dart';
 import 'package:vocabhub/exports.dart';
@@ -47,7 +48,7 @@ class NotificationDetailDesktop extends StatelessWidget {
   }
 }
 
-class NotificationDetailMobile extends StatefulWidget {
+class NotificationDetailMobile extends ConsumerStatefulWidget {
   String word;
   String title;
   bool isNotification;
@@ -60,10 +61,10 @@ class NotificationDetailMobile extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<NotificationDetailMobile> createState() => _NotificationDetailMobileState();
+  ConsumerState<NotificationDetailMobile> createState() => _NotificationDetailMobileState();
 }
 
-class _NotificationDetailMobileState extends State<NotificationDetailMobile> {
+class _NotificationDetailMobileState extends ConsumerState<NotificationDetailMobile> {
   Future<void> getCurrentWord() async {
     currentWordNotifier.value = Response(
         state: RequestState.active,
@@ -150,6 +151,7 @@ class _NotificationDetailMobileState extends State<NotificationDetailMobile> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final user = ref.watch(userNotifierProvider);
     return Scaffold(
         backgroundColor: colorScheme.background,
         appBar: AppBar(

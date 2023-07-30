@@ -38,10 +38,10 @@ Future<void> main() async {
   searchController = SearchFieldController(controller: TextEditingController());
   settingsController.loadSettings();
   dashboardController.initService();
-  // pushNotificationService = PushNotificationService(_firebaseMessaging);
+  pushNotificationService = PushNotificationService(_firebaseMessaging);
   searchController.initService();
   exploreController.initService();
-  // pushNotificationService.initService();
+  pushNotificationService.initService();
   // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   addWordController.initService();
   runApp(ProviderScope(
@@ -72,7 +72,7 @@ void notificationTapBackground(NotificationResponse notificationResponse) {
 late SettingsController settingsController;
 late SearchFieldController searchController;
 late ExploreController exploreController;
-// late PushNotificationService pushNotificationService;
+late PushNotificationService pushNotificationService;
 late DashboardController dashboardController;
 late AuthController authController;
 late AddWordController addWordController;
