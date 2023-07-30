@@ -316,25 +316,105 @@ class DashboardDesktop extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // final dashBoardRef = ref.watch(dashBoardNotifier);
     final colorScheme = Theme.of(context).colorScheme;
-    final size = MediaQuery.of(context).size;
     final word = dashboardController.wordOfTheDay;
-
+    final user = ref.watch(userNotifierProvider);
     return Scaffold(
       backgroundColor: colorScheme.background,
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-              flex: 3,
-              child: Container(
-                alignment: Alignment.center,
-                child: SizedBox(
-                  width: 600,
-                  child: DashboardMobile(),
+      body: Padding(
+        padding: 16.0.horizontalPadding,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+                flex: 3,
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Padding(
+                    padding: 16.0.verticalPadding,
+                    child: heading('Word of the day'),
+                  ),
+                  OpenContainer<bool>(
+                      openBuilder: (BuildContext context, VoidCallback openContainer) {
+                        return WordDetail(
+                          word: word,
+                          isWod: true,
+                          title: 'Word of the Day',
+                        );
+                      },
+                      tappable: true,
+                      closedShape: 16.0.rounded,
+                      transitionType: ContainerTransitionType.fadeThrough,
+                      closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                        return WoDCard(
+                          word: word,
+                          color: Colors.green.shade300,
+                          title: '${word.word}'.toUpperCase(),
+                        );
+                      }),
+                  Padding(
+                    padding: 12.0.verticalPadding,
+                    child: heading('Progress'),
+                  ),
+                  Padding(
+                    padding: 6.0.verticalPadding,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OpenContainer<bool>(
+                            openBuilder: (BuildContext context, VoidCallback openContainer) {
+                              return BookmarksPage(
+                                isBookMark: false,
+                                user: user,
+                              );
+                            },
+                            tappable: true,
+                            closedShape: 16.0.rounded,
+                            transitionType: ContainerTransitionType.fadeThrough,
+                            closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                              return WoDCard(
+                                word: word,
+                                height: 180,
+                                fontSize: 42,
+                                image: 'assets/dart.jpg',
+                                title: 'Mastered\nWords',
+                              );
+                            }),
+                      ),
+                      16.0.hSpacer(),
+                      Expanded(
+                        child: OpenContainer<bool>(
+                            openBuilder: (BuildContext context, VoidCallback openContainer) {
+                              return BookmarksPage(
+                                isBookMark: true,
+                                user: user,
+                              );
+                            },
+                            closedShape: 16.0.rounded,
+                            tappable: true,
+                            transitionType: ContainerTransitionType.fadeThrough,
+                            closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                              return WoDCard(
+                                word: word,
+                                height: 180,
+                                fontSize: 42,
+                                color: Colors.amberAccent.shade400,
+                                title: 'Bookmarks',
+                              );
+                            }),
+                      ),
+                    ],
+                  )
+                ])
+                //  Container(
+                //   alignment: Alignment.center,
+                //   child: SizedBox(
+                //     width: 600,
+                //     child: DashboardMobile(),
+                //   ),
                 ),
-              )),
-          Expanded(flex: 2, child: Notifications()),
-        ],
+            Expanded(flex: 2, child: Notifications()),
+          ],
+        ),
       ),
     );
   }

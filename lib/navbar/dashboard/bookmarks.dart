@@ -23,7 +23,10 @@ class _BookmarksPageState extends State<BookmarksPage> {
   Widget build(BuildContext context) {
     return Material(
         child: ResponsiveBuilder(
-      desktopBuilder: (context) => _BookmarksDesktop(),
+      desktopBuilder: (context) => _BookmarksDesktop(
+        isBookMark: widget.isBookMark,
+        user: widget.user,
+      ),
       mobileBuilder: (context) => _BookmarksMobile(
         isBookMark: widget.isBookMark,
         user: widget.user,
@@ -197,19 +200,61 @@ class WordListPage extends StatelessWidget {
 }
 
 class _BookmarksDesktop extends StatefulWidget {
-  const _BookmarksDesktop({Key? key}) : super(key: key);
+  final bool isBookMark;
+  final UserModel user;
+  const _BookmarksDesktop({Key? key, required this.isBookMark, required this.user})
+      : super(key: key);
 
   @override
   State<_BookmarksDesktop> createState() => _BookmarksDesktopState();
 }
 
 class _BookmarksDesktopState extends State<_BookmarksDesktop> {
+  Future<void> getBookmarks() async {
+    final words =
+        await VocabStoreService.getBookmarks(widget.user.email, isBookmark: widget.isBookMark);
+    _bookmarksNotifier.value = words;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getBookmarks();
+  }
+
+  ValueNotifier<List<Word>?> _bookmarksNotifier = ValueNotifier<List<Word>?>(null);
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Container(
-        color: Colors.red,
-      ),
-    );
+    final String title = widget.isBookMark ? 'Bookmarks' : 'Mastered words';
+
+    Widget _emptyWidget() {
+      return Center(
+        child: Text('No ${title.toLowerCase()} to show'),
+      );
+    }
+
+    return ValueListenableBuilder(
+        valueListenable: _bookmarksNotifier,
+        builder: (_, List<Word>? value, Widget? child) {
+          if (value == null) {
+            return Scaffold(
+                backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                appBar: AppBar(title: Text('$title')),
+                body: LoadingWidget());
+          }
+          return Material(
+              child: value.isEmpty
+                  ? _emptyWidget()
+                  : WordListBuilder(
+                      words: value,
+                      onTrailingTap: (word) async {
+                        await VocabStoreService.removeBookmark(word.id,
+                            isBookmark: widget.isBookMark);
+                        getBookmarks();
+                        NavbarNotifier.showSnackBar(context, '$title removed', bottom: 0);
+                      },
+                    ));
+        });
   }
 }
