@@ -59,15 +59,10 @@ class AppScrollBehavior extends MaterialScrollBehavior {
 
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse notificationResponse) {
-  // ignore: avoid_print
-  print('notification(${notificationResponse.id}) action tapped: '
-      '${notificationResponse.actionId} with'
-      ' payload: ${notificationResponse.payload}');
-  if (notificationResponse.input?.isNotEmpty ?? false) {
-    // ignore: avoid_print
-    logger.d('notification action tapped with input: ${notificationResponse.input}');
-  }
+  appKey.currentState!.pushNamed(Notifications.route);
 }
+
+final appKey = GlobalKey<NavigatorState>();
 
 late SettingsController settingsController;
 late SearchFieldController searchController;
@@ -90,9 +85,6 @@ class VocabApp extends ConsumerStatefulWidget {
   @override
   _VocabAppState createState() => _VocabAppState();
 }
-
-// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-//     FlutterLocalNotificationsPlugin();
 
 class _VocabAppState extends ConsumerState<VocabApp> {
   Future<void> initializeApp() async {
@@ -156,6 +148,7 @@ class _VocabAppState extends ConsumerState<VocabApp> {
             final colorScheme = ColorScheme.fromSeed(seedColor: settingsController.themeSeed);
             return MaterialApp(
               title: Constants.APP_TITLE,
+              key: appKey,
               scrollBehavior: AppScrollBehavior(),
               navigatorObservers: [_observer],
               debugShowCheckedModeBanner: !kDebugMode,

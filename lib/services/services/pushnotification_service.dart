@@ -3,11 +3,14 @@ import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/history.dart';
+import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/services/services/service_base.dart';
 import 'package:vocabhub/services/services/user.dart';
 import 'package:vocabhub/utils/firebase_options.dart';
@@ -175,6 +178,7 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
     }
   }
 
+  late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   @override
   Future<void> initService() async {
     _firebaseMessaging = FirebaseMessaging.instance;
@@ -183,6 +187,26 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
     await setupFlutterNotifications();
     getAdminToken();
     checkPermissions();
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    if (!kIsWeb) {
+      flutterLocalNotificationsPlugin.initialize(
+          InitializationSettings(
+            android: AndroidInitializationSettings(Constants.LAUNCHER_ICON),
+          ),
+          onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
+          onDidReceiveNotificationResponse: (response) {
+        appKey.currentState!.pushNamed(Notifications.route);
+      });
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        showFlutterNotification(message);
+      });
+      // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      //   // navigate using key
+      //   final data = message.data;
+      //   print(data);
+      //   appKey.currentState!.pushNamed(Notifications.route);
+      // });
+    }
   }
 
   void setToken(String? tk) {
@@ -202,19 +226,26 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
   @override
   Future<void> disposeService() async {}
 
-  // Future<void> showFlutterNotification(RemoteMessage message) async {
-  //   const AndroidNotificationDetails androidPlatformChannelSpecifics =
-  //       AndroidNotificationDetails(
-  //           'your channel id', 'your channel name', 'your channel description',
-  //           importance: Importance.max,
-  //           priority: Priority.high,
-  //           ticker: 'ticker');
-  //   const NotificationDetails platformChannelSpecifics =
-  //       NotificationDetails(android: androidPlatformChannelSpecifics);
-  //   await flutterLocalNotificationsPlugin.show(0, message.notification!.title,
-  //       message.notification!.body, platformChannelSpecifics,
-  //       payload: 'item x');
-  // }
+  Future<void> showFlutterNotification(RemoteMessage message) async {
+    RemoteNotification? notification = message.notification;
+    AndroidNotification? android = message.notification?.android;
+    if (notification != null && android != null) {
+      flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          const NotificationDetails(
+            android: AndroidNotificationDetails(
+              'your channel id',
+              'your channel name',
+              importance: Importance.max,
+              priority: Priority.high,
+              ticker: 'ticker',
+            ),
+          ),
+          payload: notification.body);
+    }
+  }
 
   // Future<void> setupFirebaseNotifications() async {
   //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {

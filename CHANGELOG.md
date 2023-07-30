@@ -1,3 +1,7 @@
+### 0.6.1+23 July 30, 2023
+
+- Adds support for push notifications
+
 ### 0.6.0+23 July 25, 2023
 
 - Edit History is now transparent and public
