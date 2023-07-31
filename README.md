@@ -1,4 +1,4 @@
-# Vocabhub 0.6.0
+# Vocabhub 0.6.1
 
 Supercharge your vocabulary with our comprehensive app designed to help you excel in English! Whether you're preparing for the GRE or simply aiming to enhance your language skills, this app is your ultimate companion. Unlock the potential of over 800 meticulously curated GRE words, carefully selected to bolster your word power.
 
@@ -76,7 +76,9 @@ command to run the app from the command line, or If you want to use the launch.j
         "--dart-define=SUPABASE_PROJECT_URL=<your project url here>",
         "--dart-define=SUPABASE_API_KEY=<your api key here>",
         "--dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>",
-        --dart-define=FIREBASE_VAPID_KEY=<vapid key from web push certificate in firebase>
+        "--dart-define=FIREBASE_VAPID_KEY=<vapid key from web push certificate in firebase>"
+        "--dart-define=ADMIN_EMAIL=<youremail>",
+        "--dart-define=FCM_SERVER_KEY=<Firebase server key>"
     ]
   }
 ```
@@ -91,7 +93,7 @@ _Run the project using the command_
 
 ```
   flutter build apk --dart-define=SUPABASE_PROJECT_URL=<your project url here> --dart-define=SUPABASE_API_KEY=<your api key here> --dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>
-  --dart-define=FIREBASE_VAPID_KEY=<vapid key from web push certificate in firebase>
+  --dart-define=FIREBASE_VAPID_KEY=<vapid key from web push certificate in firebase> --dart-define=ADMIN_EMAIL=<youremail> --dart-define=FCM_SERVER_KEY=<Firebase server key>
 ```
 
 The apk will be generated in the `build/app/outputs/flutter-apk/app-release.apk` folder.

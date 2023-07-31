@@ -149,7 +149,11 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
   }
 
   void _populateData({Word? word}) {
-    editedWord = widget.word!.deepCopy();
+    if (word != null) {
+      editedWord = word.deepCopy();
+    } else {
+      editedWord = widget.word!.deepCopy();
+    }
     wordController.text = word!.word;
     meaningController.text = word.meaning;
   }
@@ -351,9 +355,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
                             removeFocus(context);
                             Word selectedDraft = await Navigate.push(context, Drafts(),
                                 transitionType: TransitionType.rtl);
-                            if (selectedDraft != null) {
-                              _populateData(word: selectedDraft);
-                            }
+                            _populateData(word: selectedDraft);
                           },
                           icon: Icon(Icons.drafts)),
                   ],

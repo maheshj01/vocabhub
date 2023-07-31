@@ -200,12 +200,6 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         showFlutterNotification(message);
       });
-      // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      //   // navigate using key
-      //   final data = message.data;
-      //   print(data);
-      //   appKey.currentState!.pushNamed(Notifications.route);
-      // });
     }
   }
 

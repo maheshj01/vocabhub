@@ -1,4 +1,4 @@
-### 0.6.1+23 July 30, 2023
+### 0.6.1+24 July 30, 2023
 
 - Adds support for push notifications
 
