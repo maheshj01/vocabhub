@@ -117,38 +117,107 @@ class WordAnimationWidget extends StatefulWidget {
 
 class _WordAnimationWidgetState extends State<WordAnimationWidget>
     with SingleTickerProviderStateMixin {
+  late AnimationController _wordController;
+  @override
+  void initState() {
+    super.initState();
+    _wordController = AnimationController(
+      duration: duration,
+      vsync: this,
+    );
+    _wordController
+      ..addListener(() {
+        if (_wordController.status == AnimationStatus.completed) {
+          setState(() {
+            index++;
+          });
+          _wordController.reset();
+          _wordController.forward();
+        }
+      });
+
+    words = dashboardController.words;
+    words.shuffle();
+    _wordController.forward();
+  }
+
+  final duration = Duration(milliseconds: 1600);
+
+  List<Word> words = [];
+
+  @override
+  void dispose() {
+    // _controller.dispose();
+    _wordController.dispose();
+    super.dispose();
+  }
+
+  int index = 0;
+  @override
+  Widget build(BuildContext context) {
+    final words = dashboardController.words;
+    if (words.isEmpty) return SizedBox();
+
+    final word = words[index];
+    return Center(
+        child: Container(
+            height: 280,
+            width: 150,
+            decoration: BoxDecoration(
+              color: Colors.primaries[index % Colors.primaries.length],
+              borderRadius: BorderRadius.circular(16.0),
+              border: Border.all(color: Colors.black, width: 4),
+            ),
+            alignment: Alignment.center,
+            child: AnimatedText(
+              text: word.word,
+              duration: duration,
+            )));
+  }
+}
+
+/// Animated text widget to fadein and fadeOut text
+/// For half the duration the text will fade in and for the other half it will fade out
+class AnimatedText extends StatefulWidget {
+  final String text;
+  final Duration duration;
+  const AnimatedText(
+      {super.key, required this.text, this.duration = const Duration(milliseconds: 2000)});
+
+  @override
+  State<AnimatedText> createState() => _AnimatedTextState();
+}
+
+class _AnimatedTextState extends State<AnimatedText> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: Duration(seconds: 10),
-      vsync: this,
-    );
-    _animation = IntTween(begin: 0, end: 40).animate(
+    _controller = AnimationController(duration: widget.duration, vsync: this);
+    fadeIn = Tween<double>(begin: 0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: Curves.easeInOutSine,
+        curve: const Interval(
+          0.0,
+          0.5,
+          curve: Curves.easeIn,
+        ),
       ),
-    )..addListener(() {
-        if (_controller.status == AnimationStatus.completed) {
-          words.shuffle();
-          _controller.repeat();
-        }
-      });
+    );
+    fadeOut = Tween<double>(begin: 1.0, end: 0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(
+          0.5,
+          1.0,
+          curve: Curves.easeOut,
+        ),
+      ),
+    );
 
-    words = dashboardController.words;
-    Future.delayed(Duration(seconds: 2)).then((value) {
-      if (mounted) {
-        _controller.forward();
-      }
-    });
-    words.shuffle();
+    _controller.repeat();
   }
-
-  late Animation<int> _animation;
-  List<Word> words = [];
 
   @override
   void dispose() {
@@ -156,35 +225,30 @@ class _WordAnimationWidgetState extends State<WordAnimationWidget>
     super.dispose();
   }
 
+  late Animation<double> fadeIn;
+  late Animation<double> fadeOut;
+
+  @override
+  void didUpdateWidget(covariant AnimatedText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.text != widget.text) {
+      _controller.reset();
+      _controller.forward();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final words = dashboardController.words;
-    if (words.isEmpty) return SizedBox();
     return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) {
-        final int index = _animation.value;
-        final word = words[index];
-        return Center(
-          child: Container(
-              height: 280,
-              width: 150,
-              decoration: BoxDecoration(
-                color: Colors.primaries[index % Colors.primaries.length],
-                borderRadius: BorderRadius.circular(16.0),
-                border: Border.all(color: Colors.black, width: 4),
-              ),
-              alignment: Alignment.center,
+        animation: _controller,
+        builder: (context, child) {
+          final value = _controller.value;
+          return Opacity(
+              opacity: value > 0.5 ? fadeOut.value : fadeIn.value,
               child: Text(
-                word.word,
+                widget.text,
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white),
-              )
-              // .animate()
-              //     .fadeIn() // uses `Animate.defaultDuration`
-              //     .scale() // inheri
-              ),
-        );
-      },
-    );
+              ));
+        });
   }
 }
