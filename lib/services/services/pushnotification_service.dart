@@ -13,6 +13,7 @@ import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/services/services/service_base.dart';
 import 'package:vocabhub/services/services/user.dart';
 import 'package:vocabhub/utils/logger.dart';
+import 'package:vocabhub/utils/utility.dart';
 
 class PushNotificationService extends ServiceBase with ChangeNotifier {
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -64,6 +65,7 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
         } else {
           await unsubscribeFromTopic(wordOfTheDayTopic);
         }
+        showToast('You are now ${value ? 'subscribed' : 'unsubscribed'} to word of the day');
         break;
       case 1:
         if (value) {
@@ -71,6 +73,7 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
         } else {
           await unsubscribeFromTopic(dailyReminderTopic);
         }
+        showToast('You are now ${value ? 'subscribed' : 'unsubscribed'} to daily reminders');
         break;
       case 2:
         if (value) {
@@ -78,6 +81,7 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
         } else {
           await unsubscribeFromTopic(newWordTopic);
         }
+        showToast('You are now ${value ? 'subscribed' : 'unsubscribed'} to new words');
         break;
       case 2:
         break;
