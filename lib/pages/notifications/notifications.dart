@@ -7,6 +7,7 @@ import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/notification.dart';
 import 'package:vocabhub/navbar/profile/profile.dart';
 import 'package:vocabhub/pages/notifications/notification_detail.dart';
+import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/edit_history.dart';
 import 'package:vocabhub/services/services/vocabstore.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
@@ -62,6 +63,8 @@ class _NotificationsState extends ConsumerState<Notifications> {
       if (resp.didSucced) {
         NavbarNotifier.showSnackBar(context, 'Word added successfully!');
         isSuccess = true;
+        pushNotificationService.sendNotificationToTopic(PushNotificationService.newWordTopic,
+            'New Word: ${word.word}', 'A new word has been added to Vocabhub');
       } else {
         NavbarNotifier.showSnackBar(context, 'Failed to add word, Please try again!');
         return;

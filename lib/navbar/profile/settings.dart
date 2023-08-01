@@ -184,63 +184,63 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                 );
               }),
           hLine(),
-          // AnimatedBuilder(
-          //     animation: pushNotificationService,
-          //     builder: (context, child) {
-          //       return Stack(
-          //         children: [
-          //           ExpansionTile(
-          //             title: Text(
-          //               'Notifications',
-          //             ),
-          //             subtitle: Text(
-          //               'Enable or disable notifications',
-          //               style: TextStyle(
-          //                 fontSize: 14,
-          //                 fontWeight: FontWeight.w400,
-          //               ),
-          //             ),
-          //             childrenPadding: 20.0.rightPadding,
-          //             children: [
-          //               ListTile(
-          //                 title: Text('Word of the day'),
-          //                 subtitle: Text('Get notified for a new word everyday'),
-          //                 trailing: VocabSwitch(
-          //                     value: pushNotificationService.notifications[0],
-          //                     onChanged: (x) {
-          //                       pushNotificationService.subscribeToNotifications(0, x);
-          //                     }),
-          //               ),
-          //               ListTile(
-          //                   title: Text('Daily Reminder'),
-          //                   subtitle: Text('Get notified to learn new words everyday'),
-          //                   trailing: VocabSwitch(
-          //                       value: pushNotificationService.notifications[1],
-          //                       onChanged: (x) {
-          //                         pushNotificationService.subscribeToNotifications(1, x);
-          //                       })),
-          //               ListTile(
-          //                   title: Text('App Updates'),
-          //                   subtitle: Text('Get notified for app updates'),
-          //                   trailing: VocabSwitch(
-          //                       value: pushNotificationService.notifications[2],
-          //                       onChanged: (x) {
-          //                         pushNotificationService.subscribeToNotifications(2, x);
-          //                       }))
-          //             ],
-          //           ),
-          //           // Positioned(
-          //           //   top: 10,
-          //           //   right: 16,
-          //           //   child: VocabSwitch(
-          //           //       value: pushNotificationService.notify,
-          //           //       onChanged: (x) {
-          //           //         pushNotificationService.subscribeToNotifications(x);
-          //           //       }),
-          //           // )
-          //         ],
-          //       );
-          //     }),
+          AnimatedBuilder(
+              animation: pushNotificationService,
+              builder: (context, child) {
+                return Stack(
+                  children: [
+                    ExpansionTile(
+                      title: Text(
+                        'Notifications',
+                      ),
+                      subtitle: Text(
+                        'Enable or disable notifications',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      childrenPadding: 20.0.rightPadding,
+                      children: [
+                        ListTile(
+                          title: Text('Word of the day'),
+                          subtitle: Text('Get notified for a new word everyday'),
+                          trailing: VocabSwitch(
+                              value: pushNotificationService.notifications[0],
+                              onChanged: (x) {
+                                pushNotificationService.subscribeToNotifications(0, x);
+                              }),
+                        ),
+                        ListTile(
+                            title: Text('Daily Reminder'),
+                            subtitle: Text('Get notified to learn new words everyday'),
+                            trailing: VocabSwitch(
+                                value: pushNotificationService.notifications[1],
+                                onChanged: (x) {
+                                  pushNotificationService.subscribeToNotifications(1, x);
+                                })),
+                        ListTile(
+                            title: Text('New Words on Vocabhub'),
+                            subtitle: Text('Get notified for new word additions on Vocabhub'),
+                            trailing: VocabSwitch(
+                                value: pushNotificationService.notifications[2],
+                                onChanged: (x) {
+                                  pushNotificationService.subscribeToNotifications(2, x);
+                                }))
+                      ],
+                    ),
+                    //           // Positioned(
+                    //           //   top: 10,
+                    //           //   right: 16,
+                    //           //   child: VocabSwitch(
+                    //           //       value: pushNotificationService.notify,
+                    //           //       onChanged: (x) {
+                    //           //         pushNotificationService.subscribeToNotifications(x);
+                    //           //       }),
+                    //           // )
+                  ],
+                );
+              }),
           // hLine(),
           settingTile(
             'Report a bug',

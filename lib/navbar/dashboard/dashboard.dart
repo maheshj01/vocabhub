@@ -63,6 +63,8 @@ class _DashboardState extends ConsumerState<Dashboard> {
       final success = await dashboardController.publishWod(randomWord);
       if (success) {
         _dashBoardNotifier.value = response.copyWith(state: RequestState.done);
+        pushNotificationService.sendNotificationToTopic(PushNotificationService.wordOfTheDayTopic,
+            'Word of the Day: ${randomWord.word} ', 'Tap to see word of the day');
       } else {
         NavbarNotifier.showSnackBar(context, "Something went wrong!");
         _dashBoardNotifier.value =
