@@ -1,3 +1,9 @@
+### 0.6.2+25 August 01, 2023
+
+- Improve onboarding Animation
+- Add push notifications for word of the day, new words
+- Add ability to turn off push notifications
+
 ### 0.6.1+24 July 30, 2023
 
 - Adds support for push notifications
