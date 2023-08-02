@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
-import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/notification.dart';
 import 'package:vocabhub/navbar/profile/profile.dart';
 import 'package:vocabhub/pages/notifications/notification_detail.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/services/services/edit_history.dart';
-import 'package:vocabhub/services/services/vocabstore.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/button.dart';
@@ -105,7 +102,10 @@ class _NotificationsState extends ConsumerState<Notifications> {
     final resp = await EditHistoryService.updateRequest(edit.edit_id!, state: state);
     if (resp.didSucced) {
       getNotifications();
-      pushNotificationService.sendNotification(edit, state, isEditStatus: true, token: user.token);
+      final token = user.token;
+      pushNotificationService.sendNotification(
+        Constants.constructEditStatusChangePayload("$token", edit, state),
+      );
     } else {
       NavbarNotifier.showSnackBar(
         context,

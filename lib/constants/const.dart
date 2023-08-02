@@ -1,3 +1,8 @@
+import 'dart:convert';
+
+import 'package:vocabhub/main.dart';
+import 'package:vocabhub/models/history.dart';
+
 /// APP CONSTANTS GO HERE IN THIS FILE
 class Constants {
   static const APP_TITLE = 'Vocabhub';
@@ -72,6 +77,84 @@ class Constants {
   static const Duration timeoutDuration = Duration(seconds: 10);
 
   static const String LAUNCHER_ICON = '@mipmap/launcher_icon';
+
+  // when a user makes a contribution, admin gets a notification
+  static String constructEditPayload(EditHistory history) {
+    final type = history.edit_type!.pastTense;
+    return json.encode({
+      "to": pushNotificationService.adminToken,
+      "notification": {
+        "body": "${history.users_mobile!.name} $type ${history.word}",
+        "content_available": true,
+        "priority": "high",
+        "title": "New word ${history.edit_type!.name} request"
+      },
+      "data": {
+        "priority": "high",
+        "sound": "app_sound.wav",
+        "click_action": "FLUTTER_NOTIFICATION_CLICK",
+        "content_available": true,
+        "id": "$history.id",
+      }
+    });
+  }
+
+  // payload for topic subscription
+  static String constructTopicPayLoad(String topic, String title, String body) {
+    return json.encode({
+      "to": "/topics/$topic",
+      "notification": {
+        "body": "$body",
+        "content_available": true,
+        "priority": "high",
+        "title": "$title"
+      },
+      "data": {
+        "priority": "high",
+        "sound": "app_sound.wav",
+        "click_action": "FLUTTER_NOTIFICATION_CLICK",
+        "content_available": true,
+      }
+    });
+  }
+
+  // payload when admin takes action on edit request
+  static String constructEditStatusChangePayload(
+      String? token, EditHistory history, EditState state) {
+    return json.encode({
+      "to": "$token",
+      "notification": {
+        "body": "Your contribution to ${history.word} has been ${state.toName()}",
+        "content_available": true,
+        "priority": "high",
+        "title": "Your contribution has been ${state.toName()}"
+      },
+      "data": {
+        "priority": "high",
+        "sound": "app_sound.wav",
+        "click_action": "FLUTTER_NOTIFICATION_CLICK",
+        "content_available": true,
+      }
+    });
+  }
+
+  static String reportPayLoad(String title, String body) {
+    return json.encode({
+      "to": pushNotificationService.adminToken,
+      "notification": {
+        "body": "$body",
+        "content_available": true,
+        "priority": "high",
+        "title": "$title"
+      },
+      "data": {
+        "priority": "high",
+        "sound": "app_sound.wav",
+        "click_action": "FLUTTER_NOTIFICATION_CLICK",
+        "content_available": true,
+      }
+    });
+  }
 }
 
 enum EditState {

@@ -122,66 +122,9 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
     }
   }
 
-  String constructEditPayload(String? token, EditHistory history) {
-    final type = history.edit_type!.pastTense;
-    return json.encode({
-      "to": "$token",
-      "notification": {
-        "body": "${history.users_mobile!.name} $type ${history.word}",
-        "content_available": true,
-        "priority": "high",
-        "title": "New word ${history.edit_type!.name} request"
-      },
-      "data": {
-        "priority": "high",
-        "sound": "app_sound.wav",
-        "click_action": "FLUTTER_NOTIFICATION_CLICK",
-        "content_available": true,
-        "id": "$history.id",
-      }
-    });
-  }
-
-  String constructTopicPayLoad(String topic, String title, String body) {
-    return json.encode({
-      "to": "/topics/$topic",
-      "notification": {
-        "body": "$body",
-        "content_available": true,
-        "priority": "high",
-        "title": "$title"
-      },
-      "data": {
-        "priority": "high",
-        "sound": "app_sound.wav",
-        "click_action": "FLUTTER_NOTIFICATION_CLICK",
-        "content_available": true,
-      }
-    });
-  }
-
-  String constructEditStatusChangePayload(String? token, EditHistory history, EditState state) {
-    return json.encode({
-      "to": "$token",
-      "notification": {
-        "body": "Your contribution to ${history.word} has been ${state.toName()}",
-        "content_available": true,
-        "priority": "high",
-        "title": "Your contribution has been ${state.toName()}"
-      },
-      "data": {
-        "priority": "high",
-        "sound": "app_sound.wav",
-        "click_action": "FLUTTER_NOTIFICATION_CLICK",
-        "content_available": true,
-      }
-    });
-  }
-
   /// whether the notification is for edit status change
   /// editStatus changes when admin approves or rejects the edit request
-  Future<void> sendNotification(EditHistory history, EditState state,
-      {bool isEditStatus = false, String? token}) async {
+  Future<void> sendNotification(String body) async {
     var headers = {
       'Content-Type': 'application/json',
       'Authorization': 'key=${Constants.FCM_SERVER_KEY}'
@@ -192,11 +135,8 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
     }
     try {
       final resp = await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
-          headers: headers,
-          body: isEditStatus
-              ? constructEditStatusChangePayload("$token", history, state)
-              : constructEditPayload("$adminToken", history));
-      print("FCM request for device sent! ${resp.body}");
+          headers: headers, body: body);
+      _logger.d("FCM request for device sent! ${resp.body}");
     } catch (e) {
       print(e);
     }
@@ -214,7 +154,7 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
     }
     try {
       final resp = await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
-          headers: headers, body: constructTopicPayLoad(topic, title, body));
+          headers: headers, body: Constants.constructTopicPayLoad(topic, title, body));
       _logger.d("FCM request for device sent! ${resp.body}");
     } catch (e) {
       print(e);

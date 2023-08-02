@@ -76,7 +76,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
           users_mobile: userProvider!,
         );
         analytics.logWordAddSubmit(wordObject, 'success');
-        pushNotificationService.sendNotification(history, EditState.pending, isEditStatus: false);
+        pushNotificationService.sendNotification(Constants.constructEditPayload(history));
         NavbarNotifier.showSnackBar(
             context, 'Congrats! Your new word ${editedWord.word} is under review!', onClosed: () {
           stopCircularIndicator(context);
@@ -192,8 +192,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
             users_mobile: userProvider!,
           );
           if (response.didSucced) {
-            pushNotificationService.sendNotification(history, EditState.pending,
-                isEditStatus: false);
+            pushNotificationService.sendNotification(Constants.constructEditPayload(history));
             NavbarNotifier.showSnackBar(context, "$WORD_SUBMITTED", onClosed: () {
               stopCircularIndicator(context);
               Navigate.popView(context);
