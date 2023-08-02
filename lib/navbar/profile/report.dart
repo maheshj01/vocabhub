@@ -363,6 +363,8 @@ class _ReportABugMobileState extends ConsumerState<ReportABugMobile> {
                             _responseNotifier.value =
                                 _responseNotifier.value.copyWith(state: RequestState.done);
                             NavbarNotifier.showSnackBar(context, 'Thanks for reporting the bug');
+                            pushNotificationService.sendNotification(Constants.reportPayLoad(
+                                'A new bug report', '${user.name}: $description'));
                             _feedBackcontroller.clear();
                             await Future.delayed(const Duration(seconds: 2));
                             Navigator.pop(context);
