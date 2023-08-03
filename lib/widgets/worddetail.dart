@@ -10,16 +10,20 @@ import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
+import 'package:vocabhub/navbar/empty_page.dart';
+import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/notifications/notification_detail.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/utility.dart';
+import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
+import 'package:vocabhub/widgets/widgets.dart';
 
 class WordDetail extends StatefulWidget {
   static String routeName = '/worddetail';
@@ -139,19 +143,35 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
                             child: Text(widget.word!.word.capitalize()!,
                                 style: VocabTheme.googleFontsTextTheme.displayMedium!),
                           ),
-                          IconButton(
-                              onPressed: () async {
-                                AppController state = ref.read(appNotifier.notifier).state;
-                                ref.watch(appNotifier.notifier).state =
-                                    state.copyWith(showFAB: false);
-                                await showModalBottomSheet(
-                                    context: context,
-                                    builder: (context) =>
-                                        SizedBox(height: size.height * 0.6, child: CustomList()));
-                                ref.watch(appNotifier.notifier).state =
-                                    state.copyWith(showFAB: true);
-                              },
-                              icon: Icon(Icons.bookmark_add))
+                          userProvider.isLoggedIn
+                              ? IconButton(
+                                  onPressed: () async {
+                                    final AppController state =
+                                        ref.read(appNotifier.notifier).state;
+                                    ref.watch(appNotifier.notifier).state =
+                                        state.copyWith(showFAB: false);
+                                    NavbarNotifier.hideBottomNavBar = true;
+                                    await showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        builder: (context) {
+                                          return DraggableScrollableSheet(
+                                              maxChildSize: 0.8,
+                                              initialChildSize: 0.6,
+                                              expand: false,
+                                              builder: (context, controller) {
+                                                return CustomList(
+                                                  controller: controller,
+                                                  word: widget.word!,
+                                                );
+                                              });
+                                        });
+                                    ref.watch(appNotifier.notifier).state =
+                                        state.copyWith(showFAB: true);
+                                    NavbarNotifier.hideBottomNavBar = false;
+                                  },
+                                  icon: Icon(Icons.bookmark_add))
+                              : SizedBox.shrink()
                         ],
                       ),
                     ),
@@ -175,11 +195,6 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
             onPressed: () {
               showModalBottomSheet(
                   context: context,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(13),
-                    topRight: Radius.circular(13),
-                  )),
                   isScrollControlled: true,
                   builder: (context) => SizedBox(
                       height: size.height * 0.6,
@@ -443,7 +458,9 @@ class _EmptyWordState extends State<EmptyWord> {
 }
 
 class CustomList extends StatefulWidget {
-  const CustomList({super.key});
+  final Word word;
+  final ScrollController? controller;
+  const CustomList({super.key, required this.word, this.controller});
 
   @override
   State<CustomList> createState() => _CustomListState();
@@ -452,59 +469,144 @@ class CustomList extends StatefulWidget {
 class _CustomListState extends State<CustomList> {
   @override
   Widget build(BuildContext context) {
-    return Navigator(
-      initialRoute: '/',
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case '/new':
-            return MaterialPageRoute(builder: (context) => NewCollection());
-          default:
-            return MaterialPageRoute(builder: (context) => CollectionList());
-        }
-      },
+    return ClipRRect(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(28.0)),
+      child: Navigator(
+        initialRoute: '/',
+        onGenerateRoute: (settings) {
+          switch (settings.name) {
+            case '/new':
+              return MaterialPageRoute(
+                  builder: (context) => NewCollection(
+                        onCollectionCreated: () {
+                          setState(() {});
+                        },
+                      ));
+            default:
+              return MaterialPageRoute(
+                  builder: (context) => CollectionList(
+                        controller: widget.controller,
+                        word: widget.word,
+                      ));
+          }
+        },
+      ),
     );
   }
 }
 
-class CollectionList extends ConsumerWidget {
-  const CollectionList({super.key});
+class CollectionList extends StatefulWidget {
+  final ScrollController? controller;
+  final Word word;
+  const CollectionList({super.key, this.controller, required this.word});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  State<CollectionList> createState() => _CollectionListState();
+}
+
+class _CollectionListState extends State<CollectionList> {
+  @override
+  Widget build(BuildContext context) {
+    final collections = exploreController.collections;
     return Column(
       children: [
-        ListTile(
-          title: Text('New Collection'),
-          onTap: () {
-            Navigator.of(context).pushNamed('/new');
-          },
+        Padding(
+          padding: 8.0.topPadding + 4.0.bottomPadding,
+          child: ListTile(
+            title: Text('Collections', style: Theme.of(context).textTheme.headlineSmall),
+            trailing: TextButton(
+                onPressed: () {
+                  Navigate.pushNamed(context, '/new', arguments: () {
+                    // on Collection created refresh the list
+                    setState(() {});
+                  });
+                },
+                child: Text('Create Collection ',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall!
+                        .copyWith(color: Theme.of(context).colorScheme.primary))),
+          ),
         ),
-        Expanded(
-            child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text('Collection $index'),
-                    trailing: IconButton(onPressed: () {}, icon: Icon(Icons.add)),
-                  );
-                }))
+        hLine(),
+        if (collections.isEmpty)
+          Expanded(child: EmptyPage(message: 'No collections found'))
+        else
+          Expanded(
+              child: ListView.builder(
+                  itemCount: collections.length,
+                  controller: widget.controller ?? ScrollController(),
+                  itemBuilder: (context, index) {
+                    final title = collections.keys.elementAt(index);
+                    final values = collections.values.elementAt(index);
+                    final contains = values.containsWord(widget.word);
+                    return ListTile(
+                      title: Text('$title'),
+                      trailing: IconButton(
+                          onPressed: () {
+                            if (contains) {
+                              exploreController.removeFromCollection(title, widget.word);
+                            } else {
+                              if (widget.word.word.isNotEmpty) {
+                                exploreController.addToCollection(title, widget.word);
+                              }
+                              setState(() {});
+                            }
+                          },
+                          icon: Icon(contains ? Icons.check : Icons.add)),
+                    );
+                  }))
       ],
     );
   }
 }
 
-class NewCollection extends StatelessWidget {
-  const NewCollection({super.key});
+class NewCollection extends StatefulWidget {
+  final Function onCollectionCreated;
+  const NewCollection({Key? key, required this.onCollectionCreated}) : super(key: key);
+  @override
+  State<NewCollection> createState() => _NewCollectionState();
+}
+
+class _NewCollectionState extends State<NewCollection> {
+  TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('New Collection'),
-      ),
-      body: Center(
-        child: Text('New Collection'),
-      ),
-    );
+        backgroundColor: Theme.of(context).colorScheme.background,
+        appBar: AppBar(
+          title: Text('New Collection'),
+        ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            VHTextfield(
+              hint: 'Collection Name',
+              controller: _controller,
+              hasLabel: false,
+            ),
+            VHButton(
+                height: 48,
+                width: 200,
+                fontSize: 16,
+                onTap: () {
+                  final title = _controller.text.trim();
+                  if (title.isNotEmpty) {
+                    exploreController.addCollection(title);
+                  }
+                  widget.onCollectionCreated();
+                  Navigate.popView(context);
+                },
+                label: 'Add to Collection'),
+            32.0.vSpacer()
+          ],
+        ));
   }
 }

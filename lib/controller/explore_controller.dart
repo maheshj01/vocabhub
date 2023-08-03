@@ -11,6 +11,10 @@ class ExploreController extends ChangeNotifier with ServiceBase {
   late final ExploreService _exploreService;
   List<Word> _exploreWords = [];
 
+  Map<String, List<Word>> _collections = {};
+
+  Map<String, List<Word>> get collections => _collections;
+
   List<Word> get exploreWords => _exploreWords;
 
   late bool _isHidden;
@@ -58,6 +62,31 @@ class ExploreController extends ChangeNotifier with ServiceBase {
     _scrollMessageShownDate = await _exploreService.getScrollMessageShownDate();
     final differenceInDays = now.difference(scrollMessageShownDate).inDays;
     _shouldShowScrollAnimation = differenceInDays >= Constants.scrollMessageShownInterval;
+  }
+
+  Future<void> initCollections() async {
+    _collections = await _exploreService.getCollections();
+    notifyListeners();
+  }
+
+  Future<void> addToCollection(String collectionName, Word word) async {
+    await _exploreService.addToCollection(collectionName, word);
+    await initCollections();
+  }
+
+  Future<void> removeFromCollection(String collectionName, Word word) async {
+    await _exploreService.removeFromCollection(collectionName, word);
+    await initCollections();
+  }
+
+  Future<void> addCollection(String collectionName) async {
+    await _exploreService.addCollection(collectionName);
+    await initCollections();
+  }
+
+  Future<void> setCollections(Map<String, List<Word>> collections) async {
+    await _exploreService.setCollections(collections);
+    await initCollections();
   }
 
   @override
@@ -109,7 +138,7 @@ class ExploreController extends ChangeNotifier with ServiceBase {
 
   Future<List<Word>> getExploreWords(String email, {int page = 0}) async {
     // get All words
-     _exploreWords = await _exploreService.getExploreWords(email);
+    _exploreWords = await _exploreService.getExploreWords(email);
     return _exploreWords;
   }
 
