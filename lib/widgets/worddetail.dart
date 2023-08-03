@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
@@ -131,10 +132,27 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
                     },
                     child: FittedBox(
                       fit: BoxFit.fitWidth,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                        child: Text(widget.word!.word.capitalize()!,
-                            style: VocabTheme.googleFontsTextTheme.displayMedium!),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                            child: Text(widget.word!.word.capitalize()!,
+                                style: VocabTheme.googleFontsTextTheme.displayMedium!),
+                          ),
+                          IconButton(
+                              onPressed: () async {
+                                AppController state = ref.read(appNotifier.notifier).state;
+                                ref.watch(appNotifier.notifier).state =
+                                    state.copyWith(showFAB: false);
+                                await showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) =>
+                                        SizedBox(height: size.height * 0.6, child: CustomList()));
+                                ref.watch(appNotifier.notifier).state =
+                                    state.copyWith(showFAB: true);
+                              },
+                              icon: Icon(Icons.bookmark_add))
+                        ],
                       ),
                     ),
                   ),
@@ -419,6 +437,73 @@ class _EmptyWordState extends State<EmptyWord> {
           Padding(padding: EdgeInsets.symmetric(vertical: 16), child: VersionBuilder()),
           40.0.vSpacer(),
         ],
+      ),
+    );
+  }
+}
+
+class CustomList extends StatefulWidget {
+  const CustomList({super.key});
+
+  @override
+  State<CustomList> createState() => _CustomListState();
+}
+
+class _CustomListState extends State<CustomList> {
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      initialRoute: '/',
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/new':
+            return MaterialPageRoute(builder: (context) => NewCollection());
+          default:
+            return MaterialPageRoute(builder: (context) => CollectionList());
+        }
+      },
+    );
+  }
+}
+
+class CollectionList extends ConsumerWidget {
+  const CollectionList({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      children: [
+        ListTile(
+          title: Text('New Collection'),
+          onTap: () {
+            Navigator.of(context).pushNamed('/new');
+          },
+        ),
+        Expanded(
+            child: ListView.builder(
+                itemCount: 10,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text('Collection $index'),
+                    trailing: IconButton(onPressed: () {}, icon: Icon(Icons.add)),
+                  );
+                }))
+      ],
+    );
+  }
+}
+
+class NewCollection extends StatelessWidget {
+  const NewCollection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('New Collection'),
+      ),
+      body: Center(
+        child: Text('New Collection'),
       ),
     );
   }

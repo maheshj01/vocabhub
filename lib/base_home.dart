@@ -9,6 +9,7 @@ import 'package:navbar_router/navbar_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/constants/constants.dart';
+import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/navbar/navbar.dart';
 import 'package:vocabhub/navbar/profile/about.dart';
@@ -96,28 +97,24 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
 
   DateTime oldTime = DateTime.now();
   DateTime newTime = DateTime.now();
-  ValueNotifier<int> _selectedIndexNotifier = ValueNotifier<int>(0);
+  // ValueNotifier<int> _selectedIndexNotifier = ValueNotifier<int>(0);
 
   @override
   void dispose() {
-    _selectedIndexNotifier.dispose();
     super.dispose();
   }
 
   void showSnackBar(String message,
       {String? action, bool persist = false, Function? onActionPressed}) {
-    setState(() {
-      hideFloatingActionButton = true;
-    });
+    AppController state = ref.read(appNotifier.notifier).state;
+    ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       NavbarNotifier.showSnackBar(context, message,
           actionLabel: action,
           onActionPressed: onActionPressed,
           duration: persist ? Duration(days: 1) : Duration(seconds: 3), onClosed: () {
         if (mounted) {
-          setState(() {
-            hideFloatingActionButton = false;
-          });
+          ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: true);
         }
       });
     });
@@ -130,7 +127,6 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     NavbarItem(Icons.explore, 'Explore'),
   ];
   final analytics = Analytics.instance;
-  bool hideFloatingActionButton = false;
   UserModel? user;
   @override
   Widget build(BuildContext context) {
@@ -178,110 +174,105 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       }
     }
     final colorScheme = Theme.of(context).colorScheme;
-    return ValueListenableBuilder<int>(
-        valueListenable: _selectedIndexNotifier,
-        builder: (context, int currentIndex, Widget? child) {
-          return Scaffold(
-            resizeToAvoidBottomInset: false,
-            floatingActionButton: hideFloatingActionButton ||
-                    (currentIndex > 1 || !user!.isLoggedIn)
-                ? null
-                : Padding(
-                    padding: (kM3NavbarHeight * 0.9).bottomPadding,
-                    child: OpenContainer<bool>(
-                        openBuilder: (BuildContext context, VoidCallback openContainer) {
-                          return AddWordForm(
-                            isEdit: false,
-                          );
-                        },
-                        tappable: true,
-                        closedColor: colorScheme.primaryContainer,
-                        closedShape: 22.0.rounded,
-                        transitionType: ContainerTransitionType.fadeThrough,
-                        closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                          return FloatingActionButton.extended(
-                              backgroundColor: colorScheme.primaryContainer,
-                              heroTag: "addword",
-                              elevation: 3.5,
-                              isExtended: true,
-                              icon:
-                                  Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28),
-                              onPressed: null,
-                              label: Text(
-                                'Add Word',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: colorScheme.onPrimaryContainer,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ));
-                        }),
-                  ),
-            body: Stack(
-              children: [
-                NavbarRouter(
-                  errorBuilder: (context) {
-                    return const Center(child: Text('Error 404'));
+    final appController = ref.watch(appNotifier);
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      floatingActionButton: !appController.showFAB || (appController.index > 1 || !user!.isLoggedIn)
+          ? null
+          : Padding(
+              padding: (kM3NavbarHeight * 0.9).bottomPadding,
+              child: OpenContainer<bool>(
+                  openBuilder: (BuildContext context, VoidCallback openContainer) {
+                    return AddWordForm(
+                      isEdit: false,
+                    );
                   },
-                  type: NavbarType.material3,
-                  onBackButtonPressed: (isExiting) {
-                    if (isExiting) {
-                      newTime = DateTime.now();
-                      final int difference = newTime.difference(oldTime).inMilliseconds;
-                      oldTime = newTime;
-                      if (difference < 1000) {
-                        hideToast();
-                        return isExiting;
-                      } else {
-                        showToast('Press again to exit');
-                        return false;
+                  tappable: true,
+                  closedColor: colorScheme.primaryContainer,
+                  closedShape: 22.0.rounded,
+                  transitionType: ContainerTransitionType.fadeThrough,
+                  closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                    return FloatingActionButton.extended(
+                        backgroundColor: colorScheme.primaryContainer,
+                        heroTag: "addword",
+                        elevation: 3.5,
+                        isExtended: true,
+                        icon: Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28),
+                        onPressed: null,
+                        label: Text(
+                          'Add Word',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: colorScheme.onPrimaryContainer,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ));
+                  }),
+            ),
+      body: Stack(
+        children: [
+          NavbarRouter(
+            errorBuilder: (context) {
+              return const Center(child: Text('Error 404'));
+            },
+            type: NavbarType.material3,
+            onBackButtonPressed: (isExiting) {
+              if (isExiting) {
+                newTime = DateTime.now();
+                final int difference = newTime.difference(oldTime).inMilliseconds;
+                oldTime = newTime;
+                if (difference < 1000) {
+                  hideToast();
+                  return isExiting;
+                } else {
+                  showToast('Press again to exit');
+                  return false;
+                }
+              } else {
+                return isExiting;
+              }
+            },
+            isDesktop: !SizeUtils.isMobile,
+            destinationAnimationCurve: Curves.fastOutSlowIn,
+            destinationAnimationDuration: 0,
+            onCurrentTabClicked: () {
+              exploreController.scrollToIndex = 0;
+            },
+            onChanged: (x) async {
+              /// Simulate DragGesture on pageView
+              final pageController = exploreController.pageController;
+              if (EXPLORE_INDEX == x && SizeUtils.isMobile) {
+                if (pageController.hasClients) {
+                  if (exploreController.shouldShowScrollAnimation) {
+                    Future.delayed(Duration(seconds: 3), () async {
+                      if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {
+                        exploreController.showScrollAnimation();
                       }
-                    } else {
-                      return isExiting;
-                    }
-                  },
-                  isDesktop: !SizeUtils.isMobile,
-                  destinationAnimationCurve: Curves.fastOutSlowIn,
-                  destinationAnimationDuration: 0,
-                  onCurrentTabClicked: () {
-                    exploreController.scrollToIndex = 0;
-                  },
-                  onChanged: (x) async {
-                    /// Simulate DragGesture on pageView
-                    final pageController = exploreController.pageController;
-                    if (EXPLORE_INDEX == x && SizeUtils.isMobile) {
-                      if (pageController.hasClients) {
-                        if (exploreController.shouldShowScrollAnimation) {
-                          Future.delayed(Duration(seconds: 3), () async {
-                            if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {
-                              exploreController.showScrollAnimation();
-                            }
-                          });
-                        }
-                      }
-                    }
-                    _selectedIndexNotifier.value = x;
-                  },
-                  decoration: M3NavbarDecoration(),
+                    });
+                  }
+                }
+              }
+              ref.read(appNotifier.notifier).state = ref.watch(appNotifier).copyWith(index: x);
+            },
+            decoration: M3NavbarDecoration(),
+            destinations: [
+              for (int i = 0; i < items.length; i++)
+                DestinationRouter(
+                  navbarItem: items[i],
                   destinations: [
-                    for (int i = 0; i < items.length; i++)
-                      DestinationRouter(
-                        navbarItem: items[i],
-                        destinations: [
-                          for (int j = 0; j < _routes[i]!.keys.length; j++)
-                            Destination(
-                              route: _routes[i]!.keys.elementAt(j),
-                              widget: _routes[i]!.values.elementAt(j),
-                            ),
-                        ],
-                        initialRoute: _routes[i]!.keys.elementAt(0),
+                    for (int j = 0; j < _routes[i]!.keys.length; j++)
+                      Destination(
+                        route: _routes[i]!.keys.elementAt(j),
+                        widget: _routes[i]!.values.elementAt(j),
                       ),
                   ],
+                  initialRoute: _routes[i]!.keys.elementAt(0),
                 ),
-              ],
-            ),
-          );
-        });
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
 
