@@ -518,7 +518,7 @@ class _CollectionListState extends ConsumerState<CollectionList> {
                 onPressed: () {
                   Navigate.pushNamed(context, '/new');
                 },
-                child: Text('Create Collection ',
+                child: Text('Create Collection',
                     style: Theme.of(context)
                         .textTheme
                         .bodySmall!
@@ -591,20 +591,30 @@ class _NewCollectionState extends ConsumerState<NewCollection> {
               controller: _controller,
               hasLabel: false,
             ),
-            VHButton(
-                height: 48,
-                width: 200,
-                fontSize: 16,
-                onTap: () {
-                  final title = _controller.text.trim();
-                  if (title.isNotEmpty) {
-                    collectionRef.addCollection(title);
-                  }
-                  widget.onCollectionCreated();
-                  Navigator.pop(context);
-                },
-                label: 'Add to Collection'),
-            32.0.vSpacer()
+            Column(
+              children: [
+                VHButton(
+                    height: 48,
+                    width: 200,
+                    fontSize: 16,
+                    onTap: () {
+                      final title = _controller.text.trim();
+                      if (title.isNotEmpty) {
+                        collectionRef.addCollection(title);
+                      }
+                      widget.onCollectionCreated();
+                      Navigator.pop(context);
+                    },
+                    label: 'Create Collection'),
+                16.0.vSpacer(),
+                Text(
+                    "Note: This collection will remain on your device only. Uninstalling the app will delete all your collections.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onBackground.withOpacity(0.5))),
+              ],
+            ),
+            16.0.vSpacer()
           ],
         ));
   }

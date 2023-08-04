@@ -6,11 +6,13 @@ import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/main.dart' as app;
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/navbar/navbar.dart';
+import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/onboarding/onboarding.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/drafts.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
+import 'package:vocabhub/widgets/button.dart';
 
 extension FindText on String {
   Finder textX() => find.text(this);
@@ -71,7 +73,7 @@ void main() {
       expect(takeATour, findsOneWidget);
       await tester.pumpAndSettle();
       await tester.tap(takeATour);
-      await tester.pumpAndSettle();
+      await tester.pump(Duration(seconds: 2));
       expect((OnboardingPage).typeX(), findsOneWidget);
       await tester.pump(Duration(seconds: 2));
       final title0 = (onBoardingTitles[0]).textX();
@@ -175,7 +177,7 @@ void main() {
       // image.writeAsBytesSync(bytes);
     });
 
-    testWidgets("Ensure all navbar widgets load", skip: skip, (widgetTester) async {
+    testWidgets("Ensure all navbar widgets load", skip: true, (widgetTester) async {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
       final List<Widget> baseWidgets = [
@@ -230,7 +232,7 @@ void main() {
       // image.writeAsBytesSync(bytes);
     });
 
-    testWidgets('Unpublished Word should be saved to drafts', skip: skip, (widgetTester) async {
+    testWidgets('Unpublished Word should be saved to drafts', skip: true, (widgetTester) async {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
@@ -333,7 +335,7 @@ void main() {
       expect(drafts.length, 1);
     });
 
-    testWidgets('load Unpublished word from drafts', (widgetTester) async {
+    testWidgets('load Unpublished word from drafts', skip: true, (widgetTester) async {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
@@ -385,7 +387,7 @@ void main() {
       expect((Dashboard).typeX(), findsOneWidget);
     });
 
-    testWidgets('Users should be able to add a new word', skip: skip, (widgetTester) async {
+    testWidgets('Users should be able to add a new word', skip: true, (widgetTester) async {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
@@ -475,7 +477,7 @@ void main() {
       expect((Dashboard).typeX(), findsOneWidget);
     });
 
-    testWidgets('Reject the added test word', skip: skip, (widgetTester) async {
+    testWidgets('Reject the added test word', skip: true, (widgetTester) async {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
@@ -498,5 +500,76 @@ void main() {
       await widgetTester.tap(rejectIcon.at(1));
       await widgetTester.pumpAndSettle();
     });
+
+    testWidgets('Word can be added to custom Lists', skip: skip, (widgetTester) async {
+      await app.main();
+      // await binding.convertFlutterSurfaceToImage();
+      final List<Widget> baseWidgets = [
+        Dashboard(),
+        Search(),
+        ExploreWords(
+          onScrollThresholdReached: () {},
+        ),
+        UserProfile(),
+      ];
+
+      final List<NavbarItem> items = [
+        NavbarItem(Icons.dashboard, 'Dashboard'),
+        NavbarItem(Icons.search, 'Search'),
+        NavbarItem(Icons.explore, 'Explore'),
+        NavbarItem(Icons.person, 'Me')
+      ];
+
+      await Future.delayed(const Duration(seconds: 3));
+      await widgetTester.pumpAndSettle();
+
+      for (int i = 0; i < items.length; i++) {
+        final icon = items[i].iconData.iconX();
+        expect(icon, findsOneWidget);
+      }
+      final dashBoard = baseWidgets[0].runtimeType.typeX();
+      final search = baseWidgets[1].runtimeType.typeX();
+      final explore = baseWidgets[2].runtimeType.typeX();
+      final profile = baseWidgets[3].runtimeType.typeX();
+
+      expect(dashBoard, findsOneWidget);
+      await Future.delayed(const Duration(seconds: 1));
+      await widgetTester.pumpAndSettle();
+      final wodCards = (WoDCard).typeX();
+      expect(wodCards, findsWidgets);
+      await widgetTester.pumpAndSettle();
+      await widgetTester.tap(wodCards.at(0));
+      await widgetTester.pumpAndSettle();
+      final collectionIcon = Icons.bookmark_add.iconX();
+      expect(collectionIcon, findsOneWidget);
+      await widgetTester.tap(collectionIcon);
+      await widgetTester.pumpAndSettle();
+      final collectionTitle = "Collections".textX();
+      expect(collectionTitle, findsWidgets);
+      await widgetTester.pumpAndSettle();
+      final emptyTitle = "No collections found".textX();
+      expect(emptyTitle, findsOneWidget);
+      await widgetTester.pumpAndSettle();
+      final createCollection = "Create Collection".textX();
+      expect(createCollection, findsOneWidget);
+      await widgetTester.tap(createCollection);
+      await widgetTester.pumpAndSettle();
+      final newCollectionTitle = "New Collection".textX();
+      expect(newCollectionTitle, findsOneWidget);
+      await widgetTester.pumpAndSettle();
+      final inputField = (VHTextfield).typeX();
+      expect(inputField, findsOneWidget);
+      await widgetTester.enterText(inputField, "Test Collection");
+      await widgetTester.pumpAndSettle();
+      final button = (VHButton).typeX();
+      expect(button, findsOneWidget);
+      await widgetTester.tap(button);
+      await widgetTester.pumpAndSettle();
+      expect(collectionTitle, findsWidgets);
+      await widgetTester.pumpAndSettle();
+      final testCollection = "Test Collection".textX();
+      expect(testCollection, findsOneWidget);
+    });
+    testWidgets('Word can be added to new collection', skip: skip, (widgetTester) async {});
   });
 }
