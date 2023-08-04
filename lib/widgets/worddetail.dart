@@ -139,7 +139,7 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
                       child: Row(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                            padding: 16.0.horizontalPadding,
                             child: Text(widget.word!.word.capitalize()!,
                                 style: VocabTheme.googleFontsTextTheme.displayMedium!),
                           ),
