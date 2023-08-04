@@ -516,10 +516,7 @@ class _CollectionListState extends ConsumerState<CollectionList> {
             title: Text('Collections', style: Theme.of(context).textTheme.headlineSmall),
             trailing: TextButton(
                 onPressed: () {
-                  Navigate.pushNamed(context, '/new', arguments: () {
-                    // on Collection created refresh the list
-                    setState(() {});
-                  });
+                  Navigate.pushNamed(context, '/new');
                 },
                 child: Text('Create Collection ',
                     style: Theme.of(context)

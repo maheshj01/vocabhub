@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:vocabhub/models/models.dart';
+import 'package:vocabhub/services/services/collections_service.dart';
 import 'package:vocabhub/services/services/service_base.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/utility.dart';
 
 class CollectionsNotifier extends ChangeNotifier with ServiceBase {
-  // late CollectionsService _collectionService;
+  late CollectionsService _collectionService;
   Map<String, List<Word>> _collections = {};
   Map<String, List<Word>> get collections => _collections;
 
   Future<void> initCollections() async {
-    // _collections = await _collectionService.getCollections();
+    _collections = await _collectionService.getCollections();
     notifyListeners();
   }
 
@@ -20,6 +21,7 @@ class CollectionsNotifier extends ChangeNotifier with ServiceBase {
       if (!words.containsWord(word)) {
         words.add(word);
         _collections[collectionName] = words;
+        await _collectionService.setCollections(collections);
         showToast('Word added to $collectionName');
       } else {
         showToast('Word already exists in the collection');
@@ -28,7 +30,6 @@ class CollectionsNotifier extends ChangeNotifier with ServiceBase {
       collections[collectionName] = [word];
       showToast('Word added to $collectionName');
     }
-    // await _collectionService.addToCollection(collectionName, word);
     notifyListeners();
   }
 
@@ -40,6 +41,7 @@ class CollectionsNotifier extends ChangeNotifier with ServiceBase {
         words.remove(word);
         _collections[collectionName] = words;
         showToast('Word removed from $collectionName');
+        await _collectionService.setCollections(collections);
       } else {
         showToast('Word not found in the collection');
       }
@@ -71,8 +73,8 @@ class CollectionsNotifier extends ChangeNotifier with ServiceBase {
 
   @override
   Future<void> initService() async {
-    // _collectionService = CollectionsService();
-    // await _collectionService.initService();
+    _collectionService = CollectionsService();
+    await _collectionService.initService();
     await initCollections();
   }
 }
