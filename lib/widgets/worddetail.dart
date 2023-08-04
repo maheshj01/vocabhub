@@ -495,19 +495,19 @@ class _CustomListState extends State<CustomList> {
   }
 }
 
-class CollectionList extends StatefulWidget {
+class CollectionList extends ConsumerStatefulWidget {
   final ScrollController? controller;
   final Word word;
   const CollectionList({super.key, this.controller, required this.word});
 
   @override
-  State<CollectionList> createState() => _CollectionListState();
+  ConsumerState<CollectionList> createState() => _CollectionListState();
 }
 
-class _CollectionListState extends State<CollectionList> {
+class _CollectionListState extends ConsumerState<CollectionList> {
   @override
   Widget build(BuildContext context) {
-    final collections = exploreController.collections;
+    final collections = ref.watch(collectionNotifier).collections;
     return Column(
       children: [
         Padding(
@@ -543,32 +543,33 @@ class _CollectionListState extends State<CollectionList> {
                     return ListTile(
                       title: Text('$title'),
                       trailing: IconButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (contains) {
-                              exploreController.removeFromCollection(title, widget.word);
+                              ref
+                                  .read(collectionNotifier.notifier)
+                                  .removeFromCollection(title, widget.word);
                             } else {
-                              if (widget.word.word.isNotEmpty) {
-                                exploreController.addToCollection(title, widget.word);
-                              }
-                              setState(() {});
+                              ref
+                                  .read(collectionNotifier.notifier)
+                                  .addToCollection(title, widget.word);
                             }
                           },
                           icon: Icon(contains ? Icons.check : Icons.add)),
                     );
-                  }))
+                  })),
       ],
     );
   }
 }
 
-class NewCollection extends StatefulWidget {
+class NewCollection extends ConsumerStatefulWidget {
   final Function onCollectionCreated;
   const NewCollection({Key? key, required this.onCollectionCreated}) : super(key: key);
   @override
-  State<NewCollection> createState() => _NewCollectionState();
+  ConsumerState<NewCollection> createState() => _NewCollectionState();
 }
 
-class _NewCollectionState extends State<NewCollection> {
+class _NewCollectionState extends ConsumerState<NewCollection> {
   TextEditingController _controller = TextEditingController();
 
   @override
@@ -579,6 +580,7 @@ class _NewCollectionState extends State<NewCollection> {
 
   @override
   Widget build(BuildContext context) {
+    final collectionRef = ref.watch(collectionNotifier);
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
@@ -599,10 +601,10 @@ class _NewCollectionState extends State<NewCollection> {
                 onTap: () {
                   final title = _controller.text.trim();
                   if (title.isNotEmpty) {
-                    exploreController.addCollection(title);
+                    collectionRef.addCollection(title);
                   }
                   widget.onCollectionCreated();
-                  Navigate.popView(context);
+                  Navigator.pop(context);
                 },
                 label: 'Add to Collection'),
             32.0.vSpacer()

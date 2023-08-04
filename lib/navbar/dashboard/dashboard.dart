@@ -32,7 +32,8 @@ class _DashboardState extends ConsumerState<Dashboard> {
     _dashBoardNotifier = ValueNotifier(response);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       publishWordOfTheDay();
-      exploreController.initCollections();
+      final collectionRef = ref.watch(collectionNotifier);
+      collectionRef.initService();
     });
     super.initState();
   }
