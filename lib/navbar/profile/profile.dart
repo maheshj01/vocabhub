@@ -342,39 +342,42 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                     ),
                   ),
                   16.0.vSpacer(),
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: 16.0.allRadius,
-                        border: Border.all(color: colorScheme.secondary)),
-                    child: ListTile(
-                      title: headLine('My Collections', padding: 0),
-                      contentPadding: 8.0.allPadding + 8.0.horizontalPadding,
-                      trailing: Icon(Icons.bookmarks),
-                      onTap: () async {
-                        final AppController state = ref.read(appNotifier.notifier).state;
-                        ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: false);
-                        NavbarNotifier.hideBottomNavBar = true;
-                        await showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            builder: (context) {
-                              return DraggableScrollableSheet(
-                                  maxChildSize: 0.9,
-                                  initialChildSize: 0.9,
-                                  expand: false,
-                                  builder: (context, controller) {
-                                    return CollectionsNavigator(
-                                      controller: controller,
-                                      word: Word.init(),
-                                    );
+                  widget.isReadOnly
+                      ? SizedBox.shrink()
+                      : Container(
+                          decoration: BoxDecoration(
+                              borderRadius: 16.0.allRadius,
+                              border: Border.all(color: colorScheme.secondary)),
+                          child: ListTile(
+                            title: headLine('My Collections', padding: 0),
+                            contentPadding: 8.0.allPadding + 8.0.horizontalPadding,
+                            trailing: Icon(Icons.bookmarks),
+                            onTap: () async {
+                              final AppController state = ref.read(appNotifier.notifier).state;
+                              ref.watch(appNotifier.notifier).state =
+                                  state.copyWith(showFAB: false);
+                              NavbarNotifier.hideBottomNavBar = true;
+                              await showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  builder: (context) {
+                                    return DraggableScrollableSheet(
+                                        maxChildSize: 0.9,
+                                        initialChildSize: 0.9,
+                                        expand: false,
+                                        builder: (context, controller) {
+                                          return CollectionsNavigator(
+                                            controller: controller,
+                                            word: Word.init(),
+                                          );
+                                        });
                                   });
-                            });
-                        ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: true);
-                        NavbarNotifier.hideBottomNavBar = false;
-                      },
-                    ),
-                  ),
-                  hLine(height: 1),
+                              ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: true);
+                              NavbarNotifier.hideBottomNavBar = false;
+                            },
+                          ),
+                        ),
+                  widget.isReadOnly ? SizedBox.shrink() : hLine(height: 1),
                 ],
               ),
             ),
