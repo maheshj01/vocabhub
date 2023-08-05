@@ -335,7 +335,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
               onWillPop: () async {
                 removeFocus(context);
                 final bool isEmpty = editedWord.isWordEmpty();
-                if (!isEmpty) {
+                if (!isEmpty && !widget.isEdit) {
                   bool shouldExit = await showUnSavedDialog();
                   return shouldExit;
                 }
