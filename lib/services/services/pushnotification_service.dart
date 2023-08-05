@@ -194,8 +194,15 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
     if (!kIsWeb) {
       flutterLocalNotificationsPlugin.initialize(
           InitializationSettings(
-            android: AndroidInitializationSettings(Constants.LAUNCHER_ICON),
-          ),
+              android: AndroidInitializationSettings(Constants.LAUNCHER_ICON),
+              iOS: DarwinInitializationSettings(
+                defaultPresentAlert: true,
+                defaultPresentSound: true,
+                requestAlertPermission: true,
+                requestBadgePermission: true,
+                defaultPresentBadge: true,
+                requestSoundPermission: true,
+              )),
           onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
           onDidReceiveNotificationResponse: (response) {
         appKey.currentState!.pushNamed(Notifications.route);
