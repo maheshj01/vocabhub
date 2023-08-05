@@ -52,33 +52,7 @@ class SettingsPageMobile extends ConsumerStatefulWidget {
 }
 
 class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
-  Widget settingTile(String label, {String? description, Function? onTap, IconData? trailingIcon}) {
-    return ListTile(
-      minVerticalPadding: 24.0,
-      title: Text(
-        '$label',
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w400,
-        ),
-      ),
-      subtitle: description != null
-          ? Text(
-              '$description',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-              ),
-            )
-          : null,
-      onTap: () {
-        if (onTap != null) {
-          onTap();
-        }
-      },
-      trailing: trailingIcon != null ? Icon(trailingIcon) : null,
-    );
-  }
+  
 
   void showLicensePage({
     required BuildContext context,
@@ -241,7 +215,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                   ],
                 );
               }),
-          // hLine(),
+          hLine(),
           settingTile(
             'Report a bug',
             onTap: () {

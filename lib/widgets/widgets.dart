@@ -203,3 +203,31 @@ Future<void> showRatingsBottomSheet(context, {double bottomPadding = 0}) async {
         );
       });
 }
+
+Widget settingTile(String label, {String? description, Function? onTap, IconData? trailingIcon}) {
+  return ListTile(
+    minVerticalPadding: 24.0,
+    title: Text(
+      '$label',
+      style: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w400,
+      ),
+    ),
+    subtitle: description != null
+        ? Text(
+            '$description',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+            ),
+          )
+        : SizedBox.shrink(),
+    onTap: () {
+      if (onTap != null) {
+        onTap();
+      }
+    },
+    trailing: trailingIcon != null ? Icon(trailingIcon) : null,
+  );
+}

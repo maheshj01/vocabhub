@@ -22,6 +22,8 @@ import 'package:vocabhub/widgets/synonymslist.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
 
+import '../../pages/collections/collections.dart';
+
 class ExploreWords extends StatelessWidget {
   static const String route = '/';
   final VoidCallback? onScrollThresholdReached;
@@ -386,7 +388,7 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
                                                     initialChildSize: 0.6,
                                                     expand: false,
                                                     builder: (context, controller) {
-                                                      return CustomList(
+                                                      return CollectionsNavigator(
                                                         controller: controller,
                                                         word: widget.word!,
                                                       );

@@ -10,20 +10,17 @@ import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
-import 'package:vocabhub/navbar/empty_page.dart';
-import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/pages/addword.dart';
+import 'package:vocabhub/pages/collections/collections.dart';
 import 'package:vocabhub/pages/notifications/notification_detail.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/utility.dart';
-import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
-import 'package:vocabhub/widgets/widgets.dart';
 
 class WordDetail extends StatefulWidget {
   static String routeName = '/worddetail';
@@ -141,7 +138,7 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
                           Padding(
                             padding: 16.0.horizontalPadding,
                             child: Text(widget.word!.word.capitalize()!,
-                                style: VocabTheme.googleFontsTextTheme.displayMedium!),
+                                style: VocabTheme.googleFontsTextTheme.displaySmall!),
                           ),
                           userProvider.isLoggedIn
                               ? IconButton(
@@ -160,7 +157,7 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
                                               initialChildSize: 0.6,
                                               expand: false,
                                               builder: (context, controller) {
-                                                return CustomList(
+                                                return CollectionsNavigator(
                                                   controller: controller,
                                                   word: widget.word!,
                                                 );
@@ -207,7 +204,7 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
             child: Text(
               widget.word!.meaning,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       fontFamily: GoogleFonts.inter(
                     fontWeight: FontWeight.w400,
                   ).fontFamily),
@@ -454,168 +451,5 @@ class _EmptyWordState extends State<EmptyWord> {
         ],
       ),
     );
-  }
-}
-
-class CustomList extends StatefulWidget {
-  final Word word;
-  final ScrollController? controller;
-  const CustomList({super.key, required this.word, this.controller});
-
-  @override
-  State<CustomList> createState() => _CustomListState();
-}
-
-class _CustomListState extends State<CustomList> {
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(28.0)),
-      child: Navigator(
-        initialRoute: '/',
-        onGenerateRoute: (settings) {
-          switch (settings.name) {
-            case '/new':
-              return MaterialPageRoute(
-                  builder: (context) => NewCollection(
-                        onCollectionCreated: () {
-                          setState(() {});
-                        },
-                      ));
-            default:
-              return MaterialPageRoute(
-                  builder: (context) => CollectionList(
-                        controller: widget.controller,
-                        word: widget.word,
-                      ));
-          }
-        },
-      ),
-    );
-  }
-}
-
-class CollectionList extends ConsumerStatefulWidget {
-  final ScrollController? controller;
-  final Word word;
-  const CollectionList({super.key, this.controller, required this.word});
-
-  @override
-  ConsumerState<CollectionList> createState() => _CollectionListState();
-}
-
-class _CollectionListState extends ConsumerState<CollectionList> {
-  @override
-  Widget build(BuildContext context) {
-    final collections = ref.watch(collectionNotifier).collections;
-    return Column(
-      children: [
-        Padding(
-          padding: 8.0.topPadding + 4.0.bottomPadding,
-          child: ListTile(
-            title: Text('Collections', style: Theme.of(context).textTheme.headlineSmall),
-            trailing: TextButton(
-                onPressed: () {
-                  Navigate.pushNamed(context, '/new');
-                },
-                child: Text('Create Collection',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(color: Theme.of(context).colorScheme.primary))),
-          ),
-        ),
-        hLine(),
-        if (collections.isEmpty)
-          Expanded(child: EmptyPage(message: 'No collections found'))
-        else
-          Expanded(
-              child: ListView.builder(
-                  itemCount: collections.length,
-                  controller: widget.controller ?? ScrollController(),
-                  itemBuilder: (context, index) {
-                    final title = collections.keys.elementAt(index);
-                    final values = collections.values.elementAt(index);
-                    final contains = values.containsWord(widget.word);
-                    return ListTile(
-                      title: Text('$title'),
-                      trailing: IconButton(
-                          onPressed: () async {
-                            if (contains) {
-                              ref
-                                  .read(collectionNotifier.notifier)
-                                  .removeFromCollection(title, widget.word);
-                            } else {
-                              ref
-                                  .read(collectionNotifier.notifier)
-                                  .addToCollection(title, widget.word);
-                            }
-                          },
-                          icon: Icon(contains ? Icons.check : Icons.add)),
-                    );
-                  })),
-      ],
-    );
-  }
-}
-
-class NewCollection extends ConsumerStatefulWidget {
-  final Function onCollectionCreated;
-  const NewCollection({Key? key, required this.onCollectionCreated}) : super(key: key);
-  @override
-  ConsumerState<NewCollection> createState() => _NewCollectionState();
-}
-
-class _NewCollectionState extends ConsumerState<NewCollection> {
-  TextEditingController _controller = TextEditingController();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final collectionRef = ref.watch(collectionNotifier);
-    return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        appBar: AppBar(
-          title: Text('New Collection'),
-        ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            VHTextfield(
-              hint: 'Collection Name',
-              controller: _controller,
-              hasLabel: false,
-            ),
-            Column(
-              children: [
-                VHButton(
-                    height: 48,
-                    width: 200,
-                    fontSize: 16,
-                    onTap: () {
-                      final title = _controller.text.trim();
-                      if (title.isNotEmpty) {
-                        collectionRef.addCollection(title);
-                      }
-                      widget.onCollectionCreated();
-                      Navigator.pop(context);
-                    },
-                    label: 'Create Collection'),
-                16.0.vSpacer(),
-                Text(
-                    "Note: This collection will remain on your device only. Uninstalling the app will delete all your collections.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onBackground.withOpacity(0.5))),
-              ],
-            ),
-            16.0.vSpacer()
-          ],
-        ));
   }
 }
