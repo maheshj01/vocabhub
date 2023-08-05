@@ -49,13 +49,12 @@ class _NewCollectionState extends ConsumerState<NewCollection> {
                       final title = _controller.text.trim();
                       if (title.isNotEmpty) {
                         collectionRef.addCollection(title);
+                        Navigator.pop(context);
                       }
-                      Navigator.pop(context);
                     },
                     label: 'Create Collection'),
                 16.0.vSpacer(),
-                Text(
-                    "$onDeviceCollectionsString",
+                Text("$onDeviceCollectionsString",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.onBackground.withOpacity(0.5))),

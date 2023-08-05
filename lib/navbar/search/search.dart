@@ -419,11 +419,10 @@ class _SearchViewState extends State<SearchView> {
                               child: ListView.builder(
                                 padding: kBottomNavigationBarHeight.bottomPadding,
                                 itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(horizontal: 8, vertical: 1.0),
+                                  return Container(
+                                    margin: 8.0.horizontalPadding + 4.0.verticalPadding,
                                     child: OpenContainer(
-                                        closedColor: colorScheme.secondaryContainer,
+                                        closedColor: colorScheme.surface,
                                         openBuilder:
                                             (BuildContext context, VoidCallback openContainer) {
                                           searchController.addRecent(results[index]);
@@ -433,12 +432,18 @@ class _SearchViewState extends State<SearchView> {
                                         },
                                         closedElevation: 0,
                                         tappable: true,
-                                        transitionType: ContainerTransitionType.fadeThrough,
+                                        transitionType: ContainerTransitionType.fade,
                                         closedBuilder:
                                             (BuildContext context, VoidCallback openContainer) {
                                           return ListTile(
                                             minVerticalPadding: 24,
+                                            tileColor: colorScheme.secondaryContainer,
                                             title: Text('${results[index].word}'),
+                                            subtitle: Text(
+                                              '${results[index].meaning}',
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                            ),
                                           );
                                         }),
                                   );
