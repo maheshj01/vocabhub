@@ -190,7 +190,7 @@ class _NotificationDetailMobileState extends ConsumerState<NotificationDetailMob
                         title: Text(editHistory.word),
                         iconColor: Colors.red,
                         onExpansionChanged: (x) {},
-                        subtitle: Text(editHistory.created_at!.standardDateTime()),
+                        subtitle: Text(editHistory.created_at!.toLocal().standardDateTime()),
                         trailing: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
