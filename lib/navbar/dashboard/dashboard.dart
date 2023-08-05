@@ -108,11 +108,13 @@ class _DashboardState extends ConsumerState<Dashboard> {
                   if (response.state == RequestState.active) {
                     return LoadingWidget();
                   }
-                  return RefreshIndicator(
-                      onRefresh: () async {
-                        await publishWordOfTheDay(isRefresh: true);
-                      },
-                      child: DashboardMobile());
+                  return RefreshIndicator(onRefresh: () async {
+                    await publishWordOfTheDay(isRefresh: true);
+                  }, child: DashboardMobile(
+                    onRefresh: () async {
+                      await publishWordOfTheDay(isRefresh: true);
+                    },
+                  ));
                 },
               );
             }));
@@ -121,7 +123,8 @@ class _DashboardState extends ConsumerState<Dashboard> {
 
 class DashboardMobile extends ConsumerWidget {
   static String route = '/';
-  DashboardMobile({Key? key}) : super(key: key);
+  final Function? onRefresh;
+  DashboardMobile({Key? key, this.onRefresh}) : super(key: key);
   final analytics = Analytics.instance;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -192,11 +195,24 @@ class DashboardMobile extends ConsumerWidget {
                     closedShape: 16.0.rounded,
                     transitionType: ContainerTransitionType.fadeThrough,
                     closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                      return WoDCard(
-                        word: word,
-                        color: Colors.green.shade300,
-                        title: '${word.word}'.toUpperCase(),
-                      );
+                      return word.word.isEmpty
+                          ? GestureDetector(
+                              onTap: () {
+                                onRefresh!();
+                              },
+                              child: WoDCard(
+                                  title: 'Tap to Retry',
+                                  description: 'Something went wrong!',
+                                  color: Colors.red.shade300,
+                                  word: word,
+                                  height: 180,
+                                  fontSize: 42),
+                            )
+                          : WoDCard(
+                              word: word,
+                              color: Colors.green.shade300,
+                              title: '${word.word}'.toUpperCase(),
+                            );
                     }),
                 Padding(
                   padding: 6.0.verticalPadding,
@@ -273,6 +289,7 @@ class WoDCard extends StatelessWidget {
   final double? height;
   final double? width;
   final String? image;
+  final String? description;
   final double fontSize;
 
   const WoDCard(
@@ -282,6 +299,7 @@ class WoDCard extends StatelessWidget {
       this.width,
       required this.title,
       this.color,
+      this.description,
       this.fontSize = 40,
       this.image});
 
@@ -300,13 +318,28 @@ class WoDCard extends StatelessWidget {
               : null),
       child: Align(
           alignment: Alignment.center,
-          child: Text(
-            '$title',
-            textAlign: TextAlign.center,
-            style: Theme.of(context)
-                .textTheme
-                .displaySmall!
-                .copyWith(color: Theme.of(context).colorScheme.onPrimary, fontSize: fontSize),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '$title',
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .displaySmall!
+                    .copyWith(color: Theme.of(context).colorScheme.onPrimary, fontSize: fontSize),
+              ),
+              description != null
+                  ? Text(
+                      '$description',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                    )
+                  : SizedBox.shrink()
+            ],
           )),
     );
   }
