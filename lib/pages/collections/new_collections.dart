@@ -25,6 +25,7 @@ class _NewCollectionState extends ConsumerState<NewCollection> {
   Widget build(BuildContext context) {
     final collectionRef = ref.watch(collectionNotifier);
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
           title: Text('New Collection'),
