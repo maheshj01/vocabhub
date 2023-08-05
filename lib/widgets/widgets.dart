@@ -39,9 +39,10 @@ Widget hLine({Color? color, double height = 0.4}) {
   );
 }
 
-Widget vLine({Color? color}) {
+Widget vLine({Color? color, double width = 0.4, double height = 0.0}) {
   return Container(
-    width: 0.4,
+    width: width,
+    height: height,
     color: color ?? Colors.grey.withOpacity(0.5),
   );
 }
@@ -92,11 +93,12 @@ RichText buildNotification(String notification, String word, {TextStyle? style})
   return RichText(text: TextSpan(text: '', children: textSpans));
 }
 
-Widget heading(String title, {double fontSize: 20}) {
+Widget heading(String title, {double fontSize: 20,Color? color}) {
   return Text(
     title,
     style: TextStyle(
       fontSize: fontSize,
+      color: color,
       fontWeight: FontWeight.w500,
     ),
   );

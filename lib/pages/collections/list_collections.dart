@@ -4,11 +4,10 @@ import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/empty_page.dart';
+import 'package:vocabhub/pages/collections/collections.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
-
-import 'new_collections.dart';
 
 class CollectionsNavigator extends StatefulWidget {
   final Word word;
@@ -41,6 +40,8 @@ class _CollectionsNavigatorState extends State<CollectionsNavigator> {
                   builder: (context) => CollectionsGrid(
                         controller: widget.controller,
                       ));
+            case DemoCollections.route:
+              return MaterialPageRoute(builder: (context) => DemoCollections());
             default:
               return MaterialPageRoute(
                   builder: (context) => SavedCollections(
@@ -86,7 +87,7 @@ class _CollectionsSavedState extends ConsumerState<SavedCollections> {
         ),
         hLine(),
         if (collections.isEmpty)
-          Expanded(child: EmptyPage(message: 'No collections found'))
+          Expanded(child: DemoCollections())
         else
           Expanded(
               child: ListView.builder(

@@ -54,3 +54,9 @@ List<String> onBoardingDescriptions = [
   "Explore a diverse range of captivating words in the 'Explore' section. We curate personalized learning experiences, empowering you to effectively expand your vocabulary and master new words.",
   "Personalize your app experience with Dark Mode and personalized color schemes. Enjoy a learning journey that's uniquely yours, with an app that matches your style and feels tailor-made for you"
 ];
+
+String onDeviceCollectionsString =
+    "Note: This collection will remain on your device only. Uninstalling the app will delete all your collections.";
+
+String onDeviceCollectionsString2 =
+    "Note The collections are retained on your device and will not be synced.";

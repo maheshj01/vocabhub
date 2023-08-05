@@ -1,3 +1,8 @@
+### 0.7.0+26 August 05, 2023
+- Adds support for custom word collections
+- Show notification time in user's timezone
+- Initialize IOS notifications
+
 ### 0.6.2+25 August 01, 2023
 
 - Improve onboarding Animation

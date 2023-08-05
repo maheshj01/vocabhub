@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vocabhub/constants/strings.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/utils/extensions.dart';
@@ -54,7 +55,7 @@ class _NewCollectionState extends ConsumerState<NewCollection> {
                     label: 'Create Collection'),
                 16.0.vSpacer(),
                 Text(
-                    "Note: This collection will remain on your device only. Uninstalling the app will delete all your collections.",
+                    "$onDeviceCollectionsString",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.onBackground.withOpacity(0.5))),
