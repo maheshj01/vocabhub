@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vocabhub/utils/utils.dart';
 
 /// Creates a [ThemeSelector] widget.
 /// The [value] and [onThemeChanged] arguments must not be null.
@@ -46,19 +47,25 @@ class _ThemeSelectorState extends State<ThemeSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        for (var color in widget.colors)
-          GestureDetector(
-            onTap: () {
-              widget.onThemeChanged(color);
-            },
-            child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: circle(color, widget.value.value == color.value)),
-          ),
-      ],
+    return SizedBox(
+      height: 50,
+      child: Center(
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          children: [
+            for (var color in widget.colors)
+              GestureDetector(
+                onTap: () {
+                  widget.onThemeChanged(color);
+                },
+                child: Padding(
+                    padding: 12.0.horizontalPadding,
+                    child: circle(color, widget.value.value == color.value)),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

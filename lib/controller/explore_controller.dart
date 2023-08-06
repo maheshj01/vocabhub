@@ -11,6 +11,7 @@ class ExploreController extends ChangeNotifier with ServiceBase {
   late final ExploreService _exploreService;
   List<Word> _exploreWords = [];
 
+
   List<Word> get exploreWords => _exploreWords;
 
   late bool _isHidden;
@@ -109,7 +110,7 @@ class ExploreController extends ChangeNotifier with ServiceBase {
 
   Future<List<Word>> getExploreWords(String email, {int page = 0}) async {
     // get All words
-     _exploreWords = await _exploreService.getExploreWords(email);
+    _exploreWords = await _exploreService.getExploreWords(email);
     return _exploreWords;
   }
 

@@ -6,10 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
+import 'package:vocabhub/pages/collections/collections.dart';
 import 'package:vocabhub/pages/notifications/notification_detail.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/services.dart';
@@ -131,10 +133,43 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
                     },
                     child: FittedBox(
                       fit: BoxFit.fitWidth,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                        child: Text(widget.word!.word.capitalize()!,
-                            style: VocabTheme.googleFontsTextTheme.displayMedium!),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: 16.0.horizontalPadding,
+                            child: Text(widget.word!.word.capitalize()!,
+                                style: VocabTheme.googleFontsTextTheme.displaySmall!),
+                          ),
+                          userProvider.isLoggedIn
+                              ? IconButton(
+                                  onPressed: () async {
+                                    final AppController state =
+                                        ref.read(appNotifier.notifier).state;
+                                    ref.watch(appNotifier.notifier).state =
+                                        state.copyWith(showFAB: false);
+                                    NavbarNotifier.hideBottomNavBar = true;
+                                    await showModalBottomSheet(
+                                        context: context,
+                                        isScrollControlled: true,
+                                        builder: (context) {
+                                          return DraggableScrollableSheet(
+                                              maxChildSize: 0.8,
+                                              initialChildSize: 0.8,
+                                              expand: false,
+                                              builder: (context, controller) {
+                                                return CollectionsNavigator(
+                                                  controller: controller,
+                                                  word: widget.word!,
+                                                );
+                                              });
+                                        });
+                                    ref.watch(appNotifier.notifier).state =
+                                        state.copyWith(showFAB: true);
+                                    NavbarNotifier.hideBottomNavBar = false;
+                                  },
+                                  icon: Icon(Icons.bookmark_add))
+                              : SizedBox.shrink()
+                        ],
                       ),
                     ),
                   ),
@@ -157,11 +192,6 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
             onPressed: () {
               showModalBottomSheet(
                   context: context,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(13),
-                    topRight: Radius.circular(13),
-                  )),
                   isScrollControlled: true,
                   builder: (context) => SizedBox(
                       height: size.height * 0.6,
@@ -174,7 +204,7 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
             child: Text(
               widget.word!.meaning,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       fontFamily: GoogleFonts.inter(
                     fontWeight: FontWeight.w400,
                   ).fontFamily),

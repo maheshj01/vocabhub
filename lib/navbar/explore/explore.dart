@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/constants/constants.dart';
+import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/controller/explore_controller.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/navbar/empty_page.dart';
@@ -20,6 +21,8 @@ import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
+
+import '../../pages/collections/collections.dart';
 
 class ExploreWords extends StatelessWidget {
   static const String route = '/';
@@ -361,10 +364,43 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
                           alignment: Alignment.topCenter,
                           child: FittedBox(
                             fit: BoxFit.fitWidth,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                              child: Text(widget.word!.word.capitalize()!,
-                                  style: textTheme.displayMedium!),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: 16.0.horizontalPadding,
+                                  child: Text(widget.word!.word.capitalize()!,
+                                      style: textTheme.displayMedium!),
+                                ),
+                                userProvider.isLoggedIn
+                                    ? IconButton(
+                                        onPressed: () async {
+                                          final AppController state =
+                                              ref.read(appNotifier.notifier).state;
+                                          ref.watch(appNotifier.notifier).state =
+                                              state.copyWith(showFAB: false);
+                                          NavbarNotifier.hideBottomNavBar = true;
+                                          await showModalBottomSheet(
+                                              context: context,
+                                              isScrollControlled: true,
+                                              builder: (context) {
+                                                return DraggableScrollableSheet(
+                                                    maxChildSize: 0.8,
+                                                    initialChildSize: 0.6,
+                                                    expand: false,
+                                                    builder: (context, controller) {
+                                                      return CollectionsNavigator(
+                                                        controller: controller,
+                                                        word: widget.word!,
+                                                      );
+                                                    });
+                                              });
+                                          ref.watch(appNotifier.notifier).state =
+                                              state.copyWith(showFAB: true);
+                                          NavbarNotifier.hideBottomNavBar = false;
+                                        },
+                                        icon: Icon(Icons.bookmark_add))
+                                    : SizedBox.shrink()
+                              ],
                             ),
                           ),
                         ),

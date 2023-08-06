@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/controller/auth_controller.dart';
+import 'package:vocabhub/controller/collections_controller.dart';
 import 'package:vocabhub/controller/controllers.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/navbar/profile/webview.dart';
@@ -24,7 +26,10 @@ import 'constants/constants.dart';
 final userNotifierProvider = Provider<UserModel>((ref) {
   return UserModel.init();
 });
+
 final dashBoardNotifier = Provider<DashboardController>((ref) => DashboardController());
+final appNotifier = StateProvider<AppController>((ref) => AppController());
+final collectionNotifier = ChangeNotifierProvider((ref) => CollectionsNotifier());
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);

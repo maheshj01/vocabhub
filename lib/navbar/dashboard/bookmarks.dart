@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
@@ -99,15 +100,22 @@ class _BookmarksMobileState extends State<_BookmarksMobile> {
   }
 }
 
-class WordListBuilder extends StatelessWidget {
+class WordListBuilder extends ConsumerWidget {
   final List<Word> words;
   final Function(Word)? onTrailingTap;
   final bool? hasTrailing;
-  WordListBuilder({Key? key, required this.words, this.hasTrailing = true, this.onTrailingTap})
+  final IconData? iconData;
+  WordListBuilder(
+      {Key? key,
+      required this.words,
+      this.hasTrailing = true,
+      this.onTrailingTap,
+      this.iconData = Icons.bookmark})
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final collectionRef = ref.watch(collectionNotifier);
     return ListView.builder(
       itemCount: words.length,
       padding: EdgeInsets.only(top: 16, bottom: kNotchedNavbarHeight * 1.5),
@@ -128,7 +136,7 @@ class WordListBuilder extends StatelessWidget {
                   trailing: hasTrailing!
                       ? IconButton(
                           icon: Icon(
-                            Icons.bookmark,
+                            iconData,
                             color: Theme.of(context).colorScheme.secondary,
                           ),
                           onPressed:

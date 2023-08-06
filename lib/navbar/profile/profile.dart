@@ -4,6 +4,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
+import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/notification.dart';
@@ -11,6 +12,7 @@ import 'package:vocabhub/navbar/error_page.dart';
 import 'package:vocabhub/navbar/pageroute.dart';
 import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/navbar/profile/settings.dart';
+import 'package:vocabhub/pages/collections/collections.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
@@ -176,6 +178,13 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
     final user = widget.user;
     final size = MediaQuery.of(context).size;
     final colorScheme = Theme.of(context).colorScheme;
+    Widget headLine(String title, {double padding = 16.0}) {
+      return Container(
+          padding: padding.horizontalPadding,
+          alignment: Alignment.centerLeft,
+          child: heading('$title'));
+    }
+
     return ValueListenableBuilder<List<int>>(
         valueListenable: _statsNotifier,
         builder: (BuildContext context, List<int> stats, Widget? child) {
@@ -193,32 +202,50 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
               child: ListView(
                 children: [
                   Container(
-                    decoration: BoxDecoration(
-                        borderRadius: 16.0.allRadius,
-                        border: Border.all(color: colorScheme.secondary)),
                     child: Align(
                       alignment: Alignment.center,
                       child: Padding(
                         padding: 18.0.verticalPadding,
                         child: Column(
                           children: [
-                            size.width > 600 || widget.isReadOnly
-                                ? SizedBox.shrink()
-                                : Container(
-                                    alignment: Alignment.topRight,
-                                    child: Padding(
-                                      padding: 16.0.horizontalPadding,
-                                      child: VHIcon(
-                                        Icons.settings,
-                                        size: 38,
-                                        onTap: () {
-                                          Navigator.of(context, rootNavigator: true).push(
-                                              PageRoutes.sharedAxis(const SettingsPageMobile(),
-                                                  SharedAxisTransitionType.horizontal));
-                                        },
-                                      ),
-                                    ),
+                            Padding(
+                              padding: 8.0.horizontalPadding,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(
+                                    width: 20,
                                   ),
+                                  RichText(
+                                      text: TextSpan(children: [
+                                    TextSpan(
+                                        text: 'Joined ',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall!
+                                            .copyWith(fontWeight: FontWeight.w600, fontSize: 12)),
+                                    TextSpan(
+                                      text: user.created_at!.formatDate(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall!
+                                          .copyWith(fontWeight: FontWeight.w600),
+                                    ),
+                                  ])),
+                                  size.width > 600 || widget.isReadOnly
+                                      ? SizedBox.shrink()
+                                      : VHIcon(
+                                          Icons.settings,
+                                          size: 38,
+                                          onTap: () {
+                                            Navigator.of(context, rootNavigator: true).push(
+                                                PageRoutes.sharedAxis(const SettingsPageMobile(),
+                                                    SharedAxisTransitionType.horizontal));
+                                          },
+                                        ),
+                                ],
+                              ),
+                            ),
                             Stack(
                               children: [
                                 Padding(
@@ -261,76 +288,102 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                             Text(
                               '${user.name.capitalize()}',
                               textAlign: TextAlign.center,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineMedium!
-                                  .copyWith(fontSize: 26, fontWeight: FontWeight.w500),
+                              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                  fontSize: user.name.length > 20 ? 20 : 26,
+                                  fontWeight: FontWeight.w500),
                             ),
                             10.0.vSpacer(),
-                            RichText(
-                                text: TextSpan(children: [
-                              TextSpan(
-                                  text: 'Joined ',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall!
-                                      .copyWith(fontWeight: FontWeight.w600, fontSize: 12)),
-                              TextSpan(
-                                text: user.created_at!.formatDate(),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall!
-                                    .copyWith(fontWeight: FontWeight.w600),
-                              ),
-                            ])),
                           ],
                         ),
                       ),
                     ),
                   ),
-                  16.0.vSpacer(),
-                  Container(alignment: Alignment.centerLeft, child: heading('Contributions')),
-                  16.0.vSpacer(),
-
-                  /// rounded Container with border
-
+                  // hLine(height: 1),
+                  // 4.0.vSpacer(),
                   Container(
-                    height: 80,
+                    padding: 8.0.verticalPadding,
                     decoration: BoxDecoration(
                         borderRadius: 16.0.allRadius,
                         border: Border.all(color: colorScheme.secondary)),
-                    child: Row(
+                    child: Column(
                       children: [
-                        for (int i = 0; i < stats.length; i++)
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  '${stats[i]}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium!
-                                      .copyWith(fontSize: 28, fontWeight: FontWeight.w500),
+                        headLine('Contributions'),
+                        SizedBox(
+                          height: 80,
+                          child: Row(
+                            children: [
+                              for (int i = 0; i < stats.length; i++)
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '${stats[i]}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineMedium!
+                                            .copyWith(fontSize: 28, fontWeight: FontWeight.w500),
+                                      ),
+                                      4.0.vSpacer(),
+                                      Text(
+                                        i == 0
+                                            ? 'Words Added'
+                                            : i == 1
+                                                ? 'Words Edited'
+                                                : 'Under Review',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall!
+                                            .copyWith(fontSize: 12, fontWeight: FontWeight.w600),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                4.0.vSpacer(),
-                                Text(
-                                  i == 0
-                                      ? 'Words Added'
-                                      : i == 1
-                                          ? 'Words Edited'
-                                          : 'Under Review',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall!
-                                      .copyWith(fontSize: 12, fontWeight: FontWeight.w600),
-                                ),
-                              ],
-                            ),
+                            ],
                           ),
+                        ),
                       ],
                     ),
-                  )
+                  ),
+                  16.0.vSpacer(),
+                  widget.isReadOnly
+                      ? SizedBox.shrink()
+                      : Container(
+                          decoration: BoxDecoration(
+                              color: colorScheme.surfaceVariant,
+                              borderRadius: 16.0.allRadius,
+                              border: Border.all(color: colorScheme.secondary)),
+                          child: ListTile(
+                            title: headLine('My Collections', padding: 0),
+                            contentPadding: 8.0.allPadding + 8.0.horizontalPadding,
+                            shape:
+                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+                            trailing: VHIcon(Icons.bookmarks),
+                            onTap: () async {
+                              final AppController state = ref.read(appNotifier.notifier).state;
+                              ref.watch(appNotifier.notifier).state =
+                                  state.copyWith(showFAB: false);
+                              NavbarNotifier.hideBottomNavBar = true;
+                              await showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  builder: (context) {
+                                    return DraggableScrollableSheet(
+                                        maxChildSize: 0.9,
+                                        initialChildSize: 0.9,
+                                        expand: false,
+                                        builder: (context, controller) {
+                                          return CollectionsNavigator(
+                                            controller: controller,
+                                            word: Word.init(),
+                                          );
+                                        });
+                                  });
+                              ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: true);
+                              NavbarNotifier.hideBottomNavBar = false;
+                            },
+                          ),
+                        ),
                 ],
               ),
             ),

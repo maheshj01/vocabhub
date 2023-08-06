@@ -241,6 +241,7 @@ class VHTextfield extends StatefulWidget {
   final bool isReadOnly;
   final bool hasLabel;
   final int maxLines;
+  final bool autoFocus;
   final Function(String)? onChanged;
 
   const VHTextfield(
@@ -250,6 +251,7 @@ class VHTextfield extends StatefulWidget {
       this.isReadOnly = false,
       this.hasLabel = true,
       this.onChanged,
+      this.autoFocus = false,
       this.maxLines = 1,
       this.keyboardType = TextInputType.text});
 
@@ -300,6 +302,7 @@ class _VHTextfieldState extends State<VHTextfield> {
               keyboardType: widget.keyboardType,
               readOnly: widget.isReadOnly,
               maxLines: widget.maxLines,
+              autofocus: widget.autoFocus,
               onChanged: (x) {
                 if (widget.onChanged != null) {
                   widget.onChanged!(x);

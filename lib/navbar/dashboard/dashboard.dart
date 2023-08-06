@@ -5,10 +5,12 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
+import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/exports.dart';
-import 'package:vocabhub/models/word.dart';
+import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/navbar/dashboard/bookmarks.dart';
 import 'package:vocabhub/navbar/error_page.dart';
+import 'package:vocabhub/pages/collections/collections.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/services/analytics.dart';
@@ -32,6 +34,8 @@ class _DashboardState extends ConsumerState<Dashboard> {
     _dashBoardNotifier = ValueNotifier(response);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       publishWordOfTheDay();
+      final collectionRef = ref.watch(collectionNotifier);
+      collectionRef.initService();
     });
     super.initState();
   }
@@ -106,11 +110,13 @@ class _DashboardState extends ConsumerState<Dashboard> {
                   if (response.state == RequestState.active) {
                     return LoadingWidget();
                   }
-                  return RefreshIndicator(
-                      onRefresh: () async {
-                        await publishWordOfTheDay(isRefresh: true);
-                      },
-                      child: DashboardMobile());
+                  return RefreshIndicator(onRefresh: () async {
+                    await publishWordOfTheDay(isRefresh: true);
+                  }, child: DashboardMobile(
+                    onRefresh: () async {
+                      await publishWordOfTheDay(isRefresh: true);
+                    },
+                  ));
                 },
               );
             }));
@@ -119,7 +125,8 @@ class _DashboardState extends ConsumerState<Dashboard> {
 
 class DashboardMobile extends ConsumerWidget {
   static String route = '/';
-  DashboardMobile({Key? key}) : super(key: key);
+  final Function? onRefresh;
+  DashboardMobile({Key? key, this.onRefresh}) : super(key: key);
   final analytics = Analytics.instance;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -153,7 +160,7 @@ class DashboardMobile extends ConsumerWidget {
                       },
                       icon: Icon(
                         Icons.notifications_on,
-                        color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                        color: Theme.of(context).colorScheme.surfaceTint,
                       ))
                   : SizedBox.shrink(),
               !user.isLoggedIn
@@ -190,11 +197,24 @@ class DashboardMobile extends ConsumerWidget {
                     closedShape: 16.0.rounded,
                     transitionType: ContainerTransitionType.fadeThrough,
                     closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                      return WoDCard(
-                        word: word,
-                        color: Colors.green.shade300,
-                        title: '${word.word}'.toUpperCase(),
-                      );
+                      return word.word.isEmpty
+                          ? GestureDetector(
+                              onTap: () {
+                                onRefresh!();
+                              },
+                              child: WoDCard(
+                                  title: 'Tap to Retry',
+                                  description: 'Something went wrong!',
+                                  color: Colors.red.shade300,
+                                  word: word,
+                                  height: 180,
+                                  fontSize: 42),
+                            )
+                          : WoDCard(
+                              word: word,
+                              color: Colors.green.shade300,
+                              title: '${word.word}'.toUpperCase(),
+                            );
                     }),
                 Padding(
                   padding: 6.0.verticalPadding,
@@ -208,6 +228,8 @@ class DashboardMobile extends ConsumerWidget {
                             padding: 12.0.verticalPadding,
                             child: heading('Progress'),
                           ),
+                          DashboardCollections(),
+                          16.0.vSpacer(),
                           word.word.isEmpty
                               ? SizedBox.shrink()
                               : OpenContainer<bool>(
@@ -226,7 +248,7 @@ class DashboardMobile extends ConsumerWidget {
                                       word: word,
                                       height: 180,
                                       fontSize: 42,
-                                      color: Colors.amberAccent.shade400,
+                                      color: Colors.amber.shade600,
                                       title: 'Bookmarks',
                                     );
                                   }),
@@ -248,6 +270,7 @@ class DashboardMobile extends ConsumerWidget {
                                   word: word,
                                   height: 180,
                                   fontSize: 42,
+                                  color: Colors.black,
                                   image: 'assets/dart.jpg',
                                   title: 'Mastered\nWords',
                                 );
@@ -264,6 +287,139 @@ class DashboardMobile extends ConsumerWidget {
   }
 }
 
+class DashboardCollections extends ConsumerStatefulWidget {
+  const DashboardCollections({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _DashboardCollectionsState();
+}
+
+class _DashboardCollectionsState extends ConsumerState<DashboardCollections> {
+  bool hasPinned(List<VHCollection> collections) {
+    for (final collection in collections) {
+      if (collection.isPinned) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final collections = ref.watch(collectionNotifier).collections;
+    final _collectionNotifier = ref.watch(collectionNotifier);
+    final size = MediaQuery.of(context).size;
+    final colorScheme = Theme.of(context).colorScheme;
+    return !hasPinned(collections)
+        ? SizedBox.shrink()
+        : Card(
+            borderOnForeground: true,
+            color: colorScheme.surfaceTint,
+            child: Container(
+              padding: 8.0.allPadding,
+              // height: size.height / 3.5,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: 12.0.verticalPadding + 8.0.leftPadding,
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: heading('Pinned Collections', color: colorScheme.onPrimary)),
+                        IconButton(
+                            onPressed: () async {
+                              final AppController state = ref.read(appNotifier.notifier).state;
+                              ref.watch(appNotifier.notifier).state =
+                                  state.copyWith(showFAB: false);
+                              NavbarNotifier.hideBottomNavBar = true;
+                              await showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  builder: (context) {
+                                    return DraggableScrollableSheet(
+                                        maxChildSize: 0.7,
+                                        initialChildSize: 0.7,
+                                        expand: false,
+                                        builder: (context, controller) {
+                                          return ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.vertical(top: Radius.circular(28.0)),
+                                            child: NewCollection(
+                                              isPinned: true,
+                                            ),
+                                          );
+                                        });
+                                  });
+                              ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: true);
+                              NavbarNotifier.hideBottomNavBar = false;
+                            },
+                            icon: Icon(
+                              Icons.add,
+                              color: colorScheme.onPrimary,
+                            ))
+                      ],
+                    ),
+                  ),
+                  collections.isEmpty
+                      ? SizedBox.shrink()
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          padding: 2.0.verticalPadding,
+                          itemCount: collections.length,
+                          itemBuilder: (context, index) {
+                            final title = collections[index].title;
+                            final words = collections[index].words;
+                            final bool isPinned = collections[index].isPinned;
+                            final Color color = collections[index].color;
+                            if (!isPinned) return SizedBox.shrink();
+                            return Card(
+                              color: color,
+                              child: ListTile(
+                                  title: Text('$title (${words.length})',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(color: Colors.white)),
+                                  onTap: () {
+                                    Navigate.push(
+                                        context,
+                                        Scaffold(
+                                          backgroundColor:
+                                              Theme.of(context).colorScheme.surfaceVariant,
+                                          appBar: AppBar(
+                                            title: Text('$title'),
+                                          ),
+                                          body: WordListBuilder(
+                                            words: words,
+                                            hasTrailing: true,
+                                            iconData: Icons.close,
+                                            onTrailingTap: (x) async {
+                                              await _collectionNotifier.removeFromCollection(
+                                                  title, x);
+                                              setState(() {});
+                                            },
+                                          ),
+                                        ));
+                                  },
+                                  trailing: IconButton(
+                                      onPressed: () {
+                                        _collectionNotifier.togglePin(title);
+                                      },
+                                      icon: Icon(
+                                        Icons.push_pin,
+                                        color: Colors.white54,
+                                      ))),
+                            );
+                          }),
+                ],
+              ),
+            ),
+          );
+  }
+}
+
 class WoDCard extends StatelessWidget {
   final Word? word;
   final String title;
@@ -271,6 +427,7 @@ class WoDCard extends StatelessWidget {
   final double? height;
   final double? width;
   final String? image;
+  final String? description;
   final double fontSize;
 
   const WoDCard(
@@ -280,6 +437,7 @@ class WoDCard extends StatelessWidget {
       this.width,
       required this.title,
       this.color,
+      this.description,
       this.fontSize = 40,
       this.image});
 
@@ -298,13 +456,28 @@ class WoDCard extends StatelessWidget {
               : null),
       child: Align(
           alignment: Alignment.center,
-          child: Text(
-            '$title',
-            textAlign: TextAlign.center,
-            style: Theme.of(context)
-                .textTheme
-                .displaySmall!
-                .copyWith(color: Theme.of(context).colorScheme.onPrimary, fontSize: fontSize),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '$title',
+                textAlign: TextAlign.center,
+                style: Theme.of(context)
+                    .textTheme
+                    .displaySmall!
+                    .copyWith(color: Theme.of(context).colorScheme.onPrimary, fontSize: fontSize),
+              ),
+              description != null
+                  ? Text(
+                      '$description',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                    )
+                  : SizedBox.shrink()
+            ],
           )),
     );
   }

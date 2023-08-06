@@ -20,6 +20,7 @@ class ExploreService extends ServiceBase {
     _sharedPreferences = await SharedPreferences.getInstance();
   }
 
+
   /// This method is used to fetch explore words from the database.
   Future<List<Word>> getExploreWords(String email, {int page = 0}) async {
     try {
@@ -91,6 +92,7 @@ class ExploreService extends ServiceBase {
   Future<bool> getExploreHidden() async {
     return _sharedPreferences.getBool(kExploreHiddenKey) ?? false;
   }
+
 
   Future<void> setExploreHidden(bool value) async {
     await _sharedPreferences.setBool(kExploreHiddenKey, value);

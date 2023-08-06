@@ -5,8 +5,7 @@ class ResponsiveBuilder extends StatefulWidget {
   final WidgetBuilder desktopBuilder;
   final WidgetBuilder mobileBuilder;
 
-  const ResponsiveBuilder(
-      {Key? key, required this.desktopBuilder, required this.mobileBuilder})
+  const ResponsiveBuilder({Key? key, required this.desktopBuilder, required this.mobileBuilder})
       : super(key: key);
 
   @override
