@@ -108,7 +108,15 @@ class _CollectionsSavedState extends ConsumerState<SavedCollections> {
                     final isPinned = collections[index].isPinned;
                     final contains = words.containsWord(widget.word);
                     return ListTile(
-                      title: Text('$title (${words.length})'),
+                      title: Row(
+                        children: [
+                          Text(
+                            '$title (${words.length})',
+                          ),
+                          8.0.hSpacer(),
+                          circle(color: collections[index].color)
+                        ],
+                      ),
                       onTap: () {
                         Navigate.pushNamed(context, CollectionDetails.route,
                             arguments: collections[index]);

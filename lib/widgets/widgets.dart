@@ -93,7 +93,7 @@ RichText buildNotification(String notification, String word, {TextStyle? style})
   return RichText(text: TextSpan(text: '', children: textSpans));
 }
 
-Widget heading(String title, {double fontSize: 20,Color? color}) {
+Widget heading(String title, {double fontSize: 20, Color? color}) {
   return Text(
     title,
     style: TextStyle(
@@ -102,6 +102,14 @@ Widget heading(String title, {double fontSize: 20,Color? color}) {
       fontWeight: FontWeight.w500,
     ),
   );
+}
+
+Widget circle({Color color = Colors.red, double size = 16}) {
+  return Container(
+      height: size,
+      width: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle));
 }
 
 RichText differenceVisualizerByWord(String editedText, String oldText,

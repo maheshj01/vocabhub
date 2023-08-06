@@ -212,6 +212,7 @@ class DashboardMobile extends ConsumerWidget {
                             )
                           : WoDCard(
                               word: word,
+                              height: 180,
                               color: Colors.green.shade300,
                               title: '${word.word}'.toUpperCase(),
                             );

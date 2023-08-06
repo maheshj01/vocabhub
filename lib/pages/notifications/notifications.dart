@@ -346,14 +346,6 @@ class AdminNotificationTile extends StatelessWidget {
     this.onTap,
   });
 
-  Widget circle({Color color = Colors.red, double size = 16}) {
-    return Container(
-        height: size,
-        width: size,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(color: color, shape: BoxShape.circle));
-  }
-
   @override
   Widget build(BuildContext context) {
     /// Approve or reject card
