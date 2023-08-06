@@ -78,8 +78,8 @@ class _NewCollectionState extends ConsumerState<NewCollection> {
                       onTap: () {
                         final title = _controller.text.trim();
                         if (title.isNotEmpty) {
-                          final newCollection =
-                              VHCollection.init(pinned: false, title: title, color: selected);
+                          final newCollection = VHCollection.init(
+                              pinned: widget.isPinned, title: title, color: selected);
                           collectionRef.addCollection(newCollection);
                           Navigator.pop(context);
                         } else {

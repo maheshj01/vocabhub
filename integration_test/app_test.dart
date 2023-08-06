@@ -559,13 +559,6 @@ void main() {
       await 1.delay();
       expect(demoTitle, findsOneWidget);
       await widgetTester.pumpAndSettle();
-      // findby color
-      // final circles = (BoxShape).typeX();
-      // expect(circles.first, equals(BoxShape.circle));
-      // final thirdItem = circles.at(2);
-      // expect(thirdItem, findsOneWidget);
-      // await 1.delay();
-      // await widgetTester.tap(thirdItem);
       List<String> collectionTitles = ['Easy', 'Medium', 'Hard', 'Test Collection'];
       for (int i = 0; i < collectionTitles.length; i++) {
         final createCollection = "Create Collection".textX();

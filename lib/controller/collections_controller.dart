@@ -18,7 +18,7 @@ class CollectionsNotifier extends ChangeNotifier with ServiceBase {
   Future<void> addToCollection(String collectionName, Word word) async {
     final index = _collections.indexOfCollection(collectionName);
     if (index != -1) {
-      List<Word> words = [];
+      final List<Word> words = _collections[index].words;
       if (!words.containsWord(word)) {
         words.add(word);
         _collections[index].words = words;

@@ -110,11 +110,8 @@ class _CollectionsSavedState extends ConsumerState<SavedCollections> {
                     return ListTile(
                       title: Text('$title (${words.length})'),
                       onTap: () {
-                        Navigate.pushNamed(
-                          context,
-                          CollectionDetails.route,
-                            arguments: collections[index]
-                        );
+                        Navigate.pushNamed(context, CollectionDetails.route,
+                            arguments: collections[index]);
                       },
                       trailing: widget.word.word.isEmpty
                           ? IconButton(

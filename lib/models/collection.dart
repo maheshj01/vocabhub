@@ -19,10 +19,9 @@ class VHCollection {
     required this.color,
   });
 
-  VHCollection.init(
-      {bool pinned = false, String title = '', List<Word>? words = const [], Color? color})
+  VHCollection.init({bool pinned = false, String title = '', Color? color})
       : isPinned = pinned,
-        words = words!,
+        words = [],
         color = color ?? Colors.primaries[0],
         title = title;
 
