@@ -208,23 +208,44 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                         padding: 18.0.verticalPadding,
                         child: Column(
                           children: [
-                            size.width > 600 || widget.isReadOnly
-                                ? SizedBox.shrink()
-                                : Container(
-                                    alignment: Alignment.topRight,
-                                    child: Padding(
-                                      padding: 16.0.horizontalPadding,
-                                      child: VHIcon(
-                                        Icons.settings,
-                                        size: 38,
-                                        onTap: () {
-                                          Navigator.of(context, rootNavigator: true).push(
-                                              PageRoutes.sharedAxis(const SettingsPageMobile(),
-                                                  SharedAxisTransitionType.horizontal));
-                                        },
-                                      ),
-                                    ),
+                            Padding(
+                              padding: 8.0.horizontalPadding,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(
+                                    width: 20,
                                   ),
+                                  RichText(
+                                      text: TextSpan(children: [
+                                    TextSpan(
+                                        text: 'Joined ',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall!
+                                            .copyWith(fontWeight: FontWeight.w600, fontSize: 12)),
+                                    TextSpan(
+                                      text: user.created_at!.formatDate(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall!
+                                          .copyWith(fontWeight: FontWeight.w600),
+                                    ),
+                                  ])),
+                                  size.width > 600 || widget.isReadOnly
+                                      ? SizedBox.shrink()
+                                      : VHIcon(
+                                          Icons.settings,
+                                          size: 38,
+                                          onTap: () {
+                                            Navigator.of(context, rootNavigator: true).push(
+                                                PageRoutes.sharedAxis(const SettingsPageMobile(),
+                                                    SharedAxisTransitionType.horizontal));
+                                          },
+                                        ),
+                                ],
+                              ),
+                            ),
                             Stack(
                               children: [
                                 Padding(
@@ -267,28 +288,11 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                             Text(
                               '${user.name.capitalize()}',
                               textAlign: TextAlign.center,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineMedium!
-                                  .copyWith(fontSize: 26, fontWeight: FontWeight.w500),
+                              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                                  fontSize: user.name.length > 20 ? 20 : 26,
+                                  fontWeight: FontWeight.w500),
                             ),
                             10.0.vSpacer(),
-                            RichText(
-                                text: TextSpan(children: [
-                              TextSpan(
-                                  text: 'Joined ',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall!
-                                      .copyWith(fontWeight: FontWeight.w600, fontSize: 12)),
-                              TextSpan(
-                                text: user.created_at!.formatDate(),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall!
-                                    .copyWith(fontWeight: FontWeight.w600),
-                              ),
-                            ])),
                           ],
                         ),
                       ),
@@ -346,12 +350,15 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                       ? SizedBox.shrink()
                       : Container(
                           decoration: BoxDecoration(
+                              color: colorScheme.surfaceVariant,
                               borderRadius: 16.0.allRadius,
                               border: Border.all(color: colorScheme.secondary)),
                           child: ListTile(
                             title: headLine('My Collections', padding: 0),
                             contentPadding: 8.0.allPadding + 8.0.horizontalPadding,
-                            trailing: Icon(Icons.bookmarks),
+                            shape:
+                                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+                            trailing: VHIcon(Icons.bookmarks),
                             onTap: () async {
                               final AppController state = ref.read(appNotifier.notifier).state;
                               ref.watch(appNotifier.notifier).state =

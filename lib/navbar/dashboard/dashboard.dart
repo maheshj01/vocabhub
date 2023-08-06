@@ -338,8 +338,8 @@ class _DashboardCollectionsState extends ConsumerState<DashboardCollections> {
                                   isScrollControlled: true,
                                   builder: (context) {
                                     return DraggableScrollableSheet(
-                                        maxChildSize: 0.6,
-                                        initialChildSize: 0.6,
+                                        maxChildSize: 0.7,
+                                        initialChildSize: 0.7,
                                         expand: false,
                                         builder: (context, controller) {
                                           return ClipRRect(
