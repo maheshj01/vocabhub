@@ -1,7 +1,10 @@
 ### 0.7.0+26 August 05, 2023
-- Adds support for custom word collections
+
+- Adds support for custom word collections Partially fixes [Issue 38](https://github.com/maheshmnj/vocabhub/issues/38)
+- Pin words on the Dashboard
 - Show notification time in user's timezone
 - Initialize IOS notifications
+- Show My Collections on Profile
 
 ### 0.6.2+25 August 01, 2023
 

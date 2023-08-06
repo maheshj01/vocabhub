@@ -1,4 +1,4 @@
-# Vocabhub 0.6.2
+# Vocabhub 0.7.0
 
 Supercharge your vocabulary with our comprehensive app designed to help you excel in English! Whether you're preparing for the GRE or simply aiming to enhance your language skills, this app is your ultimate companion. Unlock the potential of over 800 meticulously curated GRE words, carefully selected to bolster your word power.
 
@@ -18,6 +18,7 @@ Key Features:
 - Supports dark mode and offers various themes to make learning an enjoyable experience
 - Supports offline mode to help you learn on the go.
 - Ability to suggest edits to improve the words on the platform
+- Create Custom word collections to help you learn words based on your interests.
 - Contributions on the platform are transparent and can be viewed by all users.
 - Edits made for all words are transparent and can be viewed by all users.
 - Regular updates with new words and features to keep your vocabulary journey exciting and dynamic.
