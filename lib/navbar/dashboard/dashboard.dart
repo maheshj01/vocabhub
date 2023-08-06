@@ -5,10 +5,12 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
+import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/exports.dart';
-import 'package:vocabhub/models/word.dart';
+import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/navbar/dashboard/bookmarks.dart';
 import 'package:vocabhub/navbar/error_page.dart';
+import 'package:vocabhub/pages/collections/collections.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/services/analytics.dart';
@@ -226,6 +228,8 @@ class DashboardMobile extends ConsumerWidget {
                             padding: 12.0.verticalPadding,
                             child: heading('Progress'),
                           ),
+                          DashboardCollections(),
+                          16.0.vSpacer(),
                           word.word.isEmpty
                               ? SizedBox.shrink()
                               : OpenContainer<bool>(
@@ -244,7 +248,7 @@ class DashboardMobile extends ConsumerWidget {
                                       word: word,
                                       height: 180,
                                       fontSize: 42,
-                                      color: Colors.amberAccent.shade400,
+                                      color: Colors.red,
                                       title: 'Bookmarks',
                                     );
                                   }),
@@ -266,6 +270,7 @@ class DashboardMobile extends ConsumerWidget {
                                   word: word,
                                   height: 180,
                                   fontSize: 42,
+                                  color: Colors.black,
                                   image: 'assets/dart.jpg',
                                   title: 'Mastered\nWords',
                                 );
@@ -279,6 +284,133 @@ class DashboardMobile extends ConsumerWidget {
         )
       ],
     );
+  }
+}
+
+class DashboardCollections extends ConsumerStatefulWidget {
+  const DashboardCollections({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => _DashboardCollectionsState();
+}
+
+class _DashboardCollectionsState extends ConsumerState<DashboardCollections> {
+  bool hasPinned(List<VHCollection> collections) {
+    for (final collection in collections) {
+      if (collection.isPinned) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final collections = ref.watch(collectionNotifier).collections;
+    final _collectionNotifier = ref.watch(collectionNotifier);
+    final size = MediaQuery.of(context).size;
+    final colorScheme = Theme.of(context).colorScheme;
+    return !hasPinned(collections)
+        ? SizedBox.shrink()
+        : Card(
+            borderOnForeground: true,
+            color: settingsController.isDark ? colorScheme.background : Colors.blue,
+            child: Container(
+              padding: 8.0.allPadding,
+              // height: size.height / 3.5,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: 12.0.verticalPadding + 8.0.leftPadding,
+                    child: Row(
+                      children: [
+                        Expanded(child: heading('Pinned Collections')),
+                        IconButton(
+                            onPressed: () async {
+                              final AppController state = ref.read(appNotifier.notifier).state;
+                              ref.watch(appNotifier.notifier).state =
+                                  state.copyWith(showFAB: false);
+                              NavbarNotifier.hideBottomNavBar = true;
+                              await showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  builder: (context) {
+                                    return DraggableScrollableSheet(
+                                        maxChildSize: 0.6,
+                                        initialChildSize: 0.6,
+                                        expand: false,
+                                        builder: (context, controller) {
+                                          return ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.vertical(top: Radius.circular(28.0)),
+                                            child: NewCollection(
+                                              isPinned: true,
+                                            ),
+                                          );
+                                        });
+                                  });
+                              ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: true);
+                              NavbarNotifier.hideBottomNavBar = false;
+                            },
+                            icon: Icon(
+                              Icons.add,
+                              color: Theme.of(context).colorScheme.primary,
+                            ))
+                      ],
+                    ),
+                  ),
+                  ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      padding: 2.0.verticalPadding,
+                      itemCount: collections.length,
+                      itemBuilder: (context, index) {
+                        final title = collections[index].title;
+                        final words = collections[index].words;
+                        final bool isPinned = collections[index].isPinned;
+                        if (!isPinned) return SizedBox.shrink();
+                        return Card(
+                          color: Colors.primaries[Random().nextInt(Colors.primaries.length)],
+                          child: ListTile(
+                              title: Text('$title (${words.length})',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .copyWith(color: Colors.white)),
+                              onTap: () {
+                                Navigate.push(
+                                    context,
+                                    Scaffold(
+                                      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                                      appBar: AppBar(
+                                        title: Text('$title'),
+                                      ),
+                                      body: WordListBuilder(
+                                        words: words,
+                                        hasTrailing: true,
+                                        iconData: Icons.close,
+                                        onTrailingTap: (x) async {
+                                          await _collectionNotifier.removeFromCollection(title, x);
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ));
+                              },
+                              trailing: IconButton(
+                                  onPressed: () {
+                                    _collectionNotifier.togglePin(title);
+                                  },
+                                  icon: Icon(
+                                    Icons.push_pin,
+                                    color: Colors.white54,
+                                  ))),
+                        );
+                      }),
+                ],
+              ),
+            ),
+          );
   }
 }
 

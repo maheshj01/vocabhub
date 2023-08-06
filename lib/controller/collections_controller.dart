@@ -7,8 +7,8 @@ import 'package:vocabhub/utils/utility.dart';
 
 class CollectionsNotifier extends ChangeNotifier with ServiceBase {
   late CollectionsService _collectionService;
-  Map<String, List<Word>> _collections = {};
-  Map<String, List<Word>> get collections => _collections;
+  List<VHCollection> _collections = [];
+  List<VHCollection> get collections => _collections;
 
   Future<void> initCollections() async {
     _collections = await _collectionService.getCollections();
@@ -16,18 +16,19 @@ class CollectionsNotifier extends ChangeNotifier with ServiceBase {
   }
 
   Future<void> addToCollection(String collectionName, Word word) async {
-    if (collections.containsKey(collectionName)) {
-      final List<Word> words = collections[collectionName]!;
+    final index = collections.indexOfCollection(collectionName);
+    if (index != -1) {
+      final List<Word> words = collections[index].words;
       if (!words.containsWord(word)) {
-        words.add(word);
-        _collections[collectionName] = words;
+        _collections[index].words.add(word);
         await _collectionService.setCollections(collections);
         showToast('Word added to $collectionName');
       } else {
         showToast('Word already exists in the collection');
       }
     } else {
-      collections[collectionName] = [word];
+      collections[index] = VHCollection.init();
+      collections[index].words.add(word);
       showToast('Word added to $collectionName');
     }
     notifyListeners();
@@ -35,13 +36,13 @@ class CollectionsNotifier extends ChangeNotifier with ServiceBase {
 
   Future<void> removeFromCollection(String collectionName, Word word) async {
     // await _collectionService.removeFromCollection(collectionName, word);
-    if (collections.containsKey(collectionName)) {
-      final List<Word> words = collections[collectionName]!;
+    final index = _collections.indexOfCollection(collectionName);
+    if (index != -1) {
+      final List<Word> words = _collections[index].words;
       if (words.containsWord(word)) {
-        words.remove(word);
-        _collections[collectionName] = words;
+        _collections[index].words.remove(word);
+        await _collectionService.setCollections(_collections);
         showToast('Word removed from $collectionName');
-        await _collectionService.setCollections(collections);
       } else {
         showToast('Word not found in the collection');
       }
@@ -51,20 +52,46 @@ class CollectionsNotifier extends ChangeNotifier with ServiceBase {
     notifyListeners();
   }
 
-  Future<void> addCollection(String collectionName) async {
+  Future<void> addCollection(String collectionName,bool isPinned) async {
     // await _collectionService.addCollection(collectionName);
-    if (collections.containsKey(collectionName)) {
+    int index = collections.indexOfCollection(collectionName);
+    if (index != -1) {
       showToast('Collection already exists');
     } else {
-      collections[collectionName] = [];
+      final newCollection = VHCollection.init(
+        pinned: isPinned
+      );
+      newCollection.title = collectionName;
+      collections.add(newCollection);
       showToast('Collection added');
     }
     notifyListeners();
   }
 
-  Future<void> setCollections(Map<String, List<Word>> coll) async {
-    // await _collectionService.setCollections(collections);
-    _collections = coll;
+  Future<void> deleteCollection(String collectionName) async {
+    // await _collectionService.deleteCollection(collectionName);
+    int index = collections.indexOfCollection(collectionName);
+    if (index != -1) {
+      collections.removeAt(index);
+      showToast('Collection deleted');
+      _collectionService.setCollections(collections);
+    } else {
+      showToast('Collection not found');
+    }
+    notifyListeners();
+  }
+
+  Future<void> togglePin(String title) async {
+    // await _collectionService.togglePin(title);
+    int index = collections.indexOfCollection(title);
+    if (index != -1) {
+      collections[index].isPinned = !collections[index].isPinned;
+      showToast(
+          'Collection ${collections[index].isPinned ? 'pinned to' : 'unpinned from'} Dashboard');
+      _collectionService.setCollections(collections);
+    } else {
+      showToast('Collection not found');
+    }
     notifyListeners();
   }
 

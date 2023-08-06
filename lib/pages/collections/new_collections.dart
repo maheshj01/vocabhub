@@ -8,7 +8,8 @@ import 'package:vocabhub/widgets/button.dart';
 
 class NewCollection extends ConsumerStatefulWidget {
   static const String route = '/new';
-  const NewCollection({Key? key}) : super(key: key);
+  final bool isPinned;
+  const NewCollection({Key? key, this.isPinned = false}) : super(key: key);
   @override
   ConsumerState<NewCollection> createState() => _NewCollectionState();
 }
@@ -48,7 +49,7 @@ class _NewCollectionState extends ConsumerState<NewCollection> {
                     onTap: () {
                       final title = _controller.text.trim();
                       if (title.isNotEmpty) {
-                        collectionRef.addCollection(title);
+                        collectionRef.addCollection(title, widget.isPinned);
                         Navigator.pop(context);
                       }
                     },

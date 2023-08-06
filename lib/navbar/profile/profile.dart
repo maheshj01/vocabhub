@@ -377,7 +377,6 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                             },
                           ),
                         ),
-                  widget.isReadOnly ? SizedBox.shrink() : hLine(height: 1),
                 ],
               ),
             ),

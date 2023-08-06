@@ -1,5 +1,6 @@
 library models;
 
-export 'word.dart';
-export 'user.dart';
+export 'collection.dart';
 export 'history.dart';
+export 'user.dart';
+export 'word.dart';

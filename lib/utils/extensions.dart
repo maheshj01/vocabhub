@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/models/collection.dart';
 import 'package:vocabhub/models/word.dart';
 
 extension StringExtension on String {
@@ -41,6 +42,28 @@ extension ListContains on List<Word> {
       }
     }
     return false;
+  }
+}
+
+extension CollectionContains on List<VHCollection> {
+  bool containsCollection(String title) {
+    for (final c in this) {
+      if (c.title == title) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// Returns the index of the collection with the given title.
+  /// Returns -1 if the collection is not found.
+  int indexOfCollection(String title) {
+    for (int i = 0; i < this.length; i++) {
+      if (this[i].title == title) {
+        return i;
+      }
+    }
+    return -1;
   }
 }
 
