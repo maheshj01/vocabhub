@@ -76,6 +76,7 @@ class _CollectionsSavedState extends ConsumerState<SavedCollections> {
   @override
   Widget build(BuildContext context) {
     final collections = ref.watch(collectionNotifier).collections;
+    final collectionRef = ref.read(collectionNotifier.notifier);
     return Column(
       children: [
         Padding(
@@ -127,13 +128,9 @@ class _CollectionsSavedState extends ConsumerState<SavedCollections> {
                           : IconButton(
                               onPressed: () async {
                                 if (contains) {
-                                  ref
-                                      .read(collectionNotifier.notifier)
-                                      .removeFromCollection(title, widget.word);
+                                  collectionRef.removeFromCollection(title, widget.word);
                                 } else {
-                                  ref
-                                      .read(collectionNotifier.notifier)
-                                      .addToCollection(title, widget.word);
+                                  collectionRef.addToCollection(title, widget.word);
                                 }
                               },
                               icon:

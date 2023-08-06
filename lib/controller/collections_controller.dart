@@ -18,9 +18,10 @@ class CollectionsNotifier extends ChangeNotifier with ServiceBase {
   Future<void> addToCollection(String collectionName, Word word) async {
     final index = _collections.indexOfCollection(collectionName);
     if (index != -1) {
-      List<Word> words = collections[index].words;
+      List<Word> words = [];
       if (!words.containsWord(word)) {
-        _collections[index].words.add(word);
+        words.add(word);
+        _collections[index].words = words;
         await _collectionService.setCollections(collections);
         showToast('Word added to $collectionName');
       } else {
@@ -54,7 +55,7 @@ class CollectionsNotifier extends ChangeNotifier with ServiceBase {
 
   Future<void> addCollection(VHCollection collection) async {
     // await _collectionService.addCollection(collectionName);
-    int index = collections.indexOfCollection(collection.title);
+    int index = _collections.indexOfCollection(collection.title);
     if (index != -1) {
       showToast('Collection already exists');
     } else {
