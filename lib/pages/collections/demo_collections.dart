@@ -55,18 +55,18 @@ class _DemoCollectionsState extends ConsumerState<DemoCollections> {
               Container(
                   alignment: Alignment.centerRight,
                   margin: 22.0.rightPadding,
-                  child: vLine(color: Colors.white, height: 32, width: 2.0)),
+                  child: vLine(color: colorScheme.primary, height: 32, width: 2.0)),
               collectionTile('You can create a collection and add words to it.',
                   Icons.add_circle_outline_outlined),
               Container(
                   alignment: Alignment.centerRight,
                   margin: 22.0.rightPadding,
-                  child: vLine(color: Colors.white, height: 32, width: 2.0)),
+                  child: vLine(color: colorScheme.primary, height: 32, width: 2.0)),
               collectionTile('You can view your collections on your profile page.', Icons.person),
               Container(
                   alignment: Alignment.centerRight,
                   margin: 22.0.rightPadding,
-                  child: vLine(color: Colors.white, height: 32, width: 2.0)),
+                  child: vLine(color: colorScheme.primary, height: 32, width: 2.0)),
               collectionTile(
                   'Pin/unpin collections to/from your Dashboard for quick access', Icons.push_pin),
               48.0.vSpacer(),

@@ -154,7 +154,7 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
                                         builder: (context) {
                                           return DraggableScrollableSheet(
                                               maxChildSize: 0.8,
-                                              initialChildSize: 0.6,
+                                              initialChildSize: 0.8,
                                               expand: false,
                                               builder: (context, controller) {
                                                 return CollectionsNavigator(

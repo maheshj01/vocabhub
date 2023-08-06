@@ -16,9 +16,9 @@ class CollectionsNotifier extends ChangeNotifier with ServiceBase {
   }
 
   Future<void> addToCollection(String collectionName, Word word) async {
-    final index = collections.indexOfCollection(collectionName);
+    final index = _collections.indexOfCollection(collectionName);
     if (index != -1) {
-      final List<Word> words = collections[index].words;
+      List<Word> words = collections[index].words;
       if (!words.containsWord(word)) {
         _collections[index].words.add(word);
         await _collectionService.setCollections(collections);
@@ -27,8 +27,8 @@ class CollectionsNotifier extends ChangeNotifier with ServiceBase {
         showToast('Word already exists in the collection');
       }
     } else {
-      collections[index] = VHCollection.init();
-      collections[index].words.add(word);
+      _collections[index] = VHCollection.init();
+      _collections[index].words.add(word);
       showToast('Word added to $collectionName');
     }
     notifyListeners();
@@ -58,7 +58,8 @@ class CollectionsNotifier extends ChangeNotifier with ServiceBase {
     if (index != -1) {
       showToast('Collection already exists');
     } else {
-      collections.add(collection);
+      _collections.add(collection);
+      _collectionService.setCollections(collections);
       showToast('Collection added');
     }
     notifyListeners();
@@ -68,7 +69,7 @@ class CollectionsNotifier extends ChangeNotifier with ServiceBase {
     // await _collectionService.deleteCollection(collectionName);
     int index = collections.indexOfCollection(collectionName);
     if (index != -1) {
-      collections.removeAt(index);
+      _collections.removeAt(index);
       showToast('Collection deleted');
       _collectionService.setCollections(collections);
     } else {
@@ -81,10 +82,10 @@ class CollectionsNotifier extends ChangeNotifier with ServiceBase {
     // await _collectionService.togglePin(title);
     int index = collections.indexOfCollection(title);
     if (index != -1) {
-      collections[index].isPinned = !collections[index].isPinned;
+      _collections[index].isPinned = !collections[index].isPinned;
       showToast(
-          'Collection ${collections[index].isPinned ? 'pinned to' : 'unpinned from'} Dashboard');
-      _collectionService.setCollections(collections);
+          'Collection ${_collections[index].isPinned ? 'pinned to' : 'unpinned from'} Dashboard');
+      _collectionService.setCollections(_collections);
     } else {
       showToast('Collection not found');
     }
