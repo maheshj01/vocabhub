@@ -52,17 +52,13 @@ class CollectionsNotifier extends ChangeNotifier with ServiceBase {
     notifyListeners();
   }
 
-  Future<void> addCollection(String collectionName,bool isPinned) async {
+  Future<void> addCollection(VHCollection collection) async {
     // await _collectionService.addCollection(collectionName);
-    int index = collections.indexOfCollection(collectionName);
+    int index = collections.indexOfCollection(collection.title);
     if (index != -1) {
       showToast('Collection already exists');
     } else {
-      final newCollection = VHCollection.init(
-        pinned: isPinned
-      );
-      newCollection.title = collectionName;
-      collections.add(newCollection);
+      collections.add(collection);
       showToast('Collection added');
     }
     notifyListeners();

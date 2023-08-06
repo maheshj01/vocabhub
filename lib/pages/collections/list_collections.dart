@@ -215,6 +215,13 @@ class _CollectionDetailsState extends ConsumerState<CollectionDetails> {
           padding: 8.0.topPadding + 4.0.bottomPadding,
           child: ListTile(
             leading: BackButton(),
+            // delete collection
+            trailing: IconButton(
+                onPressed: () {
+                  ref.read(collectionNotifier.notifier).deleteCollection(collection.title);
+                  Navigate.popView(context, isRootNavigator: false);
+                },
+                icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.primary)),
             title: Text('${collection.title}', style: Theme.of(context).textTheme.headlineSmall),
           ),
         ),

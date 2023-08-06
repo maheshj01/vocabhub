@@ -63,6 +63,12 @@ class _DemoCollectionsState extends ConsumerState<DemoCollections> {
                   margin: 22.0.rightPadding,
                   child: vLine(color: Colors.white, height: 32, width: 2.0)),
               collectionTile('You can view your collections on your profile page.', Icons.person),
+              Container(
+                  alignment: Alignment.centerRight,
+                  margin: 22.0.rightPadding,
+                  child: vLine(color: Colors.white, height: 32, width: 2.0)),
+              collectionTile(
+                  'Pin/unpin collections to/from your Dashboard for quick access', Icons.push_pin),
               48.0.vSpacer(),
               Padding(
                 padding: 16.0.horizontalPadding,

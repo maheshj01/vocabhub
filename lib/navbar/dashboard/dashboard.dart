@@ -248,7 +248,7 @@ class DashboardMobile extends ConsumerWidget {
                                       word: word,
                                       height: 180,
                                       fontSize: 42,
-                                      color: Colors.red,
+                                      color: Colors.amber.shade600,
                                       title: 'Bookmarks',
                                     );
                                   }),
@@ -314,7 +314,7 @@ class _DashboardCollectionsState extends ConsumerState<DashboardCollections> {
         ? SizedBox.shrink()
         : Card(
             borderOnForeground: true,
-            color: settingsController.isDark ? colorScheme.background : Colors.blue,
+            color: colorScheme.surfaceTint,
             child: Container(
               padding: 8.0.allPadding,
               // height: size.height / 3.5,
@@ -325,7 +325,8 @@ class _DashboardCollectionsState extends ConsumerState<DashboardCollections> {
                     padding: 12.0.verticalPadding + 8.0.leftPadding,
                     child: Row(
                       children: [
-                        Expanded(child: heading('Pinned Collections')),
+                        Expanded(
+                            child: heading('Pinned Collections', color: colorScheme.onPrimary)),
                         IconButton(
                             onPressed: () async {
                               final AppController state = ref.read(appNotifier.notifier).state;
@@ -355,58 +356,63 @@ class _DashboardCollectionsState extends ConsumerState<DashboardCollections> {
                             },
                             icon: Icon(
                               Icons.add,
-                              color: Theme.of(context).colorScheme.primary,
+                              color: colorScheme.onPrimary,
                             ))
                       ],
                     ),
                   ),
-                  ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      padding: 2.0.verticalPadding,
-                      itemCount: collections.length,
-                      itemBuilder: (context, index) {
-                        final title = collections[index].title;
-                        final words = collections[index].words;
-                        final bool isPinned = collections[index].isPinned;
-                        if (!isPinned) return SizedBox.shrink();
-                        return Card(
-                          color: Colors.primaries[Random().nextInt(Colors.primaries.length)],
-                          child: ListTile(
-                              title: Text('$title (${words.length})',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .copyWith(color: Colors.white)),
-                              onTap: () {
-                                Navigate.push(
-                                    context,
-                                    Scaffold(
-                                      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-                                      appBar: AppBar(
-                                        title: Text('$title'),
-                                      ),
-                                      body: WordListBuilder(
-                                        words: words,
-                                        hasTrailing: true,
-                                        iconData: Icons.close,
-                                        onTrailingTap: (x) async {
-                                          await _collectionNotifier.removeFromCollection(title, x);
-                                          setState(() {});
-                                        },
-                                      ),
-                                    ));
-                              },
-                              trailing: IconButton(
-                                  onPressed: () {
-                                    _collectionNotifier.togglePin(title);
+                  collections.isEmpty
+                      ? SizedBox.shrink()
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          padding: 2.0.verticalPadding,
+                          itemCount: collections.length,
+                          itemBuilder: (context, index) {
+                            final title = collections[index].title;
+                            final words = collections[index].words;
+                            final bool isPinned = collections[index].isPinned;
+                            final Color color = collections[index].color;
+                            if (!isPinned) return SizedBox.shrink();
+                            return Card(
+                              color: color,
+                              child: ListTile(
+                                  title: Text('$title (${words.length})',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(color: Colors.white)),
+                                  onTap: () {
+                                    Navigate.push(
+                                        context,
+                                        Scaffold(
+                                          backgroundColor:
+                                              Theme.of(context).colorScheme.surfaceVariant,
+                                          appBar: AppBar(
+                                            title: Text('$title'),
+                                          ),
+                                          body: WordListBuilder(
+                                            words: words,
+                                            hasTrailing: true,
+                                            iconData: Icons.close,
+                                            onTrailingTap: (x) async {
+                                              await _collectionNotifier.removeFromCollection(
+                                                  title, x);
+                                              setState(() {});
+                                            },
+                                          ),
+                                        ));
                                   },
-                                  icon: Icon(
-                                    Icons.push_pin,
-                                    color: Colors.white54,
-                                  ))),
-                        );
-                      }),
+                                  trailing: IconButton(
+                                      onPressed: () {
+                                        _collectionNotifier.togglePin(title);
+                                      },
+                                      icon: Icon(
+                                        Icons.push_pin,
+                                        color: Colors.white54,
+                                      ))),
+                            );
+                          }),
                 ],
               ),
             ),
