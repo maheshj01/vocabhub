@@ -5,6 +5,7 @@
 - Show notification time in user's timezone
 - Initialize IOS notifications
 - Show My Collections on Profile
+- Minor UI tweaks on Profile page
 
 ### 0.6.2+25 August 01, 2023
 
