@@ -160,7 +160,7 @@ class DashboardMobile extends ConsumerWidget {
                       },
                       icon: Icon(
                         Icons.notifications_on,
-                        color: Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                        color: Theme.of(context).colorScheme.surfaceTint,
                       ))
                   : SizedBox.shrink(),
               !user.isLoggedIn
