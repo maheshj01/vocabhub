@@ -32,10 +32,10 @@ class _CollectionsNavigatorState extends State<CollectionsNavigator> {
             case NewCollection.route:
               return MaterialPageRoute(builder: (context) => NewCollection());
             case CollectionDetails.route:
-              final index = int.parse(settings.arguments as String);
+              final collection = settings.arguments as VHCollection;
               return MaterialPageRoute(
                   builder: (context) => CollectionDetails(
-                        index: index,
+                        collection: collection,
                       ));
             case SavedCollections.route:
               return MaterialPageRoute(
@@ -75,8 +75,8 @@ class SavedCollections extends ConsumerStatefulWidget {
 class _CollectionsSavedState extends ConsumerState<SavedCollections> {
   @override
   Widget build(BuildContext context) {
-    final collections = ref.watch(collectionNotifier).collections;
     final collectionRef = ref.read(collectionNotifier.notifier);
+    final collections = ref.watch(collectionNotifier).collections;
     return Column(
       children: [
         Padding(
@@ -113,7 +113,7 @@ class _CollectionsSavedState extends ConsumerState<SavedCollections> {
                         Navigate.pushNamed(
                           context,
                           CollectionDetails.route,
-                          arguments: '$index',
+                            arguments: collections[index]
                         );
                       },
                       trailing: widget.word.word.isEmpty
@@ -193,9 +193,9 @@ class CollectionsGridState extends ConsumerState<CollectionsGrid> {
 
 class CollectionDetails extends ConsumerStatefulWidget {
   // collection name
-  final int index;
+  final VHCollection collection;
   static const String route = '/collection/details';
-  const CollectionDetails({super.key, required this.index});
+  const CollectionDetails({super.key, required this.collection});
 
   @override
   ConsumerState<CollectionDetails> createState() => _CollectionDetailsState();
@@ -205,7 +205,7 @@ class _CollectionDetailsState extends ConsumerState<CollectionDetails> {
   @override
   Widget build(BuildContext context) {
     final collections = ref.watch(collectionNotifier).collections;
-    final collection = collections[widget.index] ?? VHCollection.init();
+    final collection = widget.collection ?? VHCollection.init();
     return Column(
       children: [
         Padding(
