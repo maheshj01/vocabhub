@@ -342,7 +342,7 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // Size size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
     final textTheme = Theme.of(context).textTheme;
     final userProvider = ref.watch(userNotifierProvider);
     if (!userProvider.isLoggedIn) {
@@ -378,7 +378,9 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
                                               ref.read(appNotifier.notifier).state;
                                           ref.watch(appNotifier.notifier).state =
                                               state.copyWith(showFAB: false);
-                                          NavbarNotifier.hideBottomNavBar = true;
+                                          if (size.width < 600) {
+                                            NavbarNotifier.hideBottomNavBar = true;
+                                          }
                                           await showModalBottomSheet(
                                               context: context,
                                               isScrollControlled: true,

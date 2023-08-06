@@ -147,7 +147,9 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
                                         ref.read(appNotifier.notifier).state;
                                     ref.watch(appNotifier.notifier).state =
                                         state.copyWith(showFAB: false);
-                                    NavbarNotifier.hideBottomNavBar = true;
+                                    if (size.width < 600) {
+                                      NavbarNotifier.hideBottomNavBar = true;
+                                    }
                                     await showModalBottomSheet(
                                         context: context,
                                         isScrollControlled: true,
