@@ -57,47 +57,7 @@ Key Features:
 
 The app is designed using [Material Design](https://m3.material.io/) guidelines. The design files can be found [here](https://www.figma.com/file/xPCoi1IcW8M6TODTqjG9GZ/Vocabhub?type=design&node-id=0%3A1&mode=design&t=Lw5GoQIP0v9W0JQj-1)
 
-### Running the app
-
-The api keys in this project are managed using [--dart-define](https://dartcode.org/docs/using-dart-define-in-flutter/) flags passed to the flutter run command. You can also use the
-
-```dart
-flutter <command> --dart-define=SUPABASE_PROJECT_URL=<your project url here> --dart-define=SUPABASE_API_KEY=<your api key here> --dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>
-```
-
-command to run the app from the command line, or If you want to use the launch.json file to run the app, you can copy paste the below configuration to your `.vscode/launch.json` file and pass the keys from the Supabase settings.
-
-```
- {
-    "name": "Launch",
-    "request": "launch",
-    "type": "dart",
-    "program": "lib/main.dart",
-    "args": [
-        "--dart-define=SUPABASE_PROJECT_URL=<your project url here>",
-        "--dart-define=SUPABASE_API_KEY=<your api key here>",
-        "--dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>",
-        "--dart-define=FIREBASE_VAPID_KEY=<vapid key from web push certificate in firebase>"
-        "--dart-define=ADMIN_EMAIL=<youremail>",
-        "--dart-define=FCM_SERVER_KEY=<Firebase server key>"
-    ]
-  }
-```
-
-_Run the project using the command_
-
-```
-  flutter run --dart-define=SUPABASE_PROJECT_URL=<your project url here> --dart-define=SUPABASE_API_KEY=<your api key here> --dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>  --dart-define=FIREBASE_VAPID_KEY=<vapid key from web push certificate in firebase>
-```
-
-#### Build the app
-
-```
-  flutter build apk --dart-define=SUPABASE_PROJECT_URL=<your project url here> --dart-define=SUPABASE_API_KEY=<your api key here> --dart-define=SUPABASE_REDIRECT_URL=<your redirect url here>
-  --dart-define=FIREBASE_VAPID_KEY=<vapid key from web push certificate in firebase> --dart-define=ADMIN_EMAIL=<youremail> --dart-define=FCM_SERVER_KEY=<Firebase server key>
-```
-
-The apk will be generated in the `build/app/outputs/flutter-apk/app-release.apk` folder.
+### Projects Specifications and steps on running the app [see the wiki page](https://github.com/maheshmnj/vocabhub/wiki/Project-Specifications-and-Knowledge-base/)
 
 ### Redesigned for the Web v0.4.2
 
