@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/user.dart';
-import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/utility.dart';
@@ -114,7 +113,8 @@ class _EditProfileMobileState extends ConsumerState<EditProfileMobile> {
                           radius: 46,
                           backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                           child: CircularAvatar(
-                            url: '${user!.avatarUrl}',
+                            url: '${user.avatarUrl}',
+                            name: user.name.initals(),
                             radius: 40,
                           )),
                     ),
