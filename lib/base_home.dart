@@ -194,7 +194,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                   closedBuilder: (BuildContext context, VoidCallback openContainer) {
                     return FloatingActionButton.extended(
                         backgroundColor: colorScheme.primaryContainer,
-                        heroTag: "addword",
+                        heroTag: "addword${DateTime.now().millisecondsSinceEpoch}",
                         elevation: 3.5,
                         isExtended: true,
                         icon: Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28),

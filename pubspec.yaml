@@ -8,10 +8,11 @@ environment:
 
 dependencies:
   animations: ^2.0.7
+  cached_network_image: ^3.2.3
   cupertino_icons: ^1.0.5
+  feature_discovery: ^0.14.1
   firebase_analytics: ^10.4.4
   firebase_core: ^2.4.1
-  cached_network_image: ^3.2.3
   firebase_messaging: ^14.2.1
   firebase_messaging_web: ^3.5.1
   firebase_remote_config: ^3.0.9
@@ -27,13 +28,13 @@ dependencies:
   http: ^0.13.6
   intl: ^0.18.0
   json_annotation: ^4.6.0
-  navbar_router:
-    ^0.6.0
-    # git:
-    #   url: https://github.com/maheshmnj/navbar_router.git
+  navbar_router: ^0.6.0
+  # git:
+  #   url: https://github.com/maheshmnj/navbar_router.git
   package_info_plus: ^4.0.1
   pull_to_refresh: ^2.0.0
   realtime_client: ^0.1.15
+  rive: ^0.11.4
   share_plus: ^4.1.0
   shared_preferences: ^2.2.0
   smooth_page_indicator: ^1.1.0
@@ -41,7 +42,6 @@ dependencies:
   url_launcher: ^6.1.8
   uuid: ^3.0.6
   webview_flutter: ^4.2.2
-  rive: ^0.11.4
   webview_flutter_web: ^0.2.2+1
 
 dev_dependencies:

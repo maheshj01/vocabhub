@@ -1,3 +1,4 @@
+import 'package:feature_discovery/feature_discovery.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -151,31 +152,33 @@ class _VocabAppState extends ConsumerState<VocabApp> {
           animation: settingsController,
           builder: (BuildContext context, Widget? child) {
             final colorScheme = ColorScheme.fromSeed(seedColor: settingsController.themeSeed);
-            return MaterialApp(
-              title: Constants.APP_TITLE,
-              key: appKey,
-              scrollBehavior: AppScrollBehavior(),
-              navigatorObservers: [_observer],
-              debugShowCheckedModeBanner: !kDebugMode,
-              darkTheme: ThemeData.dark(
-                useMaterial3: true,
-              ).copyWith(
-                  scaffoldBackgroundColor: colorScheme.background,
-                  colorScheme: ColorScheme.fromSeed(
-                      seedColor: settingsController.themeSeed, brightness: Brightness.dark)),
-              theme: ThemeData(
+            return FeatureDiscovery(
+              child: MaterialApp(
+                title: Constants.APP_TITLE,
+                key: appKey,
+                scrollBehavior: AppScrollBehavior(),
+                navigatorObservers: [_observer],
+                debugShowCheckedModeBanner: !kDebugMode,
+                darkTheme: ThemeData.dark(
                   useMaterial3: true,
-                  scaffoldBackgroundColor: colorScheme.background,
-                  colorScheme: ColorScheme.fromSeed(seedColor: settingsController.themeSeed)),
-              routes: {
-                Notifications.route: (context) => Notifications(),
-                WebViewPage.routeName: (context) => WebViewPage(
-                      title: Constants.PRIVACY_POLICY_TITLE,
-                      url: Constants.PRIVACY_POLICY,
-                    ),
-              },
-              themeMode: settingsController.theme,
-              home: SplashScreen(),
+                ).copyWith(
+                    scaffoldBackgroundColor: colorScheme.background,
+                    colorScheme: ColorScheme.fromSeed(
+                        seedColor: settingsController.themeSeed, brightness: Brightness.dark)),
+                theme: ThemeData(
+                    useMaterial3: true,
+                    scaffoldBackgroundColor: colorScheme.background,
+                    colorScheme: ColorScheme.fromSeed(seedColor: settingsController.themeSeed)),
+                routes: {
+                  Notifications.route: (context) => Notifications(),
+                  WebViewPage.routeName: (context) => WebViewPage(
+                        title: Constants.PRIVACY_POLICY_TITLE,
+                        url: Constants.PRIVACY_POLICY,
+                      ),
+                },
+                themeMode: settingsController.theme,
+                home: SplashScreen(),
+              ),
             );
           }),
     );

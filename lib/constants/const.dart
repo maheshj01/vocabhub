@@ -78,6 +78,12 @@ class Constants {
 
   static const String LAUNCHER_ICON = '@mipmap/launcher_icon';
 
+
+  /// Features
+
+  static const String draftsFeature = 'drafts_feature';
+  static const String collectionsFeature = 'collections_feature';
+
   // when a user makes a contribution, admin gets a notification
   static String constructEditPayload(EditHistory history) {
     final type = history.edit_type!.pastTense;

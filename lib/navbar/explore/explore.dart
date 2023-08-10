@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/constants/constants.dart';
-import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/controller/explore_controller.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/navbar/empty_page.dart';
@@ -20,9 +19,8 @@ import 'package:vocabhub/widgets/examplebuilder.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
 import 'package:vocabhub/widgets/widgets.dart';
+import 'package:vocabhub/widgets/word_title.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
-
-import '../../pages/collections/collections.dart';
 
 class ExploreWords extends StatelessWidget {
   static const String route = '/';
@@ -342,8 +340,6 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final size = MediaQuery.of(context).size;
-    final textTheme = Theme.of(context).textTheme;
     final userProvider = ref.watch(userNotifierProvider);
     if (!userProvider.isLoggedIn) {
       _animationController.forward();
@@ -362,48 +358,9 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
                         padding: const EdgeInsets.only(top: kToolbarHeight, bottom: 12),
                         child: Align(
                           alignment: Alignment.topCenter,
-                          child: FittedBox(
-                            fit: BoxFit.fitWidth,
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: 16.0.horizontalPadding,
-                                  child: Text(widget.word!.word.capitalize()!,
-                                      style: textTheme.displayMedium!),
-                                ),
-                                userProvider.isLoggedIn
-                                    ? IconButton(
-                                        onPressed: () async {
-                                          final AppController state =
-                                              ref.read(appNotifier.notifier).state;
-                                          ref.watch(appNotifier.notifier).state =
-                                              state.copyWith(showFAB: false);
-                                          if (size.width < 600) {
-                                            NavbarNotifier.hideBottomNavBar = true;
-                                          }
-                                          await showModalBottomSheet(
-                                              context: context,
-                                              isScrollControlled: true,
-                                              builder: (context) {
-                                                return DraggableScrollableSheet(
-                                                    maxChildSize: 0.8,
-                                                    initialChildSize: 0.6,
-                                                    expand: false,
-                                                    builder: (context, controller) {
-                                                      return CollectionsNavigator(
-                                                        controller: controller,
-                                                        word: widget.word!,
-                                                      );
-                                                    });
-                                              });
-                                          ref.watch(appNotifier.notifier).state =
-                                              state.copyWith(showFAB: true);
-                                          NavbarNotifier.hideBottomNavBar = false;
-                                        },
-                                        icon: Icon(Icons.bookmark_add))
-                                    : SizedBox.shrink()
-                              ],
-                            ),
+                          child: WordTitleBuilder(
+                            word: widget.word!,
+                            hasFloatingActionButton: Scaffold.of(context).hasFloatingActionButton,
                           ),
                         ),
                       ),

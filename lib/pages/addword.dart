@@ -1,4 +1,6 @@
+import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
@@ -146,6 +148,14 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
     exampleController.addListener(_rebuild);
     synonymController.addListener(_rebuild);
     mnemonicController.addListener(_rebuild);
+    if (!widget.isEdit) {
+      SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
+        FeatureDiscovery.discoverFeatures(
+          context,
+          const <String>{Constants.draftsFeature},
+        );
+      });
+    }
   }
 
   void _populateData({Word? word}) {
@@ -268,7 +278,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
         context: context,
         builder: (x) => VocabAlert(
             title: 'Save word to drafts?',
-            subtitle: 'We will pull up this word from drafts, next time you try to add a word',
+            subtitle: 'You can continue editing this word later from drafts',
             actionTitle1: 'Discard & Close',
             actionTitle2: 'Save',
             onAction1: () {
@@ -324,6 +334,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
       );
     }
 
+    
     userProvider = ref.watch(userNotifierProvider);
     final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
@@ -349,14 +360,27 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
                   elevation: 5,
                   actions: [
                     if (!widget.isEdit)
-                      IconButton(
-                          onPressed: () async {
-                            removeFocus(context);
-                            Word selectedDraft = await Navigate.push(context, Drafts(),
-                                transitionType: TransitionType.rtl);
-                            _populateData(word: selectedDraft);
-                          },
-                          icon: Icon(Icons.drafts)),
+                      DescribedFeatureOverlay(
+                        featureId: Constants.draftsFeature,
+                        tapTarget: Icon(Icons.drafts),
+                        title: Text('Drafts'),
+                        description:
+                            Text('Drafts can be used to pull up words you saved for later'),
+                        backgroundColor: Theme.of(context).primaryColor,
+                        targetColor: colorScheme.onPrimary,
+                        textColor: colorScheme.onPrimary,
+                        child: IconButton(
+                            onPressed: () async {
+                              removeFocus(context);
+                              Word selectedDraft = await Navigate.push(context, Drafts(),
+                                  transitionType: TransitionType.rtl);
+                              if (selectedDraft.word.isEmpty) {
+                                return;
+                              }
+                              _populateData(word: selectedDraft);
+                            },
+                            icon: Icon(Icons.drafts)),
+                      ),
                   ],
                 ),
                 body: Form(
