@@ -120,7 +120,6 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     });
   }
 
-  bool hasUpdate = false;
   List<NavbarItem> items = [
     NavbarItem(Icons.dashboard, 'Dashboard'),
     NavbarItem(Icons.search, 'Search'),
