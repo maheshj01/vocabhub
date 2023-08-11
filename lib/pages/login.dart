@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +12,7 @@ import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
+import 'package:vocabhub/widgets/responsive.dart';
 
 class AppSignIn extends ConsumerStatefulWidget {
   const AppSignIn({Key? key}) : super(key: key);
@@ -138,25 +141,32 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
 
           return IgnorePointer(
             ignoring: request.state == RequestState.active,
-            child: Scaffold(
-                backgroundColor: Theme.of(context).colorScheme.background,
-                body: !SizeUtils.isMobile
+            child: Stack(
+              children: [
+                CustomPaint(
+                  painter: BackgroundPainter(
+                    primaryColor: colorScheme.primary,
+                    secondaryColor: colorScheme.secondary,
+                  ),
+                ),
+                BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(color: Colors.black.withOpacity(0.2))),
+                !SizeUtils.isMobile
                     ? Row(
                         children: [
                           AnimatedContainer(
                             width: SizeUtils.size.width / 2,
                             duration: Duration(seconds: 1),
-                            child: ImageBackground(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 32),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    _heading('Hi!'),
-                                    _heading('Welcome Back.'),
-                                  ],
-                                ),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 32),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _heading('Hi!'),
+                                  _heading('Welcome Back.'),
+                                ],
                               ),
                             ),
                           ),
@@ -179,7 +189,7 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
                           )
                         ],
                       )
-                    : ImageBackground(
+                    : Container(
                         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
                           200.0.vSpacer(),
                           // _heading('Hi!'),
@@ -193,7 +203,9 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
 
                           100.0.vSpacer(),
                         ]),
-                      )),
+                      ),
+              ],
+            ),
           );
         });
   }

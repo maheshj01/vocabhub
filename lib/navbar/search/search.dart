@@ -218,6 +218,7 @@ class WordTile extends StatelessWidget {
         Colors.primaries[index % Colors.primaries.length].shade900.withOpacity(0.8);
     return OpenContainer(
         closedColor: Theme.of(context).colorScheme.surface,
+        closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         openBuilder: (BuildContext context, VoidCallback openContainer) {
           return WordListPage(
               title: "Words With Letter $title (${wordList!.length})",

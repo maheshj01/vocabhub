@@ -141,6 +141,7 @@ class DashboardMobile extends ConsumerWidget {
         SliverAppBar(
             pinned: false,
             expandedHeight: 80.0,
+            backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
               background: Container(
