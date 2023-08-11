@@ -42,9 +42,13 @@ class SettingsService extends ServiceBase {
   /// this time does not indicate the user has rated the app
   /// it only indicates the last time the user was shown the rate sheet
   Future<DateTime> getLastRatedShownDate() async {
-    final lastRatedDateTimeString =
-        _sharedPreferences.getString(kLastRatedDate) ?? DateTime.now().toIso8601String();
-    return DateTime.parse(lastRatedDateTimeString);
+    final lastRatedDateTimeString = _sharedPreferences.getString(kLastRatedDate);
+    if (lastRatedDateTimeString == null) {
+      await _sharedPreferences.setString(kLastRatedDate, DateTime.now().toIso8601String());
+      return DateTime.now();
+    } else {
+      return DateTime.parse(lastRatedDateTimeString);
+    }
   }
 
   void setThemeSeed(Color color) {
