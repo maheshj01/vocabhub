@@ -47,16 +47,17 @@ class _WordTitleBuilderState extends ConsumerState<WordTitleBuilder> {
       },
       child: FittedBox(
         fit: BoxFit.fitWidth,
-        child: Row(
-          children: [
-            Padding(
-              padding: 16.0.horizontalPadding,
-              child: Text(widget.word.word.capitalize()!,
-                  style: VocabTheme.googleFontsTextTheme.displaySmall!),
-            ),
-            userProvider.isLoggedIn
-                ? SafeArea(
-                    child: DescribedFeatureOverlay(
+        child: SafeArea(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Padding(
+                padding: 16.0.horizontalPadding,
+                child: Text(widget.word.word.capitalize()!,
+                    style: VocabTheme.googleFontsTextTheme.displaySmall!),
+              ),
+              userProvider.isLoggedIn
+                  ? DescribedFeatureOverlay(
                       featureId: Constants.collectionsFeature,
                       tapTarget: Icon(Icons.bookmark_add, size: 26, color: colorScheme.surfaceTint),
                       title: Text('Save to Collections'),
@@ -94,10 +95,10 @@ class _WordTitleBuilderState extends ConsumerState<WordTitleBuilder> {
                             size: 26,
                             color: Theme.of(context).colorScheme.surfaceTint,
                           )),
-                    ),
-                  )
-                : SizedBox.shrink()
-          ],
+                    )
+                  : SizedBox.shrink()
+            ],
+          ),
         ),
       ),
     );
