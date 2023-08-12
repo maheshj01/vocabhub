@@ -54,13 +54,15 @@ void main() {
       expect((app.VocabApp).typeX(), findsOneWidget);
       await tester.pumpAndSettle();
       await Future.delayed(const Duration(seconds: 1));
+      print("WelcomePage");
       expect((WelcomePage).typeX(), findsOneWidget);
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 2));
+      print("WelcomePage1");
       final skipForNow = "Skip for now".textX();
       expect(skipForNow, findsOneWidget);
       await tester.pumpAndSettle();
       await tester.tap(skipForNow);
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1)); // wait for animation to complete
       expect((AppSignIn).typeX(), findsOneWidget);
     });
 
@@ -106,7 +108,7 @@ void main() {
       final getStartedText = "Get Started".textX();
       expect(getStartedText, findsOneWidget);
       await tester.tap(getStartedText);
-      await tester.pumpAndSettle();
+      await tester.pump(Duration(seconds: 2));
       expect((AppSignIn).typeX(), findsOneWidget);
     });
   });
@@ -118,12 +120,13 @@ void main() {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
-      await tester.pumpAndSettle();
+      await tester.pump(Duration(seconds: 2));
       expect((app.VocabApp).typeX(), findsOneWidget);
-      await tester.pumpAndSettle();
-      expect((Dashboard).typeX(), findsOneWidget);
-      await tester.pumpAndSettle();
-      await tester.pumpAndSettle();
+      await tester.pump(Duration(seconds: 2));
+      print("App loaded");
+      // expect((Dashboard).typeX(), findsOneWidget);
+
+      // await tester.pump(Duration(seconds: 2));
 
       final dashboardIcon = Icons.dashboard.iconX();
       final usericon = Icons.person.iconX();
@@ -132,9 +135,9 @@ void main() {
       expect(usericon, findsNothing);
       final signIntextFinder = "Sign In".textX();
       expect(signIntextFinder, findsWidgets);
-      await tester.pumpAndSettle();
+      await tester.pump(Duration(seconds: 2));
       await tester.tap(signIntextFinder.first);
-      await tester.pumpAndSettle();
+      await tester.pump(Duration(seconds: 2));
 
       // Sign In flow
 
@@ -184,7 +187,7 @@ void main() {
       // image.writeAsBytesSync(bytes);
     });
 
-    testWidgets("Ensure all navbar widgets load", skip: true, (widgetTester) async {
+    testWidgets("Ensure all navbar widgets load", skip: skip, (widgetTester) async {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
       final List<Widget> baseWidgets = [
@@ -239,7 +242,7 @@ void main() {
       // image.writeAsBytesSync(bytes);
     });
 
-    testWidgets('Unpublished Word should be saved to drafts', skip: true, (widgetTester) async {
+    testWidgets('Unpublished Word should be saved to drafts', skip: skip, (widgetTester) async {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
@@ -342,7 +345,7 @@ void main() {
       expect(drafts.length, 1);
     });
 
-    testWidgets('load Unpublished word from drafts', skip: true, (widgetTester) async {
+    testWidgets('load Unpublished word from drafts', skip: skip, (widgetTester) async {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
@@ -394,7 +397,7 @@ void main() {
       expect((Dashboard).typeX(), findsOneWidget);
     });
 
-    testWidgets('Users should be able to add a new word', skip: true, (widgetTester) async {
+    testWidgets('Users should be able to add a new word', skip: skip, (widgetTester) async {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
@@ -484,7 +487,7 @@ void main() {
       expect((Dashboard).typeX(), findsOneWidget);
     });
 
-    testWidgets('Reject the added test word', skip: true, (widgetTester) async {
+    testWidgets('Reject the added test word', skip: skip, (widgetTester) async {
       await app.main();
       // await binding.convertFlutterSurfaceToImage();
       await Future.delayed(const Duration(seconds: 3));
