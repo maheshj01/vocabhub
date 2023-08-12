@@ -81,7 +81,7 @@ class _WordTitleBuilderState extends ConsumerState<WordTitleBuilder> {
                                     builder: (context, controller) {
                                       return CollectionsNavigator(
                                         controller: controller,
-                                        word: widget.word!,
+                                        word: widget.word,
                                       );
                                     });
                               });

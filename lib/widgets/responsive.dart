@@ -7,9 +7,14 @@ class ResponsiveBuilder extends StatefulWidget {
   final WidgetBuilder desktopBuilder;
   final WidgetBuilder mobileBuilder;
   final bool animate;
+  final double initialAnimationValue;
 
   const ResponsiveBuilder(
-      {Key? key, required this.desktopBuilder, required this.mobileBuilder, this.animate = false})
+      {Key? key,
+      required this.desktopBuilder,
+      required this.mobileBuilder,
+      this.animate = false,
+      this.initialAnimationValue = 0.0})
       : super(key: key);
 
   @override
@@ -21,9 +26,11 @@ class _ResponsiveBuilderState extends State<ResponsiveBuilder> with TickerProvid
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: Duration(seconds: 6));
-    _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
     if (widget.animate) {
+      _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
       _controller.repeat(reverse: true);
+    } else {
+      _animation = AlwaysStoppedAnimation(widget.initialAnimationValue);
     }
   }
 
@@ -39,11 +46,16 @@ class _ResponsiveBuilderState extends State<ResponsiveBuilder> with TickerProvid
   @override
   void didUpdateWidget(covariant ResponsiveBuilder oldWidget) {
     if (oldWidget.animate != widget.animate) {
+      _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
+
       if (widget.animate) {
         _controller.repeat(reverse: true);
       } else {
         _controller.stop();
       }
+    }
+    if (oldWidget.initialAnimationValue != widget.initialAnimationValue) {
+      _animation = AlwaysStoppedAnimation(widget.initialAnimationValue);
     }
     super.didUpdateWidget(oldWidget);
   }

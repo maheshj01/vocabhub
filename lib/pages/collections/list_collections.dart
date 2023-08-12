@@ -221,17 +221,35 @@ class CollectionsGridState extends ConsumerState<CollectionsGrid> {
   }
 }
 
-class CollectionDetails extends ConsumerStatefulWidget {
-  // collection name
-  final VHCollection collection;
+class CollectionDetails extends StatelessWidget {
   static const String route = '/collection/details';
+  final VHCollection collection;
   const CollectionDetails({super.key, required this.collection});
 
   @override
-  ConsumerState<CollectionDetails> createState() => _CollectionDetailsState();
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(desktopBuilder: (context) {
+      return CollectionDetailsSheet(
+        collection: collection,
+      );
+    }, mobileBuilder: (context) {
+      return CollectionDetailsSheet(
+        collection: collection,
+      );
+    });
+  }
 }
 
-class _CollectionDetailsState extends ConsumerState<CollectionDetails> {
+class CollectionDetailsSheet extends ConsumerStatefulWidget {
+  // collection name
+  final VHCollection collection;
+  const CollectionDetailsSheet({super.key, required this.collection});
+
+  @override
+  ConsumerState<CollectionDetailsSheet> createState() => _CollectionDetailsSheetState();
+}
+
+class _CollectionDetailsSheetState extends ConsumerState<CollectionDetailsSheet> {
   @override
   Widget build(BuildContext context) {
     final collections = ref.watch(collectionNotifier).collections;

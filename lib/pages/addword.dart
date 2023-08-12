@@ -378,9 +378,39 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
                 }
                 return Future.value(true);
               },
-              child: Material(
-                color: Colors.transparent,
-                child: Form(
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                resizeToAvoidBottomInset: true,
+                appBar: AppBar(
+                  backgroundColor: Colors.transparent,
+                  title: Text(widget.isEdit ? 'Edit Word' : 'Add word'),
+                  // elevation: 5,
+                  actions: [
+                    if (!widget.isEdit)
+                      DescribedFeatureOverlay(
+                        featureId: Constants.draftsFeature,
+                        tapTarget: Icon(Icons.drafts),
+                        title: Text('Drafts'),
+                        description:
+                            Text('Drafts can be used to pull up words you saved for later'),
+                        backgroundColor: Theme.of(context).primaryColor,
+                        targetColor: colorScheme.onPrimary,
+                        textColor: colorScheme.onPrimary,
+                        child: IconButton(
+                            onPressed: () async {
+                              removeFocus(context);
+                              Word selectedDraft = await Navigate.push(context, DraftsPage(),
+                                  transitionType: TransitionType.rtl);
+                              if (selectedDraft.word.isEmpty) {
+                                return;
+                              }
+                              _populateData(word: selectedDraft);
+                            },
+                            icon: Icon(Icons.drafts)),
+                      ),
+                  ],
+                ),
+                body: Form(
                   key: _formKey,
                   onChanged: () {
                     // update button state
@@ -397,36 +427,6 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: ListView(
                       children: [
-                        AppBar(
-                          backgroundColor: Colors.transparent,
-                          title: Text(widget.isEdit ? 'Edit Word' : 'Add word'),
-                          // elevation: 5,
-                          actions: [
-                            if (!widget.isEdit)
-                              DescribedFeatureOverlay(
-                                featureId: Constants.draftsFeature,
-                                tapTarget: Icon(Icons.drafts),
-                                title: Text('Drafts'),
-                                description:
-                                    Text('Drafts can be used to pull up words you saved for later'),
-                                backgroundColor: Theme.of(context).primaryColor,
-                                targetColor: colorScheme.onPrimary,
-                                textColor: colorScheme.onPrimary,
-                                child: IconButton(
-                                    onPressed: () async {
-                                      removeFocus(context);
-                                      Word selectedDraft = await Navigate.push(
-                                          context, DraftsPage(),
-                                          transitionType: TransitionType.rtl);
-                                      if (selectedDraft.word.isEmpty) {
-                                        return;
-                                      }
-                                      _populateData(word: selectedDraft);
-                                    },
-                                    icon: Icon(Icons.drafts)),
-                              ),
-                          ],
-                        ),
                         25.0.vSpacer(),
                         VocabField(
                           fieldKey: _formFieldKeys[0],

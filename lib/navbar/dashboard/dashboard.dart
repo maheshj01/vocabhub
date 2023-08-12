@@ -554,6 +554,9 @@ class DashboardDesktop extends ConsumerWidget {
                         );
                       },
                       tappable: true,
+                      middleColor: Colors.transparent,
+                      openColor: Colors.transparent,
+                      closedColor: Colors.transparent,
                       closedShape: 16.0.rounded,
                       transitionType: ContainerTransitionType.fadeThrough,
                       closedBuilder: (BuildContext context, VoidCallback openContainer) {
@@ -581,6 +584,9 @@ class DashboardDesktop extends ConsumerWidget {
                               );
                             },
                             tappable: true,
+                            closedColor: Colors.transparent,
+                            openColor: Colors.transparent,
+                            middleColor: Colors.transparent,
                             closedShape: 16.0.rounded,
                             transitionType: ContainerTransitionType.fadeThrough,
                             closedBuilder: (BuildContext context, VoidCallback openContainer) {
@@ -596,6 +602,9 @@ class DashboardDesktop extends ConsumerWidget {
                       16.0.hSpacer(),
                       Expanded(
                         child: OpenContainer<bool>(
+                            closedColor: Colors.transparent,
+                            openColor: Colors.transparent,
+                            middleColor: Colors.transparent,
                             openBuilder: (BuildContext context, VoidCallback openContainer) {
                               return BookmarksPage(
                                 isBookMark: true,

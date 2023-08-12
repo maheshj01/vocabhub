@@ -4,6 +4,7 @@ import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/notification.dart';
+import 'package:vocabhub/navbar/error_page.dart';
 import 'package:vocabhub/navbar/profile/profile.dart';
 import 'package:vocabhub/pages/notifications/notification_detail.dart';
 import 'package:vocabhub/services/services.dart';
@@ -15,8 +16,49 @@ import 'package:vocabhub/widgets/icon.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
+class NotificationsNavigator extends StatefulWidget {
+  final String word;
+  final bool? isNotification;
+  final String title;
+  const NotificationsNavigator(
+      {super.key, required this.word, this.isNotification = true, this.title = 'Edit Detail'});
+
+  @override
+  State<NotificationsNavigator> createState() => _NotificationsNavigatorState();
+}
+
+class _NotificationsNavigatorState extends State<NotificationsNavigator> {
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(28.0)),
+      child: Navigator(
+        initialRoute: Notifications.route,
+        onGenerateRoute: (settings) {
+          switch (settings.name) {
+            case Notifications.route:
+              return MaterialPageRoute(builder: (context) => Notifications());
+            case NotificationDetail.route:
+              final collection = settings.arguments as VHCollection;
+              return MaterialPageRoute(
+                  builder: (context) => NotificationDetail(
+                      isNotification: widget.isNotification!,
+                      word: widget.word,
+                      title: widget.title));
+            default:
+              return MaterialPageRoute(
+                  builder: (context) => ErrorPage(
+                      onRetry: () {},
+                      errorMessage: 'Oh no! You have landed on an unknown planet '));
+          }
+        },
+      ),
+    );
+  }
+}
+
 class Notifications extends StatefulWidget {
-  static const String route = '/notificationsMobile';
+  static const String route = '/notifications';
   const Notifications({super.key});
 
   @override
@@ -222,7 +264,9 @@ class _NotificationsMobileState extends ConsumerState<NotificationsMobile> {
                                       Navigate.push(
                                           context,
                                           NotificationDetail(
-                                            editHistory: edit,
+                                            word: edit.word,
+                                            title: 'Edit History',
+                                            isNotification: true,
                                           ));
                                     },
                                   );
@@ -246,7 +290,9 @@ class _NotificationsMobileState extends ConsumerState<NotificationsMobile> {
                               Navigate.push(
                                   context,
                                   NotificationDetail(
-                                    editHistory: edit,
+                                    word: edit.word,
+                                    title: 'Edit History',
+                                    isNotification: true,
                                   ));
                             },
                             onCancel: () async {

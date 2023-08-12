@@ -23,16 +23,17 @@ class _BookmarksPageState extends State<BookmarksPage> {
   @override
   Widget build(BuildContext context) {
     return Material(
+        color: Colors.transparent,
         child: ResponsiveBuilder(
-      desktopBuilder: (context) => _BookmarksDesktop(
-        isBookMark: widget.isBookMark,
-        user: widget.user,
-      ),
-      mobileBuilder: (context) => _BookmarksMobile(
-        isBookMark: widget.isBookMark,
-        user: widget.user,
-      ),
-    ));
+          desktopBuilder: (context) => _BookmarksDesktop(
+            isBookMark: widget.isBookMark,
+            user: widget.user,
+          ),
+          mobileBuilder: (context) => _BookmarksMobile(
+            isBookMark: widget.isBookMark,
+            user: widget.user,
+          ),
+        ));
   }
 }
 
@@ -76,13 +77,14 @@ class _BookmarksMobileState extends State<_BookmarksMobile> {
         builder: (_, List<Word>? value, Widget? child) {
           if (value == null) {
             return Scaffold(
-                backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                backgroundColor: Colors.transparent,
                 appBar: AppBar(title: Text('$title')),
                 body: LoadingWidget());
           }
           return Scaffold(
-              backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+              backgroundColor: Colors.transparent,
               appBar: AppBar(
+                backgroundColor: Colors.transparent,
                 title: value.isEmpty ? Text('$title') : Text('${value.length} $title'),
               ),
               body: value.isEmpty
