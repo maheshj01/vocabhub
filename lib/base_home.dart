@@ -252,7 +252,9 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
               }
               ref.read(appNotifier.notifier).state = ref.watch(appNotifier).copyWith(index: x);
             },
-            decoration: M3NavbarDecoration(),
+            decoration: M3NavbarDecoration(
+              backgroundColor: (colorScheme.surfaceVariant.withOpacity(0.4)),
+            ),
             destinations: [
               for (int i = 0; i < items.length; i++)
                 DestinationRouter(
