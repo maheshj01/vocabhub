@@ -149,7 +149,7 @@ class DashboardMobile extends ConsumerWidget {
                 padding: EdgeInsets.only(left: 16, top: 16),
                 child: Text(
                   'Dashboard',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
                 ),
               ),
             ),

@@ -283,7 +283,11 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                             Padding(
                                 padding: 8.0.horizontalPadding,
                                 child: Text(
-                                    '@${user.username} ${!user.isAdmin ? ' (User)' : '(Admin)'}')),
+                                    '@${user.username} ${!user.isAdmin ? ' (User)' : '(Admin)'}',
+                                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                        ))),
                             Text(
                               '${user.name.capitalize()}',
                               textAlign: TextAlign.center,
@@ -321,7 +325,7 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                                         style: Theme.of(context)
                                             .textTheme
                                             .headlineMedium!
-                                            .copyWith(fontSize: 28, fontWeight: FontWeight.w500),
+                                            .copyWith(fontSize: 28, fontWeight: FontWeight.w600),
                                       ),
                                       4.0.vSpacer(),
                                       Text(
@@ -333,7 +337,7 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                                         style: Theme.of(context)
                                             .textTheme
                                             .titleSmall!
-                                            .copyWith(fontSize: 12, fontWeight: FontWeight.w600),
+                                            .copyWith(fontSize: 12, fontWeight: FontWeight.w800),
                                       ),
                                     ],
                                   ),

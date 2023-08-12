@@ -246,13 +246,30 @@ class WordTile extends StatelessWidget {
 class SearchView extends StatefulWidget {
   static String route = '/searchview';
 
-  const SearchView({Key? key}) : super(key: key);
+  const SearchView({super.key});
 
   @override
   State<SearchView> createState() => _SearchViewState();
 }
 
 class _SearchViewState extends State<SearchView> {
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(
+      desktopBuilder: (context) => SearchViewPage(),
+      mobileBuilder: (context) => SearchViewPage(),
+    );
+  }
+}
+
+class SearchViewPage extends StatefulWidget {
+  const SearchViewPage({Key? key}) : super(key: key);
+
+  @override
+  State<SearchViewPage> createState() => _SearchViewPageState();
+}
+
+class _SearchViewPageState extends State<SearchViewPage> {
   final searchNotifier = ValueNotifier<List<Word>?>(null);
 
   @override
@@ -297,6 +314,7 @@ class _SearchViewState extends State<SearchView> {
     words = dashboardController.words;
     final colorScheme = Theme.of(context).colorScheme;
     return Material(
+      color: Colors.transparent,
       child: SafeArea(
         child: Column(
           children: [
