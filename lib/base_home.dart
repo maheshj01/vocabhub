@@ -136,7 +136,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       },
       1: {
         Search.route: Search(),
-        AddWordForm.route: AddWordForm(),
+        AddWord.route: AddWord(),
         SearchView.route: SearchView(),
       },
       2: {
@@ -181,7 +181,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
               padding: (kM3NavbarHeight * 0.9).bottomPadding,
               child: OpenContainer<bool>(
                   openBuilder: (BuildContext context, VoidCallback openContainer) {
-                    return AddWordForm(
+                    return AddWord(
                       isEdit: false,
                     );
                   },

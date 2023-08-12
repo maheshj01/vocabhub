@@ -79,7 +79,6 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
   @override
   Widget build(BuildContext context) {
     final userProvider = ref.watch(userNotifierProvider);
-    final colorScheme = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
     return Material(
       color: Colors.transparent,
