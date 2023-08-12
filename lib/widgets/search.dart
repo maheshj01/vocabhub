@@ -58,6 +58,7 @@ class _SearchBuilderState extends State<SearchBuilder> {
           decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(horizontal: 8),
               filled: true,
+              fillColor: Theme.of(context).colorScheme.surface,
               border: OutlineInputBorder(
                   gapPadding: 0,
                   borderRadius: BorderRadius.circular(24),
@@ -69,8 +70,13 @@ class _SearchBuilderState extends State<SearchBuilder> {
                       BorderSide(color: Theme.of(context).colorScheme.primary.withOpacity(0.2))),
               prefixIcon: Icon(Icons.search),
               suffixIcon: IconButton(
-                  tooltip: _searchController.text.isNotEmpty ? 'clear' : 'shuffle',
-                  icon: _searchController.text.isNotEmpty ? Icon(Icons.clear) : SizedBox.shrink(),
+                  tooltip: 'clear',
+                  icon: _searchController.text.isNotEmpty
+                      ? Icon(
+                          Icons.clear,
+                          color: Theme.of(context).colorScheme.surfaceTint,
+                        )
+                      : SizedBox.shrink(),
                   onPressed: () {
                     if (_searchController.text.isNotEmpty) {
                       _searchController.clear();
