@@ -205,7 +205,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
             errorBuilder: (context) {
               return const Center(child: Text('Error 404'));
             },
-            type: NavbarType.material3,
+            type: NavbarType.floating,
             onBackButtonPressed: (isExiting) {
               if (isExiting) {
                 newTime = DateTime.now();
@@ -244,8 +244,14 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
               }
               ref.read(appNotifier.notifier).state = ref.watch(appNotifier).copyWith(index: x);
             },
-            decoration: M3NavbarDecoration(
-              backgroundColor: (colorScheme.surfaceVariant.withOpacity(0.4)),
+            decoration: FloatingNavbarDecoration(
+              height: 90,
+              backgroundColor:
+                  settingsController.isDark ? colorScheme.surfaceVariant : colorScheme.surface,
+              margin: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+
+              borderRadius: BorderRadius.zero,
+              // backgroundColor: (colorScheme.surfaceVariant.withOpacity(0.4)),
             ),
             destinations: [
               for (int i = 0; i < items.length; i++)
