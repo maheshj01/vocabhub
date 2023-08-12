@@ -12,17 +12,34 @@ import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
 import 'package:vocabhub/widgets/icon.dart';
+import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
-class Notifications extends ConsumerStatefulWidget {
-  static const String route = '/notifications';
-  const Notifications({Key? key}) : super(key: key);
+class Notifications extends StatefulWidget {
+  static const String route = '/notificationsMobile';
+  const Notifications({super.key});
 
   @override
-  _NotificationsState createState() => _NotificationsState();
+  State<Notifications> createState() => _NotificationsState();
 }
 
-class _NotificationsState extends ConsumerState<Notifications> {
+class _NotificationsState extends State<Notifications> {
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(
+        desktopBuilder: (context) => NotificationsMobile(),
+        mobileBuilder: (context) => NotificationsMobile());
+  }
+}
+
+class NotificationsMobile extends ConsumerStatefulWidget {
+  const NotificationsMobile({Key? key}) : super(key: key);
+
+  @override
+  _NotificationsMobileState createState() => _NotificationsMobileState();
+}
+
+class _NotificationsMobileState extends ConsumerState<NotificationsMobile> {
   @override
   void initState() {
     super.initState();
@@ -131,111 +148,119 @@ class _NotificationsState extends ConsumerState<Notifications> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final userRef = ref.watch(userNotifierProvider);
-    return Scaffold(
-        backgroundColor: colorScheme.surface,
-        key: notificationsKey,
-        appBar: AppBar(
-          elevation: 0,
-          centerTitle: false,
-          title: Text(
-            'Notifications',
+    return Material(
+      color: Colors.transparent,
+      key: notificationsKey,
+      child: Column(
+        children: [
+          AppBar(
+            elevation: 0,
+            centerTitle: false,
+            backgroundColor: Colors.transparent,
+            title: Text(
+              'Notifications',
+            ),
           ),
-        ),
-        body: ValueListenableBuilder<List<NotificationModel>?>(
-            valueListenable: historyNotifier,
-            builder: (BuildContext context, List<NotificationModel>? value, Widget? child) {
-              if (value == null || user == null) {
-                return LoadingWidget();
-              }
-              if (value.isEmpty || !userRef.isLoggedIn) {
-                return Center(
-                  child: Text('No notifications'),
-                );
-              }
-              if (user!.isAdmin) {
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    await getNotifications();
-                  },
-                  child: ListView.builder(
-                      padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight),
-                      itemBuilder: (context, index) {
-                        final edit = value[index].edit;
-                        final editor = value[index].user;
-                        return !user!.isAdmin
-                            ? UserNotificationTile(
-                                edit: edit,
-                                user: editor,
-                                onTap: () {},
-                                onCancel: () {
-                                  updateEditRequest(edit, EditState.cancelled, editor);
-                                },
-                              )
-                            : AdminNotificationTile(
-                                edit: edit,
-                                user: editor,
-                                onAvatarTap: () {
-                                  Navigate.push(
-                                      context,
-                                      Scaffold(
-                                          appBar: AppBar(
-                                            elevation: 0,
-                                            centerTitle: false,
-                                            title: Text(
-                                              'Profile',
-                                            ),
-                                          ),
-                                          body: UserProfile(
-                                            email: editor.email,
-                                            isReadOnly: true,
-                                          )));
-                                },
-                                onAction: (approved) async {
-                                  if (approved) {
-                                    updateGlobalDatabase(edit, EditState.approved, editor);
-                                  } else {
-                                    updateEditRequest(edit, EditState.rejected, editor);
-                                  }
-                                },
-                                onTap: () {
-                                  Navigate.push(
-                                      context,
-                                      NotificationDetail(
-                                        editHistory: edit,
-                                      ));
-                                },
-                              );
+          Expanded(
+            child: ValueListenableBuilder<List<NotificationModel>?>(
+                valueListenable: historyNotifier,
+                builder: (BuildContext context, List<NotificationModel>? value, Widget? child) {
+                  if (value == null || user == null) {
+                    return LoadingWidget();
+                  }
+                  if (value.isEmpty || !userRef.isLoggedIn) {
+                    return Center(
+                      child: Text('No notifications'),
+                    );
+                  }
+                  if (user!.isAdmin) {
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        await getNotifications();
                       },
-                      itemCount: value.length),
-                );
-              }
-              return RefreshIndicator(
-                onRefresh: () async {
-                  await getNotifications();
-                },
-                child: ListView.builder(
-                    padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight),
-                    itemBuilder: (context, index) {
-                      final edit = value[index].edit;
-                      final editUser = value[index].user;
-                      return UserNotificationTile(
-                        edit: edit,
-                        user: editUser,
-                        onTap: () {
-                          Navigate.push(
-                              context,
-                              NotificationDetail(
-                                editHistory: edit,
-                              ));
-                        },
-                        onCancel: () async {
-                          updateEditRequest(edit, EditState.cancelled, editUser);
-                        },
-                      );
+                      child: ListView.builder(
+                          padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight),
+                          itemBuilder: (context, index) {
+                            final edit = value[index].edit;
+                            final editor = value[index].user;
+                            return !user!.isAdmin
+                                ? UserNotificationTile(
+                                    edit: edit,
+                                    user: editor,
+                                    onTap: () {},
+                                    onCancel: () {
+                                      updateEditRequest(edit, EditState.cancelled, editor);
+                                    },
+                                  )
+                                : AdminNotificationTile(
+                                    edit: edit,
+                                    user: editor,
+                                    onAvatarTap: () {
+                                      Navigate.push(
+                                          context,
+                                          Scaffold(
+                                              appBar: AppBar(
+                                                elevation: 0,
+                                                centerTitle: false,
+                                                title: Text(
+                                                  'Profile',
+                                                ),
+                                              ),
+                                              body: UserProfile(
+                                                email: editor.email,
+                                                isReadOnly: true,
+                                              )));
+                                    },
+                                    onAction: (approved) async {
+                                      if (approved) {
+                                        updateGlobalDatabase(edit, EditState.approved, editor);
+                                      } else {
+                                        updateEditRequest(edit, EditState.rejected, editor);
+                                      }
+                                    },
+                                    onTap: () {
+                                      Navigate.push(
+                                          context,
+                                          NotificationDetail(
+                                            editHistory: edit,
+                                          ));
+                                    },
+                                  );
+                          },
+                          itemCount: value.length),
+                    );
+                  }
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      await getNotifications();
                     },
-                    itemCount: value.length),
-              );
-            }));
+                    child: ListView.builder(
+                        padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight),
+                        itemBuilder: (context, index) {
+                          final edit = value[index].edit;
+                          final editUser = value[index].user;
+                          return UserNotificationTile(
+                            edit: edit,
+                            user: editUser,
+                            onTap: () {
+                              Navigate.push(
+                                  context,
+                                  NotificationDetail(
+                                    editHistory: edit,
+                                  ));
+                            },
+                            onCancel: () async {
+                              updateEditRequest(edit, EditState.cancelled, editUser);
+                            },
+                          );
+                        },
+                        itemCount: value.length),
+                  );
+                }),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -260,7 +285,8 @@ class UserNotificationTile extends StatelessWidget {
       child: Container(
         height: 100,
         decoration: BoxDecoration(
-          color: colorScheme.surfaceVariant,
+          color: Colors.transparent,
+          border: Border.all(color: colorScheme.surfaceVariant, width: 1),
           borderRadius: BorderRadius.circular(4),
           boxShadow: [VocabTheme.notificationCardShadow],
         ),
@@ -353,8 +379,9 @@ class AdminNotificationTile extends StatelessWidget {
     return Container(
       height: 120,
       decoration: BoxDecoration(
-        color: colorScheme.surfaceVariant,
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: colorScheme.surfaceVariant, width: 1),
         boxShadow: [VocabTheme.notificationCardShadow],
       ),
       margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),

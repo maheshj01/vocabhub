@@ -80,7 +80,6 @@ class _UserProfileState extends ConsumerState<UserProfile> {
 
   @override
   Widget build(BuildContext context) {
-    final userRef = ref.watch(userNotifierProvider);
     return Material(
       child: ValueListenableBuilder<Response>(
           valueListenable: userProfileNotifier,
@@ -239,7 +238,7 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                                           size: 38,
                                           onTap: () {
                                             Navigator.of(context, rootNavigator: true).push(
-                                                PageRoutes.sharedAxis(const SettingsPageMobile(),
+                                                PageRoutes.sharedAxis(const SettingsPage(),
                                                     SharedAxisTransitionType.horizontal));
                                           },
                                         ),

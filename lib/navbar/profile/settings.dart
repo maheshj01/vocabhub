@@ -52,8 +52,6 @@ class SettingsPageMobile extends ConsumerStatefulWidget {
 }
 
 class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
-  
-
   void showLicensePage({
     required BuildContext context,
     String? applicationName,
@@ -82,13 +80,14 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
       }
     });
 
-    return Scaffold(
-      backgroundColor: colorScheme.background,
-      appBar: AppBar(
-        title: const Text('Settings'),
-      ),
-      body: ListView(
+    return Material(
+      color: Colors.transparent,
+      child: ListView(
         children: [
+          AppBar(
+            backgroundColor: Colors.transparent,
+            title: const Text('Settings'),
+          ),
           settingTile(
             'About',
             onTap: () {
@@ -231,7 +230,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                     Navigate.push(context, const ViewBugReports());
                   },
                 ),
-          !user.isAdmin ? const SizedBox.shrink() : hLine(),
+          // !user.isAdmin ? const SizedBox.shrink() : hLine(),
           user.isAdmin
               ? const SizedBox.shrink()
               : settingTile(

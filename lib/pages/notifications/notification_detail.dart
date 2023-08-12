@@ -154,106 +154,114 @@ class _NotificationDetailMobileState extends ConsumerState<NotificationDetailMob
     final user = ref.watch(userNotifierProvider);
     return ClipRRect(
       borderRadius: BorderRadius.vertical(top: Radius.circular(widget.isNotification ? 0.0 : 28.0)),
-      child: Scaffold(
-          backgroundColor: colorScheme.background,
-          appBar: AppBar(
-            elevation: 0,
-            centerTitle: false,
-            title: Text(
-              widget.title,
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
-          body: ValueListenableBuilder<Response>(
-              valueListenable: currentWordNotifier,
-              builder: (context, Response value, Widget? child) {
-                if (value.state == RequestState.active) {
-                  return LoadingWidget();
-                }
-                List<EditHistory> list = (value.data as List<EditHistory>);
-                return ListView.builder(
-                    itemCount: list.length,
-                    itemBuilder: (context, index) {
-                      EditHistory lastApprovedEdit;
-                      EditHistory currentEdit = list[index];
-                      if (index == list.length - 1 || list.length == 1) {
-                        lastApprovedEdit = currentEdit;
-                      } else {
-                        lastApprovedEdit = list[index + 1];
+      child: Material(
+          color: Colors.transparent,
+          child: Column(
+            children: [
+              AppBar(
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+                centerTitle: false,
+                title: Text(
+                  widget.title,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+              Expanded(
+                child: ValueListenableBuilder<Response>(
+                    valueListenable: currentWordNotifier,
+                    builder: (context, Response value, Widget? child) {
+                      if (value.state == RequestState.active) {
+                        return LoadingWidget();
                       }
-                      final editHistory = list[index];
-                      return ExpansionTile(
-                        leading: CircularAvatar(
-                          name: editHistory.users_mobile!.name,
-                          url: editHistory.users_mobile!.avatarUrl,
-                        ),
-                        title: Text(editHistory.word),
-                        iconColor: Colors.red,
-                        onExpansionChanged: (x) {},
-                        subtitle: Text(editHistory.created_at!.toLocal().standardDateTime()),
-                        trailing: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Status: ${editHistory.state!.name.capitalize()!}',
-                              style: TextStyle(
-                                color: stateToIconColor(editHistory.state!),
+                      List<EditHistory> list = (value.data as List<EditHistory>);
+                      return ListView.builder(
+                          itemCount: list.length,
+                          itemBuilder: (context, index) {
+                            EditHistory lastApprovedEdit;
+                            EditHistory currentEdit = list[index];
+                            if (index == list.length - 1 || list.length == 1) {
+                              lastApprovedEdit = currentEdit;
+                            } else {
+                              lastApprovedEdit = list[index + 1];
+                            }
+                            final editHistory = list[index];
+                            return ExpansionTile(
+                              leading: CircularAvatar(
+                                name: editHistory.users_mobile!.name,
+                                url: editHistory.users_mobile!.avatarUrl,
                               ),
-                            ),
-                            Text('Type: ${editHistory.edit_type!.name.capitalize()!}'),
-                          ],
-                        ),
-                        children: [
-                          DifferenceVisualizer(
-                              title: 'Word',
-                              newVersion: currentEdit.word,
-                              oldVersion: lastApprovedEdit.word),
-                          DifferenceVisualizer(
-                              title: 'Meaning',
-                              newVersion: currentEdit.meaning,
-                              oldVersion: lastApprovedEdit.meaning),
-                          DifferenceVisualizer(
-                              title: 'Synonyms',
-                              newVersion: currentEdit.synonyms!.join(','),
-                              oldVersion: lastApprovedEdit.synonyms!.join(',')),
-                          DifferenceVisualizer(
-                              title: 'Examples',
-                              newVersion: currentEdit.examples!.join(','),
-                              oldVersion: lastApprovedEdit.examples!.join(',')),
-                          DifferenceVisualizer(
-                              title: 'Mnemonics',
-                              newVersion: currentEdit.mnemonics!.join(','),
-                              oldVersion: lastApprovedEdit.mnemonics!.join(',')),
-                          ListTile(
-                            title: Text('Comments'),
-                            subtitle: Text(editHistory.comments),
-                          ),
-                          ListTile(
-                              title: Text('Edited By'),
-                              subtitle: Text(editHistory.users_mobile!.name),
-                              onTap: () {
-                                Navigate.push(
-                                    context,
-                                    Scaffold(
-                                        appBar: AppBar(
-                                          elevation: 0,
-                                          centerTitle: false,
-                                          title: Text(
-                                            'Profile',
-                                          ),
-                                        ),
-                                        body: UserProfile(
-                                          email: editHistory.users_mobile!.email,
-                                          isReadOnly: true,
-                                        )));
-                              },
-                              trailing: Icon(
-                                Icons.arrow_forward_ios,
-                              )),
-                        ],
-                      );
-                    });
-              })),
+                              title: Text(editHistory.word),
+                              iconColor: Colors.red,
+                              onExpansionChanged: (x) {},
+                              subtitle: Text(editHistory.created_at!.toLocal().standardDateTime()),
+                              trailing: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Status: ${editHistory.state!.name.capitalize()!}',
+                                    style: TextStyle(
+                                      color: stateToIconColor(editHistory.state!),
+                                    ),
+                                  ),
+                                  Text('Type: ${editHistory.edit_type!.name.capitalize()!}'),
+                                ],
+                              ),
+                              children: [
+                                DifferenceVisualizer(
+                                    title: 'Word',
+                                    newVersion: currentEdit.word,
+                                    oldVersion: lastApprovedEdit.word),
+                                DifferenceVisualizer(
+                                    title: 'Meaning',
+                                    newVersion: currentEdit.meaning,
+                                    oldVersion: lastApprovedEdit.meaning),
+                                DifferenceVisualizer(
+                                    title: 'Synonyms',
+                                    newVersion: currentEdit.synonyms!.join(','),
+                                    oldVersion: lastApprovedEdit.synonyms!.join(',')),
+                                DifferenceVisualizer(
+                                    title: 'Examples',
+                                    newVersion: currentEdit.examples!.join(','),
+                                    oldVersion: lastApprovedEdit.examples!.join(',')),
+                                DifferenceVisualizer(
+                                    title: 'Mnemonics',
+                                    newVersion: currentEdit.mnemonics!.join(','),
+                                    oldVersion: lastApprovedEdit.mnemonics!.join(',')),
+                                ListTile(
+                                  title: Text('Comments'),
+                                  subtitle: Text(editHistory.comments),
+                                ),
+                                ListTile(
+                                    title: Text('Edited By'),
+                                    subtitle: Text(editHistory.users_mobile!.name),
+                                    onTap: () {
+                                      Navigate.push(
+                                          context,
+                                          Scaffold(
+                                              backgroundColor: Colors.transparent,
+                                              appBar: AppBar(
+                                                backgroundColor: Colors.transparent,
+                                                centerTitle: false,
+                                                title: Text(
+                                                  'Profile',
+                                                ),
+                                              ),
+                                              body: UserProfile(
+                                                email: editHistory.users_mobile!.email,
+                                                isReadOnly: true,
+                                              )));
+                                    },
+                                    trailing: Icon(
+                                      Icons.arrow_forward_ios,
+                                    )),
+                              ],
+                            );
+                          });
+                    }),
+              ),
+            ],
+          )),
     );
   }
 }

@@ -81,24 +81,25 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
     final userProvider = ref.watch(userNotifierProvider);
     final colorScheme = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: colorScheme.background,
-      appBar: AppBar(
-        title: widget.title != null ? Text(widget.title!) : null,
-        actions: [
-          IconButton(
-              icon: Icon(
-                Icons.share,
-              ),
-              onPressed: () {
-                final String message = buildShareMessage(widget.word!);
-                Share.share(message);
-              })
-        ],
-      ),
-      body: SingleChildScrollView(
+    return Material(
+      color: Colors.transparent,
+      child: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
         child: Column(children: [
+          AppBar(
+            title: widget.title != null ? Text(widget.title!) : null,
+            backgroundColor: Colors.transparent,
+            actions: [
+              IconButton(
+                  icon: Icon(
+                    Icons.share,
+                  ),
+                  onPressed: () {
+                    final String message = buildShareMessage(widget.word!);
+                    Share.share(message);
+                  })
+            ],
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
             child: Column(
