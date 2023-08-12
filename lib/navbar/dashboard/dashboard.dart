@@ -392,23 +392,55 @@ class _DashboardCollectionsState extends ConsumerState<DashboardCollections> {
                                 onTap: () {
                                   Navigate.push(
                                       context,
-                                      Scaffold(
-                                        backgroundColor:
-                                            Theme.of(context).colorScheme.surfaceVariant,
-                                        appBar: AppBar(
-                                          title: Text('$title'),
-                                        ),
-                                        body: WordListBuilder(
-                                          words: words,
-                                          hasTrailing: true,
-                                          iconData: Icons.close,
-                                          onTrailingTap: (x) async {
-                                            await _collectionNotifier.removeFromCollection(
-                                                title, x);
-                                            setState(() {});
-                                          },
-                                        ),
-                                      ));
+                                      ResponsiveBuilder(desktopBuilder: (x) {
+                                        return Material(
+                                          color: Colors.transparent,
+                                          child: Column(
+                                            children: [
+                                              AppBar(
+                                                backgroundColor: Colors.transparent,
+                                                title: Text('$title'),
+                                              ),
+                                              Expanded(
+                                                child: WordListBuilder(
+                                                  words: words,
+                                                  hasTrailing: true,
+                                                  iconData: Icons.close,
+                                                  onTrailingTap: (x) async {
+                                                    await _collectionNotifier.removeFromCollection(
+                                                        title, x);
+                                                    setState(() {});
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }, mobileBuilder: (x) {
+                                        return Material(
+                                          color: Colors.transparent,
+                                          child: Column(
+                                            children: [
+                                              AppBar(
+                                                backgroundColor: Colors.transparent,
+                                                title: Text('$title'),
+                                              ),
+                                              Expanded(
+                                                child: WordListBuilder(
+                                                  words: words,
+                                                  hasTrailing: true,
+                                                  iconData: Icons.close,
+                                                  onTrailingTap: (x) async {
+                                                    await _collectionNotifier.removeFromCollection(
+                                                        title, x);
+                                                    setState(() {});
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }));
                                 },
                                 trailing: IconButton(
                                     onPressed: () {

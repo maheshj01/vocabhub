@@ -115,7 +115,6 @@ class WordListBuilder extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final collectionRef = ref.watch(collectionNotifier);
     return ListView.builder(
       itemCount: words.length,
       padding: EdgeInsets.only(top: 16, bottom: kNotchedNavbarHeight * 1.5),
@@ -123,10 +122,20 @@ class WordListBuilder extends ConsumerWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
           child: OpenContainer(
-              closedColor: Theme.of(context).colorScheme.surface,
+              closedColor: Colors.transparent,
+              closedElevation: 0,
+              openColor: Colors.transparent,
+              openElevation: 0,
+              openShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: Theme.of(context).colorScheme.surfaceVariant, width: 1)),
+              closedShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: Theme.of(context).colorScheme.surfaceVariant, width: 1)),
               openBuilder: (BuildContext context, VoidCallback openContainer) {
                 return WordDetail(word: words[index]);
               },
+              middleColor: Colors.transparent,
               tappable: true,
               transitionType: ContainerTransitionType.fadeThrough,
               closedBuilder: (BuildContext context, VoidCallback openContainer) {
