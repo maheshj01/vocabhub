@@ -144,7 +144,7 @@ class BackgroundPainter extends CustomPainter {
     final paint2 = Paint();
     Path path2 = Path();
     if (blur) {
-      paint2.maskFilter = MaskFilter.blur(BlurStyle.normal, 200);
+      paint2.maskFilter = MaskFilter.blur(BlurStyle.normal, 30);
     }
     final color1 = Colors.blueAccent;
     paint2.style = PaintingStyle.stroke;
@@ -171,7 +171,7 @@ class BackgroundPainter extends CustomPainter {
     Path path1 = Path();
     paint1.color = Colors.redAccent;
     if (blur) {
-      paint1.maskFilter = MaskFilter.blur(BlurStyle.normal, 200);
+      paint1.maskFilter = MaskFilter.blur(BlurStyle.normal, 30);
     }
     // square with rounded corners
     paint1.strokeWidth = 20;
@@ -205,12 +205,12 @@ class BackgroundPainter extends CustomPainter {
     path3.quadraticBezierTo(
         size.width * 0.8, size.height * 0.6, size.width * 1.2, size.height * 0.4);
     paint3.color = primaryColor;
+    if (blur) {
+      paint3.maskFilter = MaskFilter.blur(BlurStyle.normal, 30);
+    }
     canvas.drawPath(path3, paint3);
     final offset = getOffset(path3);
     paint3.style = PaintingStyle.fill;
-    if (blur) {
-      paint3.maskFilter = MaskFilter.blur(BlurStyle.normal, 40);
-    }
     canvas.drawOval(
         Rect.fromCenter(
           center: offset,
@@ -226,12 +226,12 @@ class BackgroundPainter extends CustomPainter {
     paint4.color = secondaryColor;
     final path4 = Path();
     paint4.style = PaintingStyle.stroke;
-    if (blur) {
-      paint4.maskFilter = MaskFilter.blur(BlurStyle.normal, 10);
-    }
     paint4.strokeWidth = 20;
     path4.moveTo(-100.0, size.height * 0.8);
     path4.quadraticBezierTo(300, size.height * 0.7, size.width, size.height * 1.2);
+    if (blur) {
+      paint4.maskFilter = MaskFilter.blur(BlurStyle.normal, 30);
+    }
     canvas.drawPath(path4, paint4);
     final offset = getOffset(path4);
     paint4.style = PaintingStyle.fill;

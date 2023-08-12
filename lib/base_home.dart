@@ -245,9 +245,8 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
               ref.read(appNotifier.notifier).state = ref.watch(appNotifier).copyWith(index: x);
             },
             decoration: FloatingNavbarDecoration(
-              height: 90,
-              backgroundColor:
-                  settingsController.isDark ? colorScheme.surfaceVariant : colorScheme.surface,
+              height: 80,
+              backgroundColor: colorScheme.scrim.withOpacity(0.2),
               margin: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
 
               borderRadius: BorderRadius.zero,
