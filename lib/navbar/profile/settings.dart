@@ -40,6 +40,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
+        animationDuration: Duration(seconds: 4),
         animate: animate,
         repeatAnimation: false,
         onAnimateComplete: () {

@@ -10,6 +10,7 @@ class ResponsiveBuilder extends StatefulWidget {
   final double initialAnimationValue;
   final bool repeatAnimation;
   final Function? onAnimateComplete;
+  final Duration animationDuration;
 
   const ResponsiveBuilder(
       {Key? key,
@@ -18,6 +19,7 @@ class ResponsiveBuilder extends StatefulWidget {
       this.animate = false,
       this.repeatAnimation = true,
       this.onAnimateComplete,
+      this.animationDuration = const Duration(seconds: 6),
       this.initialAnimationValue = 0.0})
       : super(key: key);
 
@@ -29,7 +31,7 @@ class _ResponsiveBuilderState extends State<ResponsiveBuilder> with TickerProvid
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: Duration(seconds: 6));
+    _controller = AnimationController(vsync: this, duration: widget.animationDuration);
     if (widget.animate) {
       _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
     } else {
@@ -44,7 +46,7 @@ class _ResponsiveBuilderState extends State<ResponsiveBuilder> with TickerProvid
         if (status == AnimationStatus.completed) {
           widget.onAnimateComplete?.call();
           _controller.stop();
-          _controller.reset();
+          // _controller.reset();
         }
       });
     }
@@ -89,7 +91,7 @@ class _ResponsiveBuilderState extends State<ResponsiveBuilder> with TickerProvid
           if (status == AnimationStatus.completed) {
             widget.onAnimateComplete?.call();
             _controller.stop();
-            _controller.reset();
+            // _controller.reset();
           }
         });
       }
