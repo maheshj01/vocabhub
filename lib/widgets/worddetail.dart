@@ -117,7 +117,7 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
                           onPressed: () {
                             Navigate.push(
                                 context,
-                                AddWordForm(
+                                AddWord(
                                   isEdit: true,
                                   word: widget.word,
                                 ),
