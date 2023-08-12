@@ -97,7 +97,6 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
 
   DateTime oldTime = DateTime.now();
   DateTime newTime = DateTime.now();
-  // ValueNotifier<int> _selectedIndexNotifier = ValueNotifier<int>(0);
 
   @override
   void dispose() {

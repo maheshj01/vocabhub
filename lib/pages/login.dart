@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -140,73 +138,63 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
           }
 
           return IgnorePointer(
-            ignoring: request.state == RequestState.active,
-            child: Stack(
-              children: [
-                CustomPaint(
-                  painter: BackgroundPainter(
-                    primaryColor: colorScheme.primary,
-                    secondaryColor: colorScheme.secondary,
-                  ),
-                ),
-                BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(color: Colors.black.withOpacity(0.2))),
-                !SizeUtils.isMobile
-                    ? Row(
-                        children: [
-                          AnimatedContainer(
-                            width: SizeUtils.size.width / 2,
-                            duration: Duration(seconds: 1),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 32),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _heading('Hi!'),
-                                  _heading('Welcome Back.'),
-                                ],
-                              ),
+              ignoring: request.state == RequestState.active,
+              child: ResponsiveBuilder(
+                  animate: true,
+                  desktopBuilder: (x) {
+                    return Row(
+                      children: [
+                        AnimatedContainer(
+                          width: SizeUtils.size.width / 2,
+                          duration: Duration(seconds: 1),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 32),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _heading('Hi!'),
+                                _heading('Welcome Back.'),
+                              ],
                             ),
                           ),
-                          Expanded(
-                            child: Container(
-                              color: colorScheme.surfaceVariant,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Spacer(),
-                                  _signInButton(),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  _skipButton(),
-                                  Spacer()
-                                ],
-                              ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            color: colorScheme.surfaceVariant,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Spacer(),
+                                _signInButton(),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                _skipButton(),
+                                Spacer()
+                              ],
                             ),
-                          )
-                        ],
-                      )
-                    : Container(
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                          200.0.vSpacer(),
-                          // _heading('Hi!'),
-                          _heading('Welcome!'),
-                          Expanded(child: Container()),
-                          _signInButton(),
+                          ),
+                        )
+                      ],
+                    );
+                  },
+                  mobileBuilder: (x) {
+                    return Container(
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                        200.0.vSpacer(),
+                        // _heading('Hi!'),
+                        _heading('Welcome!'),
+                        Expanded(child: Container()),
+                        _signInButton(),
 
-                          20.0.vSpacer(),
-                          _skipButton(),
-                          Expanded(child: Container()),
-
-                          100.0.vSpacer(),
-                        ]),
-                      ),
-              ],
-            ),
-          );
+                        20.0.vSpacer(),
+                        _skipButton(),
+                        Expanded(child: Container()),
+                        100.0.vSpacer(),
+                      ]),
+                    );
+                  }));
         });
   }
 }
