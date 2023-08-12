@@ -8,17 +8,37 @@ import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/themes/theme_selector.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/widgets/button.dart';
+import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
-class NewCollection extends ConsumerStatefulWidget {
+class NewCollection extends StatelessWidget {
   static const String route = '/new';
   final bool isPinned;
-  const NewCollection({Key? key, this.isPinned = false}) : super(key: key);
+
+  const NewCollection({super.key, this.isPinned = false});
+
   @override
-  ConsumerState<NewCollection> createState() => _NewCollectionState();
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(desktopBuilder: (context) {
+      return NewCollectionSheet(
+        isPinned: isPinned,
+      );
+    }, mobileBuilder: (context) {
+      return NewCollectionSheet(
+        isPinned: isPinned,
+      );
+    });
+  }
 }
 
-class _NewCollectionState extends ConsumerState<NewCollection> {
+class NewCollectionSheet extends ConsumerStatefulWidget {
+  final bool isPinned;
+  const NewCollectionSheet({Key? key, this.isPinned = false}) : super(key: key);
+  @override
+  ConsumerState<NewCollectionSheet> createState() => _NewCollectionSheetState();
+}
+
+class _NewCollectionSheetState extends ConsumerState<NewCollectionSheet> {
   TextEditingController _controller = TextEditingController();
 
   @override
@@ -33,16 +53,16 @@ class _NewCollectionState extends ConsumerState<NewCollection> {
     final collectionRef = ref.watch(collectionNotifier);
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: Theme.of(context).colorScheme.background,
-          appBar: AppBar(
-            title: Text('New Collection'),
-          ),
-          body: ListView(
+      child: Material(
+          color: Colors.transparent,
+          child: ListView(
             // crossAxisAlignment: CrossAxisAlignment.start,
             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              AppBar(
+                title: Text('New Collection'),
+                backgroundColor: Colors.transparent,
+              ),
               VHTextfield(
                 hint: 'Collection Name',
                 controller: _controller,

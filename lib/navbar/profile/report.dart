@@ -35,13 +35,31 @@ class _ReportABugState extends State<ReportABug> {
 }
 
 class ViewBugReports extends StatefulWidget {
-  const ViewBugReports({Key? key}) : super(key: key);
+  const ViewBugReports({super.key});
 
   @override
   State<ViewBugReports> createState() => _ViewBugReportsState();
 }
 
 class _ViewBugReportsState extends State<ViewBugReports> {
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(desktopBuilder: (ctx) {
+      return ViewBugReportsMobile();
+    }, mobileBuilder: (ctx) {
+      return ViewBugReportsMobile();
+    });
+  }
+}
+
+class ViewBugReportsMobile extends StatefulWidget {
+  const ViewBugReportsMobile({Key? key}) : super(key: key);
+
+  @override
+  State<ViewBugReportsMobile> createState() => _ViewBugReportsMobileState();
+}
+
+class _ViewBugReportsMobileState extends State<ViewBugReportsMobile> {
   @override
   void dispose() {
     _responseNotifier.dispose();
@@ -71,70 +89,77 @@ class _ViewBugReportsState extends State<ViewBugReports> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        appBar: AppBar(
-          title: const Text('Reports and Feedbacks'),
-        ),
-        body: ValueListenableBuilder<Response>(
-            valueListenable: _responseNotifier,
-            builder: (BuildContext context, Response request, Widget? child) {
-              if (request.state == RequestState.active) {
-                return const LoadingWidget();
-              }
-              if (request.state == RequestState.error) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextButton(
-                        onPressed: getReports,
-                        child: const Text('Try Again'),
-                      ),
-                      Text(request.message),
-                    ],
-                  ),
-                );
-              }
-              Map<String, List<ReportModel>> reports =
-                  request.data as Map<String, List<ReportModel>>;
-              if (reports.isEmpty) {
-                return const Center(
-                  child: Text('No reports yet'),
-                );
-              }
-              final List<String> keys = reports.keys.toList();
-              final List<List<ReportModel>> values = reports.values.toList();
-              return ListView.builder(
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text('${reports.values.elementAt(index).first.name}',
-                          style: Theme.of(context).textTheme.titleMedium),
-                      subtitle: Text(reports.values.elementAt(index).first.email,
-                          style: Theme.of(context).textTheme.bodyMedium),
-                      trailing: CircleAvatar(
-                        backgroundColor: Theme.of(context).colorScheme.secondary,
-                        maxRadius: 16,
-                        child: Text(
-                          '${reports.values.elementAt(index).length}',
-                          style: TextStyle(
-                              fontSize: 18, color: Theme.of(context).colorScheme.onSecondary),
+    return Material(
+        color: Colors.transparent,
+        child: Column(
+          children: [
+            AppBar(
+              title: const Text('Reports and Feedbacks'),
+              backgroundColor: Colors.transparent,
+            ),
+            Expanded(
+              child: ValueListenableBuilder<Response>(
+                  valueListenable: _responseNotifier,
+                  builder: (BuildContext context, Response request, Widget? child) {
+                    if (request.state == RequestState.active) {
+                      return const LoadingWidget();
+                    }
+                    if (request.state == RequestState.error) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed: getReports,
+                              child: const Text('Try Again'),
+                            ),
+                            Text(request.message),
+                          ],
                         ),
-                      ),
-                      onTap: () {
-                        Navigate.push(
-                            context,
-                            ViewReportsByUser(
-                              email: keys[index],
-                              reports: values[index],
-                              title: values[index].first.name,
-                              shouldFetchReport: false,
-                            ));
-                      },
-                    );
-                  },
-                  itemCount: reports.length);
-            }));
+                      );
+                    }
+                    Map<String, List<ReportModel>> reports =
+                        request.data as Map<String, List<ReportModel>>;
+                    if (reports.isEmpty) {
+                      return const Center(
+                        child: Text('No reports yet'),
+                      );
+                    }
+                    final List<String> keys = reports.keys.toList();
+                    final List<List<ReportModel>> values = reports.values.toList();
+                    return ListView.builder(
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text('${reports.values.elementAt(index).first.name}',
+                                style: Theme.of(context).textTheme.titleMedium),
+                            subtitle: Text(reports.values.elementAt(index).first.email,
+                                style: Theme.of(context).textTheme.bodyMedium),
+                            trailing: CircleAvatar(
+                              backgroundColor: Theme.of(context).colorScheme.secondary,
+                              maxRadius: 16,
+                              child: Text(
+                                '${reports.values.elementAt(index).length}',
+                                style: TextStyle(
+                                    fontSize: 18, color: Theme.of(context).colorScheme.onSecondary),
+                              ),
+                            ),
+                            onTap: () {
+                              Navigate.push(
+                                  context,
+                                  ViewReportsByUser(
+                                    email: keys[index],
+                                    reports: values[index],
+                                    title: values[index].first.name,
+                                    shouldFetchReport: false,
+                                  ));
+                            },
+                          );
+                        },
+                        itemCount: reports.length);
+                  }),
+            ),
+          ],
+        ));
   }
 }
 
@@ -313,17 +338,18 @@ class _ReportABugMobileState extends ConsumerState<ReportABugMobile> {
   Widget build(BuildContext context) {
     final user = ref.watch(userNotifierProvider);
     final colorScheme = Theme.of(context).colorScheme;
-    return Scaffold(
-      backgroundColor: colorScheme.background,
-      appBar: AppBar(
-        title: const Text('Report a bug'),
-      ),
-      body: ValueListenableBuilder<Response>(
+    return Material(
+      color: Colors.transparent,
+      child: ValueListenableBuilder<Response>(
           valueListenable: _responseNotifier,
           builder: (context, value, snapshot) {
             return SingleChildScrollView(
               child: Column(
                 children: [
+                  AppBar(
+                    title: const Text('Report a bug'),
+                    backgroundColor: Colors.transparent,
+                  ),
                   24.0.vSpacer(),
                   VHTextfield(
                     hint: 'Description of the bug',

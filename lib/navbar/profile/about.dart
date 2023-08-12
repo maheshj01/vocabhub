@@ -54,6 +54,7 @@ class _AboutVocabhubMobileState extends State<AboutVocabhubMobile> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         title: const Text('About'),
       ),
       body: Padding(

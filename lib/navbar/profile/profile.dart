@@ -349,7 +349,6 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                       ? SizedBox.shrink()
                       : Container(
                           decoration: BoxDecoration(
-                              color: colorScheme.surfaceVariant,
                               borderRadius: 16.0.allRadius,
                               border: Border.all(color: colorScheme.secondary)),
                           child: ListTile(

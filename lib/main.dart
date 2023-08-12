@@ -164,7 +164,12 @@ class _VocabAppState extends ConsumerState<VocabApp> {
                 ).copyWith(
                     scaffoldBackgroundColor: colorScheme.background,
                     colorScheme: ColorScheme.fromSeed(
-                        seedColor: settingsController.themeSeed, brightness: Brightness.dark)),
+                        background: Colors.transparent,
+                        surface: settingsController.isDark
+                            ? Colors.black.withOpacity(0.3)
+                            : Colors.white.withOpacity(0.3),
+                        seedColor: settingsController.themeSeed,
+                        brightness: Brightness.dark)),
                 theme: ThemeData(
                     useMaterial3: true,
                     scaffoldBackgroundColor: colorScheme.background,

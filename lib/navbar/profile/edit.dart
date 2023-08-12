@@ -294,6 +294,7 @@ class _VHTextfieldState extends State<VHTextfield> {
                 ),
               ),
         Card(
+          color: Colors.transparent,
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
