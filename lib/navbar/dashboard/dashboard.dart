@@ -186,38 +186,36 @@ class DashboardMobile extends ConsumerWidget {
                   padding: 16.0.verticalPadding,
                   child: heading('Word of the day'),
                 ),
-                OpenContainer<bool>(
-                    openBuilder: (BuildContext context, VoidCallback openContainer) {
-                      return WordDetail(
-                        word: word,
-                        isWod: true,
-                        title: 'Word of the Day',
-                      );
-                    },
-                    tappable: true,
-                    closedShape: 16.0.rounded,
-                    transitionType: ContainerTransitionType.fadeThrough,
-                    closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                      return word.word.isEmpty
-                          ? GestureDetector(
-                              onTap: () {
-                                onRefresh!();
-                              },
-                              child: WoDCard(
-                                  title: 'Tap to Retry',
-                                  description: 'Something went wrong!',
-                                  color: Colors.red.shade300,
-                                  word: word,
-                                  height: 180,
-                                  fontSize: 42),
-                            )
-                          : WoDCard(
-                              word: word,
-                              height: 180,
-                              color: Colors.green.shade300,
-                              title: '${word.word}'.toUpperCase(),
-                            );
-                    }),
+                word.word.isEmpty
+                    ? GestureDetector(
+                        onTap: () {
+                          onRefresh!();
+                        },
+                        child: WoDCard(
+                            title: 'Tap to Retry',
+                            description: 'Something went wrong!',
+                            color: Colors.red.shade300,
+                            word: word,
+                            height: 180,
+                            fontSize: 42),
+                      )
+                    : GestureDetector(
+                        onTap: () {
+                          Navigate.push(
+                              context,
+                              WordDetail(
+                                word: word,
+                                isWod: true,
+                                title: 'Word of the Day',
+                              ));
+                        },
+                        child: WoDCard(
+                          word: word,
+                          height: 180,
+                          color: Colors.green.shade300,
+                          title: '${word.word}'.toUpperCase(),
+                        ),
+                      ),
                 Padding(
                   padding: 6.0.verticalPadding,
                 ),
@@ -234,49 +232,43 @@ class DashboardMobile extends ConsumerWidget {
                           16.0.vSpacer(),
                           word.word.isEmpty
                               ? SizedBox.shrink()
-                              : OpenContainer<bool>(
-                                  openBuilder: (BuildContext context, VoidCallback openContainer) {
-                                    return BookmarksPage(
-                                      isBookMark: true,
-                                      user: user,
-                                    );
+                              : GestureDetector(
+                                  onTap: () {
+                                    Navigate.push(
+                                        context,
+                                        BookmarksPage(
+                                          isBookMark: true,
+                                          user: user,
+                                        ));
                                   },
-                                  closedShape: 16.0.rounded,
-                                  tappable: true,
-                                  transitionType: ContainerTransitionType.fadeThrough,
-                                  closedBuilder:
-                                      (BuildContext context, VoidCallback openContainer) {
-                                    return WoDCard(
-                                      word: word,
-                                      height: 180,
-                                      fontSize: 42,
-                                      color: Colors.amber.shade600,
-                                      title: 'Bookmarks',
-                                    );
-                                  }),
+                                  child: WoDCard(
+                                    word: word,
+                                    height: 180,
+                                    fontSize: 42,
+                                    color: Colors.amber.shade600,
+                                    title: 'Bookmarks',
+                                  ),
+                                ),
                           Padding(
                             padding: 6.0.verticalPadding,
                           ),
-                          OpenContainer<bool>(
-                              openBuilder: (BuildContext context, VoidCallback openContainer) {
-                                return BookmarksPage(
-                                  isBookMark: false,
-                                  user: user,
-                                );
+                          GestureDetector(
+                              onTap: () {
+                                Navigate.push(
+                                    context,
+                                    BookmarksPage(
+                                      isBookMark: false,
+                                      user: user,
+                                    ));
                               },
-                              tappable: true,
-                              closedShape: 16.0.rounded,
-                              transitionType: ContainerTransitionType.fadeThrough,
-                              closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                                return WoDCard(
-                                  word: word,
-                                  height: 180,
-                                  fontSize: 42,
-                                  color: Colors.black,
-                                  image: 'assets/dart.jpg',
-                                  title: 'Mastered\nWords',
-                                );
-                              })
+                              child: WoDCard(
+                                word: word,
+                                height: 180,
+                                fontSize: 42,
+                                color: Colors.black,
+                                image: 'assets/dart.jpg',
+                                title: 'Mastered\nWords',
+                              ))
                         ],
                       ),
                 100.0.vSpacer()

@@ -163,11 +163,6 @@ class _ViewBugReportsMobileState extends State<ViewBugReportsMobile> {
   }
 }
 
-/// View reports by a user
-/// [shouldFetchReport] if true, fetch reports from the server
-/// or use the reports passed in [reports] and [email]
-/// [reports] is the list of reports to display
-/// [email] is the email of the user
 class ViewReportsByUser extends StatefulWidget {
   final List<ReportModel> reports;
   final String email;
@@ -190,6 +185,49 @@ class ViewReportsByUser extends StatefulWidget {
 }
 
 class _ViewReportsByUserState extends State<ViewReportsByUser> {
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(
+        desktopBuilder: (context) => ViewReportsByUserMobile(
+            reports: widget.reports,
+            email: widget.email,
+            shouldFetchReport: widget.shouldFetchReport,
+            title: widget.title),
+        mobileBuilder: (context) => ViewReportsByUserMobile(
+            reports: widget.reports,
+            email: widget.email,
+            shouldFetchReport: widget.shouldFetchReport,
+            title: widget.title));
+  }
+}
+
+/// View reports by a user
+/// [shouldFetchReport] if true, fetch reports from the server
+/// or use the reports passed in [reports] and [email]
+/// [reports] is the list of reports to display
+/// [email] is the email of the user
+class ViewReportsByUserMobile extends StatefulWidget {
+  final List<ReportModel> reports;
+  final String email;
+
+  /// If true, fetch reports from the server
+  /// else use the reports passed in [reports]
+  final bool shouldFetchReport;
+  final String title;
+
+  const ViewReportsByUserMobile(
+      {Key? key,
+      required this.reports,
+      required this.email,
+      this.shouldFetchReport = false,
+      this.title = ''})
+      : super(key: key);
+
+  @override
+  State<ViewReportsByUserMobile> createState() => _ViewReportsByUserMobileState();
+}
+
+class _ViewReportsByUserMobileState extends State<ViewReportsByUserMobile> {
   final ValueNotifier<Response> _responseNotifier = ValueNotifier(Response.init());
 
   Future<void> getReportsByEmail(bool isRetry) async {
@@ -219,8 +257,9 @@ class _ViewReportsByUserState extends State<ViewReportsByUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
+          backgroundColor: Colors.transparent,
           title: GestureDetector(
               onTap: () {
                 if (widget.shouldFetchReport) return;
@@ -231,6 +270,7 @@ class _ViewReportsByUserState extends State<ViewReportsByUser> {
                     Scaffold(
                         appBar: AppBar(
                           elevation: 0,
+                          backgroundColor: Colors.transparent,
                           centerTitle: false,
                           title: Text(
                             'Profile',

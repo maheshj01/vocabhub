@@ -80,7 +80,7 @@ class _BookmarksMobileState extends State<_BookmarksMobile> {
           if (value == null) {
             return Scaffold(
                 backgroundColor: Colors.transparent,
-                appBar: AppBar(title: Text('$title')),
+                appBar: AppBar(backgroundColor: Colors.transparent, title: Text('$title')),
                 body: LoadingWidget());
           }
           return Scaffold(

@@ -36,16 +36,32 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   final analytics = Analytics.instance;
+  bool animate = false;
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
+        animate: animate,
+        repeatAnimation: false,
+        onAnimateComplete: () {
+          setState(() {
+            animate = false;
+          });
+        },
         desktopBuilder: (context) => SettingsPageDesktop(),
-        mobileBuilder: (context) => SettingsPageMobile());
+        mobileBuilder: (context) => SettingsPageMobile(
+              onThemeChanged: (value) {
+                setState(() {
+                  animate = true;
+                });
+              },
+            ));
   }
 }
 
 class SettingsPageMobile extends ConsumerStatefulWidget {
-  const SettingsPageMobile({Key? key}) : super(key: key);
+  final Function onThemeChanged;
+
+  const SettingsPageMobile({Key? key, required this.onThemeChanged}) : super(key: key);
 
   @override
   _SettingsPageMobileState createState() => _SettingsPageMobileState();
@@ -118,6 +134,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                           value: settingsController.isDark,
                           onChanged: (x) {
                             settingsController.setTheme(x ? ThemeMode.dark : ThemeMode.light);
+                            widget.onThemeChanged(x ? ThemeMode.dark : ThemeMode.light);
                           });
                     }),
               ],
@@ -130,6 +147,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                     value: settingsController.themeSeed,
                     onThemeChanged: (val) {
                       settingsController.themeSeed = val;
+                      widget.onThemeChanged(val);
                     });
               }),
           20.0.vSpacer(),

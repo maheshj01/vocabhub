@@ -395,7 +395,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
                             Text('Drafts can be used to pull up words you saved for later'),
                         backgroundColor: Theme.of(context).primaryColor,
                         targetColor: colorScheme.onPrimary,
-                        textColor: colorScheme.onPrimary,
+                        textColor: colorScheme.onSurface,
                         child: IconButton(
                             onPressed: () async {
                               removeFocus(context);

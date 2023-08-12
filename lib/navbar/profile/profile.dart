@@ -413,7 +413,9 @@ class UserProfileDesktop extends ConsumerWidget {
               child: UserProfileMobile(
             user: user,
           )),
-          Expanded(child: SettingsPageMobile()),
+          Expanded(child: SettingsPageMobile(
+            onThemeChanged: (){},
+          )),
         ],
       ),
     );

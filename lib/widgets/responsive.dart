@@ -8,12 +8,16 @@ class ResponsiveBuilder extends StatefulWidget {
   final WidgetBuilder mobileBuilder;
   final bool animate;
   final double initialAnimationValue;
+  final bool repeatAnimation;
+  final Function? onAnimateComplete;
 
   const ResponsiveBuilder(
       {Key? key,
       required this.desktopBuilder,
       required this.mobileBuilder,
       this.animate = false,
+      this.repeatAnimation = true,
+      this.onAnimateComplete,
       this.initialAnimationValue = 0.0})
       : super(key: key);
 
@@ -28,9 +32,21 @@ class _ResponsiveBuilderState extends State<ResponsiveBuilder> with TickerProvid
     _controller = AnimationController(vsync: this, duration: Duration(seconds: 6));
     if (widget.animate) {
       _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
-      _controller.repeat(reverse: true);
     } else {
       _animation = AlwaysStoppedAnimation(widget.initialAnimationValue);
+    }
+    if (widget.repeatAnimation) {
+      _controller.repeat(reverse: true);
+    } else {
+      _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
+      _controller.forward();
+      _controller.addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          widget.onAnimateComplete?.call();
+          _controller.stop();
+          _controller.reset();
+        }
+      });
     }
   }
 
@@ -39,7 +55,9 @@ class _ResponsiveBuilderState extends State<ResponsiveBuilder> with TickerProvid
 
   @override
   void dispose() {
+    _controller.removeStatusListener((status) {});
     _controller.dispose();
+
     super.dispose();
   }
 
@@ -49,13 +67,32 @@ class _ResponsiveBuilderState extends State<ResponsiveBuilder> with TickerProvid
       _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
 
       if (widget.animate) {
-        _controller.repeat(reverse: true);
+        if (widget.repeatAnimation) {
+          _controller.repeat(reverse: true);
+        } else {
+          _controller.reset();
+          _controller.forward();
+        }
       } else {
         _controller.stop();
       }
     }
     if (oldWidget.initialAnimationValue != widget.initialAnimationValue) {
       _animation = AlwaysStoppedAnimation(widget.initialAnimationValue);
+    }
+    if (oldWidget.repeatAnimation != widget.repeatAnimation) {
+      if (widget.repeatAnimation) {
+        _controller.repeat(reverse: true);
+      } else {
+        _controller.forward();
+        _controller.addStatusListener((status) {
+          if (status == AnimationStatus.completed) {
+            widget.onAnimateComplete?.call();
+            _controller.stop();
+            _controller.reset();
+          }
+        });
+      }
     }
     super.didUpdateWidget(oldWidget);
   }

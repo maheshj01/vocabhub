@@ -56,53 +56,55 @@ class _OnboardingContentPageState extends State<OnboardingContentPage> {
     return Container(
       color: widget.color,
       alignment: Alignment.center,
-      child: Column(
-        children: [
-          40.0.vSpacer(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              onBoardingTitles[widget.index],
-              style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
-                color: widget.index < 2 ? Colors.black : Colors.white,
+      child: SafeArea(
+        child: Column(
+          children: [
+            40.0.vSpacer(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                onBoardingTitles[widget.index],
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                  color: widget.index < 2 ? Colors.black : Colors.white,
+                ),
               ),
             ),
-          ),
-          widget.index == 0
-              ? Padding(
-                  padding: 32.0.verticalPadding + 48.0.bottomPadding,
-                  child: WordAnimationWidget(),
-                )
-              : widget.index != 1
-                  ? SizedBox(
-                      height: size.height * 0.5,
-                      child: RiveAnimation.asset(
-                        '${widget.assetPath}',
-                        animations: widget.animations,
-                        controllers: [_controller],
-                      ),
-                    )
-                  : SizedBox(
-                      height: size.height * 0.5,
-                      child: CachedNetworkImage(
-                        imageUrl: '${widget.assetPath}',
-                      )),
-          32.0.vSpacer(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              onBoardingDescriptions[widget.index],
-              style: TextStyle(
-                fontSize: 18.0,
-                color: widget.index < 2 ? Colors.black : Colors.white,
+            widget.index == 0
+                ? Padding(
+                    padding: 32.0.verticalPadding + 48.0.bottomPadding,
+                    child: WordAnimationWidget(),
+                  )
+                : widget.index != 1
+                    ? SizedBox(
+                        height: size.height * 0.5,
+                        child: RiveAnimation.asset(
+                          '${widget.assetPath}',
+                          animations: widget.animations,
+                          controllers: [_controller],
+                        ),
+                      )
+                    : SizedBox(
+                        height: size.height * 0.5,
+                        child: CachedNetworkImage(
+                          imageUrl: '${widget.assetPath}',
+                        )),
+            32.0.vSpacer(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                onBoardingDescriptions[widget.index],
+                style: TextStyle(
+                  fontSize: 18.0,
+                  color: widget.index < 2 ? Colors.black : Colors.white,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
-          ),
-          32.0.vSpacer(),
-        ],
+            32.0.vSpacer(),
+          ],
+        ),
       ),
     );
   }

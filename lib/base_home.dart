@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:animations/animations.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -179,34 +178,27 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
           ? null
           : Padding(
               padding: (kM3NavbarHeight * 0.9).bottomPadding,
-              child: OpenContainer<bool>(
-                  openBuilder: (BuildContext context, VoidCallback openContainer) {
-                    return AddWord(
-                      isEdit: false,
-                    );
-                  },
-                  tappable: true,
-                  closedColor: colorScheme.primaryContainer,
-                  closedShape: 22.0.rounded,
-                  transitionType: ContainerTransitionType.fadeThrough,
-                  closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                    return FloatingActionButton.extended(
-                        backgroundColor: colorScheme.primaryContainer,
-                        heroTag: "addword${DateTime.now().millisecondsSinceEpoch}",
-                        elevation: 3.5,
-                        isExtended: true,
-                        icon: Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28),
-                        onPressed: null,
-                        label: Text(
-                          'Add Word',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: colorScheme.onPrimaryContainer,
-                            fontWeight: FontWeight.w600,
-                          ),
+              child: FloatingActionButton.extended(
+                  backgroundColor: colorScheme.primaryContainer,
+                  heroTag: "addword${DateTime.now().millisecondsSinceEpoch}",
+                  elevation: 3.5,
+                  isExtended: true,
+                  icon: Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28),
+                  onPressed: () {
+                    Navigate.push(
+                        context,
+                        AddWord(
+                          isEdit: false,
                         ));
-                  }),
-            ),
+                  },
+                  label: Text(
+                    'Add Word',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: colorScheme.onPrimaryContainer,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ))),
       body: Stack(
         children: [
           NavbarRouter(

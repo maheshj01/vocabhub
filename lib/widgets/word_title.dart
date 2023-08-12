@@ -55,44 +55,46 @@ class _WordTitleBuilderState extends ConsumerState<WordTitleBuilder> {
                   style: VocabTheme.googleFontsTextTheme.displaySmall!),
             ),
             userProvider.isLoggedIn
-                ? DescribedFeatureOverlay(
-                    featureId: Constants.collectionsFeature,
-                    tapTarget: Icon(Icons.bookmark_add, size: 26, color: colorScheme.surfaceTint),
-                    title: Text('Save to Collections'),
-                    description: Text('Save this word to your collections'),
-                    backgroundColor: Theme.of(context).primaryColor,
-                    targetColor: colorScheme.onPrimary,
-                    textColor: colorScheme.onPrimary,
-                    child: IconButton(
-                        onPressed: () async {
-                          final AppController state = ref.read(appNotifier.notifier).state;
-                          ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: false);
-                          if (size.width < 600) {
-                            NavbarNotifier.hideBottomNavBar = true;
-                          }
-                          await showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              builder: (context) {
-                                return DraggableScrollableSheet(
-                                    maxChildSize: 0.8,
-                                    initialChildSize: 0.8,
-                                    expand: false,
-                                    builder: (context, controller) {
-                                      return CollectionsNavigator(
-                                        controller: controller,
-                                        word: widget.word,
-                                      );
-                                    });
-                              });
-                          ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: true);
-                          NavbarNotifier.hideBottomNavBar = false;
-                        },
-                        icon: Icon(
-                          Icons.bookmark_add,
-                          size: 26,
-                          color: Theme.of(context).colorScheme.surfaceTint,
-                        )),
+                ? SafeArea(
+                    child: DescribedFeatureOverlay(
+                      featureId: Constants.collectionsFeature,
+                      tapTarget: Icon(Icons.bookmark_add, size: 26, color: colorScheme.surfaceTint),
+                      title: Text('Save to Collections'),
+                      description: Text('Save this word to your collections'),
+                      backgroundColor: Theme.of(context).primaryColor,
+                      targetColor: colorScheme.onPrimary,
+                      textColor: colorScheme.onSurface,
+                      child: IconButton(
+                          onPressed: () async {
+                            final AppController state = ref.read(appNotifier.notifier).state;
+                            ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: false);
+                            if (size.width < 600) {
+                              NavbarNotifier.hideBottomNavBar = true;
+                            }
+                            await showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return DraggableScrollableSheet(
+                                      maxChildSize: 0.8,
+                                      initialChildSize: 0.8,
+                                      expand: false,
+                                      builder: (context, controller) {
+                                        return CollectionsNavigator(
+                                          controller: controller,
+                                          word: widget.word,
+                                        );
+                                      });
+                                });
+                            ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: true);
+                            NavbarNotifier.hideBottomNavBar = false;
+                          },
+                          icon: Icon(
+                            Icons.bookmark_add,
+                            size: 26,
+                            color: Theme.of(context).colorScheme.surfaceTint,
+                          )),
+                    ),
                   )
                 : SizedBox.shrink()
           ],
