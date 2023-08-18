@@ -3,21 +3,47 @@
     "short_name": "Vocabhub",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
+    "background_color": "#F9F9F9",
     "theme_color": "#0175C2",
     "description": "Your ultimate vocabulary companion to excel in English. With 800+ meticulously curated GRE words, progress tracking, 'Word of the Day,' and a collaborative community, enhance your language skills and embrace the power of words",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
         {
-            "src": "icons/Icon-192.png",
-            "sizes": "192x192",
-            "type": "image/png"
+            "src": "/android-icon-36x36.png",
+            "sizes": "36x36",
+            "type": "image/png",
+            "density": "0.75"
         },
         {
-            "src": "icons/Icon-144.png",
+            "src": "/android-icon-48x48.png",
+            "sizes": "48x48",
+            "type": "image/png",
+            "density": "1.0"
+        },
+        {
+            "src": "/android-icon-72x72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "density": "1.5"
+        },
+        {
+            "src": "/android-icon-96x96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "density": "2.0"
+        },
+        {
+            "src": "/android-icon-144x144.png",
             "sizes": "144x144",
-            "type": "image/png"
+            "type": "image\/png",
+            "density": "3.0"
+        },
+        {
+            "src": "/android-icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "density": "4.0"
         }
     ]
 }
