@@ -244,7 +244,8 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                   }
                 }
               }
-              ref.read(appNotifier.notifier).state = ref.watch(appNotifier).copyWith(index: x);
+              ref.read(appNotifier.notifier).state =
+                  ref.watch(appNotifier).copyWith(index: x, extended: true);
             },
             decoration: FloatingNavbarDecoration(
               height: 80,

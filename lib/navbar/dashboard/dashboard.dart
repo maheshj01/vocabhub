@@ -324,7 +324,7 @@ class _DashboardCollectionsState extends ConsumerState<DashboardCollections> {
                   padding: 12.0.verticalPadding + 8.0.leftPadding,
                   child: Row(
                     children: [
-                      Expanded(child: heading('Pinned Collections', color: colorScheme.primary)),
+                      Expanded(child: heading('Collections', color: colorScheme.primary)),
                       IconButton(
                           onPressed: () async {
                             final AppController state = ref.read(appNotifier.notifier).state;
