@@ -171,7 +171,16 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       }
     }
     final colorScheme = Theme.of(context).colorScheme;
+    final icon = Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28);
     final appController = ref.watch(appNotifier);
+    final label = Text(
+      'Add Word',
+      style: TextStyle(
+        fontSize: 14,
+        color: colorScheme.onPrimaryContainer,
+        fontWeight: FontWeight.w600,
+      ),
+    );
     return Scaffold(
       resizeToAvoidBottomInset: false,
       floatingActionButton: !appController.showFAB || (appController.index > 1 || !user!.isLoggedIn)
@@ -182,8 +191,8 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                   backgroundColor: colorScheme.primaryContainer,
                   heroTag: "addword${DateTime.now().millisecondsSinceEpoch}",
                   elevation: 3.5,
-                  isExtended: true,
-                  icon: Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28),
+                  isExtended: appController.extended,
+                  icon: icon,
                   onPressed: () {
                     Navigate.push(
                         context,
@@ -191,14 +200,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                           isEdit: false,
                         ));
                   },
-                  label: Text(
-                    'Add Word',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: colorScheme.onPrimaryContainer,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ))),
+                  label: label)),
       body: Stack(
         children: [
           NavbarRouter(
@@ -242,11 +244,14 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                   }
                 }
               }
-              ref.read(appNotifier.notifier).state = ref.watch(appNotifier).copyWith(index: x);
+              ref.read(appNotifier.notifier).state =
+                  ref.watch(appNotifier).copyWith(index: x, extended: true);
             },
             decoration: FloatingNavbarDecoration(
               height: 80,
-              backgroundColor: colorScheme.scrim.withOpacity(0.2),
+              backgroundColor: SizeUtils.isDesktop
+                  ? colorScheme.surfaceVariant
+                  : colorScheme.scrim.withOpacity(0.2),
               margin: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
 
               borderRadius: BorderRadius.zero,

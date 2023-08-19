@@ -73,9 +73,9 @@ class _EditProfileMobileState extends ConsumerState<EditProfileMobile> {
 
   Future<void> validateUsername(String username) async {
     _validNotifier.value = null;
-    RegExp usernamePattern = new RegExp(r"^[a-zA-Z0-9_]{5,}$");
-    if (username.isEmpty || !usernamePattern.hasMatch(username)) {
-      error = 'Username should contain letters, numbers and underscores with minimum 5 characters';
+    RegExp usernamePattern = new RegExp(r"^[a-zA-Z0-9_]{3,}$");
+    if (username.length < 3 || !usernamePattern.hasMatch(username)) {
+      error = 'Username should contain letters, numbers and underscores with minimum 3 characters';
       _validNotifier.value = false;
       return;
     } else {

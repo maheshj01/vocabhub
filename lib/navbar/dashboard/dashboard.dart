@@ -324,7 +324,7 @@ class _DashboardCollectionsState extends ConsumerState<DashboardCollections> {
                   padding: 12.0.verticalPadding + 8.0.leftPadding,
                   child: Row(
                     children: [
-                      Expanded(child: heading('Pinned Collections', color: colorScheme.primary)),
+                      Expanded(child: heading('Collections', color: colorScheme.primary)),
                       IconButton(
                           onPressed: () async {
                             final AppController state = ref.read(appNotifier.notifier).state;
@@ -523,6 +523,7 @@ class DashboardDesktop extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final word = dashboardController.wordOfTheDay;
     final user = ref.watch(userNotifierProvider);
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: colorScheme.background,
       body: Padding(
@@ -532,93 +533,98 @@ class DashboardDesktop extends ConsumerWidget {
           children: [
             Expanded(
                 flex: 3,
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Padding(
-                    padding: 16.0.verticalPadding,
-                    child: heading('Word of the day'),
-                  ),
-                  OpenContainer<bool>(
-                      openBuilder: (BuildContext context, VoidCallback openContainer) {
-                        return WordDetail(
-                          word: word,
-                          isWod: true,
-                          title: 'Word of the Day',
-                        );
-                      },
-                      tappable: true,
-                      middleColor: Colors.transparent,
-                      openColor: Colors.transparent,
-                      closedColor: Colors.transparent,
-                      closedShape: 16.0.rounded,
-                      transitionType: ContainerTransitionType.fadeThrough,
-                      closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                        return WoDCard(
-                          word: word,
-                          color: Colors.green.shade300,
-                          title: '${word.word}'.toUpperCase(),
-                        );
-                      }),
-                  Padding(
-                    padding: 12.0.verticalPadding,
-                    child: heading('Progress'),
-                  ),
-                  Padding(
-                    padding: 6.0.verticalPadding,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OpenContainer<bool>(
-                            openBuilder: (BuildContext context, VoidCallback openContainer) {
-                              return BookmarksPage(
-                                isBookMark: false,
-                                user: user,
-                              );
-                            },
-                            tappable: true,
-                            closedColor: Colors.transparent,
-                            openColor: Colors.transparent,
-                            middleColor: Colors.transparent,
-                            closedShape: 16.0.rounded,
-                            transitionType: ContainerTransitionType.fadeThrough,
-                            closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                              return WoDCard(
-                                word: word,
-                                height: 180,
-                                fontSize: 42,
-                                image: 'assets/dart.jpg',
-                                title: 'Mastered\nWords',
-                              );
-                            }),
-                      ),
-                      16.0.hSpacer(),
-                      Expanded(
-                        child: OpenContainer<bool>(
-                            closedColor: Colors.transparent,
-                            openColor: Colors.transparent,
-                            middleColor: Colors.transparent,
-                            openBuilder: (BuildContext context, VoidCallback openContainer) {
-                              return BookmarksPage(
-                                isBookMark: true,
-                                user: user,
-                              );
-                            },
-                            closedShape: 16.0.rounded,
-                            tappable: true,
-                            transitionType: ContainerTransitionType.fadeThrough,
-                            closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                              return WoDCard(
-                                word: word,
-                                height: 180,
-                                fontSize: 42,
-                                color: Colors.amberAccent.shade400,
-                                title: 'Bookmarks',
-                              );
-                            }),
-                      ),
-                    ],
-                  )
-                ])
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                  child: ListView(children: [
+                    Padding(
+                      padding: 16.0.verticalPadding,
+                      child: heading('Word of the day'),
+                    ),
+                    OpenContainer<bool>(
+                        openBuilder: (BuildContext context, VoidCallback openContainer) {
+                          return WordDetail(
+                            word: word,
+                            isWod: true,
+                            title: 'Word of the Day',
+                          );
+                        },
+                        tappable: true,
+                        middleColor: Colors.transparent,
+                        openColor: Colors.transparent,
+                        closedColor: Colors.transparent,
+                        closedShape: 16.0.rounded,
+                        transitionType: ContainerTransitionType.fadeThrough,
+                        closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                          return WoDCard(
+                            word: word,
+                            color: Colors.green.shade300,
+                            title: '${word.word}'.toUpperCase(),
+                          );
+                        }),
+                    Padding(
+                      padding: 12.0.verticalPadding,
+                      child: heading('Progress'),
+                    ),
+                    Padding(
+                      padding: 6.0.verticalPadding + 8.0.bottomPadding,
+                      child: DashboardCollections(),
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OpenContainer<bool>(
+                              openBuilder: (BuildContext context, VoidCallback openContainer) {
+                                return BookmarksPage(
+                                  isBookMark: false,
+                                  user: user,
+                                );
+                              },
+                              tappable: true,
+                              closedColor: Colors.transparent,
+                              openColor: Colors.transparent,
+                              middleColor: Colors.transparent,
+                              closedShape: 16.0.rounded,
+                              transitionType: ContainerTransitionType.fadeThrough,
+                              closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                                return WoDCard(
+                                  word: word,
+                                  height: 180,
+                                  fontSize: 42,
+                                  image: 'assets/dart.jpg',
+                                  title: 'Mastered\nWords',
+                                );
+                              }),
+                        ),
+                        16.0.hSpacer(),
+                        Expanded(
+                          child: OpenContainer<bool>(
+                              closedColor: Colors.transparent,
+                              openColor: Colors.transparent,
+                              middleColor: Colors.transparent,
+                              openBuilder: (BuildContext context, VoidCallback openContainer) {
+                                return BookmarksPage(
+                                  isBookMark: true,
+                                  user: user,
+                                );
+                              },
+                              closedShape: 16.0.rounded,
+                              tappable: true,
+                              transitionType: ContainerTransitionType.fadeThrough,
+                              closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                                return WoDCard(
+                                  word: word,
+                                  height: 180,
+                                  fontSize: 42,
+                                  color: Colors.amberAccent.shade400,
+                                  title: 'Bookmarks',
+                                );
+                              }),
+                        ),
+                      ],
+                    ),
+                    16.0.vSpacer()
+                  ]),
+                )
                 //  Container(
                 //   alignment: Alignment.center,
                 //   child: SizedBox(
@@ -626,7 +632,7 @@ class DashboardDesktop extends ConsumerWidget {
                 //     child: DashboardMobile(),
                 //   ),
                 ),
-            Expanded(flex: 2, child: Notifications()),
+            Expanded(flex: 2, child: NotificationsMobile()),
           ],
         ),
       ),

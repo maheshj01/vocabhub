@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:navbar_router/navbar_router.dart';
@@ -67,14 +68,14 @@ class _SearchState extends ConsumerState<Search> {
   }
 }
 
-class MobileView extends StatefulWidget {
+class MobileView extends ConsumerStatefulWidget {
   const MobileView({super.key});
 
   @override
-  State<MobileView> createState() => _MobileViewState();
+  ConsumerState<MobileView> createState() => _MobileViewState();
 }
 
-class _MobileViewState extends State<MobileView> {
+class _MobileViewState extends ConsumerState<MobileView> {
   Future<void> getWordsByAlphabet() async {
     response.value = response.value.copyWith(state: RequestState.active);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
@@ -111,14 +112,48 @@ class _MobileViewState extends State<MobileView> {
   }
 
   List<Word> words = [];
+  final ScrollController _scrollController = ScrollController();
+  late ScrollDirection _lastScrollDirection;
+  late double _lastScrollOffset;
+  final double _offsetThreshold = 50.0;
 
   @override
   void initState() {
     super.initState();
     getWordsByAlphabet();
+    _lastScrollDirection = ScrollDirection.idle;
+    _lastScrollOffset = 0;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _scrollController.addListener(() {
+        if (_scrollController.position.userScrollDirection != _lastScrollDirection) {
+          _lastScrollDirection = _scrollController.position.userScrollDirection;
+          _lastScrollOffset = _scrollController.offset;
+        }
+        double difference = (_scrollController.offset - _lastScrollOffset).abs();
+        if (difference > _offsetThreshold) {
+          _lastScrollOffset = _scrollController.offset;
+          _toggleFab();
+        }
+      });
+    });
+  }
+
+  void _toggleFab() {
+    final appController = ref.watch(appNotifier);
+    if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+      ref.watch(appNotifier.notifier).state = appController.copyWith(extended: true);
+    } else {
+      ref.watch(appNotifier.notifier).state = appController.copyWith(extended: false);
+    }
   }
 
   ValueNotifier<Response> response = ValueNotifier<Response>(Response.init());
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +207,8 @@ class _MobileViewState extends State<MobileView> {
                   return Padding(
                     padding: 8.0.horizontalPadding,
                     child: GridView.custom(
-                      padding: (kNavbarHeight * 1.2).bottomPadding,
+                      controller: _scrollController,
+                      padding: 80.0.bottomPadding,
                       gridDelegate: SliverQuiltedGridDelegate(
                         crossAxisCount: 4,
                         mainAxisSpacing: 8,
