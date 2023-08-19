@@ -1,3 +1,7 @@
+### 0.7.6+28 August 18, 2023
+- Fix Web view (Desktop) UI
+- Add collections support for web
+- Fix minor UI issues
 ### 0.7.5+27 August 05, 2023
 - New look for entire app with Ultra Gradients and Glassmorphism
 - Fixes minor UI issues

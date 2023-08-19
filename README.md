@@ -1,4 +1,4 @@
-# Vocabhub 0.7.5
+# Vocabhub 0.7.6
 
 Supercharge your vocabulary with our comprehensive app designed to help you excel in English! Whether you're preparing for the GRE or simply aiming to enhance your language skills, this app is your ultimate companion. Unlock the potential of over 800 meticulously curated GRE words, carefully selected to bolster your word power.
 
