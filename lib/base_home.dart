@@ -249,7 +249,9 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
             },
             decoration: FloatingNavbarDecoration(
               height: 80,
-              backgroundColor: colorScheme.scrim.withOpacity(0.2),
+              backgroundColor: SizeUtils.isDesktop
+                  ? colorScheme.surfaceVariant
+                  : colorScheme.scrim.withOpacity(0.2),
               margin: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
 
               borderRadius: BorderRadius.zero,

@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:navbar_router/navbar_router.dart';
@@ -308,29 +307,35 @@ class _WordDetailDesktopState extends ConsumerState<WordDetailDesktop>
                                   transitionType: TransitionType.scale);
                             }))
                     : SizedBox.shrink(),
+                // Align(
+                //   alignment: Alignment.topCenter,
+                //   child: GestureDetector(
+                //     onTap: () async {
+                //       await Clipboard.setData(ClipboardData(text: "${widget.word!.word}"));
+                //       NavbarNotifier.showSnackBar(
+                //           context, " copied ${widget.word!.word} to clipboard.");
+                //     },
+                //     child: MouseRegion(
+                //       cursor: SystemMouseCursors.click,
+                //       child: FittedBox(
+                //         fit: BoxFit.fitWidth,
+                //         child: Padding(
+                //           padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                //           child: Text(
+                //             widget.word!.word.capitalize()!,
+                //             style: Theme.of(context).textTheme.displayMedium!,
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 Align(
-                  alignment: Alignment.topCenter,
-                  child: GestureDetector(
-                    onTap: () async {
-                      await Clipboard.setData(ClipboardData(text: "${widget.word!.word}"));
-                      NavbarNotifier.showSnackBar(
-                          context, " copied ${widget.word!.word} to clipboard.");
-                    },
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                          child: Text(
-                            widget.word!.word.capitalize()!,
-                            style: Theme.of(context).textTheme.displayMedium!,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                    alignment: Alignment.topCenter,
+                    child: WordTitleBuilder(
+                      word: widget.word!,
+                      hasFloatingActionButton: true,
+                    )),
                 20.0.vSpacer(),
                 SynonymsList(
                   synonyms: widget.word!.synonyms,
