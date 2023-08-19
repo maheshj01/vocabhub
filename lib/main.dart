@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/controller/auth_controller.dart';
 import 'package:vocabhub/controller/collections_controller.dart';
@@ -162,11 +163,21 @@ class _VocabAppState extends ConsumerState<VocabApp> {
                 darkTheme: ThemeData.dark(
                   useMaterial3: true,
                 ).copyWith(
+                    textTheme: GoogleFonts.quicksandTextTheme().apply(
+                      bodyColor: Colors.white,
+                      displayColor: Colors.white,
+                    ),
                     scaffoldBackgroundColor: colorScheme.background,
                     colorScheme: ColorScheme.fromSeed(
-                        seedColor: settingsController.themeSeed, brightness: Brightness.dark)),
+                        background: Colors.transparent,
+                        surface: settingsController.isDark
+                            ? Colors.black.withOpacity(0.3)
+                            : Colors.white.withOpacity(0.3),
+                        seedColor: settingsController.themeSeed,
+                        brightness: Brightness.dark)),
                 theme: ThemeData(
                     useMaterial3: true,
+                    textTheme: GoogleFonts.quicksandTextTheme(),
                     scaffoldBackgroundColor: colorScheme.background,
                     colorScheme: ColorScheme.fromSeed(seedColor: settingsController.themeSeed)),
                 routes: {

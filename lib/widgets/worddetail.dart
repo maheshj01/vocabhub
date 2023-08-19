@@ -79,16 +79,19 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
   @override
   Widget build(BuildContext context) {
     final userProvider = ref.watch(userNotifierProvider);
-    final colorScheme = Theme.of(context).colorScheme;
     final size = MediaQuery.of(context).size;
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: widget.title != null ? Text(widget.title!) : null,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         actions: [
           IconButton(
               icon: Icon(
                 Icons.share,
+                color: colorScheme.primary,
               ),
               onPressed: () {
                 final String message = buildShareMessage(widget.word!);
@@ -109,11 +112,12 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
                       ? IconButton(
                           icon: Icon(
                             Icons.edit,
+                            color: colorScheme.primary,
                           ),
                           onPressed: () {
                             Navigate.push(
                                 context,
-                                AddWordForm(
+                                AddWord(
                                   isEdit: true,
                                   word: widget.word,
                                 ),
@@ -130,26 +134,37 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
               ],
             ),
           ),
-          SynonymsList(
-            synonyms: widget.word!.synonyms,
-            onTap: (synonym) {
-              if (SizeUtils.isDesktop) {
-                NavbarNotifier.index = SEARCH_INDEX;
-                searchController.setText(synonym);
-              }
-            },
+          Padding(
+            padding: 48.0.horizontalPadding,
+            child: SynonymsList(
+              synonyms: widget.word!.synonyms,
+              onTap: (synonym) {
+                if (SizeUtils.isDesktop) {
+                  NavbarNotifier.index = SEARCH_INDEX;
+                  searchController.setText(synonym);
+                }
+              },
+            ),
           ),
           16.0.vSpacer(),
           TextButton(
             child: Text("show edit History"),
-            onPressed: () {
-              showModalBottomSheet(
+            onPressed: () async {
+              await showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
-                  builder: (context) => SizedBox(
-                      height: size.height * 0.6,
-                      child: NotificationDetailMobile(
-                          title: "Edit History", isNotification: false, word: widget.word!.word)));
+                  builder: (context) {
+                    return DraggableScrollableSheet(
+                        maxChildSize: 0.8,
+                        initialChildSize: 0.8,
+                        expand: false,
+                        builder: (context, controller) {
+                          return NotificationDetailMobile(
+                              title: "Edit History",
+                              isNotification: false,
+                              word: widget.word!.word);
+                        });
+                  });
             },
           ),
           Padding(

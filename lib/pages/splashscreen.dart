@@ -6,10 +6,10 @@ import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
+import 'package:vocabhub/onboarding/onboarding.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/utils/size_utils.dart';
-
-import '../onboarding/welcome.dart';
+import 'package:vocabhub/widgets/responsive.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -74,24 +74,24 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     SizeUtils.size = MediaQuery.of(context).size;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    return Scaffold(
-      backgroundColor: colorScheme.background,
+    Widget child = Scaffold(
+      backgroundColor: Colors.transparent,
       body: Container(
-        decoration: BoxDecoration(
-          gradient:
-              LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-            colorScheme.primary,
-            colorScheme.secondary,
-          ]),
-        ),
+        // decoration: BoxDecoration(
+        //   gradient:
+        //       LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+        //     colorScheme.primary,
+        //     colorScheme.secondary,
+        //   ]),
+        // ),
         alignment: Alignment.center,
         child: FadeScaleTransition(
             animation: _animation,
@@ -111,5 +111,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
             )),
       ),
     );
+
+    return ResponsiveBuilder(
+        animate: true,
+        desktopBuilder: (ctx) {
+          return child;
+        },
+        mobileBuilder: (ctx) {
+          return child;
+        });
   }
 }

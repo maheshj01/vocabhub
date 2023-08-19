@@ -80,7 +80,6 @@ class _UserProfileState extends ConsumerState<UserProfile> {
 
   @override
   Widget build(BuildContext context) {
-    final userRef = ref.watch(userNotifierProvider);
     return Material(
       child: ValueListenableBuilder<Response>(
           valueListenable: userProfileNotifier,
@@ -239,7 +238,7 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                                           size: 38,
                                           onTap: () {
                                             Navigator.of(context, rootNavigator: true).push(
-                                                PageRoutes.sharedAxis(const SettingsPageMobile(),
+                                                PageRoutes.sharedAxis(const SettingsPage(),
                                                     SharedAxisTransitionType.horizontal));
                                           },
                                         ),
@@ -284,7 +283,11 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                             Padding(
                                 padding: 8.0.horizontalPadding,
                                 child: Text(
-                                    '@${user.username} ${!user.isAdmin ? ' (User)' : '(Admin)'}')),
+                                    '@${user.username} ${!user.isAdmin ? ' (User)' : '(Admin)'}',
+                                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                        ))),
                             Text(
                               '${user.name.capitalize()}',
                               textAlign: TextAlign.center,
@@ -322,7 +325,7 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                                         style: Theme.of(context)
                                             .textTheme
                                             .headlineMedium!
-                                            .copyWith(fontSize: 28, fontWeight: FontWeight.w500),
+                                            .copyWith(fontSize: 28, fontWeight: FontWeight.w600),
                                       ),
                                       4.0.vSpacer(),
                                       Text(
@@ -334,7 +337,7 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                                         style: Theme.of(context)
                                             .textTheme
                                             .titleSmall!
-                                            .copyWith(fontSize: 12, fontWeight: FontWeight.w600),
+                                            .copyWith(fontSize: 12, fontWeight: FontWeight.w800),
                                       ),
                                     ],
                                   ),
@@ -350,7 +353,6 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                       ? SizedBox.shrink()
                       : Container(
                           decoration: BoxDecoration(
-                              color: colorScheme.surfaceVariant,
                               borderRadius: 16.0.allRadius,
                               border: Border.all(color: colorScheme.secondary)),
                           child: ListTile(
@@ -411,7 +413,9 @@ class UserProfileDesktop extends ConsumerWidget {
               child: UserProfileMobile(
             user: user,
           )),
-          Expanded(child: SettingsPageMobile()),
+          Expanded(child: SettingsPageMobile(
+            onThemeChanged: (){},
+          )),
         ],
       ),
     );

@@ -94,9 +94,10 @@ class _EditProfileMobileState extends ConsumerState<EditProfileMobile> {
     UserModel user = ref.watch(userNotifierProvider);
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text('Edit Profile'),
+        backgroundColor: Colors.transparent,
       ),
       body: ValueListenableBuilder<Response>(
           valueListenable: _responseNotifier,
@@ -294,6 +295,7 @@ class _VHTextfieldState extends State<VHTextfield> {
                 ),
               ),
         Card(
+          color: Colors.transparent,
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -310,6 +312,7 @@ class _VHTextfieldState extends State<VHTextfield> {
               },
               decoration: InputDecoration(
                 border: InputBorder.none,
+                fillColor: Colors.transparent,
                 hintText: widget.hint,
               ),
             ),

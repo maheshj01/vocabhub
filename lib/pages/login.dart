@@ -10,6 +10,7 @@ import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
+import 'package:vocabhub/widgets/responsive.dart';
 
 class AppSignIn extends ConsumerStatefulWidget {
   const AppSignIn({Key? key}) : super(key: key);
@@ -137,64 +138,63 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
           }
 
           return IgnorePointer(
-            ignoring: request.state == RequestState.active,
-            child: Scaffold(
-                backgroundColor: Theme.of(context).colorScheme.background,
-                body: !SizeUtils.isMobile
-                    ? Row(
-                        children: [
-                          AnimatedContainer(
-                            width: SizeUtils.size.width / 2,
-                            duration: Duration(seconds: 1),
-                            child: ImageBackground(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 32),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    _heading('Hi!'),
-                                    _heading('Welcome Back.'),
-                                  ],
-                                ),
-                              ),
+              ignoring: request.state == RequestState.active,
+              child: ResponsiveBuilder(
+                  animate: true,
+                  desktopBuilder: (x) {
+                    return Row(
+                      children: [
+                        AnimatedContainer(
+                          width: SizeUtils.size.width / 2,
+                          duration: Duration(seconds: 1),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 32),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _heading('Hi!'),
+                                _heading('Welcome Back.'),
+                              ],
                             ),
                           ),
-                          Expanded(
-                            child: Container(
-                              color: colorScheme.surfaceVariant,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Spacer(),
-                                  _signInButton(),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  _skipButton(),
-                                  Spacer()
-                                ],
-                              ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            color: colorScheme.surfaceVariant,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Spacer(),
+                                _signInButton(),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                _skipButton(),
+                                Spacer()
+                              ],
                             ),
-                          )
-                        ],
-                      )
-                    : ImageBackground(
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                          200.0.vSpacer(),
-                          // _heading('Hi!'),
-                          _heading('Welcome!'),
-                          Expanded(child: Container()),
-                          _signInButton(),
+                          ),
+                        )
+                      ],
+                    );
+                  },
+                  mobileBuilder: (x) {
+                    return Container(
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                        200.0.vSpacer(),
+                        // _heading('Hi!'),
+                        _heading('Welcome!'),
+                        Expanded(child: Container()),
+                        _signInButton(),
 
-                          20.0.vSpacer(),
-                          _skipButton(),
-                          Expanded(child: Container()),
-
-                          100.0.vSpacer(),
-                        ]),
-                      )),
-          );
+                        20.0.vSpacer(),
+                        _skipButton(),
+                        Expanded(child: Container()),
+                        100.0.vSpacer(),
+                      ]),
+                    );
+                  }));
         });
   }
 }

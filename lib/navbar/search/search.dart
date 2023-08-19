@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -216,18 +215,16 @@ class WordTile extends StatelessWidget {
     final randomColor = Colors.primaries[index % Colors.primaries.length].withOpacity(0.8);
     final randomDarkColor =
         Colors.primaries[index % Colors.primaries.length].shade900.withOpacity(0.8);
-    return OpenContainer(
-        closedColor: Theme.of(context).colorScheme.surface,
-        openBuilder: (BuildContext context, VoidCallback openContainer) {
-          return WordListPage(
-              title: "Words With Letter $title (${wordList!.length})",
-              hasTrailing: false,
-              words: wordList!);
+    return GestureDetector(
+        onTap: () {
+          Navigate.push(
+              context,
+              WordListPage(
+                  title: "Words With Letter $title (${wordList!.length})",
+                  hasTrailing: false,
+                  words: wordList!));
         },
-        tappable: true,
-        transitionType: ContainerTransitionType.fadeThrough,
-        closedBuilder: (BuildContext context, VoidCallback openContainer) {
-          return Container(
+        child: Container(
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: settingsController.isDark ? randomDarkColor : randomColor,
@@ -236,22 +233,37 @@ class WordTile extends StatelessWidget {
             child: Text(
               '$title',
               style: Theme.of(context).textTheme.headlineLarge!.copyWith(color: Colors.white),
-            ),
-          );
-        });
+            )));
   }
 }
 
 class SearchView extends StatefulWidget {
   static String route = '/searchview';
 
-  const SearchView({Key? key}) : super(key: key);
+  const SearchView({super.key});
 
   @override
   State<SearchView> createState() => _SearchViewState();
 }
 
 class _SearchViewState extends State<SearchView> {
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(
+      desktopBuilder: (context) => SearchViewPage(),
+      mobileBuilder: (context) => SearchViewPage(),
+    );
+  }
+}
+
+class SearchViewPage extends StatefulWidget {
+  const SearchViewPage({Key? key}) : super(key: key);
+
+  @override
+  State<SearchViewPage> createState() => _SearchViewPageState();
+}
+
+class _SearchViewPageState extends State<SearchViewPage> {
   final searchNotifier = ValueNotifier<List<Word>?>(null);
 
   @override
@@ -296,6 +308,7 @@ class _SearchViewState extends State<SearchView> {
     words = dashboardController.words;
     final colorScheme = Theme.of(context).colorScheme;
     return Material(
+      color: Colors.transparent,
       child: SafeArea(
         child: Column(
           children: [
@@ -346,33 +359,40 @@ class _SearchViewState extends State<SearchView> {
                                   child: ListView.builder(
                                 padding: kBottomNavigationBarHeight.bottomPadding,
                                 itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: 1.0.verticalPadding,
-                                    child: OpenContainer(
-                                        openBuilder:
-                                            (BuildContext context, VoidCallback openContainer) {
-                                          searchController.addRecent(results[index]);
-                                          return WordDetail(
-                                            word: results[index],
-                                          );
+                                  return Container(
+                                      margin: 2.0.verticalPadding + 16.0.horizontalPadding,
+                                      decoration: BoxDecoration(
+
+                                          // blur the background
+                                          color: colorScheme.secondaryContainer.withOpacity(0.2),
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color:
+                                                    colorScheme.secondaryContainer.withOpacity(0.2),
+                                                blurRadius: 8.0,
+                                                offset: Offset(0, 2))
+                                          ]),
+                                      child: ListTile(
+                                        shape: RoundedRectangleBorder(
+                                            side: BorderSide(
+                                                color: colorScheme.secondaryContainer, width: 1.0),
+                                            borderRadius: BorderRadius.circular(8.0)),
+                                        title: Text('${results[index].word}'),
+                                        onTap: () {
+                                          Navigate.push(
+                                              context,
+                                              WordDetail(
+                                                word: results[index],
+                                              ),
+                                              isRootNavigator: true);
                                         },
-                                        closedColor: colorScheme.secondaryContainer,
-                                        closedElevation: 0,
-                                        tappable: true,
-                                        transitionType: ContainerTransitionType.fadeThrough,
-                                        closedBuilder:
-                                            (BuildContext context, VoidCallback openContainer) {
-                                          return ListTile(
-                                            title: Text('${results[index].word}'),
-                                            trailing: GestureDetector(
-                                                onTap: () async {
-                                                  searchController.removeRecent(results[index]);
-                                                  showRecents();
-                                                },
-                                                child: Icon(Icons.close, size: 16)),
-                                          );
-                                        }),
-                                  );
+                                        trailing: GestureDetector(
+                                            onTap: () async {
+                                              searchController.removeRecent(results[index]);
+                                              showRecents();
+                                            },
+                                            child: Icon(Icons.close, size: 16)),
+                                      ));
                                 },
                                 itemCount: results.length,
                               ))
@@ -420,33 +440,39 @@ class _SearchViewState extends State<SearchView> {
                                 padding: kBottomNavigationBarHeight.bottomPadding,
                                 itemBuilder: (context, index) {
                                   return Container(
-                                    margin: 8.0.horizontalPadding + 4.0.verticalPadding,
-                                    child: OpenContainer(
-                                        closedColor: colorScheme.surface,
-                                        openBuilder:
-                                            (BuildContext context, VoidCallback openContainer) {
+                                      margin: 8.0.horizontalPadding + 4.0.verticalPadding,
+                                      decoration: BoxDecoration(
+                                          color: colorScheme.secondaryContainer.withOpacity(0.2),
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color:
+                                                    colorScheme.secondaryContainer.withOpacity(0.2),
+                                                blurRadius: 8.0,
+                                                offset: Offset(0, 2))
+                                          ]),
+                                      child: ListTile(
+                                        shape: RoundedRectangleBorder(
+                                            side: BorderSide(
+                                                color: colorScheme.secondaryContainer, width: 1.0),
+                                            borderRadius: BorderRadius.circular(8.0)),
+                                        minVerticalPadding: 24,
+                                        tileColor: Colors.transparent,
+                                        title: Text('${results[index].word}'),
+                                        onTap: () {
                                           searchController.addRecent(results[index]);
-                                          return WordDetail(
-                                            word: results[index],
-                                          );
+                                          Navigate.push(
+                                              context,
+                                              WordDetail(
+                                                word: results[index],
+                                              ),
+                                              isRootNavigator: true);
                                         },
-                                        closedElevation: 0,
-                                        tappable: true,
-                                        transitionType: ContainerTransitionType.fade,
-                                        closedBuilder:
-                                            (BuildContext context, VoidCallback openContainer) {
-                                          return ListTile(
-                                            minVerticalPadding: 24,
-                                            tileColor: colorScheme.secondaryContainer,
-                                            title: Text('${results[index].word}'),
-                                            subtitle: Text(
-                                              '${results[index].meaning}',
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                            ),
-                                          );
-                                        }),
-                                  );
+                                        subtitle: Text(
+                                          '${results[index].meaning}',
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                        ),
+                                      ));
                                 },
                                 itemCount: results.length,
                               ),
@@ -544,22 +570,11 @@ class _WordListState extends State<WordList> {
                           }
                         },
                         onChanged: (x) {
-                          // /// Searching on the Web
                           _words = dashboardController.words;
-                          // wordsNotifier.value = _words;
                           if (x.isEmpty) {
                             wordsNotifier.value = _words;
                             return;
                           }
-                          // final List<Word> result = [];
-                          // for (var element in _words) {
-                          //   if (element.word.toLowerCase().contains(x.toLowerCase()) ||
-                          //       element.meaning.toLowerCase().contains(x.toLowerCase()) ||
-                          //       isInSynonym(x, element.synonyms)) {
-                          //     result.add(element);
-                          //   }
-                          // }
-                          // wordsNotifier.value = result;
                           search(x);
                         },
                       ),

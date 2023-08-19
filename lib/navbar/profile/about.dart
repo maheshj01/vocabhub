@@ -52,8 +52,9 @@ class _AboutVocabhubMobileState extends State<AboutVocabhubMobile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         title: const Text('About'),
       ),
       body: Padding(

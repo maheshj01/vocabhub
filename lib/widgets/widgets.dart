@@ -99,7 +99,7 @@ Widget heading(String title, {double fontSize: 20, Color? color}) {
     style: TextStyle(
       fontSize: fontSize,
       color: color,
-      fontWeight: FontWeight.w500,
+      fontWeight: FontWeight.w600,
     ),
   );
 }

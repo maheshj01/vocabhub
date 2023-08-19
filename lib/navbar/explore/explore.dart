@@ -114,6 +114,7 @@ class _ExploreWordsMobileState extends ConsumerState<ExploreWordsMobile> {
           }
           final words = request.data as List<Word>;
           return Material(
+            color: Colors.transparent,
             child: RefreshIndicator(
               onRefresh: () async {
                 await exploreWords();
@@ -372,7 +373,7 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
                                 onPressed: () {
                                   Navigate.push(
                                       context,
-                                      AddWordForm(
+                                      AddWord(
                                         isEdit: true,
                                         word: widget.word,
                                       ),
@@ -406,13 +407,10 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
                       ignoring: isHidden,
                       child: Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16.0),
-                            child: SynonymsList(
-                              synonyms: widget.word!.synonyms,
-                              emptyHeight: 0,
-                              onTap: (synonym) {},
-                            ),
+                          SynonymsList(
+                            synonyms: widget.word!.synonyms,
+                            emptyHeight: 0,
+                            onTap: (synonym) {},
                           ),
                           AnimatedBuilder(
                               animation: _animation,

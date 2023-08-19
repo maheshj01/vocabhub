@@ -20,9 +20,10 @@ class SynonymsList extends StatelessWidget {
         ? emptyHeight.vSpacer()
         : Container(
             alignment: Alignment.center,
-            padding: EdgeInsets.symmetric(horizontal: !SizeUtils.isMobile ? 12.0 : 8.0),
+            padding: EdgeInsets.symmetric(horizontal: !SizeUtils.isMobile ? 12.0 : 32.0),
             child: Wrap(
               direction: Axis.horizontal,
+              alignment: WrapAlignment.center,
               runSpacing: 5,
               spacing: 10,
               children: List.generate(synonyms!.length, (index) {
@@ -36,7 +37,17 @@ class SynonymsList extends StatelessWidget {
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.secondaryContainer,
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.secondaryContainer,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 2,
+                                offset: Offset(1, 2),
+                              )
+                            ],
+                            // color: Theme.of(context).colorScheme.secondaryContainer,
                             borderRadius: BorderRadius.circular(20)),
                         child: Text(
                           '${synonym.trim()}',

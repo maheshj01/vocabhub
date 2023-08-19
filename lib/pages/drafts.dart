@@ -6,7 +6,26 @@ import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/navbar/empty_page.dart';
 import 'package:vocabhub/navbar/error_page.dart';
 import 'package:vocabhub/utils/utility.dart';
+import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
+
+class DraftsPage extends StatefulWidget {
+  const DraftsPage({super.key});
+
+  @override
+  State<DraftsPage> createState() => _DraftsPageState();
+}
+
+class _DraftsPageState extends State<DraftsPage> {
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(desktopBuilder: (context) {
+      return Drafts();
+    }, mobileBuilder: (context) {
+      return Drafts();
+    });
+  }
+}
 
 class Drafts extends StatefulWidget {
   const Drafts({super.key});
@@ -39,44 +58,51 @@ class _DraftsState extends State<Drafts> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        appBar: AppBar(
-          title: Text('Drafts'),
-          elevation: 5,
-        ),
-        body: ValueListenableBuilder(
-            valueListenable: _requestNotifier,
-            builder: (context, Response value, child) {
-              if (value.state == RequestState.active) {
-                return LoadingWidget();
-              }
-              if (value.state == RequestState.error) {
-                return ErrorPage(
-                    onRetry: () async {
-                      await getDrafts();
-                    },
-                    errorMessage: value.message);
-              }
-              final drafts = value.data as List<Word>;
-              if (drafts.isEmpty) {
-                return EmptyPage(
-                  message: 'No drafts found',
-                );
-              }
-              return ListView.builder(
-                  itemCount: drafts.length,
-                  itemBuilder: (context, index) {
-                    final draft = drafts[index];
-                    return ListTile(
-                      title: Text('${draft.word}'),
-                      subtitle: Text('${draft.meaning}'),
-                      onTap: () {
-                        Navigate.popView(context, value: drafts[index]);
-                        addWordController.removeDraft(draft);
-                      },
-                    );
-                  });
-            }));
+    return Material(
+        color: Colors.transparent,
+        child: Column(
+          children: [
+            AppBar(
+              title: Text('Drafts'),
+              backgroundColor: Colors.transparent,
+              // elevation: 0,
+            ),
+            Expanded(
+              child: ValueListenableBuilder(
+                  valueListenable: _requestNotifier,
+                  builder: (context, Response value, child) {
+                    if (value.state == RequestState.active) {
+                      return LoadingWidget();
+                    }
+                    if (value.state == RequestState.error) {
+                      return ErrorPage(
+                          onRetry: () async {
+                            await getDrafts();
+                          },
+                          errorMessage: value.message);
+                    }
+                    final drafts = value.data as List<Word>;
+                    if (drafts.isEmpty) {
+                      return EmptyPage(
+                        message: 'No drafts found',
+                      );
+                    }
+                    return ListView.builder(
+                        itemCount: drafts.length,
+                        itemBuilder: (context, index) {
+                          final draft = drafts[index];
+                          return ListTile(
+                            title: Text('${draft.word}'),
+                            subtitle: Text('${draft.meaning}'),
+                            onTap: () {
+                              Navigate.popView(context, value: drafts[index]);
+                              addWordController.removeDraft(draft);
+                            },
+                          );
+                        });
+                  }),
+            ),
+          ],
+        ));
   }
 }

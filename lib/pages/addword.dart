@@ -17,14 +17,41 @@ import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
+import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
 import '../constants/constants.dart';
 
+class AddWord extends StatefulWidget {
+  static const String route = '/addword';
+  final bool isEdit;
+  final Word? word;
+  const AddWord({super.key, this.isEdit = false, this.word});
+
+  @override
+  State<AddWord> createState() => _AddWordState();
+}
+
+class _AddWordState extends State<AddWord> {
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(desktopBuilder: (context) {
+      return AddWordForm(
+        isEdit: widget.isEdit,
+        word: widget.word,
+      );
+    }, mobileBuilder: (context) {
+      return AddWordForm(
+        isEdit: widget.isEdit,
+        word: widget.word,
+      );
+    });
+  }
+}
+
 class AddWordForm extends ConsumerStatefulWidget {
   final bool isEdit;
   final Word? word;
-  static const String route = '/addword';
 
   const AddWordForm({Key? key, this.isEdit = false, this.word}) : super(key: key);
 
@@ -131,7 +158,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
   @override
   void initState() {
     super.initState();
-    analytics.logRouteView(AddWordForm.route);
+    analytics.logRouteView(AddWord.route);
     wordController = TextEditingController();
     meaningController = TextEditingController();
     exampleController = TextEditingController();
@@ -334,7 +361,6 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
       );
     }
 
-    
     userProvider = ref.watch(userNotifierProvider);
     final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
@@ -353,11 +379,12 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
                 return Future.value(true);
               },
               child: Scaffold(
+                backgroundColor: Colors.transparent,
                 resizeToAvoidBottomInset: true,
-                backgroundColor: colorScheme.background,
                 appBar: AppBar(
+                  backgroundColor: Colors.transparent,
                   title: Text(widget.isEdit ? 'Edit Word' : 'Add word'),
-                  elevation: 5,
+                  // elevation: 5,
                   actions: [
                     if (!widget.isEdit)
                       DescribedFeatureOverlay(
@@ -368,11 +395,11 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
                             Text('Drafts can be used to pull up words you saved for later'),
                         backgroundColor: Theme.of(context).primaryColor,
                         targetColor: colorScheme.onPrimary,
-                        textColor: colorScheme.onPrimary,
+                        textColor: colorScheme.onSurface,
                         child: IconButton(
                             onPressed: () async {
                               removeFocus(context);
-                              Word selectedDraft = await Navigate.push(context, Drafts(),
+                              Word selectedDraft = await Navigate.push(context, DraftsPage(),
                                   transitionType: TransitionType.rtl);
                               if (selectedDraft.word.isEmpty) {
                                 return;

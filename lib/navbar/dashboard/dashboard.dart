@@ -141,6 +141,7 @@ class DashboardMobile extends ConsumerWidget {
         SliverAppBar(
             pinned: false,
             expandedHeight: 80.0,
+            backgroundColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
               background: Container(
@@ -148,7 +149,7 @@ class DashboardMobile extends ConsumerWidget {
                 padding: EdgeInsets.only(left: 16, top: 16),
                 child: Text(
                   'Dashboard',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
                 ),
               ),
             ),
@@ -185,38 +186,36 @@ class DashboardMobile extends ConsumerWidget {
                   padding: 16.0.verticalPadding,
                   child: heading('Word of the day'),
                 ),
-                OpenContainer<bool>(
-                    openBuilder: (BuildContext context, VoidCallback openContainer) {
-                      return WordDetail(
-                        word: word,
-                        isWod: true,
-                        title: 'Word of the Day',
-                      );
-                    },
-                    tappable: true,
-                    closedShape: 16.0.rounded,
-                    transitionType: ContainerTransitionType.fadeThrough,
-                    closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                      return word.word.isEmpty
-                          ? GestureDetector(
-                              onTap: () {
-                                onRefresh!();
-                              },
-                              child: WoDCard(
-                                  title: 'Tap to Retry',
-                                  description: 'Something went wrong!',
-                                  color: Colors.red.shade300,
-                                  word: word,
-                                  height: 180,
-                                  fontSize: 42),
-                            )
-                          : WoDCard(
-                              word: word,
-                              height: 180,
-                              color: Colors.green.shade300,
-                              title: '${word.word}'.toUpperCase(),
-                            );
-                    }),
+                word.word.isEmpty
+                    ? GestureDetector(
+                        onTap: () {
+                          onRefresh!();
+                        },
+                        child: WoDCard(
+                            title: 'Tap to Retry',
+                            description: 'Something went wrong!',
+                            color: Colors.red.shade300,
+                            word: word,
+                            height: 180,
+                            fontSize: 42),
+                      )
+                    : GestureDetector(
+                        onTap: () {
+                          Navigate.push(
+                              context,
+                              WordDetail(
+                                word: word,
+                                isWod: true,
+                                title: 'Word of the Day',
+                              ));
+                        },
+                        child: WoDCard(
+                          word: word,
+                          height: 180,
+                          color: Colors.green.shade300,
+                          title: '${word.word}'.toUpperCase(),
+                        ),
+                      ),
                 Padding(
                   padding: 6.0.verticalPadding,
                 ),
@@ -233,49 +232,43 @@ class DashboardMobile extends ConsumerWidget {
                           16.0.vSpacer(),
                           word.word.isEmpty
                               ? SizedBox.shrink()
-                              : OpenContainer<bool>(
-                                  openBuilder: (BuildContext context, VoidCallback openContainer) {
-                                    return BookmarksPage(
-                                      isBookMark: true,
-                                      user: user,
-                                    );
+                              : GestureDetector(
+                                  onTap: () {
+                                    Navigate.push(
+                                        context,
+                                        BookmarksPage(
+                                          isBookMark: true,
+                                          user: user,
+                                        ));
                                   },
-                                  closedShape: 16.0.rounded,
-                                  tappable: true,
-                                  transitionType: ContainerTransitionType.fadeThrough,
-                                  closedBuilder:
-                                      (BuildContext context, VoidCallback openContainer) {
-                                    return WoDCard(
-                                      word: word,
-                                      height: 180,
-                                      fontSize: 42,
-                                      color: Colors.amber.shade600,
-                                      title: 'Bookmarks',
-                                    );
-                                  }),
+                                  child: WoDCard(
+                                    word: word,
+                                    height: 180,
+                                    fontSize: 42,
+                                    color: Colors.amber.shade600,
+                                    title: 'Bookmarks',
+                                  ),
+                                ),
                           Padding(
                             padding: 6.0.verticalPadding,
                           ),
-                          OpenContainer<bool>(
-                              openBuilder: (BuildContext context, VoidCallback openContainer) {
-                                return BookmarksPage(
-                                  isBookMark: false,
-                                  user: user,
-                                );
+                          GestureDetector(
+                              onTap: () {
+                                Navigate.push(
+                                    context,
+                                    BookmarksPage(
+                                      isBookMark: false,
+                                      user: user,
+                                    ));
                               },
-                              tappable: true,
-                              closedShape: 16.0.rounded,
-                              transitionType: ContainerTransitionType.fadeThrough,
-                              closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                                return WoDCard(
-                                  word: word,
-                                  height: 180,
-                                  fontSize: 42,
-                                  color: Colors.black,
-                                  image: 'assets/dart.jpg',
-                                  title: 'Mastered\nWords',
-                                );
-                              })
+                              child: WoDCard(
+                                word: word,
+                                height: 180,
+                                fontSize: 42,
+                                color: Colors.black,
+                                image: 'assets/dart.jpg',
+                                title: 'Mastered\nWords',
+                              ))
                         ],
                       ),
                 100.0.vSpacer()
@@ -313,111 +306,145 @@ class _DashboardCollectionsState extends ConsumerState<DashboardCollections> {
     final colorScheme = Theme.of(context).colorScheme;
     return !hasPinned(collections)
         ? SizedBox.shrink()
-        : Card(
-            borderOnForeground: true,
-            color: colorScheme.surfaceTint,
-            child: Container(
-              padding: 8.0.allPadding,
-              // height: size.height / 3.5,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: 12.0.verticalPadding + 8.0.leftPadding,
-                    child: Row(
-                      children: [
-                        Expanded(
-                            child: heading('Pinned Collections', color: colorScheme.onPrimary)),
-                        IconButton(
-                            onPressed: () async {
-                              final AppController state = ref.read(appNotifier.notifier).state;
-                              ref.watch(appNotifier.notifier).state =
-                                  state.copyWith(showFAB: false);
-                              if (size.width < 600) {
-                                NavbarNotifier.hideBottomNavBar = true;
-                              }
-                              await showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  builder: (context) {
-                                    return DraggableScrollableSheet(
-                                        maxChildSize: 0.7,
-                                        initialChildSize: 0.7,
-                                        expand: false,
-                                        builder: (context, controller) {
-                                          return ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.vertical(top: Radius.circular(28.0)),
-                                            child: NewCollection(
-                                              isPinned: true,
-                                            ),
-                                          );
-                                        });
-                                  });
-                              ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: true);
-                              NavbarNotifier.hideBottomNavBar = false;
-                            },
-                            icon: Icon(
-                              Icons.add,
-                              color: colorScheme.onPrimary,
-                            ))
-                      ],
-                    ),
+        : Container(
+            padding: 8.0.allPadding,
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [colorScheme.background, colorScheme.surfaceVariant]),
+                border: Border.all(color: colorScheme.surfaceTint, width: 1.0),
+                borderRadius: BorderRadius.circular(16.0)),
+
+            // height: size.height / 3.5,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: 12.0.verticalPadding + 8.0.leftPadding,
+                  child: Row(
+                    children: [
+                      Expanded(child: heading('Pinned Collections', color: colorScheme.primary)),
+                      IconButton(
+                          onPressed: () async {
+                            final AppController state = ref.read(appNotifier.notifier).state;
+                            ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: false);
+                            if (size.width < 600) {
+                              NavbarNotifier.hideBottomNavBar = true;
+                            }
+                            await showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return DraggableScrollableSheet(
+                                      maxChildSize: 0.7,
+                                      initialChildSize: 0.7,
+                                      expand: false,
+                                      builder: (context, controller) {
+                                        return ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.vertical(top: Radius.circular(28.0)),
+                                          child: NewCollection(
+                                            isPinned: true,
+                                          ),
+                                        );
+                                      });
+                                });
+                            ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: true);
+                            NavbarNotifier.hideBottomNavBar = false;
+                          },
+                          icon: Icon(
+                            Icons.add,
+                            color: colorScheme.primary,
+                          ))
+                    ],
                   ),
-                  collections.isEmpty
-                      ? SizedBox.shrink()
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          padding: 2.0.verticalPadding,
-                          itemCount: collections.length,
-                          itemBuilder: (context, index) {
-                            final title = collections[index].title;
-                            final words = collections[index].words;
-                            final bool isPinned = collections[index].isPinned;
-                            final Color color = collections[index].color;
-                            if (!isPinned) return SizedBox.shrink();
-                            return Card(
-                              color: color,
-                              child: ListTile(
-                                  title: Text('$title (${words.length})',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .copyWith(color: Colors.white)),
-                                  onTap: () {
-                                    Navigate.push(
-                                        context,
-                                        Scaffold(
-                                          backgroundColor:
-                                              Theme.of(context).colorScheme.surfaceVariant,
-                                          appBar: AppBar(
-                                            title: Text('$title'),
+                ),
+                collections.isEmpty
+                    ? SizedBox.shrink()
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: 2.0.verticalPadding,
+                        itemCount: collections.length,
+                        itemBuilder: (context, index) {
+                          final title = collections[index].title;
+                          final words = collections[index].words;
+                          final bool isPinned = collections[index].isPinned;
+                          final Color color = collections[index].color;
+                          if (!isPinned) return SizedBox.shrink();
+                          return Card(
+                            color: color,
+                            child: ListTile(
+                                title: Text('$title (${words.length})',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(color: Colors.white)),
+                                onTap: () {
+                                  Navigate.push(
+                                      context,
+                                      ResponsiveBuilder(desktopBuilder: (x) {
+                                        return Material(
+                                          color: Colors.transparent,
+                                          child: Column(
+                                            children: [
+                                              AppBar(
+                                                backgroundColor: Colors.transparent,
+                                                title: Text('$title'),
+                                              ),
+                                              Expanded(
+                                                child: WordListBuilder(
+                                                  words: words,
+                                                  hasTrailing: true,
+                                                  iconData: Icons.close,
+                                                  onTrailingTap: (x) async {
+                                                    await _collectionNotifier.removeFromCollection(
+                                                        title, x);
+                                                    setState(() {});
+                                                  },
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          body: WordListBuilder(
-                                            words: words,
-                                            hasTrailing: true,
-                                            iconData: Icons.close,
-                                            onTrailingTap: (x) async {
-                                              await _collectionNotifier.removeFromCollection(
-                                                  title, x);
-                                              setState(() {});
-                                            },
+                                        );
+                                      }, mobileBuilder: (x) {
+                                        return Material(
+                                          color: Colors.transparent,
+                                          child: Column(
+                                            children: [
+                                              AppBar(
+                                                backgroundColor: Colors.transparent,
+                                                title: Text('$title'),
+                                              ),
+                                              Expanded(
+                                                child: WordListBuilder(
+                                                  words: words,
+                                                  hasTrailing: true,
+                                                  iconData: Icons.close,
+                                                  onTrailingTap: (x) async {
+                                                    await _collectionNotifier.removeFromCollection(
+                                                        title, x);
+                                                    setState(() {});
+                                                  },
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ));
-                                  },
-                                  trailing: IconButton(
-                                      onPressed: () {
-                                        _collectionNotifier.togglePin(title);
-                                      },
-                                      icon: Icon(
-                                        Icons.push_pin,
-                                        color: Colors.white54,
-                                      ))),
-                            );
-                          }),
-                ],
-              ),
+                                        );
+                                      }));
+                                },
+                                trailing: IconButton(
+                                    onPressed: () {
+                                      _collectionNotifier.togglePin(title);
+                                    },
+                                    icon: Icon(
+                                      Icons.push_pin,
+                                      color: Colors.white54,
+                                    ))),
+                          );
+                        }),
+              ],
             ),
           );
   }
@@ -519,6 +546,9 @@ class DashboardDesktop extends ConsumerWidget {
                         );
                       },
                       tappable: true,
+                      middleColor: Colors.transparent,
+                      openColor: Colors.transparent,
+                      closedColor: Colors.transparent,
                       closedShape: 16.0.rounded,
                       transitionType: ContainerTransitionType.fadeThrough,
                       closedBuilder: (BuildContext context, VoidCallback openContainer) {
@@ -546,6 +576,9 @@ class DashboardDesktop extends ConsumerWidget {
                               );
                             },
                             tappable: true,
+                            closedColor: Colors.transparent,
+                            openColor: Colors.transparent,
+                            middleColor: Colors.transparent,
                             closedShape: 16.0.rounded,
                             transitionType: ContainerTransitionType.fadeThrough,
                             closedBuilder: (BuildContext context, VoidCallback openContainer) {
@@ -561,6 +594,9 @@ class DashboardDesktop extends ConsumerWidget {
                       16.0.hSpacer(),
                       Expanded(
                         child: OpenContainer<bool>(
+                            closedColor: Colors.transparent,
+                            openColor: Colors.transparent,
+                            middleColor: Colors.transparent,
                             openBuilder: (BuildContext context, VoidCallback openContainer) {
                               return BookmarksPage(
                                 isBookMark: true,

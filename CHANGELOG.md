@@ -1,3 +1,7 @@
+### 0.7.5+27 August 05, 2023
+- New look for entire app with Ultra Gradients and Glassmorphism
+- Fixes minor UI issues
+
 ### 0.7.0+26 August 05, 2023
 
 - Adds support for custom word collections Partially fixes [Issue 38](https://github.com/maheshmnj/vocabhub/issues/38)

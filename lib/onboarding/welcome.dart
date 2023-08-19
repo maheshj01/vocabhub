@@ -7,10 +7,11 @@ import 'package:vocabhub/main.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
+import 'package:vocabhub/widgets/responsive.dart';
 
 import 'onboard.dart';
 
-class WelcomePage extends ConsumerStatefulWidget {
+class WelcomePage extends StatefulWidget {
   final String title;
   final String description;
 
@@ -21,10 +22,40 @@ class WelcomePage extends ConsumerStatefulWidget {
   }) : super(key: key);
 
   @override
-  ConsumerState<WelcomePage> createState() => _WelcomePageState();
+  State<WelcomePage> createState() => _WelcomePageState();
 }
 
-class _WelcomePageState extends ConsumerState<WelcomePage> {
+class _WelcomePageState extends State<WelcomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(
+        initialAnimationValue: 0.1,
+        desktopBuilder: (context) => WelcomePageMobile(
+              title: widget.title,
+              description: widget.description,
+            ),
+        mobileBuilder: (context) => WelcomePageMobile(
+              title: widget.title,
+              description: widget.description,
+            ));
+  }
+}
+
+class WelcomePageMobile extends ConsumerStatefulWidget {
+  final String title;
+  final String description;
+
+  const WelcomePageMobile({
+    Key? key,
+    required this.title,
+    required this.description,
+  }) : super(key: key);
+
+  @override
+  ConsumerState<WelcomePageMobile> createState() => _WelcomePageMobileState();
+}
+
+class _WelcomePageMobileState extends ConsumerState<WelcomePageMobile> {
   Future<void> startOnBoarding() async {}
 
   bool isLoading = false;
@@ -33,8 +64,8 @@ class _WelcomePageState extends ConsumerState<WelcomePage> {
   Widget build(BuildContext context) {
     final user = ref.watch(userNotifierProvider);
     return Material(
+      color: Colors.transparent,
       child: Container(
-        color: Colors.black,
         alignment: Alignment.center,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

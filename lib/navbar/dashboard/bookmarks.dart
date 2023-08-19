@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,16 +25,17 @@ class _BookmarksPageState extends State<BookmarksPage> {
   @override
   Widget build(BuildContext context) {
     return Material(
+        color: Colors.transparent,
         child: ResponsiveBuilder(
-      desktopBuilder: (context) => _BookmarksDesktop(
-        isBookMark: widget.isBookMark,
-        user: widget.user,
-      ),
-      mobileBuilder: (context) => _BookmarksMobile(
-        isBookMark: widget.isBookMark,
-        user: widget.user,
-      ),
-    ));
+          desktopBuilder: (context) => _BookmarksDesktop(
+            isBookMark: widget.isBookMark,
+            user: widget.user,
+          ),
+          mobileBuilder: (context) => _BookmarksMobile(
+            isBookMark: widget.isBookMark,
+            user: widget.user,
+          ),
+        ));
   }
 }
 
@@ -76,13 +79,14 @@ class _BookmarksMobileState extends State<_BookmarksMobile> {
         builder: (_, List<Word>? value, Widget? child) {
           if (value == null) {
             return Scaffold(
-                backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-                appBar: AppBar(title: Text('$title')),
+                backgroundColor: Colors.transparent,
+                appBar: AppBar(backgroundColor: Colors.transparent, title: Text('$title')),
                 body: LoadingWidget());
           }
           return Scaffold(
-              backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+              backgroundColor: Colors.transparent,
               appBar: AppBar(
+                backgroundColor: Colors.transparent,
                 title: value.isEmpty ? Text('$title') : Text('${value.length} $title'),
               ),
               body: value.isEmpty
@@ -115,7 +119,6 @@ class WordListBuilder extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final collectionRef = ref.watch(collectionNotifier);
     return ListView.builder(
       itemCount: words.length,
       padding: EdgeInsets.only(top: 16, bottom: kNotchedNavbarHeight * 1.5),
@@ -123,10 +126,20 @@ class WordListBuilder extends ConsumerWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
           child: OpenContainer(
-              closedColor: Theme.of(context).colorScheme.surface,
+              closedColor: Colors.transparent,
+              closedElevation: 0,
+              openColor: Colors.transparent,
+              openElevation: 0,
+              openShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: Theme.of(context).colorScheme.surfaceVariant, width: 1)),
+              closedShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: Theme.of(context).colorScheme.surfaceVariant, width: 1)),
               openBuilder: (BuildContext context, VoidCallback openContainer) {
                 return WordDetail(word: words[index]);
               },
+              middleColor: Colors.transparent,
               tappable: true,
               transitionType: ContainerTransitionType.fadeThrough,
               closedBuilder: (BuildContext context, VoidCallback openContainer) {
@@ -151,7 +164,7 @@ class WordListBuilder extends ConsumerWidget {
   }
 }
 
-class WordListPage extends StatelessWidget {
+class WordListPage extends StatefulWidget {
   final String title;
   final List<Word> words;
   final Function(Word)? onTrailingTap;
@@ -165,29 +178,75 @@ class WordListPage extends StatelessWidget {
       : super(key: key);
 
   @override
+  State<WordListPage> createState() => _WordListPageState();
+}
+
+class _WordListPageState extends State<WordListPage> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-      appBar: AppBar(
-        title: Text('$title'),
-      ),
-      body: ListView.builder(
-        itemCount: words.length,
-        padding: EdgeInsets.symmetric(vertical: 16),
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
-            child: OpenContainer(
-                closedColor: Theme.of(context).colorScheme.surface,
-                openBuilder: (BuildContext context, VoidCallback openContainer) {
-                  return WordDetail(word: words[index]);
-                },
-                tappable: true,
-                transitionType: ContainerTransitionType.fadeThrough,
-                closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                  return ListTile(
+    return Material(
+        color: Colors.transparent,
+        child: ResponsiveBuilder(
+            desktopBuilder: (context) {
+              return WordListPageMobile(
+                  title: widget.title, hasTrailing: widget.hasTrailing, words: widget.words);
+            },
+            mobileBuilder: (context) => WordListPageMobile(
+                title: widget.title, hasTrailing: widget.hasTrailing, words: widget.words)));
+  }
+}
+
+class WordListPageMobile extends StatelessWidget {
+  final String title;
+  final List<Word> words;
+  final Function(Word)? onTrailingTap;
+  final bool? hasTrailing;
+  WordListPageMobile(
+      {Key? key,
+      required this.title,
+      required this.words,
+      this.hasTrailing = true,
+      this.onTrailingTap})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Stack(
+      children: [
+        CustomPaint(
+          painter: BackgroundPainter(
+            primaryColor: colorScheme.primary,
+            secondaryColor: colorScheme.inversePrimary,
+            // animation: AlwaysStoppedAnimation(0.0),
+          ),
+          child: Container(),
+        ),
+        BackdropFilter(filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60), child: Container()),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 15,
+            title: Text('$title'),
+          ),
+          body: ListView.builder(
+            itemCount: words.length,
+            padding: EdgeInsets.only(top: 16, bottom: kNotchedNavbarHeight * 1.5),
+            itemBuilder: (context, index) {
+              return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
+                  child: ListTile(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => WordDetail(word: words[index])));
+                    },
                     minVerticalPadding: 24,
                     title: Text(words[index].word),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: BorderSide(
+                            color: Theme.of(context).colorScheme.surfaceVariant, width: 1)),
                     trailing: hasTrailing!
                         ? IconButton(
                             icon: Icon(
@@ -198,11 +257,11 @@ class WordListPage extends StatelessWidget {
                                 onTrailingTap != null ? () => onTrailingTap!(words[index]) : null,
                           )
                         : null,
-                  );
-                }),
-          );
-        },
-      ),
+                  ));
+            },
+          ),
+        ),
+      ],
     );
   }
 }

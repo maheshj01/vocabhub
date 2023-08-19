@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:animations/animations.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -97,7 +96,6 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
 
   DateTime oldTime = DateTime.now();
   DateTime newTime = DateTime.now();
-  // ValueNotifier<int> _selectedIndexNotifier = ValueNotifier<int>(0);
 
   @override
   void dispose() {
@@ -120,7 +118,6 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     });
   }
 
-  bool hasUpdate = false;
   List<NavbarItem> items = [
     NavbarItem(Icons.dashboard, 'Dashboard'),
     NavbarItem(Icons.search, 'Search'),
@@ -138,7 +135,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       },
       1: {
         Search.route: Search(),
-        AddWordForm.route: AddWordForm(),
+        AddWord.route: AddWord(),
         SearchView.route: SearchView(),
       },
       2: {
@@ -181,41 +178,34 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
           ? null
           : Padding(
               padding: (kM3NavbarHeight * 0.9).bottomPadding,
-              child: OpenContainer<bool>(
-                  openBuilder: (BuildContext context, VoidCallback openContainer) {
-                    return AddWordForm(
-                      isEdit: false,
-                    );
-                  },
-                  tappable: true,
-                  closedColor: colorScheme.primaryContainer,
-                  closedShape: 22.0.rounded,
-                  transitionType: ContainerTransitionType.fadeThrough,
-                  closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                    return FloatingActionButton.extended(
-                        backgroundColor: colorScheme.primaryContainer,
-                        heroTag: "addword${DateTime.now().millisecondsSinceEpoch}",
-                        elevation: 3.5,
-                        isExtended: true,
-                        icon: Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28),
-                        onPressed: null,
-                        label: Text(
-                          'Add Word',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: colorScheme.onPrimaryContainer,
-                            fontWeight: FontWeight.w600,
-                          ),
+              child: FloatingActionButton.extended(
+                  backgroundColor: colorScheme.primaryContainer,
+                  heroTag: "addword${DateTime.now().millisecondsSinceEpoch}",
+                  elevation: 3.5,
+                  isExtended: true,
+                  icon: Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28),
+                  onPressed: () {
+                    Navigate.push(
+                        context,
+                        AddWord(
+                          isEdit: false,
                         ));
-                  }),
-            ),
+                  },
+                  label: Text(
+                    'Add Word',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: colorScheme.onPrimaryContainer,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ))),
       body: Stack(
         children: [
           NavbarRouter(
             errorBuilder: (context) {
               return const Center(child: Text('Error 404'));
             },
-            type: NavbarType.material3,
+            type: NavbarType.floating,
             onBackButtonPressed: (isExiting) {
               if (isExiting) {
                 newTime = DateTime.now();
@@ -254,7 +244,14 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
               }
               ref.read(appNotifier.notifier).state = ref.watch(appNotifier).copyWith(index: x);
             },
-            decoration: M3NavbarDecoration(),
+            decoration: FloatingNavbarDecoration(
+              height: 80,
+              backgroundColor: colorScheme.scrim.withOpacity(0.2),
+              margin: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+
+              borderRadius: BorderRadius.zero,
+              // backgroundColor: (colorScheme.surfaceVariant.withOpacity(0.4)),
+            ),
             destinations: [
               for (int i = 0; i < items.length; i++)
                 DestinationRouter(

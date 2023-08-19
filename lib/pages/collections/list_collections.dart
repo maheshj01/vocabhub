@@ -8,6 +8,7 @@ import 'package:vocabhub/navbar/empty_page.dart';
 import 'package:vocabhub/navbar/error_page.dart';
 import 'package:vocabhub/pages/collections/collections.dart';
 import 'package:vocabhub/utils/extensions.dart';
+import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/worddetail.dart';
 
@@ -62,17 +63,41 @@ class _CollectionsNavigatorState extends State<CollectionsNavigator> {
   }
 }
 
-class SavedCollections extends ConsumerStatefulWidget {
+class SavedCollections extends StatelessWidget {
+  static const String route = '/collections/saved';
+
   final ScrollController? controller;
   final Word word;
-  static const String route = '/collections/saved';
+
   const SavedCollections({super.key, this.controller, required this.word});
 
   @override
-  ConsumerState<SavedCollections> createState() => _CollectionsSavedState();
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(desktopBuilder: (context) {
+      return SavedCollectionsSheet(
+        controller: controller,
+        word: word,
+      );
+    }, mobileBuilder: (context) {
+      return SavedCollectionsSheet(
+        controller: controller,
+        word: word,
+      );
+    });
+  }
 }
 
-class _CollectionsSavedState extends ConsumerState<SavedCollections> {
+class SavedCollectionsSheet extends ConsumerStatefulWidget {
+  final ScrollController? controller;
+  final Word word;
+
+  const SavedCollectionsSheet({super.key, this.controller, required this.word});
+
+  @override
+  ConsumerState<SavedCollectionsSheet> createState() => _CollectionsSavedState();
+}
+
+class _CollectionsSavedState extends ConsumerState<SavedCollectionsSheet> {
   @override
   Widget build(BuildContext context) {
     final collectionRef = ref.read(collectionNotifier.notifier);
@@ -196,17 +221,35 @@ class CollectionsGridState extends ConsumerState<CollectionsGrid> {
   }
 }
 
-class CollectionDetails extends ConsumerStatefulWidget {
-  // collection name
-  final VHCollection collection;
+class CollectionDetails extends StatelessWidget {
   static const String route = '/collection/details';
+  final VHCollection collection;
   const CollectionDetails({super.key, required this.collection});
 
   @override
-  ConsumerState<CollectionDetails> createState() => _CollectionDetailsState();
+  Widget build(BuildContext context) {
+    return ResponsiveBuilder(desktopBuilder: (context) {
+      return CollectionDetailsSheet(
+        collection: collection,
+      );
+    }, mobileBuilder: (context) {
+      return CollectionDetailsSheet(
+        collection: collection,
+      );
+    });
+  }
 }
 
-class _CollectionDetailsState extends ConsumerState<CollectionDetails> {
+class CollectionDetailsSheet extends ConsumerStatefulWidget {
+  // collection name
+  final VHCollection collection;
+  const CollectionDetailsSheet({super.key, required this.collection});
+
+  @override
+  ConsumerState<CollectionDetailsSheet> createState() => _CollectionDetailsSheetState();
+}
+
+class _CollectionDetailsSheetState extends ConsumerState<CollectionDetailsSheet> {
   @override
   Widget build(BuildContext context) {
     final collections = ref.watch(collectionNotifier).collections;
