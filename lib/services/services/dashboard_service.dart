@@ -6,6 +6,7 @@ import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/service_base.dart';
 import 'package:vocabhub/utils/logger.dart';
+import 'package:vocabhub/utils/utility.dart';
 
 class DashboardService extends ServiceBase {
   late SharedPreferences _sharedPreferences;
@@ -25,12 +26,12 @@ class DashboardService extends ServiceBase {
     await _sharedPreferences.setString(kwordOfTheDay, jsonEncode(word.toJson()));
   }
 
-  Future<bool> publishWod(Word word) async {
+  Future<Response> publishWod(Word word) async {
     final response = await VocabStoreService.publishWod(word);
     if (response.didSucced) {
       await setPublishedWord((response.data as Word));
     }
-    return response.didSucced;
+    return response;
   }
 
   /// This method is used to get the last published date time from the shared preferences.
