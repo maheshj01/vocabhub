@@ -31,7 +31,7 @@ class DashboardController extends ChangeNotifier with ServiceBase {
   }
 
   Future<bool> publishWod(Word word) async {
-    final response = await _dashboardService.publishWod(_wordOfTheDay!);
+    final response = await _dashboardService.publishWod(word);
     _wordOfTheDay = response.data as Word;
     notifyListeners();
     return response.didSucced;
