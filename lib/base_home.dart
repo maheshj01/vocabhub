@@ -226,7 +226,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
             },
             isDesktop: !SizeUtils.isMobile,
             destinationAnimationCurve: Curves.fastOutSlowIn,
-            destinationAnimationDuration: 0,
+            destinationAnimationDuration: SizeUtils.isDesktop ? 0 : 300,
             onCurrentTabClicked: () {
               exploreController.scrollToIndex = 0;
             },
