@@ -82,7 +82,7 @@ class _SearchBuilderState extends State<SearchBuilder> {
                       _searchController.clear();
                     }
                   }),
-              hintText: "Search by word, meaning"),
+              hintText: "Search by word, meaning, synonym"),
         ));
   }
 }

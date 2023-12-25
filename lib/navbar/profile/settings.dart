@@ -340,7 +340,8 @@ class RatingsPage extends StatefulWidget {
 class _RatingsPageState extends State<RatingsPage> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      color: Theme.of(context).colorScheme.background,
       padding: 16.0.horizontalPadding,
       child: Column(
         children: [
