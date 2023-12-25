@@ -104,7 +104,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
 
   void showSnackBar(String message,
       {String? action, bool persist = false, Function? onActionPressed}) {
-    AppController state = ref.read(appNotifier.notifier).state;
+    final AppController state = ref.read(appNotifier.notifier).state;
     ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       NavbarNotifier.showSnackBar(context, message,
@@ -118,11 +118,6 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     });
   }
 
-  List<NavbarItem> items = [
-    NavbarItem(Icons.dashboard, 'Dashboard'),
-    NavbarItem(Icons.search, 'Search'),
-    NavbarItem(Icons.explore, 'Explore'),
-  ];
   final analytics = Analytics.instance;
   UserModel? user;
   @override
@@ -152,7 +147,16 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
         )
       },
     };
-
+    final colorScheme = Theme.of(context).colorScheme;
+    final selectedColor = colorScheme.onPrimaryContainer;
+    List<NavbarItem> items = [
+      NavbarItem(Icons.dashboard_outlined, 'Dashboard',
+          selectedIcon: Icon(Icons.dashboard, color: selectedColor)),
+      NavbarItem(Icons.search_outlined, 'Search',
+          selectedIcon: Icon(Icons.search, color: selectedColor)),
+      NavbarItem(Icons.explore_outlined, 'Explore',
+          selectedIcon: Icon(Icons.explore, color: selectedColor)),
+    ];
     user = ref.watch(userNotifierProvider);
     if (user!.isLoggedIn) {
       _routes.addAll({
@@ -170,7 +174,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
         items.removeLast();
       }
     }
-    final colorScheme = Theme.of(context).colorScheme;
+
     final icon = Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28);
     final appController = ref.watch(appNotifier);
     final label = Text(
@@ -186,7 +190,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       floatingActionButton: !appController.showFAB || (appController.index > 1 || !user!.isLoggedIn)
           ? null
           : Padding(
-              padding: (kM3NavbarHeight * 0.9).bottomPadding,
+              padding: (kM3NavbarHeight).bottomPadding,
               child: FloatingActionButton.extended(
                   backgroundColor: colorScheme.primaryContainer,
                   heroTag: "addword${DateTime.now().millisecondsSinceEpoch}",
@@ -225,8 +229,8 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
               }
             },
             isDesktop: !SizeUtils.isMobile,
-            destinationAnimationCurve: Curves.fastOutSlowIn,
-            destinationAnimationDuration: SizeUtils.isDesktop ? 0 : 300,
+            // destinationAnimationCurve: Curves.fastOutSlowIn,
+            destinationAnimationDuration: SizeUtils.isDesktop ? 0 : 0,
             onCurrentTabClicked: () {
               exploreController.scrollToIndex = 0;
             },
@@ -244,8 +248,9 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                   }
                 }
               }
-              ref.read(appNotifier.notifier).state =
-                  ref.watch(appNotifier).copyWith(index: x, extended: true);
+              // TODO: FAB should extend
+              // ref.read(appNotifier.notifier).state =
+              //     ref.watch(appNotifier).copyWith(index: x, extended: true);
             },
             decoration: FloatingNavbarDecoration(
               height: 80,
@@ -253,7 +258,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                   ? colorScheme.surfaceVariant
                   : colorScheme.scrim.withOpacity(0.2),
               margin: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-
+              showSelectedLabels: false,
               borderRadius: BorderRadius.zero,
               // backgroundColor: (colorScheme.surfaceVariant.withOpacity(0.4)),
             ),
