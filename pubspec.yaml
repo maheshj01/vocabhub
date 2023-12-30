@@ -28,8 +28,9 @@ dependencies:
   http: ^0.13.6
   intl: ^0.18.0
   json_annotation: ^4.6.0
-  navbar_router: ^0.7.2
-  # git:
+  # navbar_router: ^0.7.2
+  navbar_router:
+    path: ../../oss/my_packages/navbar_router
   #   url: https://github.com/maheshmnj/navbar_router.git
   package_info_plus: ^4.0.1
   pull_to_refresh: ^2.0.0

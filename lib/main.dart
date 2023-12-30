@@ -30,7 +30,12 @@ final userNotifierProvider = Provider<UserModel>((ref) {
 });
 
 final dashBoardNotifier = Provider<DashboardController>((ref) => DashboardController());
-final appNotifier = StateProvider<AppController>((ref) => AppController());
+final appProvider =
+    StateNotifierProvider<AppNotifier, AppController>((ref) => AppNotifier(AppController(
+          extended: false,
+          index: 0,
+          showFAB: true,
+        )));
 final collectionNotifier = ChangeNotifierProvider((ref) => CollectionsNotifier());
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

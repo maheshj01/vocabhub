@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/constants/const.dart';
-import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/collections/list_collections.dart';
@@ -67,8 +66,7 @@ class _WordTitleBuilderState extends ConsumerState<WordTitleBuilder> {
                       textColor: colorScheme.onSurface,
                       child: IconButton(
                           onPressed: () async {
-                            final AppController state = ref.read(appNotifier.notifier).state;
-                            ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: false);
+                            ref.read(appProvider.notifier).setShowFAB(false);
                             if (size.width < 600) {
                               NavbarNotifier.hideBottomNavBar = true;
                             }
@@ -87,7 +85,7 @@ class _WordTitleBuilderState extends ConsumerState<WordTitleBuilder> {
                                         );
                                       });
                                 });
-                            ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: true);
+                            ref.read(appProvider.notifier).setShowFAB(true);
                             NavbarNotifier.hideBottomNavBar = false;
                           },
                           icon: Icon(

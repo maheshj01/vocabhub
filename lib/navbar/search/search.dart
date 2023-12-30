@@ -139,11 +139,10 @@ class _MobileViewState extends ConsumerState<MobileView> {
   }
 
   void _toggleFab() {
-    final appController = ref.watch(appNotifier);
     if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
-      ref.watch(appNotifier.notifier).state = appController.copyWith(extended: true);
+      ref.read(appProvider.notifier).setExtended(true);
     } else {
-      ref.watch(appNotifier.notifier).state = appController.copyWith(extended: false);
+      ref.read(appProvider.notifier).setExtended(false);
     }
   }
 

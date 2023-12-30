@@ -8,7 +8,6 @@ import 'package:navbar_router/navbar_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/constants/constants.dart';
-import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/navbar/navbar.dart';
 import 'package:vocabhub/navbar/profile/about.dart';
@@ -104,15 +103,14 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
 
   void showSnackBar(String message,
       {String? action, bool persist = false, Function? onActionPressed}) {
-    final AppController state = ref.read(appNotifier.notifier).state;
-    ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: false);
+    ref.read(appProvider.notifier).setShowFAB(false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       NavbarNotifier.showSnackBar(context, message,
           actionLabel: action,
           onActionPressed: onActionPressed,
           duration: persist ? Duration(days: 1) : Duration(seconds: 3), onClosed: () {
         if (mounted) {
-          ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: true);
+          ref.read(appProvider.notifier).setShowFAB(true);
         }
       });
     });
@@ -176,7 +174,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     }
 
     final icon = Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28);
-    final appController = ref.watch(appNotifier);
+    final appController = ref.watch(appProvider);
     final label = Text(
       'Add Word',
       style: TextStyle(
@@ -236,6 +234,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
             },
             onChanged: (x) async {
               /// Simulate DragGesture on pageView
+              ref.read(appProvider.notifier).setIndex(x);
               final pageController = exploreController.pageController;
               if (EXPLORE_INDEX == x && SizeUtils.isMobile) {
                 if (pageController.hasClients) {

@@ -4,7 +4,6 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
-import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/notification.dart';
@@ -362,9 +361,7 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
                             trailing: VHIcon(Icons.bookmarks),
                             onTap: () async {
-                              final AppController state = ref.read(appNotifier.notifier).state;
-                              ref.watch(appNotifier.notifier).state =
-                                  state.copyWith(showFAB: false);
+                              ref.read(appProvider.notifier).setShowFAB(false);
                               if (size.width < 600) {
                                 NavbarNotifier.hideBottomNavBar = true;
                               }
@@ -383,7 +380,7 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                                           );
                                         });
                                   });
-                              ref.watch(appNotifier.notifier).state = state.copyWith(showFAB: true);
+                              ref.read(appProvider.notifier).setShowFAB(true);
                               NavbarNotifier.hideBottomNavBar = false;
                             },
                           ),
@@ -413,8 +410,9 @@ class UserProfileDesktop extends ConsumerWidget {
               child: UserProfileMobile(
             user: user,
           )),
-          Expanded(child: SettingsPageMobile(
-            onThemeChanged: (){},
+          Expanded(
+              child: SettingsPageMobile(
+            onThemeChanged: () {},
           )),
         ],
       ),
