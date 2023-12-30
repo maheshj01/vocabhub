@@ -185,7 +185,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
 
     Widget _buildFab() {
       final icon = Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28);
-      if (appController.showFAB || (appController.index < 2 || user!.isLoggedIn)) {
+      if (appController.showFAB || (appController.index < 2 && user!.isLoggedIn)) {
         return Padding(
             padding: (kM3NavbarHeight).bottomPadding,
             child: FloatingActionButton.extended(
@@ -240,7 +240,9 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
               exploreController.scrollToIndex = 0;
             },
             onChanged: (x) async {
-              ref.read(appProvider.notifier).setIndex(x);
+              ref
+                  .read(appProvider.notifier)
+                  .copyWith(appController.copyWith(index: x, showFAB: x < 2, extended: true));
 
               /// Simulate DragGesture on pageView
               final pageController = exploreController.pageController;

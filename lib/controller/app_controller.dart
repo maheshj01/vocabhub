@@ -80,4 +80,12 @@ class AppNotifier extends StateNotifier<AppController> {
   void setExtended(bool extended) {
     state = state.copyWith(extended: extended);
   }
+
+  void copyWith(AppController appController) {
+    state = state.copyWith(
+      index: appController.index,
+      showFAB: appController.showFAB,
+      extended: appController.extended,
+    );
+  }
 }

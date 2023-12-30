@@ -32,7 +32,7 @@ final userNotifierProvider = Provider<UserModel>((ref) {
 final dashBoardNotifier = Provider<DashboardController>((ref) => DashboardController());
 final appProvider =
     StateNotifierProvider<AppNotifier, AppController>((ref) => AppNotifier(AppController(
-          extended: false,
+          extended: true,
           index: 0,
           showFAB: true,
         )));
