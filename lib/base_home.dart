@@ -146,14 +146,14 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       },
     };
     final colorScheme = Theme.of(context).colorScheme;
-    final selectedColor = colorScheme.onPrimaryContainer;
+    final selectedColor = colorScheme.surfaceTint;
     List<NavbarItem> items = [
       NavbarItem(Icons.dashboard_outlined, 'Dashboard',
-          selectedIcon: Icon(Icons.dashboard, color: selectedColor)),
+          selectedIcon: Icon(Icons.dashboard, color: selectedColor, size: 26)),
       NavbarItem(Icons.search_outlined, 'Search',
-          selectedIcon: Icon(Icons.search, color: selectedColor)),
+          selectedIcon: Icon(Icons.search, color: selectedColor, size: 26)),
       NavbarItem(Icons.explore_outlined, 'Explore',
-          selectedIcon: Icon(Icons.explore, color: selectedColor)),
+          selectedIcon: Icon(Icons.explore, color: selectedColor, size: 26)),
     ];
     user = ref.watch(userNotifierProvider);
     if (user!.isLoggedIn) {
@@ -165,15 +165,14 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
         }
       });
       if (items.length < 4) {
-        items.add(NavbarItem(Icons.person, 'Me'));
+        items.add(NavbarItem(Icons.person_outlined, 'Me',
+            selectedIcon: Icon(Icons.person, color: selectedColor, size: 26)));
       }
     } else {
       if (items.length > 3) {
         items.removeLast();
       }
     }
-
-    final icon = Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28);
     final appController = ref.watch(appProvider);
     final label = Text(
       'Add Word',
@@ -183,26 +182,34 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
         fontWeight: FontWeight.w600,
       ),
     );
+
+    Widget _buildFab() {
+      final icon = Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28);
+      if (appController.showFAB || (appController.index < 2 || user!.isLoggedIn)) {
+        return Padding(
+            padding: (kM3NavbarHeight).bottomPadding,
+            child: FloatingActionButton.extended(
+                backgroundColor: colorScheme.primaryContainer,
+                heroTag: "addword${DateTime.now().millisecondsSinceEpoch}",
+                elevation: 3.5,
+                isExtended: appController.extended,
+                icon: icon,
+                onPressed: () {
+                  Navigate.push(
+                      context,
+                      AddWord(
+                        isEdit: false,
+                      ));
+                },
+                label: label));
+      } else {
+        return SizedBox.shrink();
+      }
+    }
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      floatingActionButton: !appController.showFAB || (appController.index > 1 || !user!.isLoggedIn)
-          ? null
-          : Padding(
-              padding: (kM3NavbarHeight).bottomPadding,
-              child: FloatingActionButton.extended(
-                  backgroundColor: colorScheme.primaryContainer,
-                  heroTag: "addword${DateTime.now().millisecondsSinceEpoch}",
-                  elevation: 3.5,
-                  isExtended: appController.extended,
-                  icon: icon,
-                  onPressed: () {
-                    Navigate.push(
-                        context,
-                        AddWord(
-                          isEdit: false,
-                        ));
-                  },
-                  label: label)),
+      floatingActionButton: _buildFab(),
       body: Stack(
         children: [
           NavbarRouter(
@@ -233,8 +240,9 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
               exploreController.scrollToIndex = 0;
             },
             onChanged: (x) async {
-              /// Simulate DragGesture on pageView
               ref.read(appProvider.notifier).setIndex(x);
+
+              /// Simulate DragGesture on pageView
               final pageController = exploreController.pageController;
               if (EXPLORE_INDEX == x && SizeUtils.isMobile) {
                 if (pageController.hasClients) {
@@ -247,16 +255,13 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                   }
                 }
               }
-              // TODO: FAB should extend
-              // ref.read(appNotifier.notifier).state =
-              //     ref.watch(appNotifier).copyWith(index: x, extended: true);
             },
             decoration: FloatingNavbarDecoration(
               height: 80,
               backgroundColor: SizeUtils.isDesktop
                   ? colorScheme.surfaceVariant
                   : colorScheme.scrim.withOpacity(0.2),
-              margin: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              margin: EdgeInsets.zero,
               showSelectedLabels: false,
               borderRadius: BorderRadius.zero,
               // backgroundColor: (colorScheme.surfaceVariant.withOpacity(0.4)),

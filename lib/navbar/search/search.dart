@@ -129,7 +129,7 @@ class _MobileViewState extends ConsumerState<MobileView> {
           _lastScrollDirection = _scrollController.position.userScrollDirection;
           _lastScrollOffset = _scrollController.offset;
         }
-        double difference = (_scrollController.offset - _lastScrollOffset).abs();
+        final difference = (_scrollController.offset - _lastScrollOffset).abs();
         if (difference > _offsetThreshold) {
           _lastScrollOffset = _scrollController.offset;
           _toggleFab();
@@ -204,7 +204,7 @@ class _MobileViewState extends ConsumerState<MobileView> {
                   }
                   final List<List<Word>> wordsByAlphabet = resp.data as List<List<Word>>;
                   return Padding(
-                    padding: 8.0.horizontalPadding,
+                    padding: 8.0.horizontalPadding + 80.0.bottomPadding,
                     child: GridView.custom(
                       controller: _scrollController,
                       padding: 80.0.bottomPadding,

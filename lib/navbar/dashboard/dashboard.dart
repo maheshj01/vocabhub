@@ -131,151 +131,154 @@ class DashboardMobile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userNotifierProvider);
     final word = dashboardController.wordOfTheDay;
-    return CustomScrollView(
-      scrollBehavior: const MaterialScrollBehavior().copyWith(overscroll: true),
-      physics: BouncingScrollPhysics(
-        parent: AlwaysScrollableScrollPhysics(),
-      ),
-      slivers: <Widget>[
-        SliverAppBar(
-            pinned: false,
-            expandedHeight: 80.0,
-            backgroundColor: Colors.transparent,
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              background: Container(
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(left: 16, top: 16),
-                child: Text(
-                  'Dashboard',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+    return Padding(
+      padding: 80.0.bottomPadding,
+      child: CustomScrollView(
+        scrollBehavior: const MaterialScrollBehavior().copyWith(overscroll: true),
+        physics: BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        slivers: <Widget>[
+          SliverAppBar(
+              pinned: false,
+              expandedHeight: 80.0,
+              backgroundColor: Colors.transparent,
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                background: Container(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(left: 16, top: 16),
+                  child: Text(
+                    'Dashboard',
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
+                  ),
                 ),
               ),
-            ),
-            actions: [
-              user.isLoggedIn && SizeUtils.isMobile
-                  ? IconButton(
-                      onPressed: () {
-                        Navigate.pushNamed(context, Notifications.route, isRootNavigator: true);
-                      },
-                      icon: Icon(
-                        Icons.notifications_on,
-                        color: Theme.of(context).colorScheme.surfaceTint,
-                      ))
-                  : SizedBox.shrink(),
-              !user.isLoggedIn
-                  ? TextButton(
-                      onPressed: () async {
-                        await Navigate.pushAndPopAll(context, AppSignIn());
-                      },
-                      child: Text('Sign In',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge!
-                              .copyWith(color: Theme.of(context).colorScheme.primary)))
-                  : SizedBox.shrink()
-            ]),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: 16.0.horizontalPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: 16.0.verticalPadding,
-                  child: heading('Word of the day'),
-                ),
-                word.word.isEmpty
-                    ? GestureDetector(
-                        onTap: () {
-                          onRefresh!();
+              actions: [
+                user.isLoggedIn && SizeUtils.isMobile
+                    ? IconButton(
+                        onPressed: () {
+                          Navigate.pushNamed(context, Notifications.route, isRootNavigator: true);
                         },
-                        child: WoDCard(
-                            title: 'Tap to Retry',
-                            description: 'Something went wrong!',
-                            color: Colors.red.shade300,
+                        icon: Icon(
+                          Icons.notifications_on,
+                          color: Theme.of(context).colorScheme.surfaceTint,
+                        ))
+                    : SizedBox.shrink(),
+                !user.isLoggedIn
+                    ? TextButton(
+                        onPressed: () async {
+                          await Navigate.pushAndPopAll(context, AppSignIn());
+                        },
+                        child: Text('Sign In',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge!
+                                .copyWith(color: Theme.of(context).colorScheme.primary)))
+                    : SizedBox.shrink()
+              ]),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: 16.0.horizontalPadding,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: 16.0.verticalPadding,
+                    child: heading('Word of the day'),
+                  ),
+                  word.word.isEmpty
+                      ? GestureDetector(
+                          onTap: () {
+                            onRefresh!();
+                          },
+                          child: WoDCard(
+                              title: 'Tap to Retry',
+                              description: 'Something went wrong!',
+                              color: Colors.red.shade300,
+                              word: word,
+                              height: 180,
+                              fontSize: 42),
+                        )
+                      : GestureDetector(
+                          onTap: () {
+                            Navigate.push(
+                                context,
+                                WordDetail(
+                                  word: word,
+                                  isWod: true,
+                                  title: 'Word of the Day',
+                                ));
+                          },
+                          child: WoDCard(
                             word: word,
                             height: 180,
-                            fontSize: 42),
-                      )
-                    : GestureDetector(
-                        onTap: () {
-                          Navigate.push(
-                              context,
-                              WordDetail(
-                                word: word,
-                                isWod: true,
-                                title: 'Word of the Day',
-                              ));
-                        },
-                        child: WoDCard(
-                          word: word,
-                          height: 180,
-                          color: Colors.green.shade300,
-                          title: '${word.word}'.toUpperCase(),
+                            color: Colors.green.shade300,
+                            title: '${word.word}'.toUpperCase(),
+                          ),
                         ),
-                      ),
-                Padding(
-                  padding: 6.0.verticalPadding,
-                ),
-                !user.isLoggedIn
-                    ? SizedBox.shrink()
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: 12.0.verticalPadding,
-                            child: heading('Progress'),
-                          ),
-                          DashboardCollections(),
-                          16.0.vSpacer(),
-                          word.word.isEmpty
-                              ? SizedBox.shrink()
-                              : GestureDetector(
-                                  onTap: () {
-                                    Navigate.push(
-                                        context,
-                                        BookmarksPage(
-                                          isBookMark: true,
-                                          user: user,
-                                        ));
-                                  },
-                                  child: WoDCard(
-                                    word: word,
-                                    height: 180,
-                                    fontSize: 42,
-                                    color: Colors.amber.shade600,
-                                    title: 'Bookmarks',
+                  Padding(
+                    padding: 6.0.verticalPadding,
+                  ),
+                  !user.isLoggedIn
+                      ? SizedBox.shrink()
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: 12.0.verticalPadding,
+                              child: heading('Progress'),
+                            ),
+                            DashboardCollections(),
+                            16.0.vSpacer(),
+                            word.word.isEmpty
+                                ? SizedBox.shrink()
+                                : GestureDetector(
+                                    onTap: () {
+                                      Navigate.push(
+                                          context,
+                                          BookmarksPage(
+                                            isBookMark: true,
+                                            user: user,
+                                          ));
+                                    },
+                                    child: WoDCard(
+                                      word: word,
+                                      height: 180,
+                                      fontSize: 42,
+                                      color: Colors.amber.shade600,
+                                      title: 'Bookmarks',
+                                    ),
                                   ),
-                                ),
-                          Padding(
-                            padding: 6.0.verticalPadding,
-                          ),
-                          GestureDetector(
-                              onTap: () {
-                                Navigate.push(
-                                    context,
-                                    BookmarksPage(
-                                      isBookMark: false,
-                                      user: user,
-                                    ));
-                              },
-                              child: WoDCard(
-                                word: word,
-                                height: 180,
-                                fontSize: 42,
-                                color: Colors.black,
-                                image: 'assets/dart.jpg',
-                                title: 'Mastered\nWords',
-                              ))
-                        ],
-                      ),
-                100.0.vSpacer()
-              ],
+                            Padding(
+                              padding: 6.0.verticalPadding,
+                            ),
+                            GestureDetector(
+                                onTap: () {
+                                  Navigate.push(
+                                      context,
+                                      BookmarksPage(
+                                        isBookMark: false,
+                                        user: user,
+                                      ));
+                                },
+                                child: WoDCard(
+                                  word: word,
+                                  height: 180,
+                                  fontSize: 42,
+                                  color: Colors.black,
+                                  image: 'assets/dart.jpg',
+                                  title: 'Mastered\nWords',
+                                ))
+                          ],
+                        ),
+                  100.0.vSpacer()
+                ],
+              ),
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 }
