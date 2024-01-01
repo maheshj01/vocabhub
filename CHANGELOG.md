@@ -1,7 +1,17 @@
+### 0.7.8+30 January 01, 2024
+
+- Add Handsfree mode in explore
+
+### 0.7.7+29 Sep 19, 2023
+
+- Minor Fixes and Improvements
+
 ### 0.7.6+28 August 18, 2023
+
 - Fix Web view (Desktop) UI
 - Add collections support for web
 - Fix minor UI issues
+
 ### 0.7.5+27 August 05, 2023
 
 - New look for entire app with Ultra Gradients and Glassmorphism

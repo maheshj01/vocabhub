@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:vocabhub/controller/explore_controller.dart';
 import 'package:vocabhub/services/services/settings_service.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 
@@ -13,6 +14,10 @@ class SettingsController extends ChangeNotifier {
   int _skipCount = 0;
   int maxSkipCount = 3;
 
+  late AutoScroll _autoScroll;
+
+  AutoScroll get autoScroll => _autoScroll;
+
   bool get hasRatedOnPlaystore => _ratedOnPlayStore;
 
   bool get isOnboarded => _isOnboarded;
@@ -25,10 +30,21 @@ class SettingsController extends ChangeNotifier {
 
   int get skipCount => _skipCount;
 
+  set autoScroll(AutoScroll value) {
+    _autoScroll = value;
+    notifyListeners();
+    _settingsService!.setAutoScroll(_autoScroll);
+  }
+
   set setSkipCount(int value) {
     _skipCount = value;
     notifyListeners();
     _settingsService!.setSkipCount(value);
+  }
+
+  Future<AutoScroll> getAutoScroll() async {
+    _autoScroll = await _settingsService!.autoScroll;
+    return _autoScroll;
   }
 
   Future<int> getSkipCount() async {
@@ -104,6 +120,7 @@ class SettingsController extends ChangeNotifier {
     _lastRatedDate = await getLastRatedShown();
     _isOnboarded = await getOnBoarded();
     _skipCount = await getSkipCount();
+    _autoScroll = await getAutoScroll();
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     version = packageInfo.version;
     notifyListeners();

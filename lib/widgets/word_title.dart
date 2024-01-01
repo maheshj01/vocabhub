@@ -66,7 +66,7 @@ class _WordTitleBuilderState extends ConsumerState<WordTitleBuilder> {
                       textColor: colorScheme.onSurface,
                       child: IconButton(
                           onPressed: () async {
-                            ref.read(appProvider.notifier).setShowFAB(false);
+                            // ref.read(appProvider.notifier).setShowFAB(false);
                             if (size.width < 600) {
                               NavbarNotifier.hideBottomNavBar = true;
                             }
@@ -85,7 +85,7 @@ class _WordTitleBuilderState extends ConsumerState<WordTitleBuilder> {
                                         );
                                       });
                                 });
-                            ref.read(appProvider.notifier).setShowFAB(true);
+                            // ref.read(appProvider.notifier).setShowFAB(true);
                             NavbarNotifier.hideBottomNavBar = false;
                           },
                           icon: Icon(

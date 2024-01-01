@@ -156,26 +156,103 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
           AnimatedBuilder(
               animation: exploreController,
               builder: (context, child) {
-                return Stack(
-                  children: [
-                    settingTile('Hide Explore Words',
-                        description: 'When enabled, words will be hidden in explore page',
-                        onTap: () {
-                      exploreController.toggleHiddenExplore();
-                    }),
-                    Positioned(
-                      top: 10,
-                      right: 16,
-                      child: VocabSwitch(
-                          value: exploreController.isHidden,
-                          onChanged: (x) {
-                            exploreController.toggleHiddenExplore();
-                          }),
-                    )
-                  ],
-                );
+                return ExpansionTile(
+                    title: Text(
+                      'Explore Settings',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    subtitle: Text(
+                      'Settings for explore page',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    childrenPadding: 20.0.rightPadding,
+                    children: [
+                      ListTile(
+                        title: Text('Hide Explore Words'),
+                        subtitle: Text(
+                          exploreController.isHidden
+                              ? 'Words definition will be hidden from explore page'
+                              : 'Words definition will be shown in explore page',
+                        ),
+                        trailing: VocabSwitch(
+                            value: exploreController.isHidden,
+                            onChanged: (x) {
+                              exploreController.toggleHiddenExplore();
+                            }),
+                      ),
+                      hLine(),
+                      AnimatedBuilder(
+                          animation: settingsController,
+                          builder: (context, child) {
+                            return Column(
+                              children: [
+                                ListTile(
+                                  title: Text('Hands Free Mode'),
+                                  subtitle: Text(
+                                    'if enabled words will AutoScroll in explore page',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: colorScheme.onSurface.withOpacity(0.6),
+                                    ),
+                                  ),
+                                  trailing: VocabSwitch(
+                                      value: settingsController.autoScroll.enabled,
+                                      onChanged: (x) {
+                                        settingsController.autoScroll = settingsController
+                                            .autoScroll
+                                            .copyWith(enabled: x, isPaused: !x);
+                                      }),
+                                ),
+                                hLine(),
+                                if (settingsController.autoScroll.enabled)
+                                  ListTile(
+                                    title: Text(
+                                        'Auto scroll delay ${settingsController.autoScroll.durationInSeconds} seconds',
+                                        style: TextStyle(fontSize: 18)),
+                                    subtitle: Padding(
+                                      padding: 16.0.horizontalPadding,
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            '10',
+                                            style: TextStyle(
+                                                fontSize: 20, fontWeight: FontWeight.w400),
+                                          ),
+                                          Flexible(
+                                            child: Slider(
+                                                min: 10,
+                                                max: 30,
+                                                value: settingsController
+                                                    .autoScroll.durationInSeconds
+                                                    .toDouble(),
+                                                inactiveColor: Colors.grey,
+                                                onChanged: (x) {
+                                                  settingsController.autoScroll = settingsController
+                                                      .autoScroll
+                                                      .copyWith(durationInSeconds: x.toInt());
+                                                }),
+                                          ),
+                                          Text(
+                                            '30',
+                                            style: TextStyle(
+                                                fontSize: 20, fontWeight: FontWeight.w400),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            );
+                          })
+                    ]);
               }),
-          hLine(),
           AnimatedBuilder(
               animation: pushNotificationService,
               builder: (context, child) {
@@ -186,7 +263,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                         'Notifications',
                       ),
                       subtitle: Text(
-                        'Enable or disable notifications',
+                        'Manage your notifications',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,

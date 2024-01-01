@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/word.dart';
@@ -5,12 +7,10 @@ import 'package:vocabhub/services/services/explore_service.dart';
 import 'package:vocabhub/services/services/service_base.dart';
 
 class ExploreController extends ChangeNotifier with ServiceBase {
-  final Duration _autoScrollDuration = Duration(seconds: 10);
   late DateTime _scrollMessageShownDate;
   late bool _isScrollMessageShown = false;
   late final ExploreService _exploreService;
   List<Word> _exploreWords = [];
-
 
   List<Word> get exploreWords => _exploreWords;
 
@@ -77,6 +77,7 @@ class ExploreController extends ChangeNotifier with ServiceBase {
     await _exploreService.setExploreHidden(value);
   }
 
+  // simulate scroll up with page up/down animation
   Future<void> showScrollAnimation() async {
     isAnimating = true;
     final list = List.generate(2, (index) => index).toList();
@@ -93,6 +94,7 @@ class ExploreController extends ChangeNotifier with ServiceBase {
     rememberLastScroll();
   }
 
+  /// remember the last scroll date
   Future<void> rememberLastScroll() async {
     _scrollMessageShownDate = DateTime.now();
     _isScrollMessageShown = true;
@@ -118,4 +120,67 @@ class ExploreController extends ChangeNotifier with ServiceBase {
   Future<void> disposeService() async {
     _pageController.dispose();
   }
+}
+
+@immutable
+class AutoScroll {
+  final bool enabled;
+  final int durationInSeconds;
+  final bool isPaused;
+
+  AutoScroll({
+    this.enabled = true,
+    this.durationInSeconds = 10,
+    this.isPaused = false
+  });
+
+  AutoScroll copyWith({
+    bool? enabled,
+    int? durationInSeconds,
+    bool? isPaused,
+  }) {
+    return AutoScroll(
+      enabled: enabled ?? this.enabled,
+      durationInSeconds: durationInSeconds ?? this.durationInSeconds,
+      isPaused: isPaused ?? this.isPaused,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    final result = <String, dynamic>{};
+  
+    result.addAll({'enabled': enabled});
+    result.addAll({'durationInSeconds': durationInSeconds});
+    result.addAll({'isPaused': isPaused});
+  
+    return result;
+  }
+
+  factory AutoScroll.fromMap(Map<String, dynamic> map) {
+    return AutoScroll(
+      enabled: map['enabled'] ?? false,
+      durationInSeconds: map['durationInSeconds']?.toInt() ?? 0,
+      isPaused: map['isPaused'] ?? false,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory AutoScroll.fromJson(String source) => AutoScroll.fromMap(json.decode(source));
+
+  @override
+  String toString() => 'AutoScroll(enabled: $enabled, durationInSeconds: $durationInSeconds, isPaused: $isPaused)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is AutoScroll &&
+      other.enabled == enabled &&
+      other.durationInSeconds == durationInSeconds &&
+      other.isPaused == isPaused;
+  }
+
+  @override
+  int get hashCode => enabled.hashCode ^ durationInSeconds.hashCode ^ isPaused.hashCode;
 }

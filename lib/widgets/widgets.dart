@@ -214,13 +214,18 @@ Future<void> showRatingsBottomSheet(context, {double bottomPadding = 0}) async {
       });
 }
 
-Widget settingTile(String label, {String? description, Function? onTap, IconData? trailingIcon}) {
+Widget settingTile(String label,
+    {String? description,
+    Function? onTap,
+    IconData? trailingIcon,
+    double titleSize = 18,
+    double verticalPadding = 24.0}) {
   return ListTile(
-    minVerticalPadding: 24.0,
+    minVerticalPadding: verticalPadding,
     title: Text(
       '$label',
       style: TextStyle(
-        fontSize: 18,
+        fontSize: titleSize,
         fontWeight: FontWeight.w400,
       ),
     ),

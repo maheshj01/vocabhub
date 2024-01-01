@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +16,7 @@ import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
 import 'package:vocabhub/widgets/responsive.dart';
+import 'package:vocabhub/widgets/swipeup.dart';
 import 'package:vocabhub/widgets/synonymslist.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 import 'package:vocabhub/widgets/word_title.dart';
@@ -47,10 +47,24 @@ class ExploreWordsMobile extends ConsumerStatefulWidget {
   _ExploreWordsMobileState createState() => _ExploreWordsMobileState();
 }
 
-class _ExploreWordsMobileState extends ConsumerState<ExploreWordsMobile> {
+class _ExploreWordsMobileState extends ConsumerState<ExploreWordsMobile>
+    with SingleTickerProviderStateMixin {
+  int page = 0;
+  int max = 0;
+  bool isFetching = false;
+  ExploreController _exploreController = ExploreController();
+  ValueNotifier<Response> _request = ValueNotifier<Response>(Response(state: RequestState.none));
+  int _scrollCountCallback = 11;
+  bool initAnimation = false;
+  late AnimationController _progressAnimationController;
+
   @override
   void initState() {
     super.initState();
+    _progressAnimationController = AnimationController(
+        vsync: this, duration: Duration(seconds: settingsController.autoScroll.durationInSeconds));
+    _listenToIndexChangeEvents();
+    _progressAnimationListener();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       exploreWords();
     });
@@ -84,16 +98,60 @@ class _ExploreWordsMobileState extends ConsumerState<ExploreWordsMobile> {
     }
   }
 
-  int page = 0;
-  int max = 0;
-  bool isFetching = false;
-  ExploreController _exploreController = ExploreController();
-  ValueNotifier<Response> _request = ValueNotifier<Response>(Response(state: RequestState.none));
-  int _scrollCountCallback = 11;
+  void _listenToIndexChangeEvents() {
+    NavbarNotifier.addIndexChangeListener((x) {
+      if (x != EXPLORE_INDEX) {
+        settingsController.autoScroll = settingsController.autoScroll.copyWith(isPaused: true);
+        _progressAnimationController.stop();
+      } else {
+        if (!initAnimation) {
+          _progressAnimationController.forward();
+          initAnimation = false;
+        }
+        if (settingsController.autoScroll.enabled) {
+          if (settingsController.autoScroll.isPaused) {
+            _progressAnimationController.forward();
+          } else {
+            restartAnimation();
+          }
+        } else {
+          _removeProgressAnimationListener();
+        }
+      }
+    });
+  }
+
+  Future<void> _scrollToNextPage() async {
+    exploreController.pageController
+        .nextPage(duration: Duration(milliseconds: 1500), curve: Curves.fastOutSlowIn);
+  }
+
+  void _progressAnimationListener() {
+    _progressAnimationController.addStatusListener((status) {
+      if (_progressAnimationController.status == AnimationStatus.completed &&
+          settingsController.autoScroll.enabled) {
+        _scrollToNextPage();
+        _progressAnimationController.reset();
+      }
+    });
+  }
+
+  void _removeProgressAnimationListener() {
+    _progressAnimationController.removeStatusListener((status) {});
+  }
+
+  void restartAnimation() {
+    _progressAnimationController.reset();
+    _progressAnimationController.forward();
+  }
+
   @override
   void dispose() {
     _request.dispose();
     _exploreController.dispose();
+    _removeProgressAnimationListener();
+    _progressAnimationController.dispose();
+    NavbarNotifier.removeLastListener();
     super.dispose();
   }
 
@@ -125,55 +183,60 @@ class _ExploreWordsMobileState extends ConsumerState<ExploreWordsMobile> {
                   Column(
                     children: [
                       Expanded(
-                        child: PageView.builder(
-                            itemCount: words.length,
-                            controller: exploreController.pageController,
-                            scrollBehavior: MaterialScrollBehavior(),
-                            onPageChanged: (x) {
-                              // if (x > max - 5) {
-                              //   page++;
-                              //   exploreWords();
-                              // }
-                              if (x % _scrollCountCallback == 0) {
-                                widget.onScrollThresholdReached!();
-                              }
-                              NavbarNotifier.hideSnackBar(context);
-                            },
-                            physics: ClampingScrollPhysics(),
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (context, index) {
-                              return ExploreWord(word: words[index], index: index);
-                            }),
+                        child: GestureDetector(
+                          onTapDown: (x) {
+                            _progressAnimationController.stop();
+                          },
+                          onTapUp: (x) {
+                            _progressAnimationController.forward();
+                          },
+                          child: PageView.builder(
+                              itemCount: words.length,
+                              controller: exploreController.pageController,
+                              scrollBehavior: MaterialScrollBehavior(),
+                              onPageChanged: (x) {
+                                // if (x > max - 5) {
+                                //   page++;
+                                //   exploreWords();
+                                // }
+                                restartAnimation();
+                                if (x % _scrollCountCallback == 0) {
+                                  widget.onScrollThresholdReached!();
+                                }
+                                NavbarNotifier.hideSnackBar(context);
+                              },
+                              physics: ClampingScrollPhysics(),
+                              scrollDirection: Axis.vertical,
+                              itemBuilder: (context, index) {
+                                return ExploreWord(word: words[index], index: index);
+                              }),
+                        ),
                       ),
                       AnimatedBuilder(
-                          animation: exploreController,
+                          animation: _progressAnimationController,
                           builder: (context, child) {
-                            return exploreController.isAnimating
-                                ? Container(
-                                    alignment: Alignment.center,
-                                    margin: EdgeInsets.only(
-                                      bottom: kBottomNavigationBarHeight + 50,
-                                    ),
-                                    // left: 120,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          CupertinoIcons.chevron_up,
-                                          size: 30,
-                                        ),
-                                        Text(
-                                          'Swipe up to see more',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ))
-                                : SizedBox.shrink();
-                          })
+                            return Padding(
+                              padding: 80.0.bottomPadding + 24.0.topPadding,
+                              child: settingsController.autoScroll.enabled
+                                  ? LinearProgressIndicator(
+                                      value: _progressAnimationController.value,
+                                    )
+                                  : SizedBox.shrink(),
+                            );
+                          }),
                     ],
+                  ),
+                  Positioned(
+                    bottom: kBottomNavigationBarHeight + 50,
+                    left: 0,
+                    right: 0,
+                    child: AnimatedBuilder(
+                        animation: exploreController,
+                        builder: (context, child) {
+                          return exploreController.isAnimating
+                              ? SwipeUpAnimation()
+                              : SizedBox.shrink();
+                        }),
                   ),
                   request.state == RequestState.active
                       ? Positioned(
@@ -292,6 +355,8 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
       meaning = widget.word!.meaning;
       length = widget.word!.meaning.length;
     }
+
+    /// text Animation for word definition
     _animationController = AnimationController(vsync: this, duration: Duration(seconds: 3));
     if (length < 30) {
       _animationController.duration = Duration(seconds: 1);
@@ -356,7 +421,7 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
                   Stack(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: kToolbarHeight, bottom: 12),
+                        padding: const EdgeInsets.only(top: kToolbarHeight * 0.2, bottom: 12),
                         child: Align(
                           alignment: Alignment.topCenter,
                           child: WordTitleBuilder(
@@ -366,7 +431,7 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
                         ),
                       ),
                       Positioned(
-                        top: 20,
+                        top: 10,
                         right: 40,
                         child: userProvider.isLoggedIn && !isHidden
                             ? IconButton(
@@ -448,36 +513,40 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
                                     : widget.word!.mnemonics,
                             word: widget.word!.word,
                           ),
-                          SizedBox(
-                            height: 48,
-                          ),
-                          userProvider.isLoggedIn
-                              ? WordMasteredPreference(
-                                  onChanged: (state) async {
-                                    final wordId = widget.word!.id;
-                                    final userEmail = userProvider.email;
-                                    String message = '';
-                                    if (state) {
-                                      wordState = WordState.known;
-                                      message = knownWord;
-                                    } else {
-                                      wordState = WordState.unknown;
-                                      message = unKnownWord;
-                                    }
-                                    setState(() {});
-                                    final resp = await WordStateService.storeWordPreference(
-                                        wordId, userEmail, wordState);
-                                    if (resp.didSucced) {
-                                      showToast(message);
-                                    }
-                                  },
-                                  value: wordState,
-                                )
-                              : SizedBox.shrink(),
                         ],
                       ),
                     ),
-                  )
+                  ),
+                  Flexible(child: SizedBox.expand()),
+                  AnimatedBuilder(
+                      animation: exploreController,
+                      builder: (context, snapshot) {
+                        if (userProvider.isLoggedIn && !exploreController.isAnimating) {
+                          return WordMasteredPreference(
+                            onChanged: (state) async {
+                              final wordId = widget.word!.id;
+                              final userEmail = userProvider.email;
+                              String message = '';
+                              if (state) {
+                                wordState = WordState.known;
+                                message = knownWord;
+                              } else {
+                                wordState = WordState.unknown;
+                                message = unKnownWord;
+                              }
+                              setState(() {});
+                              final resp = await WordStateService.storeWordPreference(
+                                  wordId, userEmail, wordState);
+                              if (resp.didSucced) {
+                                showToast(message);
+                              }
+                            },
+                            value: wordState,
+                          );
+                        } else {
+                          return SizedBox.shrink();
+                        }
+                      })
                 ],
               );
             });
@@ -485,10 +554,6 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
 
   @override
   bool get wantKeepAlive {
-    return true;
-
-    /// TODO this doesn't work
-    /// keep only 5 near by pages alive based on current index
     if (widget.index < lowerIndex || widget.index > upperIndex) {
       return false;
     }
@@ -574,11 +639,7 @@ class _WordMasteredPreferenceState extends State<WordMasteredPreference> {
             SizedBox(
               width: 120,
               child: Text('No',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium!
-                      .copyWith(color: isMastered ? Colors.black : stateToColor(widget.value))),
+                  textAlign: TextAlign.center, style: Theme.of(context).textTheme.headlineMedium!),
             ),
           ],
           isSelected: [isMastered, !isMastered],

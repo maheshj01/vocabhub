@@ -230,7 +230,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
           );
           if (response.didSucced) {
             pushNotificationService.sendNotification(Constants.constructEditPayload(history));
-            NavbarNotifier.showSnackBar(context, "$WORD_SUBMITTED", onClosed: () {
+            NavbarNotifier.showSnackBar(context, "$WORD_SUBMITTED", bottom: 0, onClosed: () {
               stopCircularIndicator(context);
               Navigate.popView(context);
             });

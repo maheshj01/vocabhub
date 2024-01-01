@@ -377,7 +377,6 @@ class _ReportABugMobileState extends ConsumerState<ReportABugMobile> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userNotifierProvider);
-    final colorScheme = Theme.of(context).colorScheme;
     return Material(
       color: Colors.transparent,
       child: ValueListenableBuilder<Response>(

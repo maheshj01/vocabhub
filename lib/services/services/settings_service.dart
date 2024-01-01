@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vocabhub/controller/explore_controller.dart';
 import 'package:vocabhub/services/services/service_base.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
 
@@ -11,9 +12,26 @@ class SettingsService extends ServiceBase {
   final String kLastRatedDate = 'kLastRatedDate';
   final String kOnboardedKey = 'kOnboardedKey';
   static const skipCountKey = 'skipCount';
+  final String kAutoScrollKey = 'kAutoScrollKey';
 
   void setSkipCount(int value) {
     _sharedPreferences.setInt('$skipCountKey', value);
+  }
+
+  Future<AutoScroll> get autoScroll async {
+    final String? autoScroll = _sharedPreferences.getString(kAutoScrollKey);
+    if (autoScroll == null) {
+      final json = AutoScroll().toJson();
+      await _sharedPreferences.setString(kAutoScrollKey, json);
+      return AutoScroll();
+    } else {
+      return AutoScroll.fromJson(autoScroll);
+    }
+  }
+
+  Future<void> setAutoScroll(AutoScroll value) async {
+    final json = value.toJson();
+    await _sharedPreferences.setString(kAutoScrollKey, json);
   }
 
   Future<int> get skipCount async {

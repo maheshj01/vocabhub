@@ -204,7 +204,7 @@ class _MobileViewState extends ConsumerState<MobileView> {
                   }
                   final List<List<Word>> wordsByAlphabet = resp.data as List<List<Word>>;
                   return Padding(
-                    padding: 8.0.horizontalPadding + 80.0.bottomPadding,
+                    padding: 8.0.horizontalPadding + 50.0.bottomPadding,
                     child: GridView.custom(
                       controller: _scrollController,
                       padding: 80.0.bottomPadding,

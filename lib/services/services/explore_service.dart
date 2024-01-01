@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vocabhub/controller/explore_controller.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/services.dart';
@@ -14,7 +15,7 @@ class ExploreService extends ServiceBase {
   final kExploreWordsKey = 'kExploreWordsKey';
   final kScrollMessageShownDateKey = 'kScrollMessageShownDateKey';
   final kIsScrollMessageShownKey = 'kIsScrollMessageShownKey';
-
+  final kShouldAutoScroll = 'kShouldAutoScrollKey';
   @override
   Future<void> initService() async {
     _sharedPreferences = await SharedPreferences.getInstance();
@@ -66,6 +67,14 @@ class ExploreService extends ServiceBase {
     } else {
       return await VocabStoreService.getAllWords();
     }
+  }
+
+  Future<AutoScroll> getAutoScroll() async {
+    final String? autoScrollString = _sharedPreferences.getString(kShouldAutoScroll);
+    if (autoScrollString != null) {
+      return AutoScroll.fromJson(jsonDecode(autoScrollString));
+    }
+    return AutoScroll();
   }
 
   Future<void> setScrollMessageShownDate(DateTime date) {
