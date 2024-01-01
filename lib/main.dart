@@ -35,6 +35,8 @@ final appProvider =
           extended: true,
           index: 0,
           showFAB: true,
+          hasUpdate: false,
+          
         )));
 final collectionNotifier = ChangeNotifierProvider((ref) => CollectionsNotifier());
 Future<void> main() async {
