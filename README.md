@@ -20,6 +20,7 @@ Key Features:
 - Ability to suggest edits to improve the words on the platform
 - Create Custom word collections to help you learn words based on your interests.
 - Contributions on the platform are transparent and can be viewed by all users.
+- Scroll Words Automatically with HandsFree mode under explore
 - Edits made for all words are transparent and can be viewed by all users.
 - Regular updates with new words and features to keep your vocabulary journey exciting and dynamic.
 

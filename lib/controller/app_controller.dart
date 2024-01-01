@@ -8,22 +8,26 @@ class AppController {
   final int index;
   final bool showFAB;
   final bool extended;
+  final bool hasUpdate;
 
   AppController({
     this.index = 0,
     this.showFAB = true,
     this.extended = true,
+    this.hasUpdate = false,
   });
 
   AppController copyWith({
     int? index,
     bool? showFAB,
     bool? extended,
+    bool? hasUpdate,
   }) {
     return AppController(
       index: index ?? this.index,
       showFAB: showFAB ?? this.showFAB,
       extended: extended ?? this.extended,
+      hasUpdate: hasUpdate ?? this.hasUpdate,
     );
   }
 
@@ -33,6 +37,7 @@ class AppController {
     result.addAll({'index': index});
     result.addAll({'showFAB': showFAB});
     result.addAll({'extended': extended});
+    result.addAll({'hasUpdate': hasUpdate});
 
     return result;
   }
@@ -42,6 +47,7 @@ class AppController {
       index: map['index']?.toInt() ?? 0,
       showFAB: map['showFAB'] ?? false,
       extended: map['extended'] ?? false,
+      hasUpdate: map['hasUpdate'] ?? false,
     );
   }
 
@@ -50,7 +56,9 @@ class AppController {
   factory AppController.fromJson(String source) => AppController.fromMap(json.decode(source));
 
   @override
-  String toString() => 'AppController(index: $index, showFAB: $showFAB, extended: $extended)';
+  String toString() {
+    return 'AppController(index: $index, showFAB: $showFAB, extended: $extended, hasUpdate: $hasUpdate)';
+  }
 
   @override
   bool operator ==(Object other) {
@@ -59,11 +67,14 @@ class AppController {
     return other is AppController &&
         other.index == index &&
         other.showFAB == showFAB &&
-        other.extended == extended;
+        other.extended == extended &&
+        other.hasUpdate == hasUpdate;
   }
 
   @override
-  int get hashCode => index.hashCode ^ showFAB.hashCode ^ extended.hashCode;
+  int get hashCode {
+    return index.hashCode ^ showFAB.hashCode ^ extended.hashCode ^ hasUpdate.hashCode;
+  }
 }
 
 class AppNotifier extends StateNotifier<AppController> {
@@ -81,11 +92,16 @@ class AppNotifier extends StateNotifier<AppController> {
     state = state.copyWith(extended: extended);
   }
 
+  void setUpdate(bool update) {
+    state = state.copyWith(hasUpdate: update);
+  }
+
   void copyWith(AppController appController) {
     state = state.copyWith(
       index: appController.index,
       showFAB: appController.showFAB,
       extended: appController.extended,
+      hasUpdate: appController.hasUpdate
     );
   }
 }

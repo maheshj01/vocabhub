@@ -130,7 +130,7 @@ class AutoScroll {
 
   AutoScroll({
     this.enabled = true,
-    this.durationInSeconds = 10,
+    this.durationInSeconds = 30,
     this.isPaused = false
   });
 

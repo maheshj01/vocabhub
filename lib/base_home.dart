@@ -80,11 +80,19 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       await remoteConfig.fetchAndActivate();
       final version = remoteConfig.getString('${Constants.VERSION_KEY}');
       final buildNumber = remoteConfig.getInt('${Constants.BUILD_NUMBER_KEY}');
+      final appController = ref.watch(appProvider);
       if (appVersion != version || buildNumber > appBuildNumber) {
+        ref
+            .read(appProvider.notifier)
+            .copyWith(appController.copyWith(showFAB: false, extended: true, hasUpdate: true));
         showSnackBar("New Update Available", action: 'Update', persist: true, onActionPressed: () {
           analytics.logAppUpdate(settingsController.version!);
           launchUrl(Uri.parse(Constants.PLAY_STORE_URL), mode: LaunchMode.externalApplication);
         });
+      } else {
+        ref
+            .read(appProvider.notifier)
+            .copyWith(appController.copyWith(showFAB: true, extended: true, hasUpdate: false));
       }
     } catch (_) {
       setState(() {});
@@ -104,13 +112,15 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
   void showSnackBar(String message,
       {String? action, bool persist = false, Function? onActionPressed}) {
     ref.read(appProvider.notifier).setShowFAB(false);
+    final appController = ref.watch(appProvider);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       NavbarNotifier.showSnackBar(context, message,
           actionLabel: action,
+          bottom: 50,
           onActionPressed: onActionPressed,
           duration: persist ? Duration(days: 1) : Duration(seconds: 3), onClosed: () {
         if (mounted) {
-          ref.read(appProvider.notifier).setShowFAB(true);
+          ref.read(appProvider.notifier).copyWith(appController.copyWith(hasUpdate: false));
         }
       });
     });
@@ -209,7 +219,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      floatingActionButton: _buildFab(),
+      floatingActionButton: appController.hasUpdate ? null : _buildFab(),
       body: Stack(
         children: [
           NavbarRouter(
