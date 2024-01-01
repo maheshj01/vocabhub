@@ -6,6 +6,7 @@ import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/models/notification.dart';
 import 'package:vocabhub/navbar/error_page.dart';
 import 'package:vocabhub/navbar/profile/profile.dart';
+import 'package:vocabhub/pages/notifications/NotificationEditDetail.dart';
 import 'package:vocabhub/pages/notifications/notification_detail.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/vocab_theme.dart';
@@ -188,7 +189,6 @@ class _NotificationsMobileState extends ConsumerState<NotificationsMobile> {
   final GlobalKey<ScaffoldState> notificationsKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final userRef = ref.watch(userNotifierProvider);
     return Material(
       color: Colors.transparent,
@@ -225,51 +225,42 @@ class _NotificationsMobileState extends ConsumerState<NotificationsMobile> {
                           itemBuilder: (context, index) {
                             final edit = value[index].edit;
                             final editor = value[index].user;
-                            return !user!.isAdmin
-                                ? UserNotificationTile(
-                                    edit: edit,
-                                    user: editor,
-                                    onTap: () {},
-                                    onCancel: () {
-                                      updateEditRequest(edit, EditState.cancelled, editor);
-                                    },
-                                  )
-                                : AdminNotificationTile(
-                                    edit: edit,
-                                    user: editor,
-                                    onAvatarTap: () {
-                                      Navigate.push(
-                                          context,
-                                          Scaffold(
-                                              appBar: AppBar(
-                                                elevation: 0,
-                                                centerTitle: false,
-                                                title: Text(
-                                                  'Profile',
-                                                ),
-                                              ),
-                                              body: UserProfile(
-                                                email: editor.email,
-                                                isReadOnly: true,
-                                              )));
-                                    },
-                                    onAction: (approved) async {
-                                      if (approved) {
-                                        updateGlobalDatabase(edit, EditState.approved, editor);
-                                      } else {
-                                        updateEditRequest(edit, EditState.rejected, editor);
-                                      }
-                                    },
-                                    onTap: () {
-                                      Navigate.push(
-                                          context,
-                                          NotificationDetail(
-                                            word: edit.word,
-                                            title: 'Edit History',
-                                            isNotification: true,
-                                          ));
-                                    },
-                                  );
+                            return AdminNotificationTile(
+                              edit: edit,
+                              user: editor,
+                              onAvatarTap: () {
+                                Navigate.push(
+                                    context,
+                                    Scaffold(
+                                        appBar: AppBar(
+                                          elevation: 0,
+                                          centerTitle: false,
+                                          title: Text(
+                                            'Profile',
+                                          ),
+                                        ),
+                                        body: UserProfile(
+                                          email: editor.email,
+                                          isReadOnly: true,
+                                        )));
+                              },
+                              onAction: (approved) async {
+                                if (approved) {
+                                  updateGlobalDatabase(edit, EditState.approved, editor);
+                                } else {
+                                  updateEditRequest(edit, EditState.rejected, editor);
+                                }
+                              },
+                              onTap: () {
+                                Navigate.push(
+                                    context,
+                                    NotificationDetail(
+                                      word: edit.word,
+                                      title: 'Edit History',
+                                      isNotification: true,
+                                    ));
+                              },
+                            );
                           },
                           itemCount: value.length),
                     );
@@ -289,9 +280,9 @@ class _NotificationsMobileState extends ConsumerState<NotificationsMobile> {
                             onTap: () {
                               Navigate.push(
                                   context,
-                                  NotificationDetail(
+                                  NotificationEditDetailResponsive(
                                     word: edit.word,
-                                    title: 'Edit History',
+                                    title: 'Edit Detail',
                                     isNotification: true,
                                   ));
                             },

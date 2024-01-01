@@ -361,7 +361,7 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
                             trailing: VHIcon(Icons.bookmarks),
                             onTap: () async {
-                              ref.read(appProvider.notifier).setShowFAB(false);
+                              // ref.read(appProvider.notifier).setShowFAB(false);
                               if (size.width < 600) {
                                 NavbarNotifier.hideBottomNavBar = true;
                               }
@@ -380,7 +380,7 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                                           );
                                         });
                                   });
-                              ref.read(appProvider.notifier).setShowFAB(true);
+                              // ref.read(appProvider.notifier).setShowFAB(true);
                               NavbarNotifier.hideBottomNavBar = false;
                             },
                           ),

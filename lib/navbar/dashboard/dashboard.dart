@@ -329,7 +329,8 @@ class _DashboardCollectionsState extends ConsumerState<DashboardCollections> {
                       Expanded(child: heading('Collections', color: colorScheme.primary)),
                       IconButton(
                           onPressed: () async {
-                            ref.read(appProvider.notifier).setShowFAB(false);
+                            // to hide fab
+                            ref.read(appProvider.notifier).setUpdate(true);
                             if (size.width < 600) {
                               NavbarNotifier.hideBottomNavBar = true;
                             }
@@ -351,7 +352,7 @@ class _DashboardCollectionsState extends ConsumerState<DashboardCollections> {
                                         );
                                       });
                                 });
-                            ref.read(appProvider.notifier).setShowFAB(true);
+                            ref.read(appProvider.notifier).setUpdate(false);
                             NavbarNotifier.hideBottomNavBar = false;
                           },
                           icon: Icon(
