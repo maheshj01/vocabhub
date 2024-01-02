@@ -10,6 +10,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/controller/auth_controller.dart';
 import 'package:vocabhub/controller/collections_controller.dart';
@@ -20,6 +21,8 @@ import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/pages/splashscreen.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
+import 'package:vocabhub/themes/theme_utils.dart';
+import 'package:vocabhub/themes/vocabtheme_controller.dart';
 import 'package:vocabhub/utils/firebase_options.dart';
 import 'package:vocabhub/utils/logger.dart';
 
@@ -36,11 +39,28 @@ final appProvider =
           index: 0,
           showFAB: true,
           hasUpdate: false,
-          
         )));
+// final appThemeProvider = StateNotifierProvider<VocabThemeNotifier, VocabThemeController>(
+//     (ref) => VocabThemeNotifier(ref));
+
+// same as above comment
+final appThemeProvider =
+    StateNotifierProvider<VocabThemeNotifier, VocabThemeController>(VocabThemeNotifier.new);
+
 final collectionNotifier = ChangeNotifierProvider((ref) => CollectionsNotifier());
+
+final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
+  throw UnimplementedError();
+});
+
+final themeUtilityProvider = Provider<ThemeUtility>((ref) {
+  final sharedPrefs = ref.watch(sharedPreferencesProvider);
+  return ThemeUtility(sharedPreferences: sharedPrefs);
+});
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final sharedPreferences = await SharedPreferences.getInstance();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   firebaseAnalytics = FirebaseAnalytics.instance;
   usePathUrlStrategy();
@@ -59,6 +79,9 @@ Future<void> main() async {
   // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   addWordController.initService();
   runApp(ProviderScope(
+    overrides: [
+      sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+    ],
     child: VocabApp(),
   ));
 }
@@ -159,7 +182,8 @@ class _VocabAppState extends ConsumerState<VocabApp> {
       child: AnimatedBuilder(
           animation: settingsController,
           builder: (BuildContext context, Widget? child) {
-            final colorScheme = ColorScheme.fromSeed(seedColor: settingsController.themeSeed);
+            final appThemeController = ref.watch(appThemeProvider);
+            final colorScheme = ColorScheme.fromSeed(seedColor: appThemeController.themeSeed);
             return FeatureDiscovery(
               child: MaterialApp(
                 title: Constants.APP_TITLE,
@@ -177,16 +201,16 @@ class _VocabAppState extends ConsumerState<VocabApp> {
                     scaffoldBackgroundColor: colorScheme.background,
                     colorScheme: ColorScheme.fromSeed(
                         background: Colors.transparent,
-                        surface: settingsController.isDark
+                        surface: appThemeController.isDark
                             ? Colors.black.withOpacity(0.3)
                             : Colors.white.withOpacity(0.3),
-                        seedColor: settingsController.themeSeed,
+                        seedColor: appThemeController.themeSeed,
                         brightness: Brightness.dark)),
                 theme: ThemeData(
                     useMaterial3: true,
                     textTheme: GoogleFonts.quicksandTextTheme(),
                     scaffoldBackgroundColor: colorScheme.background,
-                    colorScheme: ColorScheme.fromSeed(seedColor: settingsController.themeSeed)),
+                    colorScheme: ColorScheme.fromSeed(seedColor: appThemeController.themeSeed)),
                 routes: {
                   Notifications.route: (context) => Notifications(),
                   WebViewPage.routeName: (context) => WebViewPage(
@@ -194,7 +218,7 @@ class _VocabAppState extends ConsumerState<VocabApp> {
                         url: Constants.PRIVACY_POLICY,
                       ),
                 },
-                themeMode: settingsController.theme,
+                themeMode: appThemeController.isDark ? ThemeMode.dark : ThemeMode.light,
                 home: SplashScreen(),
               ),
             );

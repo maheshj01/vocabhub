@@ -113,7 +113,7 @@ Widget circle({Color color = Colors.red, double size = 16}) {
 }
 
 RichText differenceVisualizerByWord(String editedText, String oldText,
-    {bool isOldVersion = true, TextAlign textAlign = TextAlign.start}) {
+    {bool isOldVersion = true, TextAlign textAlign = TextAlign.start, required bool isDark}) {
   final oldTextList = oldText.split(' ');
   final newTextList = editedText.split(' ');
   final oldTextLength = oldTextList.length;
@@ -125,7 +125,7 @@ RichText differenceVisualizerByWord(String editedText, String oldText,
     text: TextSpan(
       style: TextStyle(
         fontSize: 16.0,
-        color: settingsController.isDark ? Colors.white : Colors.black,
+        color: isDark ? Colors.white : Colors.black,
       ),
       children: <TextSpan>[
         for (int i = 0; i < minLengthList; i++)
@@ -155,7 +155,7 @@ RichText differenceVisualizerByWord(String editedText, String oldText,
 }
 
 RichText differenceVisualizerGranular(String editedText, String oldText,
-    {bool isOldVersion = true, TextAlign textAlign = TextAlign.start}) {
+    {bool isOldVersion = true, TextAlign textAlign = TextAlign.start, required bool isDark}) {
   final oldTextLength = oldText.length;
   final newTextLength = editedText.length;
   final minLength = min(newTextLength, oldTextLength);
@@ -164,7 +164,7 @@ RichText differenceVisualizerGranular(String editedText, String oldText,
     text: TextSpan(
       style: TextStyle(
         fontSize: 14.0,
-        color: settingsController.isDark ? Colors.white : Colors.black,
+        color: isDark ? Colors.white : Colors.black,
       ),
       children: <TextSpan>[
         for (int i = 0; i < minLength; i++)

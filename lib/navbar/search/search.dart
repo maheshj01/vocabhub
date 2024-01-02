@@ -238,7 +238,7 @@ class _MobileViewState extends ConsumerState<MobileView> {
   }
 }
 
-class WordTile extends StatelessWidget {
+class WordTile extends ConsumerWidget {
   final int index;
   final String title;
   final List<Word>? wordList;
@@ -246,7 +246,7 @@ class WordTile extends StatelessWidget {
   const WordTile({super.key, required this.title, required this.index, this.wordList});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final randomColor = Colors.primaries[index % Colors.primaries.length].withOpacity(0.8);
     final randomDarkColor =
         Colors.primaries[index % Colors.primaries.length].shade900.withOpacity(0.8);
@@ -262,7 +262,7 @@ class WordTile extends StatelessWidget {
         child: Container(
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: settingsController.isDark ? randomDarkColor : randomColor,
+              color: ref.read(appThemeProvider).isDark ? randomDarkColor : randomColor,
               borderRadius: BorderRadius.all(Radius.circular(16)),
             ),
             child: Text(

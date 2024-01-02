@@ -91,6 +91,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final user = ref.watch(userNotifierProvider);
+    final appTheme = ref.read(appThemeProvider);
     ref.listen<UserModel>(userNotifierProvider, (UserModel? userOld, UserModel? userNew) {
       if (userNew != null) {
         user.setUser(userNew);
@@ -124,7 +125,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                     )),
                 Spacer(),
                 Icon(
-                  settingsController.isDark ? Icons.dark_mode : Icons.light_mode,
+                  appTheme.isDark ? Icons.dark_mode : Icons.light_mode,
                   color: colorScheme.primary,
                 ),
                 10.0.hSpacer(),
@@ -132,9 +133,9 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                     animation: settingsController,
                     builder: (context, child) {
                       return VocabSwitch(
-                          value: settingsController.isDark,
+                          value: appTheme.isDark,
                           onChanged: (x) {
-                            settingsController.setTheme(x ? ThemeMode.dark : ThemeMode.light);
+                            ref.read(appThemeProvider.notifier).setDark(x);
                             widget.onThemeChanged(x ? ThemeMode.dark : ThemeMode.light);
                           });
                     }),
@@ -145,9 +146,9 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
               animation: settingsController,
               builder: (context, child) {
                 return ThemeSelector(
-                    value: settingsController.themeSeed,
+                    value: appTheme.themeSeed,
                     onThemeChanged: (val) {
-                      settingsController.themeSeed = val;
+                      ref.read(appThemeProvider.notifier).setThemeSeed(val);
                       widget.onThemeChanged(val);
                     });
               }),
@@ -230,8 +231,12 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                                                 min: 10,
                                                 max: 30,
                                                 value: settingsController
-                                                    .autoScroll.durationInSeconds
-                                                    .toDouble(),
+                                                            .autoScroll.durationInSeconds <
+                                                        10
+                                                    ? 10.0
+                                                    : settingsController
+                                                        .autoScroll.durationInSeconds
+                                                        .toDouble(),
                                                 inactiveColor: Colors.grey,
                                                 onChanged: (x) {
                                                   settingsController.autoScroll = settingsController

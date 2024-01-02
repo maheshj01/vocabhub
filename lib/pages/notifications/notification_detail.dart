@@ -224,7 +224,7 @@ class _NotificationDetailMobileState extends ConsumerState<NotificationDetailMob
   }
 }
 
-class DifferenceVisualizer extends StatelessWidget {
+class DifferenceVisualizer extends ConsumerWidget {
   const DifferenceVisualizer(
       {super.key, required this.newVersion, required this.oldVersion, required this.title});
 
@@ -233,10 +233,12 @@ class DifferenceVisualizer extends StatelessWidget {
   final String title;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (oldVersion.isEmpty && newVersion.isEmpty) {
       return SizedBox.shrink();
     }
+
+    final appThemeController = ref.watch(appThemeProvider);
 
     bool hasChange = newVersion != oldVersion;
     if (!hasChange) {
@@ -262,11 +264,13 @@ class DifferenceVisualizer extends StatelessWidget {
         children: [
           newVersion.isEmpty
               ? SizedBox()
-              : differenceVisualizerGranular(newVersion, oldVersion, isOldVersion: false),
+              : differenceVisualizerGranular(newVersion, oldVersion,
+                  isOldVersion: false, isDark: appThemeController.isDark),
           oldVersion.isEmpty ? SizedBox.shrink() : 8.0.vSpacer(),
           oldVersion.isEmpty
               ? SizedBox.shrink()
-              : differenceVisualizerGranular(newVersion, oldVersion, isOldVersion: true),
+              : differenceVisualizerGranular(newVersion, oldVersion,
+                  isOldVersion: true, isDark: appThemeController.isDark),
         ],
       ),
     );

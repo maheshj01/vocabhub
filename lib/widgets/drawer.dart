@@ -85,6 +85,7 @@ class _DrawerBuilderState extends ConsumerState<DrawerBuilder> {
       );
     }
 
+    final appThemeController = ref.watch(appThemeProvider);
     final bool isAdmin = (userProvider.isLoggedIn && userProvider.isAdmin);
 
     return Drawer(
@@ -153,7 +154,7 @@ class _DrawerBuilderState extends ConsumerState<DrawerBuilder> {
                 'Source code',
               ),
               trailing: Image.asset(
-                settingsController.isDark ? GITHUB_WHITE_ASSET_PATH : GITHUB_ASSET_PATH,
+                appThemeController.isDark ? GITHUB_WHITE_ASSET_PATH : GITHUB_ASSET_PATH,
                 width: 26,
               ),
             ),

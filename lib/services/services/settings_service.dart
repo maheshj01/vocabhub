@@ -39,15 +39,6 @@ class SettingsService extends ServiceBase {
     return count;
   }
 
-  void setTheme(ThemeMode value) {
-    _sharedPreferences.setBool(kThemeKey, value == ThemeMode.dark);
-  }
-
-  Future<ThemeMode> getTheme() async {
-    final bool theme = _sharedPreferences.getBool(kThemeKey) ?? true;
-    return theme == true ? ThemeMode.dark : ThemeMode.light;
-  }
-
   Future<void> setOnboarded(bool value) async {
     await _sharedPreferences.setBool(kOnboardedKey, value);
   }
