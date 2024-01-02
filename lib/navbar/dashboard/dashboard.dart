@@ -132,7 +132,7 @@ class DashboardMobile extends ConsumerWidget {
     final user = ref.watch(userNotifierProvider);
     final word = dashboardController.wordOfTheDay;
     return Padding(
-      padding: 80.0.bottomPadding,
+      padding: (kNavbarHeight * 1.2).bottomPadding,
       child: CustomScrollView(
         scrollBehavior: const MaterialScrollBehavior().copyWith(overscroll: true),
         physics: BouncingScrollPhysics(

@@ -1,9 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/utils/size_utils.dart';
 
-class ResponsiveBuilder extends StatefulWidget {
+class ResponsiveBuilder extends ConsumerStatefulWidget {
   final WidgetBuilder desktopBuilder;
   final WidgetBuilder mobileBuilder;
   final bool animate;
@@ -24,10 +26,11 @@ class ResponsiveBuilder extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<ResponsiveBuilder> createState() => _ResponsiveBuilderState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ResponsiveBuilderState();
 }
 
-class _ResponsiveBuilderState extends State<ResponsiveBuilder> with TickerProviderStateMixin {
+class _ResponsiveBuilderState extends ConsumerState<ResponsiveBuilder>
+    with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
@@ -37,18 +40,21 @@ class _ResponsiveBuilderState extends State<ResponsiveBuilder> with TickerProvid
     } else {
       _animation = AlwaysStoppedAnimation(widget.initialAnimationValue);
     }
-    if (widget.repeatAnimation) {
-      _controller.repeat(reverse: true);
-    } else {
-      _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
-      _controller.forward();
-      _controller.addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          widget.onAnimateComplete?.call();
-          _controller.stop();
-          // _controller.reset();
-        }
-      });
+    final apptheme = ref.read(appThemeProvider);
+    if (!apptheme.isClassic) {
+      if (widget.repeatAnimation) {
+        _controller.repeat(reverse: true);
+      } else {
+        _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
+        _controller.forward();
+        _controller.addStatusListener((status) {
+          if (status == AnimationStatus.completed) {
+            widget.onAnimateComplete?.call();
+            _controller.stop();
+            // _controller.reset();
+          }
+        });
+      }
     }
   }
 
@@ -65,9 +71,9 @@ class _ResponsiveBuilderState extends State<ResponsiveBuilder> with TickerProvid
 
   @override
   void didUpdateWidget(covariant ResponsiveBuilder oldWidget) {
+    print('didUpdateWidget');
     if (oldWidget.animate != widget.animate) {
       _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
-
       if (widget.animate) {
         if (widget.repeatAnimation) {
           _controller.repeat(reverse: true);
@@ -109,21 +115,24 @@ class _ResponsiveBuilderState extends State<ResponsiveBuilder> with TickerProvid
         if (!SizeUtils.isMobile) {
           return widget.desktopBuilder(context);
         }
+        final appTheme = ref.watch(appThemeProvider);
         return Stack(
           children: [
-            AnimatedBuilder(
-                animation: _animation,
-                builder: (context, child) {
-                  return CustomPaint(
-                    painter: BackgroundPainter(
-                      primaryColor: colorScheme.primary,
-                      secondaryColor: colorScheme.inversePrimary,
-                      animation: _animation,
-                    ),
-                    child: Container(),
-                  );
-                }),
-            BackdropFilter(filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60), child: Container()),
+            if (!appTheme.isClassic)
+              AnimatedBuilder(
+                  animation: _animation,
+                  builder: (context, child) {
+                    return CustomPaint(
+                      painter: BackgroundPainter(
+                        primaryColor: colorScheme.primary,
+                        secondaryColor: colorScheme.inversePrimary,
+                        animation: _animation,
+                      ),
+                      child: Container(),
+                    );
+                  }),
+            if (!appTheme.isClassic)
+              BackdropFilter(filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60), child: Container()),
             widget.mobileBuilder(context),
           ],
         );

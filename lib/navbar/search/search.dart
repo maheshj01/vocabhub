@@ -204,10 +204,9 @@ class _MobileViewState extends ConsumerState<MobileView> {
                   }
                   final List<List<Word>> wordsByAlphabet = resp.data as List<List<Word>>;
                   return Padding(
-                    padding: 8.0.horizontalPadding + 50.0.bottomPadding,
+                    padding: 8.0.horizontalPadding + (kNavbarHeight * 1.2).bottomPadding,
                     child: GridView.custom(
                       controller: _scrollController,
-                      padding: 80.0.bottomPadding,
                       gridDelegate: SliverQuiltedGridDelegate(
                         crossAxisCount: 4,
                         mainAxisSpacing: 8,
@@ -472,7 +471,7 @@ class _SearchViewPageState extends State<SearchViewPage> {
                             ),
                             Expanded(
                               child: ListView.builder(
-                                padding: kBottomNavigationBarHeight.bottomPadding,
+                                padding: (kNavbarHeight * 1.2).bottomPadding,
                                 itemBuilder: (context, index) {
                                   return Container(
                                       margin: 8.0.horizontalPadding + 4.0.verticalPadding,

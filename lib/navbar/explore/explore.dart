@@ -216,7 +216,7 @@ class _ExploreWordsMobileState extends ConsumerState<ExploreWordsMobile>
                           animation: _progressAnimationController,
                           builder: (context, child) {
                             return Padding(
-                              padding: 80.0.bottomPadding + 24.0.topPadding,
+                              padding: (kNavbarHeight * 1.2).bottomPadding + 24.0.topPadding,
                               child: settingsController.autoScroll.enabled
                                   ? LinearProgressIndicator(
                                       value: _progressAnimationController.value,

@@ -116,7 +116,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       NavbarNotifier.showSnackBar(context, message,
           actionLabel: action,
-          bottom: 50,
+          bottom: kNavbarHeight * 1.2,
           onActionPressed: onActionPressed,
           duration: persist ? Duration(days: 1) : Duration(seconds: 3), onClosed: () {
         if (mounted) {
@@ -197,7 +197,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       final icon = Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28);
       if (appController.showFAB || (appController.index < 2 && user!.isLoggedIn)) {
         return Padding(
-            padding: (kM3NavbarHeight).bottomPadding,
+            padding: (kNavbarHeight * 1.2).bottomPadding,
             child: FloatingActionButton.extended(
                 backgroundColor: colorScheme.primaryContainer,
                 heroTag: "addword${DateTime.now().millisecondsSinceEpoch}",
@@ -250,9 +250,8 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
               exploreController.scrollToIndex = 0;
             },
             onChanged: (x) async {
-              ref
-                  .read(appProvider.notifier)
-                  .copyWith(appController.copyWith(index: x, showFAB: x < 2, extended: true));
+              ref.read(appProvider.notifier).copyWith(appController.copyWith(
+                  index: x, showFAB: x < 2 && user!.isLoggedIn, extended: true));
 
               /// Simulate DragGesture on pageView
               final pageController = exploreController.pageController;
@@ -269,7 +268,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
               }
             },
             decoration: FloatingNavbarDecoration(
-              height: 80,
+              height: kNavbarHeight * 1.2,
               backgroundColor: SizeUtils.isDesktop
                   ? colorScheme.surfaceVariant
                   : colorScheme.scrim.withOpacity(0.2),

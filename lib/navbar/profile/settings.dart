@@ -91,7 +91,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final user = ref.watch(userNotifierProvider);
-    final appTheme = ref.read(appThemeProvider);
+    final appTheme = ref.watch(appThemeProvider);
     ref.listen<UserModel>(userNotifierProvider, (UserModel? userOld, UserModel? userNew) {
       if (userNew != null) {
         user.setUser(userNew);
@@ -118,7 +118,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
             padding: 16.0.horizontalPadding,
             child: Row(
               children: [
-                Text('Theme',
+                Text('${appTheme.isDark ? 'Dark' : 'Light'} Theme',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w400,
@@ -129,28 +129,52 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                   color: colorScheme.primary,
                 ),
                 10.0.hSpacer(),
-                AnimatedBuilder(
-                    animation: settingsController,
-                    builder: (context, child) {
-                      return VocabSwitch(
-                          value: appTheme.isDark,
-                          onChanged: (x) {
-                            ref.read(appThemeProvider.notifier).setDark(x);
-                            widget.onThemeChanged(x ? ThemeMode.dark : ThemeMode.light);
-                          });
-                    }),
+                VocabSwitch(
+                    value: appTheme.isDark,
+                    onChanged: (x) {
+                      ref.read(appThemeProvider.notifier).setDark(x);
+                      // widget.onThemeChanged(x ? ThemeMode.dark : ThemeMode.light);
+                    })
               ],
             ),
           ),
-          AnimatedBuilder(
-              animation: settingsController,
-              builder: (context, child) {
-                return ThemeSelector(
-                    value: appTheme.themeSeed,
-                    onThemeChanged: (val) {
-                      ref.read(appThemeProvider.notifier).setThemeSeed(val);
-                      widget.onThemeChanged(val);
-                    });
+          Padding(
+            padding: 16.0.horizontalPadding,
+            child: Row(
+              children: [
+                Text('Use Classic Theme',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400,
+                    )),
+                Spacer(),
+                VocabSwitch(
+                    value: appTheme.isClassic,
+                    onChanged: (x) {
+                      ref.read(appThemeProvider.notifier).setClassic(x);
+                      widget.onThemeChanged(x);
+                    })
+              ],
+            ),
+          ),
+          Padding(
+            padding: 16.0.horizontalPadding,
+            child: Row(
+              children: [
+                Text('Choose color scheme',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400,
+                    )),
+                Spacer(),
+              ],
+            ),
+          ),
+          ThemeSelector(
+              value: appTheme.themeSeed,
+              onThemeChanged: (val) {
+                ref.read(appThemeProvider.notifier).setThemeSeed(val);
+                widget.onThemeChanged(val);
               }),
           20.0.vSpacer(),
           hLine(),
