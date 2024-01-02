@@ -221,11 +221,6 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                                   title: Text('Hands Free Mode'),
                                   subtitle: Text(
                                     'if enabled words will AutoScroll in explore page',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: colorScheme.onSurface.withOpacity(0.6),
-                                    ),
                                   ),
                                   trailing: VocabSwitch(
                                       value: settingsController.autoScroll.enabled,

@@ -71,7 +71,6 @@ class _ResponsiveBuilderState extends ConsumerState<ResponsiveBuilder>
 
   @override
   void didUpdateWidget(covariant ResponsiveBuilder oldWidget) {
-    print('didUpdateWidget');
     if (oldWidget.animate != widget.animate) {
       _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
       if (widget.animate) {

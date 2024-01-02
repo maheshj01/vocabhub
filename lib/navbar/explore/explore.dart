@@ -216,7 +216,7 @@ class _ExploreWordsMobileState extends ConsumerState<ExploreWordsMobile>
                           animation: _progressAnimationController,
                           builder: (context, child) {
                             return Padding(
-                              padding: (kNavbarHeight * 1.2).bottomPadding + 24.0.topPadding,
+                              padding: (kNavbarHeight * 1.2).bottomPadding,
                               child: settingsController.autoScroll.enabled
                                   ? LinearProgressIndicator(
                                       value: _progressAnimationController.value,
@@ -290,7 +290,7 @@ class _ExploreWordsDesktopState extends State<ExploreWordsDesktop> {
           fit: StackFit.expand,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40),
+              padding: 40.0.horizontalPadding,
               child: PageView.builder(
                   itemCount: words.length,
                   controller: exploreController.pageController,
@@ -421,7 +421,7 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
                   Stack(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: kToolbarHeight * 0.2, bottom: 12),
+                        padding: (kToolbarHeight * 0.4).topPadding + 12.0.bottomPadding,
                         child: Align(
                           alignment: Alignment.topCenter,
                           child: WordTitleBuilder(
@@ -546,7 +546,8 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
                         } else {
                           return SizedBox.shrink();
                         }
-                      })
+                      }),
+                  16.0.vSpacer()
                 ],
               );
             });
