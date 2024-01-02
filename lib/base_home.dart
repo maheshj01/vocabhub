@@ -12,6 +12,7 @@ import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/navbar/navbar.dart';
 import 'package:vocabhub/navbar/profile/about.dart';
 import 'package:vocabhub/navbar/profile/settings.dart';
+import 'package:vocabhub/navbar/search/search_view.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
