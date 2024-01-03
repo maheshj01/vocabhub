@@ -10,8 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/navbar/navbar.dart';
-import 'package:vocabhub/navbar/profile/about.dart';
-import 'package:vocabhub/navbar/profile/settings.dart';
+import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/navbar/search/search_view.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/login.dart';
@@ -117,7 +116,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       NavbarNotifier.showSnackBar(context, message,
           actionLabel: action,
-          bottom: kNavbarHeight * 1.2,
+          bottom: 50,
           onActionPressed: onActionPressed,
           duration: persist ? Duration(days: 1) : Duration(seconds: 3), onClosed: () {
         if (mounted) {
@@ -170,9 +169,8 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     if (user!.isLoggedIn) {
       _routes.addAll({
         3: {
-          UserProfile.route: UserProfile(),
-          SettingsPage.route: SettingsPage(),
-          AboutVocabhub.route: AboutVocabhub(),
+          UserProfileNavigator.route: UserProfileNavigator(),
+          EditProfile.route: EditProfile(),
         }
       });
       if (items.length < 4) {
@@ -244,6 +242,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                 return isExiting;
               }
             },
+            shouldPopToBaseRoute: true,
             isDesktop: !SizeUtils.isMobile,
             // destinationAnimationCurve: Curves.fastOutSlowIn,
             destinationAnimationDuration: SizeUtils.isDesktop ? 0 : 0,

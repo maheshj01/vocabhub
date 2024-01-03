@@ -1,4 +1,3 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
@@ -21,7 +20,6 @@ class AppSignIn extends ConsumerStatefulWidget {
 
 class _AppSignInState extends ConsumerState<AppSignIn> {
   AuthService auth = AuthService();
-  FirebaseMessaging _messaging = FirebaseMessaging.instance;
   Future<void> _handleSignIn(BuildContext context) async {
     final _userNotifier = ref.read(userNotifierProvider);
     try {
@@ -47,9 +45,23 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
             _userNotifier.loggedIn = false;
             NavbarNotifier.showSnackBar(context, '$signInFailure');
             _requestNotifier.value = Response(state: RequestState.done);
-            throw 'failed to register new user';
+            throw '$registration_Failed';
           }
         } else {
+          if (existingUser.isDeleted) {
+            _requestNotifier.value = Response(state: RequestState.done);
+            NavbarNotifier.showSnackBar(
+              context,
+              '$accountDeleted ${Constants.FEEDBACK_EMAIL_TO}',
+              actionLabel: 'Contact Support',
+              showCloseIcon: false,
+              duration: Duration(seconds: 10),
+              onActionPressed: () => launchURL(
+                accountActivationEmail,
+              ),
+            );
+            return;
+          }
           existingUser.loggedIn = true;
           _userNotifier.setUser(existingUser);
           user = user!.copyWith(
@@ -59,6 +71,7 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
             data: {
               Constants.USER_LOGGEDIN_COLUMN: true,
               Constants.USER_TOKEN_COLUMN: token,
+              Constants.DELETED_COLUMN: false
             },
             email: existingUser.email,
           );
@@ -69,10 +82,10 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
       } else {
         NavbarNotifier.showSnackBar(context, '$signInFailure');
         _requestNotifier.value = Response(state: RequestState.done);
-        throw 'failed to register new user';
+        throw '$registration_Failed';
       }
     } catch (error) {
-      NavbarNotifier.showSnackBar(context, error.toString());
+      NavbarNotifier.showSnackBar(context, bottom: 0, error.toString());
       _requestNotifier.value = Response(state: RequestState.done);
       _userNotifier.loggedIn = false;
     }
@@ -180,19 +193,22 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
                     );
                   },
                   mobileBuilder: (x) {
-                    return Container(
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                        200.0.vSpacer(),
-                        // _heading('Hi!'),
-                        _heading('Welcome!'),
-                        Expanded(child: Container()),
-                        _signInButton(),
+                    return Scaffold(
+                      backgroundColor: Colors.transparent,
+                      body: Container(
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                          200.0.vSpacer(),
+                          // _heading('Hi!'),
+                          _heading('Welcome!'),
+                          Expanded(child: Container()),
+                          _signInButton(),
 
-                        20.0.vSpacer(),
-                        _skipButton(),
-                        Expanded(child: Container()),
-                        100.0.vSpacer(),
-                      ]),
+                          20.0.vSpacer(),
+                          _skipButton(),
+                          Expanded(child: Container()),
+                          100.0.vSpacer(),
+                        ]),
+                      ),
                     );
                   }));
         });

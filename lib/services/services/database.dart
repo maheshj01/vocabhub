@@ -237,8 +237,8 @@ class DatabaseService {
   /// updates a row in the table
   /// update `tableName` where `columnName` = `colValue`
   /// with `data`
-  static Future<PostgrestResponse> updateRow(
-      {required String colValue,
+  static Future<PostgrestResponse> updateRow<T>(
+      {required T colValue,
       required Map<String, dynamic> data,
       String columnName = '${Constants.ID_COLUMN}',
       String tableName = '${Constants.VOCAB_TABLE_NAME}'}) async {

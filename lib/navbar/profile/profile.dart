@@ -19,9 +19,44 @@ import 'package:vocabhub/widgets/icon.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
+class UserProfileNavigator extends StatefulWidget {
+  static const String route = '/';
+  const UserProfileNavigator({super.key});
+
+  @override
+  State<UserProfileNavigator> createState() => _UserProfileNavigatorState();
+}
+
+class _UserProfileNavigatorState extends State<UserProfileNavigator> {
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      initialRoute: UserProfile.route,
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case UserProfile.route:
+            return MaterialPageRoute(builder: (context) => UserProfile());
+          case EditProfile.route:
+            return MaterialPageRoute(
+                builder: (context) => EditProfile(
+                      onClose: () {},
+                    ));
+          case SettingsPage.route:
+            return MaterialPageRoute(builder: (context) => SettingsPage());
+
+          default:
+            return MaterialPageRoute(
+                builder: (context) => ErrorPage(
+                    onRetry: () {}, errorMessage: 'Oh no! You have landed on an unknown planet '));
+        }
+      },
+    );
+  }
+}
+
 /// when specidying readOnly as true, email must be provided
 class UserProfile extends ConsumerStatefulWidget {
-  static const String route = '/';
+  static const String route = '/profile';
   final bool isReadOnly;
   final String email;
   UserProfile({Key? key, this.isReadOnly = false, this.email = ''}) : super(key: key);
@@ -267,14 +302,11 @@ class _UserProfileMobileState extends ConsumerState<UserProfileMobile> {
                                           size: 30,
                                           onTap: () {
                                             Navigator.of(context, rootNavigator: true)
-                                                .push(PageRoutes.sharedAxis(
-                                                    EditProfile(
-                                                      user: user,
-                                                      onClose: () async {
-                                                        setState(() {});
-                                                      },
-                                                    ),
-                                                    SharedAxisTransitionType.scaled));
+                                                .push(PageRoutes.sharedAxis(EditProfile(
+                                              onClose: () async {
+                                                setState(() {});
+                                              },
+                                            ), SharedAxisTransitionType.scaled));
                                           },
                                         ))
                               ],

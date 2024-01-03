@@ -74,6 +74,27 @@ class UserService {
     }
   }
 
+  static Future<bool> deleteUser(UserModel user) async {
+    try {
+      final response = await DatabaseService.updateByColumn(
+          searchValue: user.email,
+          data: {
+            Constants.DELETED_COLUMN: true,
+            Constants.USER_LOGGEDIN_COLUMN: false,
+            Constants.UPDATED_AT_COLUMN: DateTime.now().toIso8601String()
+          },
+          searchColumn: Constants.USER_EMAIL_COLUMN,
+          tableName: _tableName);
+      if (response.status == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// ```Select * from words;```
   static Future<List<User>> findAllUsers() async {
     List<User> users = [];

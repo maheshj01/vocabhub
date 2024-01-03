@@ -3,19 +3,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/user.dart';
+import 'package:vocabhub/pages/addword.dart';
+import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
 import 'package:vocabhub/widgets/responsive.dart';
+import 'package:vocabhub/widgets/widgets.dart';
 
 class EditProfile extends StatefulWidget {
-  final UserModel? user;
+  static const String route = '/edit-profile';
   final VoidCallback? onClose;
 
-  static const String route = '/';
-  EditProfile({Key? key, required this.user, this.onClose}) : super(key: key);
+  EditProfile({Key? key, this.onClose}) : super(key: key);
 
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -25,7 +27,7 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
-      desktopBuilder: (context) => EditProfileDesktop(),
+      desktopBuilder: (context) => EditProfileMobile(),
       mobileBuilder: (context) => EditProfileMobile(
         onClose: widget.onClose,
       ),
@@ -55,10 +57,10 @@ class _EditProfileMobileState extends ConsumerState<EditProfileMobile> {
     });
   }
 
-  ValueNotifier<bool?> _validNotifier = ValueNotifier<bool?>(null);
+  ValueNotifier<Response> _validNotifier =
+      ValueNotifier<Response>(Response(state: RequestState.none));
   ValueNotifier<Response> _responseNotifier =
       ValueNotifier<Response>(Response(state: RequestState.none));
-  String error = '';
   TextEditingController _nameController = TextEditingController();
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
@@ -71,148 +73,233 @@ class _EditProfileMobileState extends ConsumerState<EditProfileMobile> {
     super.dispose();
   }
 
+  Future<void> showDeleteConfirmation(Function onDelete) async {
+    // drafts found in local storage
+    await showDialog(
+        context: context,
+        builder: (x) => VocabAlert(
+            title: 'Are you sure you want to delete your account?',
+            subtitle: 'Note: This action cannot be undone',
+            actionTitle1: 'Confirm Account Deletion',
+            actionTitle2: 'Cancel',
+            onAction1: () {
+              onDelete();
+            },
+            onAction2: () async {
+              Navigator.of(context).pop();
+            }));
+  }
+
   Future<void> validateUsername(String username) async {
-    _validNotifier.value = null;
+    _validNotifier.value = Response(state: RequestState.active, didSucced: true);
     RegExp usernamePattern = new RegExp(r"^[a-zA-Z0-9_]{3,}$");
     if (username.length < 3 || !usernamePattern.hasMatch(username)) {
-      error = 'Username should contain letters, numbers and underscores with minimum 3 characters';
-      _validNotifier.value = false;
+      _validNotifier.value =
+          Response(data: userNameConstraints, state: RequestState.error, didSucced: false);
       return;
     } else {
       final bool isUsernameValid = await UserService.isUsernameValid(username);
       if (isUsernameValid) {
-        error = 'Username is available';
+        _validNotifier.value =
+            Response(state: RequestState.done, data: 'Username is available', didSucced: true);
       } else {
-        error = 'Username is not available';
+        _validNotifier.value =
+            Response(state: RequestState.error, data: 'Username is not available', didSucced: true);
       }
-      _validNotifier.value = isUsernameValid;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     UserModel user = ref.watch(userNotifierProvider);
+    final apptheme = ref.read(appThemeProvider);
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('Edit Profile'),
         backgroundColor: Colors.transparent,
       ),
-      body: ValueListenableBuilder<Response>(
-          valueListenable: _responseNotifier,
-          builder: (BuildContext context, Response request, Widget? child) {
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      body: GestureDetector(
+        onTap: () {
+          removeFocus(context);
+        },
+        child: ValueListenableBuilder<Response>(
+            valueListenable: _responseNotifier,
+            builder: (BuildContext context, Response request, Widget? child) {
+              return Column(
                 children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: 16.0.topHorizontalPadding,
-                      child: CircleAvatar(
-                          radius: 46,
-                          backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                          child: CircularAvatar(
-                            url: '${user.avatarUrl}',
-                            name: user.name.initals(),
-                            radius: 40,
-                          )),
-                    ),
-                  ),
-                  // Align(
-                  //   alignment: Alignment.center,
-                  //   child: TextButton(
-                  //     child: Text('Edit Avatar'),
-                  //     onPressed: () {},
-                  //   ),
-                  // ),
-                  24.0.vSpacer(),
-                  VHTextfield(
-                    hint: 'Name',
-                    controller: _nameController,
-                    isReadOnly: true,
-                  ),
-                  ValueListenableBuilder<bool?>(
-                      valueListenable: _validNotifier,
-                      builder: (BuildContext context, bool? isValid, Widget? child) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            VHTextfield(
-                              hint: 'Username',
-                              isReadOnly: request.state == RequestState.active,
-                              controller: _usernameController,
-                              onChanged: (username) {
-                                user = ref.watch(userNotifierProvider);
-                                if (user.username == username) {
-                                  _validNotifier.value = null;
-                                  return;
-                                }
-                                validateUsername(username);
-                              },
-                            ),
-                            isValid == null
-                                ? SizedBox.shrink()
-                                : Padding(
-                                    padding: 16.0.bottomLeftPadding,
-                                    child: Text(error,
-                                        style: TextStyle(
-                                            color:
-                                                isValid ? colorScheme.primary : colorScheme.error)),
+                  Expanded(
+                    child: ListView(
+                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      // mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: 16.0.topHorizontalPadding,
+                            child: CircleAvatar(
+                                radius: 46,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                                child: CircularAvatar(
+                                  url: '${user.avatarUrl}',
+                                  name: user.name.initals(),
+                                  radius: 40,
+                                )),
+                          ),
+                        ),
+                        // Align(
+                        //   alignment: Alignment.center,
+                        //   child: TextButton(
+                        //     child: Text('Edit Avatar'),
+                        //     onPressed: () {},
+                        //   ),
+                        // ),
+                        24.0.vSpacer(),
+                        VHTextfield(
+                          hint: 'Name',
+                          controller: _nameController,
+                          isReadOnly: true,
+                        ),
+                        ValueListenableBuilder<Response>(
+                            valueListenable: _validNotifier,
+                            builder: (BuildContext context, Response response, Widget? child) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  VHTextfield(
+                                    hint: 'Username',
+                                    isReadOnly: request.state == RequestState.active,
+                                    controller: _usernameController,
+                                    onChanged: (username) {
+                                      if (username.isEmpty) {
+                                        _validNotifier.value = Response(
+                                            state: RequestState.error,
+                                            data: 'Username cannot be empty',
+                                            didSucced: true);
+                                      } else {
+                                        if (user.username == username) {
+                                          _validNotifier.value =
+                                              Response(state: RequestState.none, didSucced: true);
+                                          return;
+                                        }
+// wait few seconds before validating username
+                                        Future.delayed(Duration(milliseconds: 300), () {
+                                          validateUsername(username);
+                                        });
+                                      }
+                                    },
                                   ),
-                          ],
-                        );
-                      }),
-                  VHTextfield(
-                    hint: 'Email',
-                    controller: _emailController,
-                    isReadOnly: true,
-                  ),
-                  VHTextfield(
-                    hint: 'Joined',
-                    controller: _joinedController,
-                    isReadOnly: true,
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: 16.0.allPadding,
-                      child: VHButton(
-                          height: 48,
-                          width: 200,
-                          isLoading: request.state == RequestState.active,
-                          onTap: () async {
-                            FocusScope.of(context).unfocus();
-                            if (_validNotifier.value == null || !_validNotifier.value!) return;
-                            _responseNotifier.value =
-                                Response(didSucced: false, state: RequestState.active);
-                            final userName = _usernameController.text.trim();
-                            final editedUser = user!.copyWith(username: userName);
-                            final success = await UserService.updateUser(editedUser);
-                            if (success) {
-                              _responseNotifier.value =
-                                  Response(state: RequestState.done, didSucced: true);
-                              _validNotifier.value = null;
-                              user.setUser(editedUser);
-                              NavbarNotifier.showSnackBar(context, 'success updating user! ');
-                            } else {
-                              _responseNotifier.value =
-                                  Response(state: RequestState.done, didSucced: false);
-                              NavbarNotifier.showSnackBar(context, 'error updating user! ');
-                            }
-                            Future.delayed(Duration(seconds: 2), () {
-                              widget.onClose!();
-                              Navigate.popView(context);
-                            });
-                          },
-                          label: 'Save'),
+                                  response.state == RequestState.none ||
+                                          response.state == RequestState.active
+                                      ? SizedBox.shrink()
+                                      : Padding(
+                                          padding: 16.0.bottomLeftPadding,
+                                          child: Row(
+                                            children: [
+                                              Flexible(
+                                                child: Text(response.data as String,
+                                                    style: TextStyle(
+                                                        color: response.state != RequestState.error
+                                                            ? colorScheme.primary
+                                                            : Colors.red)),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                  response.state == RequestState.active
+                                      ? LoadingWidget(radius: 24, width: 1.5)
+                                      : SizedBox.shrink()
+                                ],
+                              );
+                            }),
+                        VHTextfield(
+                          hint: 'Email',
+                          controller: _emailController,
+                          isReadOnly: true,
+                        ),
+                        VHTextfield(
+                          hint: 'Joined',
+                          controller: _joinedController,
+                          isReadOnly: true,
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: 16.0.allPadding,
+                            child: VHButton(
+                                height: 48,
+                                width: 200,
+                                isLoading: request.state == RequestState.active,
+                                onTap: () async {
+                                  FocusScope.of(context).unfocus();
+                                  if (_validNotifier.value.state == RequestState.none) {
+                                    NavbarNotifier.showSnackBar(
+                                        context, 'Nothing to update, closing...');
+                                    Future.delayed(Duration(seconds: 2), () {
+                                      widget.onClose!();
+                                      Navigate.popView(context);
+                                    });
+                                    return;
+                                  }
+                                  if (_validNotifier.value.state == RequestState.error) return;
+                                  _responseNotifier.value =
+                                      Response(didSucced: false, state: RequestState.active);
+                                  final userName = _usernameController.text.trim();
+                                  final editedUser = user.copyWith(username: userName);
+                                  final success = await UserService.updateUser(editedUser);
+                                  if (success) {
+                                    _responseNotifier.value =
+                                        Response(state: RequestState.done, didSucced: true);
+                                    user.setUser(editedUser);
+                                    NavbarNotifier.showSnackBar(context, 'success updating user! ');
+                                  } else {
+                                    _responseNotifier.value =
+                                        Response(state: RequestState.done, didSucced: false);
+                                    NavbarNotifier.showSnackBar(context, 'error updating user! ');
+                                  }
+                                  Future.delayed(Duration(seconds: 2), () {
+                                    widget.onClose!();
+                                    Navigate.popView(context);
+                                  });
+                                },
+                                label: 'Save'),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Padding(
+                            padding: 80.0.bottomPadding,
+                            child: VHButton(
+                                height: 48,
+                                width: 200,
+                                label: 'Delete Account',
+                                backgroundColor: Colors.transparent,
+                                foregroundColor: apptheme.isDark ? Colors.white : Colors.black,
+                                // isLoading: request.state == RequestState.active,
+                                onTap: () async {
+                                  FocusScope.of(context).unfocus();
+                                  showDeleteConfirmation(() async {
+                                    showCircularIndicator(context);
+                                    await UserService.deleteUser(user);
+                                    showToast('You will be logged out!');
+                                    await Future.delayed(Duration(seconds: 2));
+                                    stopCircularIndicator(context);
+                                    Navigate.pushAndPopAll(context, AppSignIn());
+                                  });
+                                  // show a dialog to confirm
+                                }),
+                          ),
+                        )
+                      ],
                     ),
-                  )
+                  ),
                 ],
-              ),
-            );
-          }),
+              );
+            }),
+      ),
     );
   }
 }
@@ -295,7 +382,9 @@ class _VHTextfieldState extends State<VHTextfield> {
                 ),
               ),
         Card(
-          color: Colors.transparent,
+          color: widget.isReadOnly
+              ? Theme.of(context).colorScheme.background
+              : Theme.of(context).colorScheme.surface,
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),

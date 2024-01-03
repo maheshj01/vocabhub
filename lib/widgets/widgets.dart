@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/navbar/profile/settings.dart';
 import 'package:vocabhub/services/analytics.dart';
-import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/size_utils.dart';
 import 'package:vocabhub/utils/utility.dart';
 
@@ -25,10 +24,18 @@ void stopCircularIndicator(BuildContext context) {
 
 class LoadingWidget extends StatelessWidget {
   final Color? color;
-  const LoadingWidget({Key? key, this.color}) : super(key: key);
+  final double? radius;
+  final double? width;
+  const LoadingWidget({Key? key, this.color, this.width, this.radius}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Center(child: CircularProgressIndicator());
+    return Center(
+        child: SizedBox(
+            height: radius ?? 40,
+            width: radius ?? 40,
+            child: CircularProgressIndicator(
+              strokeWidth: width ?? 3,
+            )));
   }
 }
 
@@ -218,9 +225,11 @@ Widget settingTile(String label,
     {String? description,
     Function? onTap,
     IconData? trailingIcon,
+    IconData? leadingIcon,
     double titleSize = 18,
     double verticalPadding = 24.0}) {
   return ListTile(
+    leading: leadingIcon != null ? Icon(leadingIcon) : null,
     minVerticalPadding: verticalPadding,
     title: Text(
       '$label',

@@ -105,11 +105,12 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
           AppBar(
             backgroundColor: Colors.transparent,
             title: const Text('Settings'),
+            automaticallyImplyLeading: !SizeUtils.isDesktop,
           ),
           settingTile(
             'About',
             onTap: () {
-              Navigate.push(context, AboutVocabhub());
+              Navigate.pushNamed(context, isRootNavigator: true, AboutVocabhub.route);
             },
           ),
           hLine(),
@@ -335,12 +336,9 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                 );
               }),
           hLine(),
-          settingTile(
-            'Report a bug',
-            onTap: () {
-              Navigate.push(context, ReportABug());
-            },
-          ),
+          settingTile('Share a feedback', onTap: () {
+            Navigate.pushNamed(context, ReportABug.route);
+          }, leadingIcon: Icons.feedback),
           hLine(),
           !user.isAdmin
               ? const SizedBox.shrink()
@@ -355,6 +353,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
               ? const SizedBox.shrink()
               : settingTile(
                   'My Bug Reports',
+                  leadingIcon: Icons.bug_report,
                   onTap: () {
                     Navigate.push(
                         context,
@@ -368,16 +367,16 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                 ),
           hLine(),
           !user.isAdmin ? const SizedBox.shrink() : hLine(),
-          settingTile(Constants.PRIVACY_POLICY_TITLE, onTap: () {
+          settingTile(Constants.PRIVACY_POLICY_TITLE, leadingIcon: Icons.privacy_tip, onTap: () {
             Navigate.pushNamed(context, WebViewPage.routeName, isRootNavigator: true);
           }),
           hLine(),
-          settingTile('Contact Us', onTap: () {
+          settingTile('Contact Us', leadingIcon: Icons.contact_mail, onTap: () {
             launchUrl(Uri.parse('mailto:${Constants.FEEDBACK_EMAIL_TO}'),
                 mode: LaunchMode.externalApplication);
           }),
           hLine(),
-          settingTile('Licenses', onTap: () {
+          settingTile('Licenses', leadingIcon: Icons.verified_user, onTap: () {
             showLicensePage(
               context: context,
               applicationLegalese: "© 2022 ${Constants.ORGANIZATION}",
@@ -385,7 +384,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
             );
           }),
           hLine(),
-          settingTile('Logout', trailingIcon: Icons.logout, onTap: () async {
+          settingTile('Logout', leadingIcon: Icons.logout, onTap: () async {
             user.loggedIn = false;
             authController.logout(context);
             Navigate.pushAndPopAll(context, AppSignIn());

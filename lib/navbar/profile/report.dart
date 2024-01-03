@@ -35,6 +35,8 @@ class _ReportABugState extends State<ReportABug> {
 }
 
 class ViewBugReports extends StatefulWidget {
+  static const route = '/view-bug-reports';
+
   const ViewBugReports({super.key});
 
   @override
@@ -386,12 +388,12 @@ class _ReportABugMobileState extends ConsumerState<ReportABugMobile> {
               child: Column(
                 children: [
                   AppBar(
-                    title: const Text('Report a bug'),
+                    title: const Text('Feedback'),
                     backgroundColor: Colors.transparent,
                   ),
                   24.0.vSpacer(),
                   VHTextfield(
-                    hint: 'Description of the bug',
+                    hint: 'Describe your feedback',
                     hasLabel: false,
                     controller: _feedBackcontroller,
                     maxLines: 8,
@@ -405,8 +407,7 @@ class _ReportABugMobileState extends ConsumerState<ReportABugMobile> {
                             _responseNotifier.value.copyWith(state: RequestState.active);
                         final String description = _feedBackcontroller.text.trim();
                         if (description.isEmpty) {
-                          NavbarNotifier.showSnackBar(
-                              context, 'You must enter a description of the bug',
+                          NavbarNotifier.showSnackBar(context, 'Feedback cannot be empty',
                               bottom: 0);
                           _responseNotifier.value =
                               _responseNotifier.value.copyWith(state: RequestState.done);
@@ -427,7 +428,7 @@ class _ReportABugMobileState extends ConsumerState<ReportABugMobile> {
                                 state: RequestState.done, message: 'Report sent successfully');
                             _responseNotifier.value =
                                 _responseNotifier.value.copyWith(state: RequestState.done);
-                            NavbarNotifier.showSnackBar(context, 'Thanks for reporting the bug');
+                            NavbarNotifier.showSnackBar(context, 'Thank you for your feedback');
                             pushNotificationService.sendNotification(Constants.reportPayLoad(
                                 'A new bug report', '${user.name}: $description'));
                             _feedBackcontroller.clear();
@@ -435,12 +436,13 @@ class _ReportABugMobileState extends ConsumerState<ReportABugMobile> {
                             Navigator.pop(context);
                           } else {
                             _responseNotifier.value = _responseNotifier.value.copyWith(
-                                state: RequestState.done, message: 'Error sending report');
-                            NavbarNotifier.showSnackBar(context, 'Error sending report! Try again');
+                                state: RequestState.done, message: 'Error sending feedback');
+                            NavbarNotifier.showSnackBar(
+                                context, 'Error sending feedback! Try again');
                           }
                         } catch (e) {
-                          _responseNotifier.value = _responseNotifier.value
-                              .copyWith(state: RequestState.done, message: 'Error sending report');
+                          _responseNotifier.value = _responseNotifier.value.copyWith(
+                              state: RequestState.done, message: 'Error sending feedback');
                           NavbarNotifier.showSnackBar(context, 'Something went wrong, try agcain');
                         }
                       },
@@ -449,7 +451,7 @@ class _ReportABugMobileState extends ConsumerState<ReportABugMobile> {
                   Padding(
                     padding: 16.0.allPadding,
                     child: Text(
-                        'Note: We may contact you for more information about the bug you reported.'),
+                        'Note: We may contact you for more information about the feedback you reported.'),
                   ),
                   24.0.vSpacer(),
                 ],

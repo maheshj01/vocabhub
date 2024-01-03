@@ -60,3 +60,13 @@ String onDeviceCollectionsString =
 
 String onDeviceCollectionsString2 =
     "Note The collections are retained on your device and will not be synced.";
+
+String userNameConstraints =
+    'Username should contain letters, numbers and underscores with minimum 3 characters';
+
+String accountDeleted = 'This account is deleted. Please contact support at';
+
+String registration_Failed = 'failed to register new user';
+
+String accountActivationEmail =
+    'mailto:${Constants.FEEDBACK_EMAIL_TO}?subject=Sign In Failure&body=Hi, I am facing issues while signing in. Please help me out.';

@@ -17,7 +17,9 @@ class UserModel extends ChangeNotifier {
   String username;
   // push notification token
   String token;
+  bool isDeleted;
   DateTime? created_at;
+  DateTime? updated_at;
 
   UserModel({
     this.name = '',
@@ -29,6 +31,8 @@ class UserModel extends ChangeNotifier {
     this.token = '',
     this.username = '',
     this.created_at,
+    this.updated_at,
+    this.isDeleted = false,
     this.isLoggedIn = false,
   });
 
@@ -45,7 +49,9 @@ class UserModel extends ChangeNotifier {
       isAdmin: w.isAdmin,
       username: w.username,
       token: w.token,
+      isDeleted: w.isDeleted,
       created_at: w.created_at,
+      updated_at: w.updated_at,
       isLoggedIn: w.isLoggedIn,
     );
   }
@@ -61,6 +67,8 @@ class UserModel extends ChangeNotifier {
     String? username,
     String? token,
     DateTime? created_at,
+    DateTime? updated_at,
+    bool? isDeleted,
     List<Word>? bookmarks,
   }) {
     return UserModel(
@@ -72,7 +80,9 @@ class UserModel extends ChangeNotifier {
       isAdmin: isAdmin ?? this.isAdmin,
       username: username ?? this.username,
       token: token ?? this.token,
+      isDeleted: isDeleted ?? this.isDeleted,
       created_at: created_at ?? this.created_at,
+      updated_at: updated_at ?? this.updated_at,
       isLoggedIn: isLoggedIn ?? this.isLoggedIn,
     );
   }
@@ -85,9 +95,11 @@ class UserModel extends ChangeNotifier {
         idToken: '',
         accessToken: '',
         created_at: DateTime.now(),
+        updated_at: DateTime.now(),
         username: '',
         token: '',
         isAdmin: false,
+        isDeleted: false,
         isLoggedIn: false);
   }
 
@@ -132,6 +144,11 @@ class UserModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  set setIsDeleted(bool m) {
+    isDeleted = m;
+    notifyListeners();
+  }
+
   UserModel get user => this;
 
   // updates local state and also stores in local storage
@@ -146,6 +163,7 @@ class UserModel extends ChangeNotifier {
     this.token = user.token;
     this.created_at = user.created_at;
     this.isLoggedIn = user.isLoggedIn;
+    this.isDeleted = user.isDeleted;
     authController.setUser(this);
     notifyListeners();
   }

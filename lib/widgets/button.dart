@@ -41,19 +41,20 @@ class _VHButtonState extends State<VHButton> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return ElevatedButton(
-      style: (widget.onTap == null)
-          ? null
-          : ButtonStyle(
-              minimumSize: MaterialStateProperty.resolveWith(
-                  (states) => Size(widget.width ?? 120, widget.height)),
-              maximumSize: MaterialStateProperty.resolveWith(
-                  (states) => Size(widget.width ?? 120, widget.height)),
-              foregroundColor: MaterialStateColor.resolveWith(
-                  (states) => widget.foregroundColor ?? colorScheme.onSecondary),
-              backgroundColor: MaterialStateColor.resolveWith(
-                (states) => widget.backgroundColor ?? colorScheme.secondary,
-              )),
+    final style = (widget.onTap == null)
+        ? null
+        : ButtonStyle(
+            minimumSize: MaterialStateProperty.resolveWith(
+                (states) => Size(widget.width ?? 120, widget.height)),
+            maximumSize: MaterialStateProperty.resolveWith(
+                (states) => Size(widget.width ?? 120, widget.height)),
+            foregroundColor: MaterialStateColor.resolveWith(
+                (states) => widget.foregroundColor ?? colorScheme.onSecondary),
+            backgroundColor: MaterialStateColor.resolveWith(
+              (states) => widget.backgroundColor ?? colorScheme.secondary,
+            ));
+    return OutlinedButton(
+      style: style,
       onPressed: widget.isLoading || (widget.onTap == null) ? null : widget.onTap,
       child: widget.isLoading
           ? CircularProgressIndicator(

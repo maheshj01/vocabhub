@@ -16,6 +16,9 @@ import 'package:vocabhub/controller/auth_controller.dart';
 import 'package:vocabhub/controller/collections_controller.dart';
 import 'package:vocabhub/controller/controllers.dart';
 import 'package:vocabhub/models/user.dart';
+import 'package:vocabhub/navbar/profile/about.dart';
+import 'package:vocabhub/navbar/profile/report.dart';
+import 'package:vocabhub/navbar/profile/settings.dart';
 import 'package:vocabhub/navbar/profile/webview.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/pages/splashscreen.dart';
@@ -40,10 +43,7 @@ final appProvider =
           showFAB: true,
           hasUpdate: false,
         )));
-// final appThemeProvider = StateNotifierProvider<VocabThemeNotifier, VocabThemeController>(
-//     (ref) => VocabThemeNotifier(ref));
 
-// same as above comment
 final appThemeProvider =
     StateNotifierProvider<VocabThemeNotifier, VocabThemeController>(VocabThemeNotifier.new);
 
@@ -166,7 +166,6 @@ class _VocabAppState extends ConsumerState<VocabApp> {
     dashboardController.disposeService();
     exploreController.disposeService();
     // pushNotificationService.disposeService();
-
     super.dispose();
   }
 
@@ -217,6 +216,10 @@ class _VocabAppState extends ConsumerState<VocabApp> {
                         title: Constants.PRIVACY_POLICY_TITLE,
                         url: Constants.PRIVACY_POLICY,
                       ),
+                  ReportABug.route: (context) => ReportABug(),
+                  AboutVocabhub.route: (context) => AboutVocabhub(),
+                  SettingsPage.route: (context) => SettingsPage(),
+                  ViewBugReports.route: (context) => ViewBugReports(),
                 },
                 themeMode: appThemeController.isDark ? ThemeMode.dark : ThemeMode.light,
                 home: SplashScreen(),

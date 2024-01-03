@@ -252,7 +252,6 @@ class CollectionDetailsSheet extends ConsumerStatefulWidget {
 class _CollectionDetailsSheetState extends ConsumerState<CollectionDetailsSheet> {
   @override
   Widget build(BuildContext context) {
-    final collections = ref.watch(collectionNotifier).collections;
     final collection = widget.collection ?? VHCollection.init();
     return Column(
       children: [

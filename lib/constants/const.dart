@@ -53,12 +53,14 @@ class Constants {
   static const NOTE_COLUMN = 'notes';
   static const STATE_COLUMN = 'state';
   static const CREATED_AT_COLUMN = 'created_at';
+  static const UPDATED_AT_COLUMN = 'updated_at';
 
   /// USER TABLE COLUMNS
   static const USERID_COLUMN = 'id';
   static const USER_NAME_COLUMN = 'name';
   static const USER_EMAIL_COLUMN = 'email';
   static const USERNAME_COLUMN = 'username';
+  static const DELETED_COLUMN = 'deleted';
   static const USER_BOOKMARKS_COLUMN = 'bookmarks';
   static const USER_CREATED_AT_COLUMN = 'created_at';
   static const USER_LOGGEDIN_COLUMN = 'isLoggedIn';
