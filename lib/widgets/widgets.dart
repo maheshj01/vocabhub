@@ -226,18 +226,20 @@ Widget settingTile(String label,
     Function? onTap,
     IconData? trailingIcon,
     IconData? leadingIcon,
+    Widget? title,
     double titleSize = 18,
     double verticalPadding = 24.0}) {
   return ListTile(
     leading: leadingIcon != null ? Icon(leadingIcon) : null,
     minVerticalPadding: verticalPadding,
-    title: Text(
-      '$label',
-      style: TextStyle(
-        fontSize: titleSize,
-        fontWeight: FontWeight.w400,
-      ),
-    ),
+    title: title ??
+        Text(
+          '$label',
+          style: TextStyle(
+            fontSize: titleSize,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
     subtitle: description != null
         ? Text(
             '$description',

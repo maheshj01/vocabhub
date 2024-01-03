@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
@@ -19,6 +20,7 @@ import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
+import 'package:vocabhub/widgets/whats_new.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
 import 'pages/notifications/notifications.dart';
@@ -69,9 +71,12 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       return;
     }
     try {
+      final appController = ref.read(appProvider);
+
       final packageInfo = await PackageInfo.fromPlatform();
       final String appVersion = packageInfo.version;
       final int appBuildNumber = int.parse(packageInfo.buildNumber);
+
       final remoteConfig = FirebaseRemoteConfig.instance;
       await remoteConfig.setConfigSettings(RemoteConfigSettings(
         fetchTimeout: const Duration(minutes: 1),
@@ -80,7 +85,9 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       await remoteConfig.fetchAndActivate();
       final version = remoteConfig.getString('${Constants.VERSION_KEY}');
       final buildNumber = remoteConfig.getInt('${Constants.BUILD_NUMBER_KEY}');
-      final appController = ref.watch(appProvider);
+
+      final oldVersion = appController.version.split(' ')[0];
+      final oldBuildNumber = int.parse(appController.version.split(' ')[1]);
       if (appVersion != version || buildNumber > appBuildNumber) {
         ref
             .read(appProvider.notifier)
@@ -90,9 +97,18 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
           launchUrl(Uri.parse(Constants.PLAY_STORE_URL), mode: LaunchMode.externalApplication);
         });
       } else {
-        ref
-            .read(appProvider.notifier)
-            .copyWith(appController.copyWith(showFAB: true, extended: true, hasUpdate: false));
+        if (oldVersion != version || oldBuildNumber < buildNumber) {
+          Navigate.push(
+            context,
+            WhatsNew(),
+            transitionType: TransitionType.btt,
+          );
+          ref.read(appProvider.notifier).copyWith(appController.copyWith(
+              showFAB: true,
+              extended: true,
+              hasUpdate: false,
+              version: '$appVersion $appBuildNumber'));
+        }
       }
     } catch (_) {
       setState(() {});
@@ -116,7 +132,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       NavbarNotifier.showSnackBar(context, message,
           actionLabel: action,
-          bottom: 50,
+          bottom: Platform.isIOS ? 50 : kNavbarHeight * 1.2,
           onActionPressed: onActionPressed,
           duration: persist ? Duration(days: 1) : Duration(seconds: 3), onClosed: () {
         if (mounted) {

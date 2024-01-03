@@ -57,7 +57,9 @@ class _ThemeSelectorState extends State<ThemeSelector> {
             for (var color in widget.colors)
               GestureDetector(
                 onTap: () {
-                  widget.onThemeChanged(color);
+                  if (widget.value.value != color.value) {
+                    widget.onThemeChanged(color);
+                  }
                 },
                 child: Padding(
                     padding: 12.0.horizontalPadding,

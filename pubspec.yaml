@@ -31,7 +31,7 @@ dependencies:
   navbar_router: ^0.7.3
   # navbar_router:
   #   path: ../../oss/my_packages/navbar_router
-    # url: https://github.com/maheshmnj/navbar_router.git
+  # url: https://github.com/maheshmnj/navbar_router.git
   package_info_plus: ^4.0.1
   pull_to_refresh: ^2.0.0
   realtime_client: ^0.1.15
@@ -71,3 +71,4 @@ flutter:
     - assets/rive/
     - .env
     - shorebird.yaml
+    - CHANGELOG.md

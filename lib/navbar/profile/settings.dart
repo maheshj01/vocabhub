@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/user.dart';
@@ -15,6 +16,7 @@ import 'package:vocabhub/themes/theme_selector.dart';
 import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/responsive.dart';
+import 'package:vocabhub/widgets/whats_new.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -87,6 +89,10 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
     ));
   }
 
+  Future<PackageInfo> getVersion() async {
+    return await PackageInfo.fromPlatform();
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -97,6 +103,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
         user.setUser(userNew);
       }
     });
+    final appController = ref.read(appProvider);
 
     return Material(
       color: Colors.transparent,
@@ -113,6 +120,51 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
               Navigate.pushNamed(context, isRootNavigator: true, AboutVocabhub.route);
             },
           ),
+          hLine(),
+          FutureBuilder(
+              future: getVersion(),
+              builder: (context, AsyncSnapshot<PackageInfo> snapshot) {
+                if (snapshot.data == null) return SizedBox.shrink();
+                final String appVersion = snapshot.data!.version;
+                final int appBuildNumber = int.parse(snapshot.data!.buildNumber);
+                final oldVersion = appController.version.split(' ')[0];
+                final oldBuildNumber = int.parse(appController.version.split(' ')[1]);
+
+                if (appVersion != oldVersion || oldBuildNumber < appBuildNumber) {
+                  return settingTile(
+                    'Whats New',
+                    title: RichText(
+                        text: TextSpan(children: [
+                      TextSpan(
+                          text: 'Whats',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme.primary,
+                          )),
+                      TextSpan(
+                          text: ' New',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.primary,
+                          )),
+                      TextSpan(
+                          text: ' ✨',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.primary,
+                          )),
+                    ])),
+                    onTap: () {
+                      Navigate.pushNamed(context, isRootNavigator: true, WhatsNew.route);
+                    },
+                  );
+                } else {
+                  return SizedBox.shrink();
+                }
+              }),
           hLine(),
           10.0.vSpacer(),
           Padding(
@@ -140,7 +192,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
             ),
           ),
           Padding(
-            padding: 16.0.horizontalPadding,
+            padding: 16.0.horizontalPadding + 10.0.verticalPadding,
             child: Row(
               children: [
                 Text('Use Classic Theme',
@@ -171,6 +223,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
               ],
             ),
           ),
+          20.0.vSpacer(),
           ThemeSelector(
               value: appTheme.themeSeed,
               onThemeChanged: (val) {

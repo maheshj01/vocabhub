@@ -28,6 +28,7 @@ import 'package:vocabhub/themes/theme_utils.dart';
 import 'package:vocabhub/themes/vocabtheme_controller.dart';
 import 'package:vocabhub/utils/firebase_options.dart';
 import 'package:vocabhub/utils/logger.dart';
+import 'package:vocabhub/widgets/whats_new.dart';
 
 import 'constants/constants.dart';
 
@@ -220,6 +221,7 @@ class _VocabAppState extends ConsumerState<VocabApp> {
                   AboutVocabhub.route: (context) => AboutVocabhub(),
                   SettingsPage.route: (context) => SettingsPage(),
                   ViewBugReports.route: (context) => ViewBugReports(),
+                  WhatsNew.route: (context) => WhatsNew(),
                 },
                 themeMode: appThemeController.isDark ? ThemeMode.dark : ThemeMode.light,
                 home: SplashScreen(),
