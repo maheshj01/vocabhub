@@ -3,6 +3,7 @@
 - Add Handsfree mode in explore
 - Add ability to switch to classic mode
 - User can now delete their account under edit profile
+- Notifications now shows edit detail instead of history
 - Minor UI fixes and improvements
 
 ### 0.7.7+29 Sep 19, 2023
