@@ -73,8 +73,7 @@ class AuthService extends ServiceBase {
           accessToken: accessToken);
     } catch (error) {
       _logger.e(error.toString());
-      NavbarNotifier.showSnackBar(context, 'Failed to signIn');
-      throw 'Failed to signIn';
+      throw 'Failed to sign In';
     }
     return user;
   }
