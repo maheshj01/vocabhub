@@ -112,10 +112,7 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
     SizeUtils.size = MediaQuery.of(context).size;
     final colorScheme = Theme.of(context).colorScheme;
     Widget _heading(String text) {
-      return Text(
-        '$text',
-        style: Theme.of(context).textTheme.displaySmall!.copyWith(color: Colors.white),
-      );
+      return Text('$text', style: Theme.of(context).textTheme.displaySmall);
     }
 
     Widget _skipButton() {
