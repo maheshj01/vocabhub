@@ -77,14 +77,6 @@ class VocabThemeNotifier extends StateNotifier<VocabThemeController> {
 
   Ref ref;
 
-  final String kThemeKey = 'kThemeKey';
-  final String kThemeSeedKey = 'kThemeSeedKey';
-  final String kRatedOnPlaystore = 'kRatedOnPlaystore';
-  final String kLastRatedDate = 'kLastRatedDate';
-  final String kOnboardedKey = 'kOnboardedKey';
-  static const skipCountKey = 'skipCount';
-  final String kAutoScrollKey = 'kAutoScrollKey';
-
   void setDark(bool dark) {
     state = state.copyWith(isDark: dark);
     final ThemeUtility settings = ref.watch(themeUtilityProvider);

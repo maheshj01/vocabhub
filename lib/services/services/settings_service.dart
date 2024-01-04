@@ -6,7 +6,6 @@ import 'package:vocabhub/themes/vocab_theme.dart';
 
 class SettingsService extends ServiceBase {
   late SharedPreferences _sharedPreferences;
-  final String kThemeKey = 'kThemeKey';
   final String kThemeSeedKey = 'kThemeSeedKey';
   final String kRatedOnPlaystore = 'kRatedOnPlaystore';
   final String kLastRatedDate = 'kLastRatedDate';

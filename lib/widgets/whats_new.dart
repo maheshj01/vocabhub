@@ -7,6 +7,10 @@ import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
 class WhatsNew extends StatefulWidget {
+  /// whether to show only the latest release note
+  final bool showLatestNoteOnly;
+
+  const WhatsNew({Key? key, this.showLatestNoteOnly = false}) : super(key: key);
   static const route = '/whats-new';
   @override
   _WhatsNewState createState() => _WhatsNewState();

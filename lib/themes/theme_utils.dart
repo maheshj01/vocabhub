@@ -9,7 +9,7 @@ class ThemeUtility {
 
   final SharedPreferences sharedPreferences;
 
-  final String kThemeKey = 'kThemeKey';
+  final String kThemeKey = 'kAppThemeKey';
 
   void setThemeController(VocabThemeController value) {
     final json = value.toJson();
