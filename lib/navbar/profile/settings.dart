@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/user.dart';
@@ -89,10 +88,6 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
     ));
   }
 
-  Future<PackageInfo> getVersion() async {
-    return await PackageInfo.fromPlatform();
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -103,6 +98,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
         user.setUser(userNew);
       }
     });
+    final now = DateTime.now();
     final oldVersion = ref.read(appProvider).version!.oldVersion;
     return Material(
       color: Colors.transparent,
@@ -120,50 +116,38 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
             },
           ),
           hLine(),
-          FutureBuilder(
-              future: getVersion(),
-              builder: (context, AsyncSnapshot<PackageInfo> snapshot) {
-                if (snapshot.data == null) return SizedBox.shrink();
-                final String appVersion = snapshot.data!.version;
-                final int appBuildNumber = int.parse(snapshot.data!.buildNumber);
-                final version = oldVersion.version;
-                final buildNumber = oldVersion.buildNumber;
 
-                if (appVersion != version || buildNumber < appBuildNumber) {
-                  return settingTile(
-                    'Whats New',
-                    title: RichText(
-                        text: TextSpan(children: [
-                      TextSpan(
-                          text: 'Whats',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                            color: colorScheme.primary,
-                          )),
-                      TextSpan(
-                          text: ' New',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: colorScheme.primary,
-                          )),
-                      TextSpan(
-                          text: ' ✨',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: colorScheme.primary,
-                          )),
-                    ])),
-                    onTap: () {
-                      Navigate.pushNamed(context, isRootNavigator: true, WhatsNew.route);
-                    },
-                  );
-                } else {
-                  return SizedBox.shrink();
-                }
-              }),
+          if (oldVersion.date!.difference(now).inDays < 30)
+            settingTile(
+              'Whats New',
+              title: RichText(
+                  text: TextSpan(children: [
+                TextSpan(
+                    text: 'Whats',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: colorScheme.primary,
+                    )),
+                TextSpan(
+                    text: ' New',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.primary,
+                    )),
+                TextSpan(
+                    text: ' ✨',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.primary,
+                    )),
+              ])),
+              onTap: () {
+                Navigate.pushNamed(context, isRootNavigator: true, WhatsNew.route);
+              },
+            ),
           hLine(),
           10.0.vSpacer(),
           Padding(
@@ -190,25 +174,27 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
               ],
             ),
           ),
-          Padding(
-            padding: 16.0.horizontalPadding + 10.0.verticalPadding,
-            child: Row(
-              children: [
-                Text('Use Classic Theme',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400,
-                    )),
-                Spacer(),
-                VocabSwitch(
-                    value: appTheme.isClassic,
-                    onChanged: (x) {
-                      ref.read(appThemeProvider.notifier).setClassic(x);
-                      widget.onThemeChanged(x);
-                    })
-              ],
-            ),
-          ),
+          (SizeUtils.isDesktop && kIsWeb)
+              ? SizedBox.shrink()
+              : Padding(
+                  padding: 16.0.horizontalPadding + 10.0.verticalPadding,
+                  child: Row(
+                    children: [
+                      Text('Use Classic Theme',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400,
+                          )),
+                      Spacer(),
+                      VocabSwitch(
+                          value: appTheme.isClassic,
+                          onChanged: (x) {
+                            ref.read(appThemeProvider.notifier).setClassic(x);
+                            widget.onThemeChanged(x);
+                          })
+                    ],
+                  ),
+                ),
           Padding(
             padding: 16.0.horizontalPadding,
             child: Row(

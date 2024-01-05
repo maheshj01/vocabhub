@@ -93,7 +93,9 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
         buildNumber: int.parse(packageInfo.buildNumber),
         date: DateTime.now(),
       );
-      final app_version = AppVersion(version: current, oldVersion: current);
+      final app_version = appController.version!.copyWith(
+        version: current,
+      );
       if (appVersion != remoteVersion || remoteBuildNumber > appBuildNumber) {
         appNotifier.copyWith(appController.copyWith(
             showFAB: false, extended: true, hasUpdate: true, version: app_version));
@@ -110,8 +112,9 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
             ),
             transitionType: TransitionType.btt,
           );
+          //  This is set only once when the user opens the app once after Update
+          appNotifier.setVersion(app_version);
         }
-        appNotifier.setVersion(app_version);
       }
     } catch (_) {
       setState(() {});
