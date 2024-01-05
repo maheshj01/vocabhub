@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vocabhub/models/version.dart';
 import 'package:vocabhub/services/services.dart';
 
 @immutable
@@ -10,31 +11,24 @@ class AppController {
   final bool showFAB;
   final bool extended;
   final bool hasUpdate;
-  final String version;
-  final String oldVersion;
+  final AppVersion? version;
 
   AppController(
       {this.index = 0,
       this.showFAB = true,
       this.extended = true,
       this.hasUpdate = false,
-      this.version = '1.0.0 1',
-      this.oldVersion = '1.0.0 1'});
+      this.version});
 
   AppController copyWith(
-      {int? index,
-      bool? showFAB,
-      bool? extended,
-      bool? hasUpdate,
-      String? version,
-      String? oldVersion}) {
+      {int? index, bool? showFAB, bool? extended, bool? hasUpdate, AppVersion? version}) {
     return AppController(
-        index: index ?? this.index,
-        showFAB: showFAB ?? this.showFAB,
-        extended: extended ?? this.extended,
-        hasUpdate: hasUpdate ?? this.hasUpdate,
-        version: version ?? this.version,
-        oldVersion: oldVersion ?? this.oldVersion);
+      index: index ?? this.index,
+      showFAB: showFAB ?? this.showFAB,
+      extended: extended ?? this.extended,
+      hasUpdate: hasUpdate ?? this.hasUpdate,
+      version: version ?? this.version,
+    );
   }
 
   Map<String, dynamic> toMap() {
@@ -45,18 +39,17 @@ class AppController {
     result.addAll({'extended': extended});
     result.addAll({'hasUpdate': hasUpdate});
     result.addAll({'version': version});
-    result.addAll({'oldVersion': oldVersion});
     return result;
   }
 
   factory AppController.fromMap(Map<String, dynamic> map) {
     return AppController(
-        index: map['index']?.toInt() ?? 0,
-        showFAB: map['showFAB'] ?? false,
-        extended: map['extended'] ?? false,
-        hasUpdate: map['hasUpdate'] ?? false,
-        version: map['version'] ?? '1.0.0 1',
-        oldVersion: map['oldVersion'] ?? '1.0.0 1');
+      index: map['index']?.toInt() ?? 0,
+      showFAB: map['showFAB'] ?? false,
+      extended: map['extended'] ?? false,
+      hasUpdate: map['hasUpdate'] ?? false,
+      version: AppVersion.fromMap(map['version']),
+    );
   }
 
   String toJson() => json.encode(toMap());
@@ -65,7 +58,7 @@ class AppController {
 
   @override
   String toString() {
-    return 'AppController(index: $index, showFAB: $showFAB, extended: $extended, hasUpdate: $hasUpdate, version: $version oldVersion: $oldVersion)';
+    return 'AppController(index: $index, showFAB: $showFAB, extended: $extended, hasUpdate: $hasUpdate, version: ${version.toString()}})';
   }
 
   @override
@@ -77,8 +70,7 @@ class AppController {
         other.showFAB == showFAB &&
         other.extended == extended &&
         other.hasUpdate == hasUpdate &&
-        other.version == version &&
-        other.oldVersion == oldVersion;
+        other.version == version;
   }
 
   @override
@@ -87,22 +79,20 @@ class AppController {
         showFAB.hashCode ^
         extended.hashCode ^
         hasUpdate.hashCode ^
-        version.hashCode ^
-        oldVersion.hashCode;
+        version.hashCode;
   }
 }
 
 class AppNotifier extends StateNotifier<AppController> {
   AppNotifier(this.ref)
       : super(AppController(
-            extended: true,
-            index: 0,
-            showFAB: true,
-            hasUpdate: false,
-            oldVersion: "1.0.0 1",
-            version: "1.0.0 1")) {
-    final oldVer = ref.read(appUtilityProvider).getVersion();
-    state.copyWith(oldVersion: oldVer);
+          extended: true,
+          index: 0,
+          showFAB: true,
+          hasUpdate: false,
+        )) {
+    final version = ref.read(appUtilityProvider).getVersion();
+    state = state.copyWith(version: version);
   }
   Ref ref;
   void setIndex(int index) {
@@ -121,22 +111,18 @@ class AppNotifier extends StateNotifier<AppController> {
     state = state.copyWith(hasUpdate: update);
   }
 
-  void setVersion(String version) {
+  void setVersion(AppVersion version) {
     state = state.copyWith(version: version);
-  }
-
-  void setOldVersion(String oldVersion) {
-    state = state.copyWith(oldVersion: oldVersion);
-    ref.read(appUtilityProvider).setAppVersion(oldVersion);
+    ref.read(appUtilityProvider).setAppVersion(version);
   }
 
   void copyWith(AppController appController) {
     state = state.copyWith(
-        index: appController.index,
-        showFAB: appController.showFAB,
-        extended: appController.extended,
-        hasUpdate: appController.hasUpdate,
-        version: appController.version,
-        oldVersion: appController.oldVersion);
+      index: appController.index,
+      showFAB: appController.showFAB,
+      extended: appController.extended,
+      hasUpdate: appController.hasUpdate,
+      version: appController.version,
+    );
   }
 }

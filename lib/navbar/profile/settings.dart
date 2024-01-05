@@ -103,7 +103,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
         user.setUser(userNew);
       }
     });
-    final oldVersion = ref.read(appProvider).oldVersion;
+    final oldVersion = ref.read(appProvider).version!.oldVersion;
     return Material(
       color: Colors.transparent,
       child: ListView(
@@ -126,8 +126,8 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                 if (snapshot.data == null) return SizedBox.shrink();
                 final String appVersion = snapshot.data!.version;
                 final int appBuildNumber = int.parse(snapshot.data!.buildNumber);
-                final version = oldVersion.split(' ')[0];
-                final buildNumber = int.parse(oldVersion.split(' ')[1]);
+                final version = oldVersion.version;
+                final buildNumber = oldVersion.buildNumber;
 
                 if (appVersion != version || buildNumber < appBuildNumber) {
                   return settingTile(

@@ -9,6 +9,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/user.dart';
+import 'package:vocabhub/models/version.dart';
 import 'package:vocabhub/navbar/navbar.dart';
 import 'package:vocabhub/navbar/profile/edit.dart';
 import 'package:vocabhub/navbar/search/search_view.dart';
@@ -71,7 +72,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     }
     try {
       final appController = ref.read(appProvider);
-      final appUtility = ref.read(appUtilityProvider);
+      final appNotifier = ref.read(appProvider.notifier);
       final packageInfo = await PackageInfo.fromPlatform();
       final String appVersion = packageInfo.version;
       final int appBuildNumber = int.parse(packageInfo.buildNumber);
@@ -82,21 +83,26 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
         minimumFetchInterval: const Duration(seconds: 1),
       ));
       await remoteConfig.fetchAndActivate();
-      final version = remoteConfig.getString('${Constants.VERSION_KEY}');
-      final buildNumber = remoteConfig.getInt('${Constants.BUILD_NUMBER_KEY}');
-      final storedVersion = appUtility.getVersion();
-      final oldVersion = storedVersion.split(' ')[0];
-      final oldBuildNumber = int.parse(storedVersion.split(' ')[1]);
-      if (appVersion != version || buildNumber > appBuildNumber) {
-        ref
-            .read(appProvider.notifier)
-            .copyWith(appController.copyWith(showFAB: false, extended: true, hasUpdate: true));
+      final remoteVersion = remoteConfig.getString('${Constants.VERSION_KEY}');
+      final remoteBuildNumber = remoteConfig.getInt('${Constants.BUILD_NUMBER_KEY}');
+      final storedVersion = appController.version;
+      final oldVersion = storedVersion!.oldVersion.version;
+      final oldBuildNumber = storedVersion.oldVersion.buildNumber;
+      final current = Version(
+        version: packageInfo.version,
+        buildNumber: int.parse(packageInfo.buildNumber),
+        date: DateTime.now(),
+      );
+      final app_version = AppVersion(version: current, oldVersion: current);
+      if (appVersion != remoteVersion || remoteBuildNumber > appBuildNumber) {
+        appNotifier.copyWith(appController.copyWith(
+            showFAB: false, extended: true, hasUpdate: true, version: app_version));
         showSnackBar("New Update Available", action: 'Update', persist: true, onActionPressed: () {
           analytics.logAppUpdate(settingsController.version!);
           launchUrl(Uri.parse(Constants.PLAY_STORE_URL), mode: LaunchMode.externalApplication);
         });
       } else {
-        if (oldVersion != version || oldBuildNumber < buildNumber) {
+        if (oldVersion != appVersion || oldBuildNumber < appBuildNumber) {
           Navigate.push(
             context,
             WhatsNew(
@@ -104,11 +110,8 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
             ),
             transitionType: TransitionType.btt,
           );
-
-          appUtility.setAppVersion(
-            '$version $buildNumber',
-          );
         }
+        appNotifier.setVersion(app_version);
       }
     } catch (_) {
       setState(() {});

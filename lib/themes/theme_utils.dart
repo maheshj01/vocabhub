@@ -9,15 +9,15 @@ class ThemeUtility {
 
   final SharedPreferences sharedPreferences;
 
-  final String kThemeKey = 'kThemeKey';
+  final String kAppThemeKey = 'kAppThemeKey';
 
   void setThemeController(VocabThemeController value) {
     final json = value.toJson();
-    sharedPreferences.setString(kThemeKey, json);
+    sharedPreferences.setString(kAppThemeKey, json);
   }
 
   VocabThemeController getThemeController() {
-    final String? theme = sharedPreferences.getString(kThemeKey);
+    final String? theme = sharedPreferences.getString(kAppThemeKey);
     if (theme == null) {
       final defaultThemeController = VocabThemeController(
           themeSeed: VocabTheme.colorSeeds[1], isClassic: false, isDark: false);

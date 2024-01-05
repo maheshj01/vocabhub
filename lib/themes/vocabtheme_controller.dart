@@ -77,8 +77,6 @@ class VocabThemeNotifier extends StateNotifier<VocabThemeController> {
 
   Ref ref;
 
-  final String kThemeKey = 'kThemeKey';
-  final String kThemeSeedKey = 'kThemeSeedKey';
   final String kRatedOnPlaystore = 'kRatedOnPlaystore';
   final String kLastRatedDate = 'kLastRatedDate';
   final String kOnboardedKey = 'kOnboardedKey';
