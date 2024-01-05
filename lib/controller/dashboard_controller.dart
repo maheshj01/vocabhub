@@ -4,6 +4,15 @@ import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/service_base.dart';
 
 class DashboardController extends ChangeNotifier with ServiceBase {
+  bool _isLoading = true;
+
+  bool get isLoading => _isLoading;
+
+  set isLoading(bool isLoading) {
+    _isLoading = isLoading;
+    notifyListeners();
+  }
+
   Word? _wordOfTheDay;
   late final DashboardService _dashboardService;
   final List<Word> _words = [];
@@ -46,6 +55,7 @@ class DashboardController extends ChangeNotifier with ServiceBase {
   @override
   Future<void> initService() async {
     try {
+      isLoading = true;
       if (_wordOfTheDay == null) {
         _wordOfTheDay = Word.init();
       }
@@ -53,6 +63,7 @@ class DashboardController extends ChangeNotifier with ServiceBase {
       await _dashboardService.initService();
       _wordOfTheDay = await getLastPublishedWord();
       words = await _dashboardService.getWords();
+      isLoading = false;
     } catch (e) {
       rethrow;
     }

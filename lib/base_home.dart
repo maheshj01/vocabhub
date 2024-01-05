@@ -71,7 +71,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     }
     try {
       final appController = ref.read(appProvider);
-
+      final appUtility = ref.read(appUtilityProvider);
       final packageInfo = await PackageInfo.fromPlatform();
       final String appVersion = packageInfo.version;
       final int appBuildNumber = int.parse(packageInfo.buildNumber);
@@ -84,9 +84,9 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       await remoteConfig.fetchAndActivate();
       final version = remoteConfig.getString('${Constants.VERSION_KEY}');
       final buildNumber = remoteConfig.getInt('${Constants.BUILD_NUMBER_KEY}');
-
-      final oldVersion = appController.version.split(' ')[0];
-      final oldBuildNumber = int.parse(appController.version.split(' ')[1]);
+      final storedVersion = appUtility.getVersion();
+      final oldVersion = storedVersion.split(' ')[0];
+      final oldBuildNumber = int.parse(storedVersion.split(' ')[1]);
       if (appVersion != version || buildNumber > appBuildNumber) {
         ref
             .read(appProvider.notifier)
@@ -99,14 +99,15 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
         if (oldVersion != version || oldBuildNumber < buildNumber) {
           Navigate.push(
             context,
-            WhatsNew(),
+            WhatsNew(
+              showFullChangelog: false,
+            ),
             transitionType: TransitionType.btt,
           );
-          ref.read(appProvider.notifier).copyWith(appController.copyWith(
-              showFAB: true,
-              extended: true,
-              hasUpdate: false,
-              version: '$appVersion $appBuildNumber'));
+
+          appUtility.setAppVersion(
+            '$version $buildNumber',
+          );
         }
       }
     } catch (_) {
@@ -231,85 +232,89 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       }
     }
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      floatingActionButton: appController.hasUpdate ? null : _buildFab(),
-      body: Stack(
-        children: [
-          NavbarRouter(
-            errorBuilder: (context) {
-              return const Center(child: Text('Error 404'));
-            },
-            type: NavbarType.floating,
-            onBackButtonPressed: (isExiting) {
-              if (isExiting) {
-                newTime = DateTime.now();
-                final int difference = newTime.difference(oldTime).inMilliseconds;
-                oldTime = newTime;
-                if (difference < 1000) {
-                  hideToast();
-                  return isExiting;
-                } else {
-                  showToast('Press again to exit');
-                  return false;
-                }
-              } else {
-                return isExiting;
-              }
-            },
-            shouldPopToBaseRoute: true,
-            isDesktop: !SizeUtils.isMobile,
-            // destinationAnimationCurve: Curves.fastOutSlowIn,
-            destinationAnimationDuration: SizeUtils.isDesktop ? 0 : 0,
-            onCurrentTabClicked: () {
-              exploreController.scrollToIndex = 0;
-            },
-            onChanged: (x) async {
-              ref.read(appProvider.notifier).copyWith(appController.copyWith(
-                  index: x, showFAB: x < 2 && user!.isLoggedIn, extended: true));
-
-              /// Simulate DragGesture on pageView
-              final pageController = exploreController.pageController;
-              if (EXPLORE_INDEX == x && SizeUtils.isMobile) {
-                if (pageController.hasClients) {
-                  if (exploreController.shouldShowScrollAnimation) {
-                    Future.delayed(Duration(seconds: 3), () async {
-                      if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {
-                        exploreController.showScrollAnimation();
+    return AnimatedBuilder(
+        animation: dashboardController,
+        builder: (context, child) {
+          return Scaffold(
+            resizeToAvoidBottomInset: false,
+            floatingActionButton: appController.hasUpdate ? null : _buildFab(),
+            body: Stack(
+              children: [
+                NavbarRouter(
+                  errorBuilder: (context) {
+                    return const Center(child: Text('Error 404'));
+                  },
+                  type: NavbarType.floating,
+                  onBackButtonPressed: (isExiting) {
+                    if (isExiting) {
+                      newTime = DateTime.now();
+                      final int difference = newTime.difference(oldTime).inMilliseconds;
+                      oldTime = newTime;
+                      if (difference < 1000) {
+                        hideToast();
+                        return isExiting;
+                      } else {
+                        showToast('Press again to exit');
+                        return false;
                       }
-                    });
-                  }
-                }
-              }
-            },
-            decoration: FloatingNavbarDecoration(
-              height: kNavbarHeight * 1.2,
-              backgroundColor: SizeUtils.isDesktop
-                  ? colorScheme.surfaceVariant
-                  : colorScheme.scrim.withOpacity(0.2),
-              margin: EdgeInsets.zero,
-              showSelectedLabels: false,
-              borderRadius: BorderRadius.zero,
-              // backgroundColor: (colorScheme.surfaceVariant.withOpacity(0.4)),
-            ),
-            destinations: [
-              for (int i = 0; i < items.length; i++)
-                DestinationRouter(
-                  navbarItem: items[i],
+                    } else {
+                      return isExiting;
+                    }
+                  },
+                  shouldPopToBaseRoute: true,
+                  isDesktop: !SizeUtils.isMobile,
+                  // destinationAnimationCurve: Curves.fastOutSlowIn,
+                  destinationAnimationDuration: SizeUtils.isDesktop ? 0 : 0,
+                  onCurrentTabClicked: () {
+                    exploreController.scrollToIndex = 0;
+                  },
+                  onChanged: (x) async {
+                    ref.read(appProvider.notifier).copyWith(appController.copyWith(
+                        index: x, showFAB: x < 2 && user!.isLoggedIn, extended: true));
+
+                    /// Simulate DragGesture on pageView
+                    final pageController = exploreController.pageController;
+                    if (EXPLORE_INDEX == x && SizeUtils.isMobile) {
+                      if (pageController.hasClients) {
+                        if (exploreController.shouldShowScrollAnimation) {
+                          Future.delayed(Duration(seconds: 3), () async {
+                            if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {
+                              exploreController.showScrollAnimation();
+                            }
+                          });
+                        }
+                      }
+                    }
+                  },
+                  decoration: FloatingNavbarDecoration(
+                    height: kNavbarHeight * 1.2,
+                    backgroundColor: SizeUtils.isDesktop
+                        ? colorScheme.surfaceVariant
+                        : colorScheme.scrim.withOpacity(0.2),
+                    margin: EdgeInsets.zero,
+                    showSelectedLabels: false,
+                    borderRadius: BorderRadius.zero,
+                    // backgroundColor: (colorScheme.surfaceVariant.withOpacity(0.4)),
+                  ),
                   destinations: [
-                    for (int j = 0; j < _routes[i]!.keys.length; j++)
-                      Destination(
-                        route: _routes[i]!.keys.elementAt(j),
-                        widget: _routes[i]!.values.elementAt(j),
+                    for (int i = 0; i < items.length; i++)
+                      DestinationRouter(
+                        navbarItem: items[i],
+                        destinations: [
+                          for (int j = 0; j < _routes[i]!.keys.length; j++)
+                            Destination(
+                              route: _routes[i]!.keys.elementAt(j),
+                              widget: _routes[i]!.values.elementAt(j),
+                            ),
+                        ],
+                        initialRoute: _routes[i]!.keys.elementAt(0),
                       ),
                   ],
-                  initialRoute: _routes[i]!.keys.elementAt(0),
                 ),
-            ],
-          ),
-        ],
-      ),
-    );
+              ],
+            ),
+          );
+        });
   }
 }
 

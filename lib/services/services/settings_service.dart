@@ -1,13 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocabhub/controller/explore_controller.dart';
 import 'package:vocabhub/services/services/service_base.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 
 class SettingsService extends ServiceBase {
   late SharedPreferences _sharedPreferences;
-  final String kThemeKey = 'kThemeKey';
-  final String kThemeSeedKey = 'kThemeSeedKey';
   final String kRatedOnPlaystore = 'kRatedOnPlaystore';
   final String kLastRatedDate = 'kLastRatedDate';
   final String kOnboardedKey = 'kOnboardedKey';
@@ -58,15 +54,6 @@ class SettingsService extends ServiceBase {
     } else {
       return DateTime.parse(lastRatedDateTimeString);
     }
-  }
-
-  void setThemeSeed(Color color) {
-    _sharedPreferences.setInt(kThemeSeedKey, color.value);
-  }
-
-  Color getThemeSeed() {
-    final int color = _sharedPreferences.getInt(kThemeSeedKey) ?? VocabTheme.colorSeeds[1].value;
-    return Color(color);
   }
 
   Future<void> setRatedOnPlaystore(bool value) async {

@@ -7,6 +7,10 @@ import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
 class WhatsNew extends StatefulWidget {
+  final bool showFullChangelog;
+
+  WhatsNew({this.showFullChangelog = true});
+
   static const route = '/whats-new';
   @override
   _WhatsNewState createState() => _WhatsNewState();
@@ -68,7 +72,7 @@ class _WhatsNewState extends State<WhatsNew> {
                       return LoadingWidget();
                     }
                     return ListView.builder(
-                        itemCount: snapshot.data!.length,
+                        itemCount: widget.showFullChangelog ? snapshot.data!.length : 1,
                         itemBuilder: (context, index) {
                           final release = snapshot.data![index];
                           return Column(

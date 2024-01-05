@@ -103,21 +103,26 @@ class _DashboardState extends ConsumerState<Dashboard> {
                   errorMessage: response.message,
                 );
               }
-              return ResponsiveBuilder(
-                desktopBuilder: (context) => DashboardDesktop(),
-                mobileBuilder: (context) {
-                  if (response.state == RequestState.active) {
-                    return LoadingWidget();
-                  }
-                  return RefreshIndicator(onRefresh: () async {
-                    await publishWordOfTheDay(isRefresh: true);
-                  }, child: DashboardMobile(
-                    onRefresh: () async {
-                      await publishWordOfTheDay(isRefresh: true);
-                    },
-                  ));
-                },
-              );
+              return AnimatedBuilder(
+                  animation: dashboardController,
+                  builder: (context, child) {
+                    return ResponsiveBuilder(
+                      desktopBuilder: (context) => DashboardDesktop(),
+                      mobileBuilder: (context) {
+                        if (response.state == RequestState.active ||
+                            dashboardController.isLoading) {
+                          return LoadingWidget();
+                        }
+                        return RefreshIndicator(onRefresh: () async {
+                          await publishWordOfTheDay(isRefresh: true);
+                        }, child: DashboardMobile(
+                          onRefresh: () async {
+                            await publishWordOfTheDay(isRefresh: true);
+                          },
+                        ));
+                      },
+                    );
+                  });
             }));
   }
 }

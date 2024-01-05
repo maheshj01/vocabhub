@@ -26,6 +26,7 @@ import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/theme_utils.dart';
 import 'package:vocabhub/themes/vocabtheme_controller.dart';
+import 'package:vocabhub/utils/app_utils.dart';
 import 'package:vocabhub/utils/firebase_options.dart';
 import 'package:vocabhub/utils/logger.dart';
 import 'package:vocabhub/widgets/whats_new.dart';
@@ -37,13 +38,7 @@ final userNotifierProvider = Provider<UserModel>((ref) {
 });
 
 final dashBoardNotifier = Provider<DashboardController>((ref) => DashboardController());
-final appProvider =
-    StateNotifierProvider<AppNotifier, AppController>((ref) => AppNotifier(AppController(
-          extended: true,
-          index: 0,
-          showFAB: true,
-          hasUpdate: false,
-        )));
+final appProvider = StateNotifierProvider<AppNotifier, AppController>(AppNotifier.new);
 
 final appThemeProvider =
     StateNotifierProvider<VocabThemeNotifier, VocabThemeController>(VocabThemeNotifier.new);
@@ -57,6 +52,11 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
 final themeUtilityProvider = Provider<ThemeUtility>((ref) {
   final sharedPrefs = ref.watch(sharedPreferencesProvider);
   return ThemeUtility(sharedPreferences: sharedPrefs);
+});
+
+final appUtilityProvider = Provider<AppUtility>((ref) {
+  final sharedPrefs = ref.watch(sharedPreferencesProvider);
+  return AppUtility(sharedPreferences: sharedPrefs);
 });
 
 Future<void> main() async {

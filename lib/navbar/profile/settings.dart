@@ -103,8 +103,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
         user.setUser(userNew);
       }
     });
-    final appController = ref.read(appProvider);
-
+    final oldVersion = ref.read(appProvider).oldVersion;
     return Material(
       color: Colors.transparent,
       child: ListView(
@@ -127,10 +126,10 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                 if (snapshot.data == null) return SizedBox.shrink();
                 final String appVersion = snapshot.data!.version;
                 final int appBuildNumber = int.parse(snapshot.data!.buildNumber);
-                final oldVersion = appController.version.split(' ')[0];
-                final oldBuildNumber = int.parse(appController.version.split(' ')[1]);
+                final version = oldVersion.split(' ')[0];
+                final buildNumber = int.parse(oldVersion.split(' ')[1]);
 
-                if (appVersion != oldVersion || oldBuildNumber < appBuildNumber) {
+                if (appVersion != version || buildNumber < appBuildNumber) {
                   return settingTile(
                     'Whats New',
                     title: RichText(
