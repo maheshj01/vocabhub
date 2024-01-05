@@ -35,6 +35,9 @@ jobs:
           FIREBASE_UTILS_OPTIONS: ${{ secrets.FIREBASE_UTILS_OPTIONS }}
       - run: flutter clean
       - run: flutter pub get
+      # Use the setup-shorebird action to configure Shorebird
+      - name: 🐦 Setup Shorebird
+        uses: shorebirdtech/setup-shorebird@v0
 
       - name: Publish Shorebird Patch
         env:
@@ -57,10 +60,6 @@ jobs:
       #   run: flutter pub get
       # - name: 📱 Run integration test
       #   run: flutter drive --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart --no-build --dart-define=SUPABASE_PROJECT_URL=${{secrets.SUPABASE_PROJECT_URL}} --dart-define=SUPABASE_API_KEY=${{secrets.SUPABASE_API_KEY}} --dart-define=SUPABASE_REDIRECT_URL=${{secrets.SUPABASE_REDIRECT_URL}} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }}
-
-      # Use the setup-shorebird action to configure Shorebird
-      - name: 🐦 Setup Shorebird
-        uses: shorebirdtech/setup-shorebird@v0
 
       # - name: Create Shorebird release
       #   env:
