@@ -42,7 +42,7 @@ jobs:
       - name: Publish Shorebird Patch
         env:
           SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
-        run: shorebird patch android --release-version  0.7.6+28 --dart-define=SUPABASE_PROJECT_URL=${{secrets.SUPABASE_PROJECT_URL}} --dart-define=SUPABASE_API_KEY=${{secrets.SUPABASE_API_KEY}} --dart-define=SUPABASE_REDIRECT_URL=${{secrets.SUPABASE_REDIRECT_URL}} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }}--dart-define=ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} --dart-define=FCM_SERVER_KEY=${{ secrets.FCM_SERVER_KEY }}
+        run: shorebird patch android --release-version  0.7.6+28 -- --dart-define=SUPABASE_PROJECT_URL=${{secrets.SUPABASE_PROJECT_URL}} --dart-define=SUPABASE_API_KEY=${{secrets.SUPABASE_API_KEY}} --dart-define=SUPABASE_REDIRECT_URL=${{secrets.SUPABASE_REDIRECT_URL}} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }}--dart-define=ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} --dart-define=FCM_SERVER_KEY=${{ secrets.FCM_SERVER_KEY }}
 
       # - run: flutter pub run build_runner build --delete-conflicting-outputs
       - run: flutter build web --release --dart-define=SUPABASE_PROJECT_URL=${{secrets.SUPABASE_PROJECT_URL}} --dart-define=SUPABASE_API_KEY=${{secrets.SUPABASE_API_KEY}} --dart-define=SUPABASE_REDIRECT_URL=${{secrets.SUPABASE_REDIRECT_URL}} --dart-define=SUPABASE_SERVICE_ROLE=${{secrets.SUPABASE_SERVICE_ROLE}} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }} --dart-define=ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} --dart-define=FCM_SERVER_KEY=${{ secrets.FCM_SERVER_KEY }}
