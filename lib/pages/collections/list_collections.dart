@@ -100,8 +100,8 @@ class SavedCollectionsSheet extends ConsumerStatefulWidget {
 class _CollectionsSavedState extends ConsumerState<SavedCollectionsSheet> {
   @override
   Widget build(BuildContext context) {
-    final collectionRef = ref.read(collectionNotifier.notifier);
-    final collections = ref.watch(collectionNotifier).collections;
+    final collectionsNotifier = ref.read(collectionNotifierProvider.notifier);
+    final collections = ref.watch(collectionNotifierProvider).value;
     return Column(
       children: [
         Padding(
@@ -120,7 +120,7 @@ class _CollectionsSavedState extends ConsumerState<SavedCollectionsSheet> {
           ),
         ),
         hLine(),
-        if (collections.isEmpty)
+        if (collections!.isEmpty)
           Expanded(child: DemoCollections())
         else
           Expanded(
@@ -149,7 +149,7 @@ class _CollectionsSavedState extends ConsumerState<SavedCollectionsSheet> {
                       trailing: widget.word.word.isEmpty
                           ? IconButton(
                               onPressed: () async {
-                                ref.read(collectionNotifier.notifier).togglePin(title);
+                                collectionsNotifier.togglePin(title);
                               },
                               icon: Icon(
                                 !isPinned ? Icons.push_pin_outlined : Icons.push_pin_rounded,
@@ -158,9 +158,9 @@ class _CollectionsSavedState extends ConsumerState<SavedCollectionsSheet> {
                           : IconButton(
                               onPressed: () async {
                                 if (contains) {
-                                  collectionRef.removeFromCollection(title, widget.word);
+                                  collectionsNotifier.removeFromCollection(title, widget.word);
                                 } else {
-                                  collectionRef.addToCollection(title, widget.word);
+                                  collectionsNotifier.addToCollection(title, widget.word);
                                 }
                               },
                               icon:
@@ -184,8 +184,8 @@ class CollectionsGrid extends ConsumerStatefulWidget {
 class CollectionsGridState extends ConsumerState<CollectionsGrid> {
   @override
   Widget build(BuildContext context) {
-    final collections = ref.watch(collectionNotifier).collections;
-    return collections.isEmpty
+    final collections = ref.watch(collectionNotifierProvider).value;
+    return collections!.isEmpty
         ? EmptyPage(message: 'No collections found')
         : GridView.builder(
             shrinkWrap: true,
@@ -252,6 +252,7 @@ class CollectionDetailsSheet extends ConsumerStatefulWidget {
 class _CollectionDetailsSheetState extends ConsumerState<CollectionDetailsSheet> {
   @override
   Widget build(BuildContext context) {
+    final collectionsNotifier = ref.read(collectionNotifierProvider.notifier);
     final collection = widget.collection ?? VHCollection.init();
     return Column(
       children: [
@@ -262,7 +263,7 @@ class _CollectionDetailsSheetState extends ConsumerState<CollectionDetailsSheet>
             // delete collection
             trailing: IconButton(
                 onPressed: () {
-                  ref.read(collectionNotifier.notifier).deleteCollection(collection.title);
+                  collectionsNotifier.deleteCollection(collection.title);
                   Navigate.popView(context, isRootNavigator: false);
                 },
                 icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.primary)),

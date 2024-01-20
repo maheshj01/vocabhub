@@ -1,12 +1,11 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+
 import 'package:json_annotation/json_annotation.dart';
-import 'package:vocabhub/main.dart';
-import 'package:vocabhub/models/models.dart';
 
 part 'user.g.dart';
 
 @JsonSerializable()
-class UserModel extends ChangeNotifier {
+class UserModel {
   String? idToken;
   String? accessToken;
   String email;
@@ -17,75 +16,107 @@ class UserModel extends ChangeNotifier {
   String username;
   // push notification token
   String token;
-  bool isDeleted;
+  bool deleted;
   DateTime? created_at;
   DateTime? updated_at;
-
   UserModel({
-    this.name = '',
-    this.email = '',
-    this.avatarUrl,
     this.idToken,
-    this.isAdmin = false,
     this.accessToken,
+    required this.email,
+    required this.name,
+    this.avatarUrl,
+    this.isLoggedIn = false,
+    this.isAdmin = false,
+    required this.username,
     this.token = '',
-    this.username = '',
+    this.deleted = false,
     this.created_at,
     this.updated_at,
-    this.isDeleted = false,
-    this.isLoggedIn = false,
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
-
-  /// todo: add created at parameter
-  factory UserModel.copyWith(UserModel w) {
-    return UserModel(
-      name: w.name,
-      email: w.email,
-      avatarUrl: w.avatarUrl,
-      idToken: w.idToken,
-      accessToken: w.accessToken,
-      isAdmin: w.isAdmin,
-      username: w.username,
-      token: w.token,
-      isDeleted: w.isDeleted,
-      created_at: w.created_at,
-      updated_at: w.updated_at,
-      isLoggedIn: w.isLoggedIn,
-    );
-  }
-
   UserModel copyWith({
-    String? name,
-    String? email,
-    String? avatarUrl,
     String? idToken,
     String? accessToken,
-    bool? isAdmin,
+    String? email,
+    String? name,
+    String? avatarUrl,
     bool? isLoggedIn,
+    bool? isAdmin,
     String? username,
     String? token,
+    bool? deleted,
     DateTime? created_at,
     DateTime? updated_at,
-    bool? isDeleted,
-    List<Word>? bookmarks,
   }) {
     return UserModel(
-      name: name ?? this.name,
-      email: email ?? this.email,
-      avatarUrl: avatarUrl ?? this.avatarUrl,
       idToken: idToken ?? this.idToken,
       accessToken: accessToken ?? this.accessToken,
+      email: email ?? this.email,
+      name: name ?? this.name,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      isLoggedIn: isLoggedIn ?? this.isLoggedIn,
       isAdmin: isAdmin ?? this.isAdmin,
       username: username ?? this.username,
       token: token ?? this.token,
-      isDeleted: isDeleted ?? this.isDeleted,
+      deleted: deleted ?? this.deleted,
       created_at: created_at ?? this.created_at,
       updated_at: updated_at ?? this.updated_at,
-      isLoggedIn: isLoggedIn ?? this.isLoggedIn,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    final result = <String, dynamic>{};
+
+    if (idToken != null) {
+      result.addAll({'idToken': idToken});
+    }
+    if (accessToken != null) {
+      result.addAll({'accessToken': accessToken});
+    }
+    result.addAll({'email': email});
+    result.addAll({'name': name});
+    if (avatarUrl != null) {
+      result.addAll({'avatarUrl': avatarUrl});
+    }
+    result.addAll({'isLoggedIn': isLoggedIn});
+    result.addAll({'isAdmin': isAdmin});
+    result.addAll({'username': username});
+    result.addAll({'token': token});
+    result.addAll({'deleted': deleted});
+    if (created_at != null) {
+      result.addAll({'created_at': created_at!.millisecondsSinceEpoch});
+    }
+    if (updated_at != null) {
+      result.addAll({'updated_at': updated_at!.millisecondsSinceEpoch});
+    }
+
+    return result;
+  }
+
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
+      idToken: map['idToken'],
+      accessToken: map['accessToken'],
+      email: map['email'] ?? '',
+      name: map['name'] ?? '',
+      avatarUrl: map['avatarUrl'],
+      isLoggedIn: map['isLoggedIn'] ?? false,
+      isAdmin: map['isAdmin'] ?? false,
+      username: map['username'] ?? '',
+      token: map['token'] ?? '',
+      deleted: map['deleted'] ?? false,
+      created_at: map['created_at'].runtimeType == int
+          ? DateTime.fromMillisecondsSinceEpoch(map['created_at'])
+          : DateTime.parse(map['created_at']),
+      updated_at: map['updated_at'].runtimeType == int
+          ? DateTime.fromMillisecondsSinceEpoch(map['updated_at'])
+          : DateTime.parse(map['updated_at']),
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory UserModel.fromJson(String source) => UserModel.fromMap(json.decode(source));
 
   factory UserModel.init() {
     return UserModel(
@@ -99,72 +130,47 @@ class UserModel extends ChangeNotifier {
         username: '',
         token: '',
         isAdmin: false,
-        isDeleted: false,
+        deleted: false,
         isLoggedIn: false);
   }
 
-  /// TODO: add a method to convert a User to JSON object
-//  Map<String, dynamic> toJson() => {
-//         'id': id,
-//         'email': email,
-//         'created_at': createdAt,
-//         'last_sign_in_at': lastSignInAt,
-//         'updated_at': updatedAt,
-//       };
-
-  Map<String, dynamic> toJson() => _$UserModelToJson(this);
-
-  set setEmail(String m) {
-    email = m;
-    notifyListeners();
+  @override
+  String toString() {
+    return 'UserModel(idToken: $idToken, accessToken: $accessToken, email: $email, name: $name, avatarUrl: $avatarUrl, isLoggedIn: $isLoggedIn, isAdmin: $isAdmin, username: $username, token: $token, deleted: $deleted, created_at: $created_at, updated_at: $updated_at)';
   }
 
-  set setName(String m) {
-    name = m;
-    notifyListeners();
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is UserModel &&
+        other.idToken == idToken &&
+        other.accessToken == accessToken &&
+        other.email == email &&
+        other.name == name &&
+        other.avatarUrl == avatarUrl &&
+        other.isLoggedIn == isLoggedIn &&
+        other.isAdmin == isAdmin &&
+        other.username == username &&
+        other.token == token &&
+        other.deleted == deleted &&
+        other.created_at == created_at &&
+        other.updated_at == updated_at;
   }
 
-  set setIdToken(String m) {
-    idToken = m;
-    notifyListeners();
-  }
-
-  set setAccessToken(String m) {
-    accessToken = m;
-    notifyListeners();
-  }
-
-  set setAvatarUrl(String m) {
-    avatarUrl = m;
-    notifyListeners();
-  }
-
-  set loggedIn(bool m) {
-    isLoggedIn = m;
-    notifyListeners();
-  }
-
-  set setIsDeleted(bool m) {
-    isDeleted = m;
-    notifyListeners();
-  }
-
-  UserModel get user => this;
-
-  // updates local state and also stores in local storage
-  setUser(UserModel user) {
-    this.name = user.name;
-    this.email = user.email;
-    this.avatarUrl = user.avatarUrl;
-    this.idToken = user.idToken;
-    this.accessToken = user.accessToken;
-    this.isAdmin = user.isAdmin;
-    this.username = user.username;
-    this.token = user.token;
-    this.created_at = user.created_at;
-    this.isLoggedIn = user.isLoggedIn;
-    this.isDeleted = user.isDeleted;
-    authController.setUser(this);
-    notifyListeners();
+  @override
+  int get hashCode {
+    return idToken.hashCode ^
+        accessToken.hashCode ^
+        email.hashCode ^
+        name.hashCode ^
+        avatarUrl.hashCode ^
+        isLoggedIn.hashCode ^
+        isAdmin.hashCode ^
+        username.hashCode ^
+        token.hashCode ^
+        deleted.hashCode ^
+        created_at.hashCode ^
+        updated_at.hashCode;
   }
 }

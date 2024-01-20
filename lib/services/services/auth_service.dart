@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:navbar_router/navbar_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/models.dart';
@@ -13,9 +10,6 @@ import 'package:vocabhub/services/services/service_base.dart';
 import 'package:vocabhub/utils/utility.dart';
 
 class AuthService extends ServiceBase {
-  static const userKey = 'userKey';
-
-  late SharedPreferences _sharedPreferences;
   GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: <String>[
       'email',
@@ -23,12 +17,12 @@ class AuthService extends ServiceBase {
     ],
   );
 
-  static String _tableName = '${Constants.USER_TABLE_NAME}';
-  static final _logger = Logger("AuthService");
+  String _tableName = '${Constants.USER_TABLE_NAME}';
+  final _logger = Logger("AuthService");
 
-  static Future<Response> registerUser(UserModel user) async {
+  Future<Response> registerUser(UserModel user) async {
     final resp = Response(didSucced: false, message: "Failed");
-    final json = user.toJson();
+    final json = user.toMap();
     json['created_at'] = DateTime.now().toIso8601String();
     json['isLoggedIn'] = true;
     // TODO: temp fix
@@ -89,7 +83,7 @@ class AuthService extends ServiceBase {
     }
   }
 
-  static Future<ResponseObject> updateLogin({
+  Future<ResponseObject> updateLogin({
     required String email,
     required Map<String, dynamic> data,
   }) async {
@@ -102,7 +96,7 @@ class AuthService extends ServiceBase {
 
       if (response.status == 200) {
         return ResponseObject(
-            Status.success.name, UserModel.fromJson((response.data as List).first), Status.success);
+            Status.success.name, UserModel.fromMap((response.data as List).first), Status.success);
       } else {
         _logger.d('existing user not found');
         return ResponseObject(
@@ -114,8 +108,7 @@ class AuthService extends ServiceBase {
     }
   }
 
-  static Future<ResponseObject> updateTokenOnLogin(
-      {required String email, required String token}) async {
+  Future<ResponseObject> updateTokenOnLogin({required String email, required String token}) async {
     try {
       final response = await DatabaseService.updateRow(
           colValue: email,
@@ -140,21 +133,8 @@ class AuthService extends ServiceBase {
     }
   }
 
-  Future<void> setUser(UserModel user) async {
-    final userToJson = user.toJson();
-    final encodeString = json.encode(userToJson);
-    await _sharedPreferences.setString('$userKey', encodeString);
-  }
-
-  Future<UserModel> getUser() async {
-    final userString = _sharedPreferences.getString('$userKey') ?? '';
-    if (userString.isEmpty) return UserModel.init();
-    final userJson = json.decode(userString);
-    return UserModel.fromJson(userJson);
-  }
-
   Future<void> logOut(BuildContext context, UserModel user) async {
-    await AuthService.updateLogin(
+    await updateLogin(
       email: user.email,
       data: {Constants.USER_LOGGEDIN_COLUMN: false},
     );
@@ -166,7 +146,5 @@ class AuthService extends ServiceBase {
   Future<void> disposeService() async {}
 
   @override
-  Future<void> initService() async {
-    _sharedPreferences = await SharedPreferences.getInstance();
-  }
+  Future<void> initService() async {}
 }

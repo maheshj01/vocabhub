@@ -61,7 +61,6 @@ class AddWordForm extends ConsumerStatefulWidget {
 
 class _AddWordFormState extends ConsumerState<AddWordForm> {
   late Size size;
-  VocabStoreService supaStore = VocabStoreService();
 
   late TextEditingController wordController;
   late TextEditingController meaningController;
@@ -361,7 +360,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
       );
     }
 
-    userProvider = ref.watch(userNotifierProvider);
+    userProvider = ref.watch(userNotifierProvider).value;
     final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),

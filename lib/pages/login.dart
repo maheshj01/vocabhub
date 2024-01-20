@@ -19,36 +19,36 @@ class AppSignIn extends ConsumerStatefulWidget {
 }
 
 class _AppSignInState extends ConsumerState<AppSignIn> {
-  AuthService auth = AuthService();
   Future<void> _handleSignIn(BuildContext context) async {
-    final _userNotifier = ref.read(userNotifierProvider);
+    final _userNotifier = ref.read(userNotifierProvider.notifier);
+    final authService = ref.read(authServiceProvider);
     try {
       final token = pushNotificationService.fcmToken;
       _requestNotifier.value = Response(state: RequestState.active);
-      user = await auth.googleSignIn(context);
+      user = await authService.googleSignIn(context);
       if (user != null) {
-        final existingUser = await UserService.findByEmail(email: user!.email);
+        final existingUser = await _userNotifier.findUserByEmail(email: user!.email);
         if (existingUser.email.isEmpty) {
           user = user!.copyWith(
             token: token,
           );
-          final resp = await AuthService.registerUser(user!);
+          final resp = await authService.registerUser(user!);
           if (resp.didSucced) {
             final UserModel registeredUser = UserModel.fromJson((resp.data as List<dynamic>)[0]);
             // state.setUser(user.copyWith(isLoggedIn: true, token: fcmToken));
-            registeredUser.loggedIn = true;
+            registeredUser.isLoggedIn = true;
             _userNotifier.setUser(registeredUser);
             _requestNotifier.value = Response(state: RequestState.done, data: registeredUser);
             Navigate.pushAndPopAll(context, AdaptiveLayout(), transitionType: TransitionType.ttb);
             firebaseAnalytics.logNewUser(registeredUser);
           } else {
-            _userNotifier.loggedIn = false;
+            _userNotifier.setLogin(false);
             NavbarNotifier.showSnackBar(context, '$signInFailure');
             _requestNotifier.value = Response(state: RequestState.done);
             throw '$registration_Failed';
           }
         } else {
-          if (existingUser.isDeleted) {
+          if (existingUser.deleted) {
             _requestNotifier.value = Response(state: RequestState.done);
             NavbarNotifier.showSnackBar(
               context,
@@ -62,12 +62,12 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
             );
             return;
           }
-          existingUser.loggedIn = true;
+          existingUser.isLoggedIn = true;
           _userNotifier.setUser(existingUser);
           user = user!.copyWith(
             token: token,
           );
-          await AuthService.updateLogin(
+          await authService.updateLogin(
             data: {
               Constants.USER_LOGGEDIN_COLUMN: true,
               Constants.USER_TOKEN_COLUMN: token,
@@ -87,7 +87,7 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
     } catch (error) {
       NavbarNotifier.showSnackBar(context, bottom: 0, error.toString());
       _requestNotifier.value = Response(state: RequestState.done);
-      _userNotifier.loggedIn = false;
+      _userNotifier.setLogin(false);
     }
   }
 

@@ -87,7 +87,7 @@ class _NotificationsMobileState extends ConsumerState<NotificationsMobile> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      user = ref.watch(userNotifierProvider);
+      user = ref.watch(userNotifierProvider).value;
       getNotifications();
     });
   }
@@ -189,7 +189,7 @@ class _NotificationsMobileState extends ConsumerState<NotificationsMobile> {
   final GlobalKey<ScaffoldState> notificationsKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    final userRef = ref.watch(userNotifierProvider);
+    final userRef = ref.watch(userNotifierProvider).value;
     return Material(
       color: Colors.transparent,
       key: notificationsKey,
@@ -210,7 +210,7 @@ class _NotificationsMobileState extends ConsumerState<NotificationsMobile> {
                   if (value == null || user == null) {
                     return LoadingWidget();
                   }
-                  if (value.isEmpty || !userRef.isLoggedIn) {
+                  if (value.isEmpty || !userRef!.isLoggedIn) {
                     return Center(
                       child: Text('No notifications'),
                     );

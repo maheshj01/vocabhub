@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:vocabhub/base_home.dart';
@@ -9,12 +10,14 @@ import 'package:vocabhub/widgets/button.dart';
 
 import 'onboarding.dart';
 
-class OnboardingPage extends StatefulWidget {
+class OnboardingPage extends ConsumerStatefulWidget {
+  const OnboardingPage({super.key});
+
   @override
-  State<OnboardingPage> createState() => _OnboardingPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _OnboardingPageState();
 }
 
-class _OnboardingPageState extends State<OnboardingPage> {
+class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   int index = 0;
 
   Future<void> onBoardComplete() async {
@@ -25,7 +28,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
     setState(() {
       isLoading = false;
     });
-    if (authController.user.isLoggedIn) {
+    final user = ref.read(userNotifierProvider).value;
+    if (user!.isLoggedIn) {
       Navigate.pushAndPopAll(context, AdaptiveLayout());
     } else {
       Navigate.pushAndPopAll(context, AppSignIn());

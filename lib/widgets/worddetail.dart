@@ -77,7 +77,7 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = ref.watch(userNotifierProvider);
+    final userProvider = ref.watch(userNotifierProvider).value;
     final size = MediaQuery.of(context).size;
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
@@ -107,7 +107,7 @@ class _WordDetailMobileState extends ConsumerState<WordDetailMobile> {
               children: [
                 Align(
                   alignment: Alignment.bottomRight,
-                  child: userProvider.isLoggedIn
+                  child: userProvider!.isLoggedIn
                       ? IconButton(
                           icon: Icon(
                             Icons.edit,
@@ -231,7 +231,6 @@ class _WordDetailDesktopState extends ConsumerState<WordDetailDesktop>
       meaning = widget.word!.meaning;
       length = widget.word!.meaning.length;
     }
-    supaStore = VocabStoreService();
     _tween = IntTween(begin: 0, end: length);
     _animation = _tween.animate(_animationController);
     _animationController.addStatusListener((status) {
@@ -276,20 +275,18 @@ class _WordDetailDesktopState extends ConsumerState<WordDetailDesktop>
   }
 
   late String meaning;
-  late VocabStoreService supaStore;
-  UserModel userProvider = UserModel.init();
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    userProvider = ref.watch(userNotifierProvider);
+    final userProvider = ref.watch(userNotifierProvider).value;
     return widget.word == null
         ? EmptyWord()
         : Material(
             child: Column(
               children: [
                 (SizeUtils.isMobile ? 24.0 : (size.height / 5)).vSpacer(),
-                userProvider.isLoggedIn
+                userProvider!.isLoggedIn
                     ? Container(
                         alignment: Alignment.topRight,
                         padding: EdgeInsets.only(right: 16),

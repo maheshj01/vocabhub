@@ -22,7 +22,6 @@ class AppUtility {
     final String? version = sharedPreferences.getString(kOldAppVersionKey);
     if (version != null) {
       // TODO: to remove this condition in future
-      print("stored version: $version");
       if (!version.startsWith('{')) {
         final appVersion = version.split(' ')[0];
         final buildNumber = version.split(' ')[1];

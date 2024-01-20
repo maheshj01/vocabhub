@@ -41,26 +41,38 @@ class _SearchState extends ConsumerState<Search> {
   final analytics = Analytics.instance;
   @override
   Widget build(BuildContext context) {
-    final words = dashboardController.words;
+    final dashboardState = ref.read(dashboardNotifierProvider);
+
     return ResponsiveBuilder(desktopBuilder: (context) {
-      return SafeArea(
-        child: Row(
-          children: [
-            Flexible(
-              child: WordList(
-                controller: ScrollController(),
-                onSelected: (word) {
-                  setState(() {
-                    selectedWord = word;
-                    selectedIndex = words.indexOf(word);
-                  });
+      return dashboardState.when(
+          error: (error, stack) => ErrorPage(
+                onRetry: () {
+                  ref.refresh(dashboardNotifierProvider);
                 },
+                errorMessage: error.toString(),
               ),
-            ),
-            Expanded(flex: 2, child: WordDetail(word: selectedWord ?? words.first)),
-          ],
-        ),
-      );
+          loading: () => LoadingWidget(),
+          data: (dashboard) {
+            final words = dashboard.words;
+            return SafeArea(
+              child: Row(
+                children: [
+                  Flexible(
+                    child: WordList(
+                      controller: ScrollController(),
+                      onSelected: (word) {
+                        setState(() {
+                          selectedWord = word;
+                          selectedIndex = words!.indexOf(word);
+                        });
+                      },
+                    ),
+                  ),
+                  Expanded(flex: 2, child: WordDetail(word: selectedWord ?? words!.first)),
+                ],
+              ),
+            );
+          });
     }, mobileBuilder: (BuildContext context) {
       return MobileView();
     });
@@ -270,7 +282,7 @@ class WordTile extends ConsumerWidget {
   }
 }
 
-class WordList extends StatefulWidget {
+class WordList extends ConsumerStatefulWidget {
   final Function(Word) onSelected;
   ScrollController? controller;
   final Function? onFocus;
@@ -287,19 +299,15 @@ class WordList extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<WordList> createState() => _WordListState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _WordListState();
 }
 
-class _WordListState extends State<WordList> {
+class _WordListState extends ConsumerState<WordList> {
   @override
   void initState() {
     wordsNotifier = ValueNotifier<List<Word>>([]);
     widget.controller ??= ScrollController();
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _words = dashboardController.words;
-      wordsNotifier.value = _words;
-    });
   }
 
   bool isInSynonym(String query, List<String>? synonyms) {
@@ -315,7 +323,6 @@ class _WordListState extends State<WordList> {
     return result;
   }
 
-  List<Word> _words = [];
   late final ValueNotifier<List<Word>> wordsNotifier;
 
   @override
@@ -333,6 +340,8 @@ class _WordListState extends State<WordList> {
 
   @override
   Widget build(BuildContext context) {
+    final dashboardState = ref.read(dashboardNotifierProvider.notifier);
+
     return ValueListenableBuilder<List<Word>>(
         valueListenable: wordsNotifier,
         builder: (BuildContext context, List<Word> value, Widget? child) {
@@ -352,9 +361,8 @@ class _WordListState extends State<WordList> {
                           }
                         },
                         onChanged: (x) {
-                          _words = dashboardController.words;
                           if (x.isEmpty) {
-                            wordsNotifier.value = _words;
+                            wordsNotifier.value = dashboardState.stateValue.words!;
                             return;
                           }
                           search(x);

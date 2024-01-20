@@ -1,12 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rive/rive.dart';
 import 'package:vocabhub/constants/strings.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/utils/extensions.dart';
+import 'package:vocabhub/widgets/widgets.dart';
 
-class OnboardingContentPage extends StatefulWidget {
+class OnboardingContentPage extends ConsumerStatefulWidget {
   final Color? color;
   final int index;
   final List<String> animations;
@@ -21,10 +23,10 @@ class OnboardingContentPage extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<OnboardingContentPage> createState() => _OnboardingContentPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _OnboardingContentPageState();
 }
 
-class _OnboardingContentPageState extends State<OnboardingContentPage> {
+class _OnboardingContentPageState extends ConsumerState<OnboardingContentPage> {
   @override
   void didUpdateWidget(covariant OnboardingContentPage oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -110,21 +112,21 @@ class _OnboardingContentPageState extends State<OnboardingContentPage> {
   }
 }
 
-class WordAnimationWidget extends StatefulWidget {
+class WordAnimationWidget extends ConsumerStatefulWidget {
   const WordAnimationWidget({super.key});
 
   @override
-  State<WordAnimationWidget> createState() => _WordAnimationWidgetState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _WordAnimationWidgetState();
 }
 
-class _WordAnimationWidgetState extends State<WordAnimationWidget>
+class _WordAnimationWidgetState extends ConsumerState<WordAnimationWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _wordController;
   @override
   void initState() {
     super.initState();
     _wordController = AnimationController(
-      duration: duration,
+      duration: Duration(seconds: 2),
       vsync: this,
     );
     _wordController
@@ -137,10 +139,6 @@ class _WordAnimationWidgetState extends State<WordAnimationWidget>
           _wordController.forward();
         }
       });
-
-    words = dashboardController.words;
-    words.shuffle();
-    _wordController.forward();
   }
 
   final duration = Duration(milliseconds: 1600);
@@ -157,24 +155,33 @@ class _WordAnimationWidgetState extends State<WordAnimationWidget>
   int index = 0;
   @override
   Widget build(BuildContext context) {
-    final words = dashboardController.words;
-    if (words.isEmpty) return SizedBox();
+    final dashboardState = ref.watch(dashboardNotifierProvider);
 
-    final word = words[index];
-    return Center(
-        child: Container(
-            height: 280,
-            width: 150,
-            decoration: BoxDecoration(
-              color: Colors.primaries[index % Colors.primaries.length],
-              borderRadius: BorderRadius.circular(16.0),
-              border: Border.all(color: Colors.black, width: 4),
-            ),
-            alignment: Alignment.center,
-            child: AnimatedText(
-              text: word.word,
-              duration: duration,
-            )));
+    return dashboardState.when(
+      data: (state) {
+        words = state.words!;
+        final word = words[index];
+        words.shuffle();
+        _wordController.forward();
+        if (words.isEmpty) return SizedBox();
+        return Center(
+            child: Container(
+                height: 280,
+                width: 150,
+                decoration: BoxDecoration(
+                  color: Colors.primaries[index % Colors.primaries.length],
+                  borderRadius: BorderRadius.circular(16.0),
+                  border: Border.all(color: Colors.black, width: 4),
+                ),
+                alignment: Alignment.center,
+                child: AnimatedText(
+                  text: word.word,
+                  duration: duration,
+                )));
+      },
+      loading: () => LoadingWidget(),
+      error: (e, s) => Center(child: Text(e.toString())),
+    );
   }
 }
 
@@ -202,7 +209,7 @@ class _AnimatedTextState extends State<AnimatedText> with SingleTickerProviderSt
         parent: _controller,
         curve: const Interval(
           0.0,
-          0.5,
+          0.3,
           curve: Curves.easeIn,
         ),
       ),
@@ -211,7 +218,7 @@ class _AnimatedTextState extends State<AnimatedText> with SingleTickerProviderSt
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(
-          0.5,
+          0.7,
           1.0,
           curve: Curves.easeOut,
         ),

@@ -62,7 +62,7 @@ class _WelcomePageMobileState extends ConsumerState<WelcomePageMobile> {
   String title = 'Welcome to Vocabhub';
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userNotifierProvider);
+    final user = ref.watch(userNotifierProvider).value;
     return Material(
       color: Colors.transparent,
       child: Container(
@@ -115,7 +115,7 @@ class _WelcomePageMobileState extends ConsumerState<WelcomePageMobile> {
                 VHButton(
                     width: 200,
                     onTap: () {
-                      if (user.isLoggedIn) {
+                      if (user!.isLoggedIn) {
                         Navigate.pushAndPopAll(context, AdaptiveLayout());
                       } else {
                         Navigate.push(context, AppSignIn(), transitionType: TransitionType.scale);

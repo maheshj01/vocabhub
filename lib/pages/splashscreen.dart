@@ -57,19 +57,21 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
   }
 
   Future<void> handleNavigation() async {
-    final user = ref.watch(userNotifierProvider);
-    final String _email = user.email;
-    if (_email.isNotEmpty && user.isLoggedIn) {
-      Navigate.pushReplace(context, AdaptiveLayout());
-    } else {
-      final int count = settingsController.skipCount + 1;
-      settingsController.setSkipCount = count;
-      if (count % 3 != 0) {
+    final userProvider = ref.watch(userNotifierProvider);
+    userProvider.whenData((user) {
+      final String _email = user.email;
+      if (_email.isNotEmpty && user.isLoggedIn) {
         Navigate.pushReplace(context, AdaptiveLayout());
       } else {
-        Navigate.pushReplace(context, AppSignIn());
+        final int count = settingsController.skipCount + 1;
+        settingsController.setSkipCount = count;
+        if (count % 3 != 0) {
+          Navigate.pushReplace(context, AdaptiveLayout());
+        } else {
+          Navigate.pushReplace(context, AppSignIn());
+        }
       }
-    }
+    });
   }
 
   @override

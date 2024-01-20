@@ -34,7 +34,6 @@ class _WhatsNewState extends State<WhatsNew> {
         release.add(lines[i]);
       }
     }
-    print(changelog[1]);
     return changelog;
   }
 

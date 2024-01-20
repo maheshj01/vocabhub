@@ -30,7 +30,7 @@ EditHistory _$EditHistoryFromJson(Map<String, dynamic> json) => EditHistory(
           const [],
       users_mobile: json['users_mobile'] == null
           ? null
-          : UserModel.fromJson(json['users_mobile'] as Map<String, dynamic>),
+          : UserModel.fromJson(json['users_mobile'] as String),
       mnemonics: (json['mnemonics'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
@@ -47,7 +47,7 @@ Map<String, dynamic> _$EditHistoryToJson(EditHistory instance) =>
       'synonyms': instance.synonyms,
       'examples': instance.examples,
       'mnemonics': instance.mnemonics,
-      'created_at': instance.created_at?.toIso8601String(),
+      'created_at': instance.created_at?.toUtc(),
       'state': _$EditStateEnumMap[instance.state],
       'edit_type': _$EditTypeEnumMap[instance.edit_type],
       'comments': instance.comments,

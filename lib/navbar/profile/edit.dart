@@ -49,8 +49,8 @@ class _EditProfileMobileState extends ConsumerState<EditProfileMobile> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      final user = ref.watch(userNotifierProvider);
-      _nameController.text = user.name;
+      final user = ref.watch(userNotifierProvider).value;
+      _nameController.text = user!.name;
       _usernameController.text = user.username;
       _emailController.text = user.email;
       _joinedController.text = user.created_at!.formatDate();
@@ -98,7 +98,8 @@ class _EditProfileMobileState extends ConsumerState<EditProfileMobile> {
           Response(data: userNameConstraints, state: RequestState.error, didSucced: false);
       return;
     } else {
-      final bool isUsernameValid = await UserService.isUsernameValid(username);
+      final userNotifier = ref.read(userNotifierProvider.notifier);
+      final bool isUsernameValid = await userNotifier.isUserNameValid(username);
       if (isUsernameValid) {
         _validNotifier.value =
             Response(state: RequestState.done, data: 'Username is available', didSucced: true);
@@ -111,7 +112,8 @@ class _EditProfileMobileState extends ConsumerState<EditProfileMobile> {
 
   @override
   Widget build(BuildContext context) {
-    UserModel user = ref.watch(userNotifierProvider);
+    UserModel user = ref.watch(userNotifierProvider).value!;
+    final userNotifier = ref.watch(userNotifierProvider.notifier);
     final apptheme = ref.read(appThemeProvider);
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
@@ -249,11 +251,11 @@ class _EditProfileMobileState extends ConsumerState<EditProfileMobile> {
                                       Response(didSucced: false, state: RequestState.active);
                                   final userName = _usernameController.text.trim();
                                   final editedUser = user.copyWith(username: userName);
-                                  final success = await UserService.updateUser(editedUser);
+                                  final success = await userNotifier.updateUser(editedUser);
                                   if (success) {
                                     _responseNotifier.value =
                                         Response(state: RequestState.done, didSucced: true);
-                                    user.setUser(editedUser);
+                                    userNotifier.setUser(editedUser);
                                     NavbarNotifier.showSnackBar(context, 'success updating user! ');
                                   } else {
                                     _responseNotifier.value =
@@ -283,7 +285,7 @@ class _EditProfileMobileState extends ConsumerState<EditProfileMobile> {
                                   FocusScope.of(context).unfocus();
                                   showDeleteConfirmation(() async {
                                     showCircularIndicator(context);
-                                    await UserService.deleteUser(user);
+                                    await userNotifier.deleteUser(user);
                                     showToast('You will be logged out!');
                                     await Future.delayed(Duration(seconds: 2));
                                     stopCircularIndicator(context);

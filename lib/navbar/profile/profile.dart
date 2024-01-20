@@ -70,9 +70,9 @@ class _UserProfileState extends ConsumerState<UserProfile> {
   void initState() {
     super.initState();
     userProfileNotifier = ValueNotifier<Response>(response);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _fetchUser();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _fetchUser();
+    // });
   }
 
   late final ValueNotifier<Response> userProfileNotifier;
@@ -88,14 +88,15 @@ class _UserProfileState extends ConsumerState<UserProfile> {
     userProfileNotifier.value =
         response.copyWith(state: RequestState.active, message: "Loading...");
     try {
+      final user = ref.watch(userNotifierProvider).value;
+      final userNotifier = ref.watch(userNotifierProvider.notifier);
       if (!widget.isReadOnly) {
-        final user = ref.watch(userNotifierProvider);
-        final updatedUser = await UserService.findByEmail(email: user.email, cache: true);
-        user.setUser(updatedUser);
+        final updatedUser = await userNotifier.findUserByEmail(email: user!.email);
+        userNotifier.setUser(updatedUser);
         userProfileNotifier.value = response.copyWith(
             state: RequestState.done, message: "Success", data: updatedUser, didSucced: true);
       } else {
-        final user = await UserService.findByEmail(email: widget.email, cache: false);
+        final user = await userNotifier.findUserByEmail(email: widget.email);
         userProfileNotifier.value = response.copyWith(
             state: RequestState.done, message: "Success", data: user, didSucced: true);
       }
@@ -430,7 +431,7 @@ class UserProfileDesktop extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userNotifierProvider);
+    final user = ref.watch(userNotifierProvider).value;
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
@@ -440,7 +441,7 @@ class UserProfileDesktop extends ConsumerWidget {
         children: [
           Expanded(
               child: UserProfileMobile(
-            user: user,
+            user: user!,
           )),
           Expanded(
               child: SettingsPageMobile(

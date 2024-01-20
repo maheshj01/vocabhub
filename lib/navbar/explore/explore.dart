@@ -73,8 +73,8 @@ class _ExploreWordsMobileState extends ConsumerState<ExploreWordsMobile>
   Future<void> exploreWords() async {
     try {
       _request.value = Response(state: RequestState.active);
-      final user = ref.watch(userNotifierProvider);
-      final newWords = await exploreController.getExploreWords(user.email, page: page);
+      final user = ref.watch(userNotifierProvider).value;
+      final newWords = await exploreController.getExploreWords(user!.email, page: page);
       newWords.shuffle();
       max = newWords.length;
       if (mounted) {
@@ -258,21 +258,22 @@ class _ExploreWordsMobileState extends ConsumerState<ExploreWordsMobile>
   }
 }
 
-class ExploreWordsDesktop extends StatefulWidget {
-  ExploreWordsDesktop({Key? key}) : super(key: key);
+class ExploreWordsDesktop extends ConsumerStatefulWidget {
+  const ExploreWordsDesktop({super.key});
 
   @override
-  State<ExploreWordsDesktop> createState() => _ExploreWordsDesktopState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ExploreWordsDesktopState();
 }
 
-class _ExploreWordsDesktopState extends State<ExploreWordsDesktop> {
+class _ExploreWordsDesktopState extends ConsumerState<ExploreWordsDesktop> {
   final focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final words = dashboardController.words;
-    if (words.isEmpty) return SizedBox.shrink();
+    final dashboardState = ref.watch(dashboardNotifierProvider.notifier);
+    final words = dashboardState.stateValue.words;
+    if (words!.isEmpty) return SizedBox.shrink();
     return KeyboardListener(
       focusNode: focusNode,
       autofocus: true,
@@ -363,7 +364,6 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
     } else {
       _animationController.duration = Duration(seconds: 3);
     }
-    supaStore = VocabStoreService();
     _tween = IntTween(begin: 0, end: length);
     _animation = _tween.animate(_animationController);
     isHidden = exploreController.isHidden;
@@ -391,7 +391,6 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
   }
 
   late String meaning;
-  late VocabStoreService supaStore;
   int upperIndex = 0;
   int lowerIndex = 0;
   WordState wordState = WordState.unanswered;
@@ -406,8 +405,8 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final userProvider = ref.watch(userNotifierProvider);
-    if (!userProvider.isLoggedIn) {
+    final userProvider = ref.watch(userNotifierProvider).value;
+    if (!userProvider!.isLoggedIn) {
       _animationController.forward();
     }
     return widget.word == null

@@ -378,7 +378,7 @@ class _ReportABugMobileState extends ConsumerState<ReportABugMobile> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userNotifierProvider);
+    final user = ref.watch(userNotifierProvider).value;
     return Material(
       color: Colors.transparent,
       child: ValueListenableBuilder<Response>(
@@ -418,7 +418,7 @@ class _ReportABugMobileState extends ConsumerState<ReportABugMobile> {
                         try {
                           final report = ReportModel(
                               feedback: description,
-                              email: user.email,
+                              email: user!.email,
                               created_at: DateTime.now(),
                               id: Uuid().v4(),
                               name: user.name);

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:supabase/supabase.dart';
 import 'package:vocabhub/constants/const.dart';
-import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/platform/mobile.dart'
     if (dart.library.html) 'package:vocabhub/platform/web.dart' as platformOnly;
@@ -14,8 +13,10 @@ import 'package:vocabhub/utils/utility.dart';
 class VocabStoreService {
   static String tableName = '${Constants.VOCAB_TABLE_NAME}';
   static final _logger = Logger("VocabStoreService");
-  static final SupabaseClient _supabase =
-      SupabaseClient("${Constants.SUPABASE_URL}", "${Constants.SUPABASE_API_KEY}}");
+  final SupabaseClient supabase;
+
+  VocabStoreService(this.supabase);
+
   static Future<PostgrestResponse> findById(String id) async {
     final response = await DatabaseService.findSingleRowByColumnValue(id,
         columnName: Constants.ID_COLUMN, tableName: tableName);
@@ -37,7 +38,7 @@ class VocabStoreService {
   }
 
   static Future<Response> addWord(Word word) async {
-    final json = word.toJson();
+    final json = word.toMapJson();
     final vocabresponse = Response(didSucced: false, message: "Failed");
     try {
       final response = await DatabaseService.insertIntoTable(json, table: tableName);
@@ -87,9 +88,8 @@ class VocabStoreService {
         if (sort) {
           words.sort((a, b) => a.word.compareTo(b.word));
         }
-        dashboardController.words = words;
       } else {
-        return dashboardController.words;
+        throw "Failed to get words,error:${response.error!.message}";
       }
       return words;
     } catch (_) {
@@ -178,7 +178,7 @@ class VocabStoreService {
 
   Future<bool> downloadFile() async {
     try {
-      final response = await _supabase.from(tableName).select("*").execute();
+      final response = await supabase.from(tableName).select("*").execute();
       if (response.status == 200) {
         platformOnly.fileSaver(json.encode(response.data), 'file.json');
         return true;
@@ -194,7 +194,7 @@ class VocabStoreService {
     required String id,
     required Word word,
   }) async {
-    final Map<String, dynamic> json = word.toJson();
+    final Map<String, dynamic> json = word.toMapJson();
     final response = await DatabaseService.updateRow(
         colValue: id, data: json, columnName: Constants.ID_COLUMN, tableName: tableName);
     return response;

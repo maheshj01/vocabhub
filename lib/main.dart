@@ -11,10 +11,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase/supabase.dart' as sp;
 import 'package:vocabhub/controller/app_controller.dart';
-import 'package:vocabhub/controller/auth_controller.dart';
-import 'package:vocabhub/controller/collections_controller.dart';
 import 'package:vocabhub/controller/controllers.dart';
+import 'package:vocabhub/models/collection.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/navbar/profile/about.dart';
 import 'package:vocabhub/navbar/profile/report.dart';
@@ -22,31 +22,42 @@ import 'package:vocabhub/navbar/profile/settings.dart';
 import 'package:vocabhub/navbar/profile/webview.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/pages/splashscreen.dart';
-import 'package:vocabhub/services/appstate.dart';
+import 'package:vocabhub/services/dashboardstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/theme_utils.dart';
 import 'package:vocabhub/themes/vocabtheme_controller.dart';
 import 'package:vocabhub/utils/app_utils.dart';
+import 'package:vocabhub/utils/collection_notifier.dart';
+import 'package:vocabhub/utils/dashboard_notifier.dart';
 import 'package:vocabhub/utils/firebase_options.dart';
 import 'package:vocabhub/utils/logger.dart';
+import 'package:vocabhub/utils/user_notifier.dart';
 import 'package:vocabhub/widgets/whats_new.dart';
 
 import 'constants/constants.dart';
 
-final userNotifierProvider = Provider<UserModel>((ref) {
-  return UserModel.init();
-});
+// final userControllerProvider = Provider<UserController>((ref) {
+//   final sharedPrefs = ref.watch(sharedPreferencesProvider);
+//   final userService = UserService();
+//   return UserController(sharedPrefs, userService);
+// });
 
-final dashBoardNotifier = Provider<DashboardController>((ref) => DashboardController());
 final appProvider = StateNotifierProvider<AppNotifier, AppController>(AppNotifier.new);
 
 final appThemeProvider =
     StateNotifierProvider<VocabThemeNotifier, VocabThemeController>(VocabThemeNotifier.new);
 
-final collectionNotifier = ChangeNotifierProvider((ref) => CollectionsNotifier());
-
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError();
+});
+final authServiceProvider = Provider<AuthService>((ref) {
+  return AuthService();
+});
+
+final supabaseClientProvider = Provider<sp.SupabaseClient>((ref) {
+  final sp.SupabaseClient _supabase =
+      sp.SupabaseClient("${Constants.SUPABASE_URL}", "${Constants.SUPABASE_API_KEY}}");
+  return _supabase;
 });
 
 final themeUtilityProvider = Provider<ThemeUtility>((ref) {
@@ -59,20 +70,38 @@ final appUtilityProvider = Provider<AppUtility>((ref) {
   return AppUtility(sharedPreferences: sharedPrefs);
 });
 
+final collectionNotifierProvider =
+    StateNotifierProvider<CollectionStateNotifier, AsyncValue<List<VHCollection>>>((ref) {
+  final sharedPrefs = ref.watch(sharedPreferencesProvider);
+  return CollectionStateNotifier(sharedPrefs, ref);
+});
+
+final dashboardNotifierProvider =
+    StateNotifierProvider<DashboardStateNotifier, AsyncValue<DashboardState>>((ref) {
+  final sharedPrefs = ref.watch(sharedPreferencesProvider);
+  final supabaseClient = ref.watch(supabaseClientProvider);
+  final vocabStoreService = new VocabStoreService(supabaseClient);
+  return DashboardStateNotifier(sharedPrefs, vocabStoreService, ref);
+});
+
+final userNotifierProvider = StateNotifierProvider<UserStateNotifier, AsyncValue<UserModel>>((ref) {
+  final sharedPrefs = ref.watch(sharedPreferencesProvider);
+  final supabaseClient = ref.watch(supabaseClientProvider);
+  final userService = new UserService(supabaseClient);
+  return UserStateNotifier(sharedPrefs, userService, ref);
+});
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final sharedPreferences = await SharedPreferences.getInstance();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   firebaseAnalytics = FirebaseAnalytics.instance;
   usePathUrlStrategy();
-  dashboardController = DashboardController();
   settingsController = SettingsController();
   exploreController = ExploreController();
-  authController = AuthController();
   addWordController = AddWordController();
   searchController = SearchFieldController(controller: TextEditingController());
   settingsController.loadSettings();
-  dashboardController.initService();
   pushNotificationService = PushNotificationService(_firebaseMessaging);
   searchController.initService();
   exploreController.initService();
@@ -106,8 +135,6 @@ late SettingsController settingsController;
 late SearchFieldController searchController;
 late ExploreController exploreController;
 late PushNotificationService pushNotificationService;
-late DashboardController dashboardController;
-late AuthController authController;
 late AddWordController addWordController;
 Logger logger = Logger('main.dart');
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -127,36 +154,38 @@ class VocabApp extends ConsumerStatefulWidget {
 class _VocabAppState extends ConsumerState<VocabApp> {
   Future<void> initializeApp() async {
     firebaseAnalytics.logAppOpen();
-    await authController.initService();
-    final localUser = authController.user;
-    final user = ref.watch(userNotifierProvider);
-    if (localUser.email.isNotEmpty) {
-      user.setUser(localUser);
-      if (localUser.isLoggedIn) {
-        await autoLogin(localUser);
-      }
-    }
-    user.setUser(localUser);
-
-    /// user details not found locally
-    /// set default user to local state
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      final localUser = ref.watch(userNotifierProvider);
+      localUser.whenData((user) async {
+        if (user.email.isNotEmpty) {
+          if (user.isLoggedIn) {
+            await autoLogin(user);
+          }
+        }
+      });
+    });
   }
 
   Future<void> autoLogin(UserModel localUser) async {
-    final resp = await AuthService.updateLogin(
-      data: {
-        Constants.USER_LOGGEDIN_COLUMN: true,
-      },
-      email: localUser.email,
-    );
-    final userProvider = ref.watch(userNotifierProvider);
+    try {
+      final authService = ref.watch(authServiceProvider);
+      final resp = await authService.updateLogin(
+        data: {
+          Constants.USER_LOGGEDIN_COLUMN: true,
+        },
+        email: localUser.email,
+      );
+      final userProvider = ref.watch(userNotifierProvider.notifier);
 
-    /// if login success, update local user details
-    if (resp.status == Status.success) {
-      final user = await UserService.findByEmail(email: localUser.email, cache: true);
-      userProvider.setUser(user);
-    } else {
-      userProvider.setUser(localUser);
+      /// if login success, update local user details
+      if (resp.status == Status.success) {
+        final user = await userProvider.findUserByEmail(email: localUser.email);
+        userProvider.setUser(user);
+      } else {
+        userProvider.setUser(localUser);
+      }
+    } catch (e) {
+      logger.e(e.toString());
     }
   }
 
@@ -164,7 +193,6 @@ class _VocabAppState extends ConsumerState<VocabApp> {
   @override
   void dispose() {
     searchController.disposeService();
-    dashboardController.disposeService();
     exploreController.disposeService();
     // pushNotificationService.disposeService();
     super.dispose();
@@ -178,56 +206,59 @@ class _VocabAppState extends ConsumerState<VocabApp> {
 
   @override
   Widget build(BuildContext context) {
-    return AppStateWidget(
-      child: AnimatedBuilder(
-          animation: settingsController,
-          builder: (BuildContext context, Widget? child) {
-            final appThemeController = ref.watch(appThemeProvider);
-            final colorScheme = ColorScheme.fromSeed(seedColor: appThemeController.themeSeed);
-            return FeatureDiscovery(
-              child: MaterialApp(
-                title: Constants.APP_TITLE,
-                key: appKey,
-                scrollBehavior: AppScrollBehavior(),
-                navigatorObservers: [_observer],
-                debugShowCheckedModeBanner: !kDebugMode,
-                darkTheme: ThemeData.dark(
+    return AnimatedBuilder(
+        animation: settingsController,
+        builder: (BuildContext context, Widget? child) {
+          final appThemeController = ref.watch(appThemeProvider);
+          final colorScheme = ColorScheme.fromSeed(seedColor: appThemeController.themeSeed);
+          //  calling this here will initialize the dashboard state
+          // and fetch words for words animation
+          // final user = ref.watch(userNotifierProvider);̉
+          // final dashboardState = ref.watch(dashboardNotifierProvider);
+
+          return FeatureDiscovery(
+            child: MaterialApp(
+              title: Constants.APP_TITLE,
+              key: appKey,
+              scrollBehavior: AppScrollBehavior(),
+              navigatorObservers: [_observer],
+              debugShowCheckedModeBanner: !kDebugMode,
+              darkTheme: ThemeData.dark(
+                useMaterial3: true,
+              ).copyWith(
+                  textTheme: GoogleFonts.quicksandTextTheme().apply(
+                    bodyColor: Colors.white,
+                    displayColor: Colors.white,
+                  ),
+                  scaffoldBackgroundColor: colorScheme.background,
+                  colorScheme: ColorScheme.fromSeed(
+                      background: Colors.transparent,
+                      surface: appThemeController.isDark
+                          ? Colors.black.withOpacity(0.3)
+                          : Colors.white.withOpacity(0.3),
+                      seedColor: appThemeController.themeSeed,
+                      brightness: Brightness.dark)),
+              theme: ThemeData(
                   useMaterial3: true,
-                ).copyWith(
-                    textTheme: GoogleFonts.quicksandTextTheme().apply(
-                      bodyColor: Colors.white,
-                      displayColor: Colors.white,
+                  textTheme: GoogleFonts.quicksandTextTheme(),
+                  scaffoldBackgroundColor: colorScheme.background,
+                  colorScheme: ColorScheme.fromSeed(seedColor: appThemeController.themeSeed)),
+              routes: {
+                Notifications.route: (context) => Notifications(),
+                WebViewPage.routeName: (context) => WebViewPage(
+                      title: Constants.PRIVACY_POLICY_TITLE,
+                      url: Constants.PRIVACY_POLICY,
                     ),
-                    scaffoldBackgroundColor: colorScheme.background,
-                    colorScheme: ColorScheme.fromSeed(
-                        background: Colors.transparent,
-                        surface: appThemeController.isDark
-                            ? Colors.black.withOpacity(0.3)
-                            : Colors.white.withOpacity(0.3),
-                        seedColor: appThemeController.themeSeed,
-                        brightness: Brightness.dark)),
-                theme: ThemeData(
-                    useMaterial3: true,
-                    textTheme: GoogleFonts.quicksandTextTheme(),
-                    scaffoldBackgroundColor: colorScheme.background,
-                    colorScheme: ColorScheme.fromSeed(seedColor: appThemeController.themeSeed)),
-                routes: {
-                  Notifications.route: (context) => Notifications(),
-                  WebViewPage.routeName: (context) => WebViewPage(
-                        title: Constants.PRIVACY_POLICY_TITLE,
-                        url: Constants.PRIVACY_POLICY,
-                      ),
-                  ReportABug.route: (context) => ReportABug(),
-                  AboutVocabhub.route: (context) => AboutVocabhub(),
-                  SettingsPage.route: (context) => SettingsPage(),
-                  ViewBugReports.route: (context) => ViewBugReports(),
-                  WhatsNew.route: (context) => WhatsNew(),
-                },
-                themeMode: appThemeController.isDark ? ThemeMode.dark : ThemeMode.light,
-                home: SplashScreen(),
-              ),
-            );
-          }),
-    );
+                ReportABug.route: (context) => ReportABug(),
+                AboutVocabhub.route: (context) => AboutVocabhub(),
+                SettingsPage.route: (context) => SettingsPage(),
+                ViewBugReports.route: (context) => ViewBugReports(),
+                WhatsNew.route: (context) => WhatsNew(),
+              },
+              themeMode: appThemeController.isDark ? ThemeMode.dark : ThemeMode.light,
+              home: SplashScreen(),
+            ),
+          );
+        });
   }
 }

@@ -16,7 +16,6 @@ import 'package:vocabhub/navbar/search/search_view.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
-import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
@@ -121,8 +120,6 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     }
   }
 
-  late AppState state;
-
   DateTime oldTime = DateTime.now();
   DateTime newTime = DateTime.now();
 
@@ -187,7 +184,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       NavbarItem(Icons.explore_outlined, 'Explore',
           selectedIcon: Icon(Icons.explore, color: selectedColor, size: 26)),
     ];
-    user = ref.watch(userNotifierProvider);
+    user = ref.read(userNotifierProvider).value!;
     if (user!.isLoggedIn) {
       _routes.addAll({
         3: {
@@ -238,89 +235,85 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       }
     }
 
-    return AnimatedBuilder(
-        animation: dashboardController,
-        builder: (context, child) {
-          return Scaffold(
-            resizeToAvoidBottomInset: false,
-            floatingActionButton: appController.hasUpdate ? null : _buildFab(),
-            body: Stack(
-              children: [
-                NavbarRouter(
-                  errorBuilder: (context) {
-                    return const Center(child: Text('Error 404'));
-                  },
-                  type: NavbarType.floating,
-                  onBackButtonPressed: (isExiting) {
-                    if (isExiting) {
-                      newTime = DateTime.now();
-                      final int difference = newTime.difference(oldTime).inMilliseconds;
-                      oldTime = newTime;
-                      if (difference < 1000) {
-                        hideToast();
-                        return isExiting;
-                      } else {
-                        showToast('Press again to exit');
-                        return false;
-                      }
-                    } else {
-                      return isExiting;
-                    }
-                  },
-                  shouldPopToBaseRoute: true,
-                  isDesktop: !SizeUtils.isMobile,
-                  // destinationAnimationCurve: Curves.fastOutSlowIn,
-                  destinationAnimationDuration: SizeUtils.isDesktop ? 0 : 0,
-                  onCurrentTabClicked: () {
-                    exploreController.scrollToIndex = 0;
-                  },
-                  onChanged: (x) async {
-                    ref.read(appProvider.notifier).copyWith(appController.copyWith(
-                        index: x, showFAB: x < 2 && user!.isLoggedIn, extended: true));
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      floatingActionButton: appController.hasUpdate ? null : _buildFab(),
+      body: Stack(
+        children: [
+          NavbarRouter(
+            errorBuilder: (context) {
+              return const Center(child: Text('Error 404'));
+            },
+            type: NavbarType.floating,
+            onBackButtonPressed: (isExiting) {
+              if (isExiting) {
+                newTime = DateTime.now();
+                final int difference = newTime.difference(oldTime).inMilliseconds;
+                oldTime = newTime;
+                if (difference < 1000) {
+                  hideToast();
+                  return isExiting;
+                } else {
+                  showToast('Press again to exit');
+                  return false;
+                }
+              } else {
+                return isExiting;
+              }
+            },
+            shouldPopToBaseRoute: true,
+            isDesktop: !SizeUtils.isMobile,
+            // destinationAnimationCurve: Curves.fastOutSlowIn,
+            destinationAnimationDuration: SizeUtils.isDesktop ? 0 : 0,
+            onCurrentTabClicked: () {
+              exploreController.scrollToIndex = 0;
+            },
+            onChanged: (x) async {
+              ref.read(appProvider.notifier).copyWith(appController.copyWith(
+                  index: x, showFAB: x < 2 && user!.isLoggedIn, extended: true));
 
-                    /// Simulate DragGesture on pageView
-                    final pageController = exploreController.pageController;
-                    if (EXPLORE_INDEX == x && SizeUtils.isMobile) {
-                      if (pageController.hasClients) {
-                        if (exploreController.shouldShowScrollAnimation) {
-                          Future.delayed(Duration(seconds: 3), () async {
-                            if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {
-                              exploreController.showScrollAnimation();
-                            }
-                          });
-                        }
+              /// Simulate DragGesture on pageView
+              final pageController = exploreController.pageController;
+              if (EXPLORE_INDEX == x && SizeUtils.isMobile) {
+                if (pageController.hasClients) {
+                  if (exploreController.shouldShowScrollAnimation) {
+                    Future.delayed(Duration(seconds: 3), () async {
+                      if (NavbarNotifier.currentIndex == EXPLORE_INDEX) {
+                        exploreController.showScrollAnimation();
                       }
-                    }
-                  },
-                  decoration: FloatingNavbarDecoration(
-                    height: kNavbarHeight * 1.2,
-                    backgroundColor: SizeUtils.isDesktop
-                        ? colorScheme.surfaceVariant
-                        : colorScheme.scrim.withOpacity(0.2),
-                    margin: EdgeInsets.zero,
-                    showSelectedLabels: false,
-                    borderRadius: BorderRadius.zero,
-                    // backgroundColor: (colorScheme.surfaceVariant.withOpacity(0.4)),
-                  ),
+                    });
+                  }
+                }
+              }
+            },
+            decoration: FloatingNavbarDecoration(
+              height: kNavbarHeight * 1.2,
+              backgroundColor: SizeUtils.isDesktop
+                  ? colorScheme.surfaceVariant
+                  : colorScheme.scrim.withOpacity(0.2),
+              margin: EdgeInsets.zero,
+              showSelectedLabels: false,
+              borderRadius: BorderRadius.zero,
+              // backgroundColor: (colorScheme.surfaceVariant.withOpacity(0.4)),
+            ),
+            destinations: [
+              for (int i = 0; i < items.length; i++)
+                DestinationRouter(
+                  navbarItem: items[i],
                   destinations: [
-                    for (int i = 0; i < items.length; i++)
-                      DestinationRouter(
-                        navbarItem: items[i],
-                        destinations: [
-                          for (int j = 0; j < _routes[i]!.keys.length; j++)
-                            Destination(
-                              route: _routes[i]!.keys.elementAt(j),
-                              widget: _routes[i]!.values.elementAt(j),
-                            ),
-                        ],
-                        initialRoute: _routes[i]!.keys.elementAt(0),
+                    for (int j = 0; j < _routes[i]!.keys.length; j++)
+                      Destination(
+                        route: _routes[i]!.keys.elementAt(j),
+                        widget: _routes[i]!.values.elementAt(j),
                       ),
                   ],
+                  initialRoute: _routes[i]!.keys.elementAt(0),
                 ),
-              ],
-            ),
-          );
-        });
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
 

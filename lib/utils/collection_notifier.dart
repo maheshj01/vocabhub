@@ -1,52 +1,98 @@
 import 'dart:convert';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/collection.dart';
 import 'package:vocabhub/models/word.dart';
-import 'package:vocabhub/services/services/service_base.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/utility.dart';
 
-class CollectionsService extends ServiceBase {
-  late String _kCollectionKey;
-  late SharedPreferences _sharedPreferences;
+class CollectionStateNotifier extends StateNotifier<AsyncValue<List<VHCollection>>> {
+  CollectionStateNotifier(this.sharedPreferences, this.ref) : super(AsyncValue.loading()) {
+    init();
+  }
+
+  String _kCollectionKey = 'kCollection';
 
   set collectionKey(String value) {
     _kCollectionKey = value;
   }
 
+  Future<void> init() async {
+    state = AsyncValue.loading();
+    try {
+      final user = ref.read(userNotifierProvider).value!;
+      _kCollectionKey = '${user.username}_collection';
+      final collections = await getCollections();
+      state = AsyncValue.data(collections);
+    } catch (e, y) {
+      state = AsyncValue.error(e, y);
+    }
+  }
+
   Future<List<VHCollection>> getCollections() async {
-    _kCollectionKey = '${authController.user.username}_collection';
-    final String? collectionString = _sharedPreferences.getString(_kCollectionKey) ?? '[]';
+    state = AsyncValue.loading();
+    final String? collectionString = sharedPreferences.getString(_kCollectionKey) ?? '[]';
     if (collectionString != null && collectionString.isNotEmpty) {
       final List<dynamic> collection = jsonDecode(collectionString);
       final List<VHCollection> _collections = [];
       collection.forEach((x) {
         _collections.add(VHCollection.fromJson(x));
       });
+      setCollections(_collections);
       return _collections;
     }
+    setCollections([]);
     return [];
   }
 
   Future<void> setCollections(List<VHCollection> collections) async {
-    _kCollectionKey = '${authController.user.username}_collection';
+    state = AsyncValue.loading();
     final List<dynamic> collection = [];
     for (var x in collections) {
       collection.add(x.toJson());
     }
-    await _sharedPreferences.setString(_kCollectionKey, jsonEncode(collection));
+    await sharedPreferences.setString(_kCollectionKey, jsonEncode(collection));
+    state = AsyncValue.data(collections);
   }
 
-  Future<void> addCollection(String collectionName) async {
+  Future<void> deleteCollection(String collectionName) async {
+    final List<VHCollection> collections = state.value!;
+
+    int index = collections.indexOfCollection(collectionName);
+    if (index != -1) {
+      collections.removeAt(index);
+      showToast('Collection deleted');
+    } else {
+      showToast('Collection not found');
+    }
+    await setCollections(collections);
+  }
+
+  Future<void> togglePin(String title) async {
+    // await _collectionService.togglePin(title);
+    final List<VHCollection> collections = state.value!;
+
+    int index = collections.indexOfCollection(title);
+    if (index != -1) {
+      collections[index].isPinned = !collections[index].isPinned;
+      showToast(
+          'Collection ${collections[index].isPinned ? 'pinned to' : 'unpinned from'} Dashboard');
+    } else {
+      showToast('Collection not found');
+    }
+    await setCollections(collections);
+  }
+
+  Future<void> addCollection(VHCollection collection) async {
     final List<VHCollection> collections = await getCollections();
-    final index = collections.indexOfCollection(collectionName);
+
+    int index = collections.indexOfCollection(collection.title);
     if (index != -1) {
       showToast('Collection already exists');
     } else {
-      collections[index] = VHCollection.init();
-      collections[index].title = collectionName;
+      collections.add(collection);
       showToast('Collection added');
     }
     await setCollections(collections);
@@ -88,12 +134,6 @@ class CollectionsService extends ServiceBase {
     await setCollections(collections);
   }
 
-  @override
-  Future<void> disposeService() async {}
-
-  @override
-  Future<void> initService() async {
-    _sharedPreferences = await SharedPreferences.getInstance();
-    _kCollectionKey = 'kCollectionKey';
-  }
+  SharedPreferences sharedPreferences;
+  Ref ref;
 }

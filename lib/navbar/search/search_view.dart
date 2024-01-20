@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/pages/addword.dart';
@@ -29,14 +30,14 @@ class _SearchViewState extends State<SearchView> {
   }
 }
 
-class SearchViewPage extends StatefulWidget {
-  const SearchViewPage({Key? key}) : super(key: key);
+class SearchViewPage extends ConsumerStatefulWidget {
+  const SearchViewPage({super.key});
 
   @override
-  State<SearchViewPage> createState() => _SearchViewPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SearchViewPageState();
 }
 
-class _SearchViewPageState extends State<SearchViewPage> {
+class _SearchViewPageState extends ConsumerState<SearchViewPage> {
   final searchNotifier = ValueNotifier<List<Word>?>(null);
 
   @override
@@ -73,12 +74,13 @@ class _SearchViewPageState extends State<SearchViewPage> {
     }
   }
 
-  List<Word> words = [];
   String oldQuery = '';
 
   @override
   Widget build(BuildContext context) {
-    words = dashboardController.words;
+    // final dashboardState = ref.read(dashboardUtilityProvider.notifier);
+    // final words = dashboardState.stateValue.words;
+
     final colorScheme = Theme.of(context).colorScheme;
     return Material(
       color: Colors.transparent,

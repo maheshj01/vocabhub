@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
-
+import 'dart:convert';
 part 'word.g.dart';
 
 ///
@@ -72,6 +72,43 @@ class Word {
       mnemonics: mnemonics!.toList(),
       created_at: created_at);
 
+  Map<String, dynamic> toMap() {
+    final result = <String, dynamic>{};
+
+    result.addAll({'id': id});
+    result.addAll({'word': word});
+    result.addAll({'meaning': meaning});
+    if (synonyms != null) {
+      result.addAll({'synonyms': synonyms});
+    }
+    if (examples != null) {
+      result.addAll({'examples': examples});
+    }
+    if (mnemonics != null) {
+      result.addAll({'mnemonics': mnemonics});
+    }
+    if (created_at != null) {
+      result.addAll({'created_at': created_at!.millisecondsSinceEpoch});
+    }
+
+    return result;
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory Word.fromMap(Map<String, dynamic> map) {
+    return Word(
+      map['id'] ?? '',
+      map['word'] ?? '',
+      map['meaning'] ?? '',
+      synonyms: (map['synonyms'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const [],
+      examples: (map['examples'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const [],
+      mnemonics: (map['mnemonics'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const [],
+      created_at:
+          map['created_at'] != null ? DateTime.fromMillisecondsSinceEpoch(map['created_at']) : null,
+    );
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -88,5 +125,5 @@ class Word {
   @override
   int get hashCode => id.hashCode ^ word.hashCode;
 
-  Map<String, dynamic> toJson() => _$WordToJson(this);
+  Map<String, dynamic> toMapJson() => _$WordToJson(this);
 }

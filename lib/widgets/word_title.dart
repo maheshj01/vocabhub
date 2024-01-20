@@ -34,7 +34,7 @@ class _WordTitleBuilderState extends ConsumerState<WordTitleBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = ref.watch(userNotifierProvider);
+    final userProvider = ref.watch(userNotifierProvider).value;
     final size = MediaQuery.of(context).size;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -55,7 +55,7 @@ class _WordTitleBuilderState extends ConsumerState<WordTitleBuilder> {
                 child: Text(widget.word.word.capitalize()!,
                     style: VocabTheme.googleFontsTextTheme.displaySmall!),
               ),
-              userProvider.isLoggedIn
+              userProvider!.isLoggedIn
                   ? DescribedFeatureOverlay(
                       featureId: Constants.collectionsFeature,
                       tapTarget: Icon(Icons.bookmark_add, size: 26, color: colorScheme.surfaceTint),

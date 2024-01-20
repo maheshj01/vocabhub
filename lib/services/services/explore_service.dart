@@ -21,7 +21,6 @@ class ExploreService extends ServiceBase {
     _sharedPreferences = await SharedPreferences.getInstance();
   }
 
-
   /// This method is used to fetch explore words from the database.
   Future<List<Word>> getExploreWords(String email, {int page = 0}) async {
     try {
@@ -45,12 +44,13 @@ class ExploreService extends ServiceBase {
       }
       if (response.status == 500) {
         _logger.e("Device is offline");
-        return dashboardController.words;
+        throw "Device is offline";
+        // return dashboardController.words;
       }
       throw "Something went wrong";
     } catch (_) {
       _logger.e(_.toString());
-      return dashboardController.words;
+      throw "Something went wrong while fetching words";
     }
   }
 
@@ -101,7 +101,6 @@ class ExploreService extends ServiceBase {
   Future<bool> getExploreHidden() async {
     return _sharedPreferences.getBool(kExploreHiddenKey) ?? false;
   }
-
 
   Future<void> setExploreHidden(bool value) async {
     await _sharedPreferences.setBool(kExploreHiddenKey, value);

@@ -91,13 +91,9 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final user = ref.watch(userNotifierProvider);
+    final user = ref.watch(userNotifierProvider).value;
+    final userNotifier = ref.watch(userNotifierProvider.notifier);
     final appTheme = ref.watch(appThemeProvider);
-    ref.listen<UserModel>(userNotifierProvider, (UserModel? userOld, UserModel? userNew) {
-      if (userNew != null) {
-        user.setUser(userNew);
-      }
-    });
     final now = DateTime.now();
     final oldVersion = ref.read(appProvider).version!.oldVersion;
     return Material(
@@ -378,7 +374,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
             Navigate.pushNamed(context, ReportABug.route);
           }, leadingIcon: Icons.feedback),
           hLine(),
-          !user.isAdmin
+          !user!.isAdmin
               ? const SizedBox.shrink()
               : settingTile(
                   'Reports and Feedbacks',
@@ -423,8 +419,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
           }),
           hLine(),
           settingTile('Logout', leadingIcon: Icons.logout, onTap: () async {
-            user.loggedIn = false;
-            authController.logout(context);
+            userNotifier.logout();
             Navigate.pushAndPopAll(context, AppSignIn());
           }),
           hLine(),

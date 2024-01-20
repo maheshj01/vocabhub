@@ -50,7 +50,7 @@ class _NewCollectionSheetState extends ConsumerState<NewCollectionSheet> {
   Color selected = Colors.primaries[0];
   @override
   Widget build(BuildContext context) {
-    final collectionRef = ref.watch(collectionNotifier);
+    final collectionRef = ref.watch(collectionNotifierProvider.notifier);
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Material(

@@ -26,6 +26,7 @@ PRE(=E;Rel)
 - [ ] Add deeplinking to specific word from share feature
 - [ ] Add mechanism to generate screenshots of app.
 - [ ] Add word only show submit button when required fields are filled.
+- [ ] Implement network connectivity listener for offline data https://gist.github.com/sbosell/d47b5c4a6fb2be90a686e0fcc95b9bc0
 
 In Progress
 - [ ] Improve explore page UI
