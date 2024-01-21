@@ -84,12 +84,7 @@ final dashboardNotifierProvider =
   return DashboardStateNotifier(sharedPrefs, vocabStoreService, ref);
 });
 
-final userNotifierProvider = StateNotifierProvider<UserStateNotifier, AsyncValue<UserModel>>((ref) {
-  final sharedPrefs = ref.watch(sharedPreferencesProvider);
-  final supabaseClient = ref.watch(supabaseClientProvider);
-  final userService = new UserService(supabaseClient);
-  return UserStateNotifier(sharedPrefs, userService, ref);
-});
+final userNotifierProvider = AsyncNotifierProvider(UserStateNotifier.new);
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

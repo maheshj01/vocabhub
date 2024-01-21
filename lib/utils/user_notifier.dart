@@ -1,21 +1,25 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase/supabase.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/services/user_service.dart';
 
-class UserStateNotifier extends StateNotifier<AsyncValue<UserModel>> {
-  UserStateNotifier(this.sharedPreferences, this.userService, this.ref)
-      : super(AsyncValue.loading()) {}
-
-  final SharedPreferences sharedPreferences;
-  final UserService userService;
-  Ref ref;
-
+@riverpod
+class UserStateNotifier extends AsyncNotifier<UserModel> {
+  late SharedPreferences sharedPreferences;
+  late UserService userService;
+  late SupabaseClient supabaseClient;
   String kUserKey = 'kUser';
-
-  Future<void> init() async {
-    state = AsyncValue.data(UserModel.init());
-    await findUserByEmail();
+  @override
+  Future<UserModel> build() async {
+    print("building user");
+    state = AsyncValue.loading();
+    sharedPreferences = ref.watch(sharedPreferencesProvider);
+    supabaseClient = ref.watch(supabaseClientProvider);
+    userService = UserService(supabaseClient);
+    final user = await findUserByEmail();
+    return user;
   }
 
   Future<UserModel> findUserByEmail({String? email}) async {
