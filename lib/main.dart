@@ -149,16 +149,6 @@ class VocabApp extends ConsumerStatefulWidget {
 class _VocabAppState extends ConsumerState<VocabApp> {
   Future<void> initializeApp() async {
     firebaseAnalytics.logAppOpen();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      final localUser = ref.watch(userNotifierProvider);
-      localUser.whenData((user) async {
-        if (user.email.isNotEmpty) {
-          if (user.isLoggedIn) {
-            await autoLogin(user);
-          }
-        }
-      });
-    });
   }
 
   Future<void> autoLogin(UserModel localUser) async {
@@ -201,6 +191,7 @@ class _VocabAppState extends ConsumerState<VocabApp> {
 
   @override
   Widget build(BuildContext context) {
+    final localUser = ref.watch(userNotifierProvider);
     return AnimatedBuilder(
         animation: settingsController,
         builder: (BuildContext context, Widget? child) {
@@ -210,7 +201,13 @@ class _VocabAppState extends ConsumerState<VocabApp> {
           // and fetch words for words animation
           // final user = ref.watch(userNotifierProvider);̉
           // final dashboardState = ref.watch(dashboardNotifierProvider);
-
+          localUser.whenData((user) {
+            if (user.email.isNotEmpty) {
+              if (user.isLoggedIn) {
+                autoLogin(user);
+              }
+            }
+          });
           return FeatureDiscovery(
             child: MaterialApp(
               title: Constants.APP_TITLE,
