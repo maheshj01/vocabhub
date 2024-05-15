@@ -44,13 +44,13 @@ class _VHButtonState extends State<VHButton> {
     final style = (widget.onTap == null)
         ? null
         : ButtonStyle(
-            minimumSize: MaterialStateProperty.resolveWith(
+            minimumSize: WidgetStateProperty.resolveWith(
                 (states) => Size(widget.width ?? 120, widget.height)),
-            maximumSize: MaterialStateProperty.resolveWith(
+            maximumSize: WidgetStateProperty.resolveWith(
                 (states) => Size(widget.width ?? 120, widget.height)),
-            foregroundColor: MaterialStateColor.resolveWith(
+            foregroundColor: WidgetStateColor.resolveWith(
                 (states) => widget.foregroundColor ?? colorScheme.onSecondary),
-            backgroundColor: MaterialStateColor.resolveWith(
+            backgroundColor: WidgetStateColor.resolveWith(
               (states) => widget.backgroundColor ?? colorScheme.secondary,
             ));
     return OutlinedButton(

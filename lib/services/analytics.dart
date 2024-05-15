@@ -1,7 +1,6 @@
 // import 'package:firebase_analytics/firebase_analytics.dart';
 // import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/foundation.dart';
-import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/models.dart';
 

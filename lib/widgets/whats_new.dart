@@ -19,7 +19,7 @@ class WhatsNew extends StatefulWidget {
 class _WhatsNewState extends State<WhatsNew> {
   Future<List<List<String>>> loadAsset() async {
     final result = await DefaultAssetBundle.of(context).loadString('assets/CHANGELOG.md');
-    List<List<String>> changelog = [];
+    final List<List<String>> changelog = [];
     List<String> release = [];
     final lines = result.split('\n');
     for (int i = 0; i < lines.length; i++) {

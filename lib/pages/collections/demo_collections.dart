@@ -74,8 +74,8 @@ class _DemoCollectionsState extends ConsumerState<DemoCollections> {
                 padding: 16.0.horizontalPadding,
                 child: Text("$onDeviceCollectionsString2",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onBackground.withOpacity(0.5))),
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5))),
               ),
             ],
           ),

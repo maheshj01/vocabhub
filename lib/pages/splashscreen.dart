@@ -81,8 +81,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     SizeUtils.size = MediaQuery.of(context).size;
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    Widget child = Scaffold(
+    final Widget child = Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
         // decoration: BoxDecoration(

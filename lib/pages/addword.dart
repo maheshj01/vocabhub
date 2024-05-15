@@ -399,7 +399,7 @@ class _AddWordFormState extends ConsumerState<AddWordForm> {
                         child: IconButton(
                             onPressed: () async {
                               removeFocus(context);
-                              Word selectedDraft = await Navigate.push(context, DraftsPage(),
+                              final Word selectedDraft = await Navigate.push(context, DraftsPage(),
                                   transitionType: TransitionType.rtl);
                               if (selectedDraft.word.isEmpty) {
                                 return;

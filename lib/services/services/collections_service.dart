@@ -22,9 +22,9 @@ class CollectionsService extends ServiceBase {
     if (collectionString != null && collectionString.isNotEmpty) {
       final List<dynamic> collection = jsonDecode(collectionString);
       final List<VHCollection> _collections = [];
-      collection.forEach((x) {
+      for (var x in collection) {
         _collections.add(VHCollection.fromJson(x));
-      });
+      }
       return _collections;
     }
     return [];
@@ -54,7 +54,7 @@ class CollectionsService extends ServiceBase {
 
   Future<void> addToCollection(String collectionName, Word word) async {
     final List<VHCollection> collections = await getCollections();
-    int index = collections.indexOfCollection(collectionName);
+    final int index = collections.indexOfCollection(collectionName);
     if (index != -1) {
       final List<Word> words = collections[index].words;
       if (!words.containsWord(word)) {
@@ -73,7 +73,7 @@ class CollectionsService extends ServiceBase {
 
   Future<void> removeFromCollection(String collectionName, Word word) async {
     final List<VHCollection> collections = await getCollections();
-    int index = collections.indexOfCollection(collectionName);
+    final int index = collections.indexOfCollection(collectionName);
     if (index != -1) {
       final List<Word> words = collections[index].words;
       if (words.containsWord(word)) {

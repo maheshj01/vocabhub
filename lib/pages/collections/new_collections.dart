@@ -111,7 +111,7 @@ class _NewCollectionSheetState extends ConsumerState<NewCollectionSheet> {
                   Text("$onDeviceCollectionsString",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.onBackground.withOpacity(0.5))),
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5))),
                 ],
               ),
               16.0.vSpacer()

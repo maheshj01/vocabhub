@@ -55,7 +55,7 @@ class CollectionsNotifier extends ChangeNotifier implements ServiceBase {
 
   Future<void> addCollection(VHCollection collection) async {
     // await _collectionService.addCollection(collectionName);
-    int index = _collections.indexOfCollection(collection.title);
+    final int index = _collections.indexOfCollection(collection.title);
     if (index != -1) {
       showToast('Collection already exists');
     } else {
@@ -68,7 +68,7 @@ class CollectionsNotifier extends ChangeNotifier implements ServiceBase {
 
   Future<void> deleteCollection(String collectionName) async {
     // await _collectionService.deleteCollection(collectionName);
-    int index = collections.indexOfCollection(collectionName);
+    final int index = collections.indexOfCollection(collectionName);
     if (index != -1) {
       _collections.removeAt(index);
       showToast('Collection deleted');
@@ -81,7 +81,7 @@ class CollectionsNotifier extends ChangeNotifier implements ServiceBase {
 
   Future<void> togglePin(String title) async {
     // await _collectionService.togglePin(title);
-    int index = collections.indexOfCollection(title);
+    final int index = collections.indexOfCollection(title);
     if (index != -1) {
       _collections[index].isPinned = !collections[index].isPinned;
       showToast(

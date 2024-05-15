@@ -305,7 +305,7 @@ class _ViewReportsByUserMobileState extends State<ViewReportsByUserMobile> {
                   ),
                 );
               }
-              List<ReportModel> reports = request.data as List<ReportModel>;
+              final List<ReportModel> reports = request.data as List<ReportModel>;
               if (reports.isEmpty) {
                 return const Center(
                   child: Text('No reports yet'),

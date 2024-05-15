@@ -178,7 +178,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       },
     };
     final colorScheme = Theme.of(context).colorScheme;
-    final selectedColor = colorScheme.surfaceTint;
+    final selectedColor = colorScheme.primary;
     List<NavbarItem> items = [
       NavbarItem(Icons.dashboard_outlined, 'Dashboard',
           selectedIcon: Icon(Icons.dashboard, color: selectedColor, size: 26)),
@@ -297,11 +297,11 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                     height: kNavbarHeight * 1.2,
                     backgroundColor: SizeUtils.isDesktop
                         ? colorScheme.surfaceContainerHighest
-                        : colorScheme.scrim.withOpacity(0.2),
+                        : colorScheme.secondaryContainer,
                     margin: EdgeInsets.zero,
                     showSelectedLabels: false,
                     borderRadius: BorderRadius.zero,
-                    // backgroundColor: (colorScheme.surfaceVariant.withOpacity(0.4)),
+                    // backgroundColor: (colorScheme.surfaceContainerHighest.withOpacity(0.4)),
                   ),
                   destinations: [
                     for (int i = 0; i < items.length; i++)

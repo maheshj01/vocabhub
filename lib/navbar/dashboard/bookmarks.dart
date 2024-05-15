@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -132,10 +130,12 @@ class WordListBuilder extends ConsumerWidget {
               openElevation: 0,
               openShape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(color: Theme.of(context).colorScheme.surfaceVariant, width: 1)),
+                  side: BorderSide(
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest, width: 1)),
               closedShape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(color: Theme.of(context).colorScheme.surfaceVariant, width: 1)),
+                  side: BorderSide(
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest, width: 1)),
               openBuilder: (BuildContext context, VoidCallback openContainer) {
                 return WordDetail(word: words[index]);
               },
@@ -211,26 +211,7 @@ class WordListPageMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Stack(
-      children: [
-        CustomPaint(
-          painter: BackgroundPainter(
-            primaryColor: colorScheme.primary,
-            secondaryColor: colorScheme.inversePrimary,
-            // animation: AlwaysStoppedAnimation(0.0),
-          ),
-          child: Container(),
-        ),
-        BackdropFilter(filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60), child: Container()),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 15,
-            title: Text('$title'),
-          ),
-          body: ListView.builder(
+    final body = ListView.builder(
             itemCount: words.length,
             padding: EdgeInsets.only(top: 16, bottom: kNotchedNavbarHeight * 1.5),
             itemBuilder: (context, index) {
@@ -246,7 +227,7 @@ class WordListPageMobile extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                         side: BorderSide(
-                            color: Theme.of(context).colorScheme.surfaceVariant, width: 1)),
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest, width: 1)),
                     trailing: hasTrailing!
                         ? IconButton(
                             icon: Icon(
@@ -259,10 +240,16 @@ class WordListPageMobile extends StatelessWidget {
                         : null,
                   ));
             },
-          ),
-        ),
-      ],
     );
+
+    return Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 15,
+          title: Text('$title'),
+          ),
+        body: body);
   }
 }
 
@@ -306,7 +293,7 @@ class _BookmarksDesktopState extends State<_BookmarksDesktop> {
         builder: (_, List<Word>? value, Widget? child) {
           if (value == null) {
             return Scaffold(
-                backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 appBar: AppBar(title: Text('$title')),
                 body: LoadingWidget());
           }

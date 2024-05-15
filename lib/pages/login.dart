@@ -171,7 +171,7 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
                         ),
                         Expanded(
                           child: Container(
-                            color: colorScheme.surfaceVariant,
+                            color: colorScheme.surfaceContainerHighest,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [

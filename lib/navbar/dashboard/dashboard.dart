@@ -319,7 +319,7 @@ class _DashboardCollectionsState extends ConsumerState<DashboardCollections> {
                 gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [colorScheme.background, colorScheme.surfaceVariant]),
+                    colors: [colorScheme.surface, colorScheme.surfaceContainerHighest]),
                 border: Border.all(color: colorScheme.surfaceTint, width: 1.0),
                 borderRadius: BorderRadius.circular(16.0)),
 
@@ -530,9 +530,8 @@ class DashboardDesktop extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final word = dashboardController.wordOfTheDay;
     final user = ref.watch(userNotifierProvider);
-    final size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: Padding(
         padding: 16.0.horizontalPadding,
         child: Row(

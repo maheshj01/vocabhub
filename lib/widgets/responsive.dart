@@ -178,7 +178,7 @@ class BackgroundPainter extends CustomPainter {
 
   void squareAnimate(Canvas canvas, Size size, {bool blur = true}) {
     final paint1 = Paint();
-    Path path1 = Path();
+    final Path path1 = Path();
     paint1.color = Colors.redAccent;
     if (blur) {
       paint1.maskFilter = MaskFilter.blur(BlurStyle.normal, 30);

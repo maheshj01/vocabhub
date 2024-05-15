@@ -102,350 +102,357 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
     final oldVersion = ref.read(appProvider).version!.oldVersion;
     return Material(
       color: Colors.transparent,
-      child: ListView(
+      child: Column(
         children: [
           AppBar(
             backgroundColor: Colors.transparent,
             title: const Text('Settings'),
             automaticallyImplyLeading: !SizeUtils.isDesktop,
           ),
-          settingTile(
-            'About',
-            onTap: () {
-              Navigate.pushNamed(context, isRootNavigator: true, AboutVocabhub.route);
-            },
-          ),
-          hLine(),
-
-          if (oldVersion.date!.difference(now).inDays < 30)
-            settingTile(
-              'Whats New',
-              title: RichText(
-                  text: TextSpan(children: [
-                TextSpan(
-                    text: 'Whats',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: colorScheme.primary,
-                    )),
-                TextSpan(
-                    text: ' New',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.primary,
-                    )),
-                TextSpan(
-                    text: ' ✨',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.primary,
-                    )),
-              ])),
-              onTap: () {
-                Navigate.pushNamed(context, isRootNavigator: true, WhatsNew.route);
-              },
-            ),
-          hLine(),
-          10.0.vSpacer(),
-          Padding(
-            padding: 16.0.horizontalPadding,
-            child: Row(
+          Expanded(
+            child: ListView(
               children: [
-                Text('${appTheme.isDark ? 'Dark' : 'Light'} Theme',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400,
-                    )),
-                Spacer(),
-                Icon(
-                  appTheme.isDark ? Icons.dark_mode : Icons.light_mode,
-                  color: colorScheme.primary,
+                settingTile(
+                  'About',
+                  onTap: () {
+                    Navigate.pushNamed(context, isRootNavigator: true, AboutVocabhub.route);
+                  },
                 ),
-                10.0.hSpacer(),
-                VocabSwitch(
-                    value: appTheme.isDark,
-                    onChanged: (x) {
-                      ref.read(appThemeProvider.notifier).setDark(x);
-                      // widget.onThemeChanged(x ? ThemeMode.dark : ThemeMode.light);
-                    })
-              ],
-            ),
-          ),
-          (SizeUtils.isDesktop && kIsWeb)
-              ? SizedBox.shrink()
-              : Padding(
-                  padding: 16.0.horizontalPadding + 10.0.verticalPadding,
+                hLine(),
+
+                if (oldVersion.date!.difference(now).inDays < 30)
+                  settingTile(
+                    'Whats New',
+                    title: RichText(
+                        text: TextSpan(children: [
+                      TextSpan(
+                          text: 'Whats',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme.primary,
+                          )),
+                      TextSpan(
+                          text: ' New',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.primary,
+                          )),
+                      TextSpan(
+                          text: ' ✨',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.primary,
+                          )),
+                    ])),
+                    onTap: () {
+                      Navigate.pushNamed(context, isRootNavigator: true, WhatsNew.route);
+                    },
+                  ),
+                hLine(),
+                10.0.vSpacer(),
+                Padding(
+                  padding: 16.0.horizontalPadding,
                   child: Row(
                     children: [
-                      Text('Use Classic Theme',
+                      Text('${appTheme.isDark ? 'Dark' : 'Light'} Theme',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w400,
                           )),
                       Spacer(),
+                      Icon(
+                        appTheme.isDark ? Icons.dark_mode : Icons.light_mode,
+                        color: colorScheme.primary,
+                      ),
+                      10.0.hSpacer(),
                       VocabSwitch(
-                          value: appTheme.isClassic,
+                          value: appTheme.isDark,
                           onChanged: (x) {
-                            ref.read(appThemeProvider.notifier).setClassic(x);
-                            widget.onThemeChanged(x);
+                            ref.read(appThemeProvider.notifier).setDark(x);
+                            // widget.onThemeChanged(x ? ThemeMode.dark : ThemeMode.light);
                           })
                     ],
                   ),
                 ),
-          Padding(
-            padding: 16.0.horizontalPadding,
-            child: Row(
-              children: [
-                Text('Choose color scheme',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400,
-                    )),
-                Spacer(),
+                (SizeUtils.isDesktop && kIsWeb)
+                    ? SizedBox.shrink()
+                    : Padding(
+                        padding: 16.0.horizontalPadding + 10.0.verticalPadding,
+                        child: Row(
+                          children: [
+                            Text('Use Classic Theme',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w400,
+                                )),
+                            Spacer(),
+                            VocabSwitch(
+                                value: appTheme.isClassic,
+                                onChanged: (x) {
+                                  ref.read(appThemeProvider.notifier).setClassic(x);
+                                  widget.onThemeChanged(x);
+                                })
+                          ],
+                        ),
+                      ),
+                Padding(
+                  padding: 16.0.horizontalPadding,
+                  child: Row(
+                    children: [
+                      Text('Choose color scheme',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400,
+                          )),
+                      Spacer(),
+                    ],
+                  ),
+                ),
+                20.0.vSpacer(),
+                ThemeSelector(
+                    value: appTheme.themeSeed,
+                    onThemeChanged: (val) {
+                      ref.read(appThemeProvider.notifier).setThemeSeed(val);
+                      widget.onThemeChanged(val);
+                    }),
+                20.0.vSpacer(),
+                hLine(),
+                AnimatedBuilder(
+                    animation: exploreController,
+                    builder: (context, child) {
+                      return ExpansionTile(
+                          title: Text(
+                            'Explore Settings',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          subtitle: Text(
+                            'Settings for explore page',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          childrenPadding: 20.0.rightPadding,
+                          children: [
+                            ListTile(
+                              title: Text('Hide Explore Words'),
+                              subtitle: Text(
+                                exploreController.isHidden
+                                    ? 'Words definition will be hidden from explore page'
+                                    : 'Words definition will be shown in explore page',
+                              ),
+                              trailing: VocabSwitch(
+                                  value: exploreController.isHidden,
+                                  onChanged: (x) {
+                                    exploreController.toggleHiddenExplore();
+                                  }),
+                            ),
+                            hLine(),
+                            AnimatedBuilder(
+                                animation: settingsController,
+                                builder: (context, child) {
+                                  return Column(
+                                    children: [
+                                      ListTile(
+                                        title: Text('Hands Free Mode'),
+                                        subtitle: Text(
+                                          'if enabled words will AutoScroll in explore page',
+                                        ),
+                                        trailing: VocabSwitch(
+                                            value: settingsController.autoScroll.enabled,
+                                            onChanged: (x) {
+                                              settingsController.autoScroll = settingsController
+                                                  .autoScroll
+                                                  .copyWith(enabled: x, isPaused: !x);
+                                            }),
+                                      ),
+                                      hLine(),
+                                      if (settingsController.autoScroll.enabled)
+                                        ListTile(
+                                          title: Text(
+                                              'Auto scroll delay ${settingsController.autoScroll.durationInSeconds} seconds',
+                                              style: TextStyle(fontSize: 18)),
+                                          subtitle: Padding(
+                                            padding: 16.0.horizontalPadding,
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  '10',
+                                                  style: TextStyle(
+                                                      fontSize: 20, fontWeight: FontWeight.w400),
+                                                ),
+                                                Flexible(
+                                                  child: Slider(
+                                                      min: 10,
+                                                      max: 30,
+                                                      value: settingsController
+                                                                  .autoScroll.durationInSeconds <
+                                                              10
+                                                          ? 10.0
+                                                          : settingsController
+                                                              .autoScroll.durationInSeconds
+                                                              .toDouble(),
+                                                      inactiveColor: Colors.grey,
+                                                      onChanged: (x) {
+                                                        settingsController.autoScroll =
+                                                            settingsController.autoScroll.copyWith(
+                                                                durationInSeconds: x.toInt());
+                                                      }),
+                                                ),
+                                                Text(
+                                                  '30',
+                                                  style: TextStyle(
+                                                      fontSize: 20, fontWeight: FontWeight.w400),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  );
+                                })
+                          ]);
+                    }),
+                AnimatedBuilder(
+                    animation: pushNotificationService,
+                    builder: (context, child) {
+                      return Stack(
+                        children: [
+                          ExpansionTile(
+                            title: Text(
+                              'Notifications',
+                            ),
+                            subtitle: Text(
+                              'Manage your notifications',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            childrenPadding: 20.0.rightPadding,
+                            children: [
+                              ListTile(
+                                title: Text('Word of the day'),
+                                subtitle: Text('Get notified for a new word everyday'),
+                                trailing: VocabSwitch(
+                                    value: pushNotificationService.notifications[0],
+                                    onChanged: (x) {
+                                      pushNotificationService.subscribeToNotifications(0, x);
+                                    }),
+                              ),
+                              ListTile(
+                                  title: Text('Daily Reminder'),
+                                  subtitle: Text('Get notified to learn new words everyday'),
+                                  trailing: VocabSwitch(
+                                      value: pushNotificationService.notifications[1],
+                                      onChanged: (x) {
+                                        pushNotificationService.subscribeToNotifications(1, x);
+                                      })),
+                              ListTile(
+                                  title: Text('New Words on Vocabhub'),
+                                  subtitle: Text('Get notified for new word additions on Vocabhub'),
+                                  trailing: VocabSwitch(
+                                      value: pushNotificationService.notifications[2],
+                                      onChanged: (x) {
+                                        pushNotificationService.subscribeToNotifications(2, x);
+                                      }))
+                            ],
+                          ),
+                          //           // Positioned(
+                          //           //   top: 10,
+                          //           //   right: 16,
+                          //           //   child: VocabSwitch(
+                          //           //       value: pushNotificationService.notify,
+                          //           //       onChanged: (x) {
+                          //           //         pushNotificationService.subscribeToNotifications(x);
+                          //           //       }),
+                          //           // )
+                        ],
+                      );
+                    }),
+                hLine(),
+                settingTile('Share a feedback', onTap: () {
+                  Navigate.pushNamed(context, ReportABug.route);
+                }, leadingIcon: Icons.feedback),
+                hLine(),
+                !user.isAdmin
+                    ? const SizedBox.shrink()
+                    : settingTile(
+                        'Reports and Feedbacks',
+                        onTap: () {
+                          Navigate.push(context, const ViewBugReports());
+                        },
+                      ),
+                // !user.isAdmin ? const SizedBox.shrink() : hLine(),
+                user.isAdmin
+                    ? const SizedBox.shrink()
+                    : settingTile(
+                        'My Bug Reports',
+                        leadingIcon: Icons.bug_report,
+                        onTap: () {
+                          Navigate.push(
+                              context,
+                              ViewReportsByUser(
+                                email: user.email,
+                                reports: [],
+                                shouldFetchReport: true,
+                                title: 'My Bug Reports',
+                              ));
+                        },
+                      ),
+                hLine(),
+                !user.isAdmin ? const SizedBox.shrink() : hLine(),
+                settingTile(Constants.PRIVACY_POLICY_TITLE, leadingIcon: Icons.privacy_tip,
+                    onTap: () {
+                  Navigate.pushNamed(context, WebViewPage.routeName, isRootNavigator: true);
+                }),
+                hLine(),
+                settingTile('Contact Us', leadingIcon: Icons.contact_mail, onTap: () {
+                  launchUrl(Uri.parse('mailto:${Constants.FEEDBACK_EMAIL_TO}'),
+                      mode: LaunchMode.externalApplication);
+                }),
+                hLine(),
+                settingTile('Licenses', leadingIcon: Icons.verified_user, onTap: () {
+                  showLicensePage(
+                    context: context,
+                    applicationLegalese: "© 2022 ${Constants.ORGANIZATION}",
+                    applicationName: Constants.APP_TITLE,
+                  );
+                }),
+                hLine(),
+                settingTile('Logout', leadingIcon: Icons.logout, onTap: () async {
+                  user.loggedIn = false;
+                  authController.logout(context);
+                  Navigate.pushAndPopAll(context, AppSignIn());
+                }),
+                hLine(),
+                30.0.vSpacer(),
+                VersionBuilder(),
+                30.0.vSpacer(),
+                !kIsWeb
+                    ? const SizedBox.shrink()
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          storeRedirect(
+                            context,
+                          ),
+                          16.0.hSpacer(),
+                          storeRedirect(context,
+                              redirectUrl: Constants.AMAZON_APP_STORE_URL,
+                              assetUrl: 'assets/amazonappstore.png'),
+                        ],
+                      ),
+                30.0.vSpacer(),
               ],
             ),
           ),
-          20.0.vSpacer(),
-          ThemeSelector(
-              value: appTheme.themeSeed,
-              onThemeChanged: (val) {
-                ref.read(appThemeProvider.notifier).setThemeSeed(val);
-                widget.onThemeChanged(val);
-              }),
-          20.0.vSpacer(),
-          hLine(),
-          AnimatedBuilder(
-              animation: exploreController,
-              builder: (context, child) {
-                return ExpansionTile(
-                    title: Text(
-                      'Explore Settings',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    subtitle: Text(
-                      'Settings for explore page',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    childrenPadding: 20.0.rightPadding,
-                    children: [
-                      ListTile(
-                        title: Text('Hide Explore Words'),
-                        subtitle: Text(
-                          exploreController.isHidden
-                              ? 'Words definition will be hidden from explore page'
-                              : 'Words definition will be shown in explore page',
-                        ),
-                        trailing: VocabSwitch(
-                            value: exploreController.isHidden,
-                            onChanged: (x) {
-                              exploreController.toggleHiddenExplore();
-                            }),
-                      ),
-                      hLine(),
-                      AnimatedBuilder(
-                          animation: settingsController,
-                          builder: (context, child) {
-                            return Column(
-                              children: [
-                                ListTile(
-                                  title: Text('Hands Free Mode'),
-                                  subtitle: Text(
-                                    'if enabled words will AutoScroll in explore page',
-                                  ),
-                                  trailing: VocabSwitch(
-                                      value: settingsController.autoScroll.enabled,
-                                      onChanged: (x) {
-                                        settingsController.autoScroll = settingsController
-                                            .autoScroll
-                                            .copyWith(enabled: x, isPaused: !x);
-                                      }),
-                                ),
-                                hLine(),
-                                if (settingsController.autoScroll.enabled)
-                                  ListTile(
-                                    title: Text(
-                                        'Auto scroll delay ${settingsController.autoScroll.durationInSeconds} seconds',
-                                        style: TextStyle(fontSize: 18)),
-                                    subtitle: Padding(
-                                      padding: 16.0.horizontalPadding,
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            '10',
-                                            style: TextStyle(
-                                                fontSize: 20, fontWeight: FontWeight.w400),
-                                          ),
-                                          Flexible(
-                                            child: Slider(
-                                                min: 10,
-                                                max: 30,
-                                                value: settingsController
-                                                            .autoScroll.durationInSeconds <
-                                                        10
-                                                    ? 10.0
-                                                    : settingsController
-                                                        .autoScroll.durationInSeconds
-                                                        .toDouble(),
-                                                inactiveColor: Colors.grey,
-                                                onChanged: (x) {
-                                                  settingsController.autoScroll = settingsController
-                                                      .autoScroll
-                                                      .copyWith(durationInSeconds: x.toInt());
-                                                }),
-                                          ),
-                                          Text(
-                                            '30',
-                                            style: TextStyle(
-                                                fontSize: 20, fontWeight: FontWeight.w400),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            );
-                          })
-                    ]);
-              }),
-          AnimatedBuilder(
-              animation: pushNotificationService,
-              builder: (context, child) {
-                return Stack(
-                  children: [
-                    ExpansionTile(
-                      title: Text(
-                        'Notifications',
-                      ),
-                      subtitle: Text(
-                        'Manage your notifications',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      childrenPadding: 20.0.rightPadding,
-                      children: [
-                        ListTile(
-                          title: Text('Word of the day'),
-                          subtitle: Text('Get notified for a new word everyday'),
-                          trailing: VocabSwitch(
-                              value: pushNotificationService.notifications[0],
-                              onChanged: (x) {
-                                pushNotificationService.subscribeToNotifications(0, x);
-                              }),
-                        ),
-                        ListTile(
-                            title: Text('Daily Reminder'),
-                            subtitle: Text('Get notified to learn new words everyday'),
-                            trailing: VocabSwitch(
-                                value: pushNotificationService.notifications[1],
-                                onChanged: (x) {
-                                  pushNotificationService.subscribeToNotifications(1, x);
-                                })),
-                        ListTile(
-                            title: Text('New Words on Vocabhub'),
-                            subtitle: Text('Get notified for new word additions on Vocabhub'),
-                            trailing: VocabSwitch(
-                                value: pushNotificationService.notifications[2],
-                                onChanged: (x) {
-                                  pushNotificationService.subscribeToNotifications(2, x);
-                                }))
-                      ],
-                    ),
-                    //           // Positioned(
-                    //           //   top: 10,
-                    //           //   right: 16,
-                    //           //   child: VocabSwitch(
-                    //           //       value: pushNotificationService.notify,
-                    //           //       onChanged: (x) {
-                    //           //         pushNotificationService.subscribeToNotifications(x);
-                    //           //       }),
-                    //           // )
-                  ],
-                );
-              }),
-          hLine(),
-          settingTile('Share a feedback', onTap: () {
-            Navigate.pushNamed(context, ReportABug.route);
-          }, leadingIcon: Icons.feedback),
-          hLine(),
-          !user.isAdmin
-              ? const SizedBox.shrink()
-              : settingTile(
-                  'Reports and Feedbacks',
-                  onTap: () {
-                    Navigate.push(context, const ViewBugReports());
-                  },
-                ),
-          // !user.isAdmin ? const SizedBox.shrink() : hLine(),
-          user.isAdmin
-              ? const SizedBox.shrink()
-              : settingTile(
-                  'My Bug Reports',
-                  leadingIcon: Icons.bug_report,
-                  onTap: () {
-                    Navigate.push(
-                        context,
-                        ViewReportsByUser(
-                          email: user.email,
-                          reports: [],
-                          shouldFetchReport: true,
-                          title: 'My Bug Reports',
-                        ));
-                  },
-                ),
-          hLine(),
-          !user.isAdmin ? const SizedBox.shrink() : hLine(),
-          settingTile(Constants.PRIVACY_POLICY_TITLE, leadingIcon: Icons.privacy_tip, onTap: () {
-            Navigate.pushNamed(context, WebViewPage.routeName, isRootNavigator: true);
-          }),
-          hLine(),
-          settingTile('Contact Us', leadingIcon: Icons.contact_mail, onTap: () {
-            launchUrl(Uri.parse('mailto:${Constants.FEEDBACK_EMAIL_TO}'),
-                mode: LaunchMode.externalApplication);
-          }),
-          hLine(),
-          settingTile('Licenses', leadingIcon: Icons.verified_user, onTap: () {
-            showLicensePage(
-              context: context,
-              applicationLegalese: "© 2022 ${Constants.ORGANIZATION}",
-              applicationName: Constants.APP_TITLE,
-            );
-          }),
-          hLine(),
-          settingTile('Logout', leadingIcon: Icons.logout, onTap: () async {
-            user.loggedIn = false;
-            authController.logout(context);
-            Navigate.pushAndPopAll(context, AppSignIn());
-          }),
-          hLine(),
-          30.0.vSpacer(),
-          VersionBuilder(),
-          30.0.vSpacer(),
-          !kIsWeb
-              ? const SizedBox.shrink()
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    storeRedirect(
-                      context,
-                    ),
-                    16.0.hSpacer(),
-                    storeRedirect(context,
-                        redirectUrl: Constants.AMAZON_APP_STORE_URL,
-                        assetUrl: 'assets/amazonappstore.png'),
-                  ],
-                ),
-          30.0.vSpacer(),
         ],
       ),
     );
@@ -462,7 +469,7 @@ class VocabSwitch extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return Switch(
         inactiveThumbColor: colorScheme.primary,
-        trackOutlineColor: MaterialStateColor.resolveWith((states) => colorScheme.primary),
+        trackOutlineColor: WidgetStateColor.resolveWith((states) => colorScheme.primary),
         value: value,
         onChanged: onChanged);
   }
@@ -479,7 +486,7 @@ class _RatingsPageState extends State<RatingsPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.background,
+      color: Theme.of(context).colorScheme.surface,
       padding: 16.0.horizontalPadding,
       child: Column(
         children: [
