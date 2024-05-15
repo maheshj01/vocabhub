@@ -3,7 +3,7 @@ import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/services/search_service.dart';
 import 'package:vocabhub/services/services/service_base.dart';
 
-class SearchFieldController extends ChangeNotifier with ServiceBase {
+class SearchFieldController extends ChangeNotifier implements ServiceBase {
   late TextEditingController _searchController;
   late SearchService _searchService;
 

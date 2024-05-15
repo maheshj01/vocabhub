@@ -201,7 +201,7 @@ class _NotificationDetailMobileState extends ConsumerState<NotificationDetailMob
                           if (value.state == RequestState.active) {
                             return LoadingWidget();
                           }
-                          List<EditHistory> list = (value.data as List<EditHistory>);
+                          final List<EditHistory> list = (value.data as List<EditHistory>);
                           return ListView.builder(
                               itemCount: list.length,
                               itemBuilder: (context, index) {
@@ -240,7 +240,7 @@ class DifferenceVisualizer extends ConsumerWidget {
 
     final appThemeController = ref.watch(appThemeProvider);
 
-    bool hasChange = newVersion != oldVersion;
+    final bool hasChange = newVersion != oldVersion;
     if (!hasChange) {
       return ListTile(
         title: Text(

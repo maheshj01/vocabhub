@@ -5,7 +5,7 @@ import 'package:vocabhub/services/services/service_base.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/utility.dart';
 
-class CollectionsNotifier extends ChangeNotifier with ServiceBase {
+class CollectionsNotifier extends ChangeNotifier implements ServiceBase {
   late CollectionsService _collectionService;
   List<VHCollection> _collections = [];
   List<VHCollection> get collections => _collections;

@@ -40,7 +40,7 @@ class _NotificationsNavigatorState extends State<NotificationsNavigator> {
             case Notifications.route:
               return MaterialPageRoute(builder: (context) => Notifications());
             case NotificationDetail.route:
-              final collection = settings.arguments as VHCollection;
+              // final collection = settings.arguments as VHCollection;
               return MaterialPageRoute(
                   builder: (context) => NotificationDetail(
                       isNotification: widget.isNotification!,
@@ -323,7 +323,7 @@ class UserNotificationTile extends StatelessWidget {
         height: 100,
         decoration: BoxDecoration(
           color: Colors.transparent,
-          border: Border.all(color: colorScheme.surfaceVariant, width: 1),
+          border: Border.all(color: colorScheme.surfaceContainerHighest, width: 1),
           borderRadius: BorderRadius.circular(4),
           boxShadow: [VocabTheme.notificationCardShadow],
         ),
@@ -418,7 +418,7 @@ class AdminNotificationTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: colorScheme.surfaceVariant, width: 1),
+        border: Border.all(color: colorScheme.surfaceContainerHighest, width: 1),
         boxShadow: [VocabTheme.notificationCardShadow],
       ),
       margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),

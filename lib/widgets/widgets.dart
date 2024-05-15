@@ -100,7 +100,7 @@ RichText buildNotification(String notification, String word, {TextStyle? style})
   return RichText(text: TextSpan(text: '', children: textSpans));
 }
 
-Widget heading(String title, {double fontSize: 20, Color? color}) {
+Widget heading(String title, {double fontSize = 20, Color? color}) {
   return Text(
     title,
     style: TextStyle(

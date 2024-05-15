@@ -6,7 +6,7 @@ import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/services/explore_service.dart';
 import 'package:vocabhub/services/services/service_base.dart';
 
-class ExploreController extends ChangeNotifier with ServiceBase {
+class ExploreController extends ChangeNotifier implements ServiceBase {
   late DateTime _scrollMessageShownDate;
   late bool _isScrollMessageShown = false;
   late final ExploreService _exploreService;

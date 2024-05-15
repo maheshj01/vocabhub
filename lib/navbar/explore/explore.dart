@@ -609,7 +609,7 @@ class _WordMasteredPreferenceState extends State<WordMasteredPreference> {
                 preferBelow: false,
                 decoration: BoxDecoration(color: colorScheme.tertiaryContainer),
                 richMessage: TextSpan(
-                    style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                           fontWeight: FontWeight.w200,
                         ),
                     children: [

@@ -198,9 +198,8 @@ class _VocabAppState extends ConsumerState<VocabApp> {
                       bodyColor: Colors.white,
                       displayColor: Colors.white,
                     ),
-                    scaffoldBackgroundColor: colorScheme.background,
+                    scaffoldBackgroundColor: colorScheme.surface,
                     colorScheme: ColorScheme.fromSeed(
-                        background: Colors.transparent,
                         surface: appThemeController.isDark
                             ? Colors.black.withOpacity(0.3)
                             : Colors.white.withOpacity(0.3),
@@ -209,7 +208,7 @@ class _VocabAppState extends ConsumerState<VocabApp> {
                 theme: ThemeData(
                     useMaterial3: true,
                     textTheme: GoogleFonts.quicksandTextTheme(),
-                    scaffoldBackgroundColor: colorScheme.background,
+                    scaffoldBackgroundColor: colorScheme.surface,
                     colorScheme: ColorScheme.fromSeed(seedColor: appThemeController.themeSeed)),
                 routes: {
                   Notifications.route: (context) => Notifications(),

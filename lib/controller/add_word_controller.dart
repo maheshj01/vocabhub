@@ -4,7 +4,7 @@ import 'package:vocabhub/services/services/add_word_service.dart';
 import 'package:vocabhub/services/services/service_base.dart';
 import 'package:vocabhub/utils/utils.dart';
 
-class AddWordController extends ChangeNotifier with ServiceBase {
+class AddWordController extends ChangeNotifier implements ServiceBase {
   late List<Word> _drafts;
   late AddWordService _addWordService;
   late bool hasDrafts = false;

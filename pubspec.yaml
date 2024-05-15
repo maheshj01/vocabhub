@@ -4,18 +4,20 @@ publish_to: "none"
 version: 0.7.8+30
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-
+  sdk: ">=3.3.0 <4.0.0"
 dependencies:
-  animations: ^2.0.7
+  animations: ^2.0.11
   cached_network_image: ^3.2.3
   cupertino_icons: ^1.0.5
-  feature_discovery: ^0.14.1
-  firebase_analytics: ^10.4.4
-  firebase_core: ^2.4.1
-  firebase_messaging: ^14.2.1
-  firebase_messaging_web: ^3.5.1
-  firebase_remote_config: ^3.0.9
+  feature_discovery:
+    git:
+      url: https://github.com/maheshmnj/feature_discovery.git
+      ref: master
+  firebase_analytics: ^10.10.5
+  firebase_core: ^2.31.0
+  firebase_messaging: ^14.9.2
+  firebase_messaging_web: ^3.8.5
+  firebase_remote_config: ^4.4.5
   flutter:
     sdk: flutter
   flutter_local_notifications: ^15.0.0
@@ -24,11 +26,16 @@ dependencies:
   fluttertoast: ^8.0.9
   go_router: ^7.0.2
   google_fonts: ^4.0.4
-  google_sign_in: ^5.4.1
+  google_sign_in: ^5.4.4
   http: ^0.13.6
   intl: ^0.18.0
   json_annotation: ^4.6.0
-  navbar_router: ^0.7.3
+  # navbar_router: ^0.7.3
+  navbar_router:
+    ^0.7.4
+    # git:
+    #   url: https://github.com/maheshmnj/navbar_router.git
+    #   ref: issue-38
   # navbar_router:
   #   path: ../../oss/my_packages/navbar_router
   # url: https://github.com/maheshmnj/navbar_router.git

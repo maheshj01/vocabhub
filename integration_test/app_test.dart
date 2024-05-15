@@ -40,8 +40,7 @@ extension FindIcon on IconData {
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()
-      as IntegrationTestWidgetsFlutterBinding;
+  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   bool skip = false;
 

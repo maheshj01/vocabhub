@@ -3,7 +3,7 @@ import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/service_base.dart';
 
-class DashboardController extends ChangeNotifier with ServiceBase {
+class DashboardController extends ChangeNotifier implements ServiceBase {
   bool _isLoading = true;
 
   bool get isLoading => _isLoading;

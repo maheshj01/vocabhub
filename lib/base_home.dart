@@ -267,6 +267,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                       return isExiting;
                     }
                   },
+                  initialIndex: 0,
                   shouldPopToBaseRoute: true,
                   isDesktop: !SizeUtils.isMobile,
                   // destinationAnimationCurve: Curves.fastOutSlowIn,
@@ -295,7 +296,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                   decoration: FloatingNavbarDecoration(
                     height: kNavbarHeight * 1.2,
                     backgroundColor: SizeUtils.isDesktop
-                        ? colorScheme.surfaceVariant
+                        ? colorScheme.surfaceContainerHighest
                         : colorScheme.scrim.withOpacity(0.2),
                     margin: EdgeInsets.zero,
                     showSelectedLabels: false,

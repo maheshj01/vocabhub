@@ -3,7 +3,7 @@ import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/services/services/auth_service.dart';
 import 'package:vocabhub/services/services/service_base.dart';
 
-class AuthController extends ChangeNotifier with ServiceBase {
+class AuthController extends ChangeNotifier implements ServiceBase {
   late AuthService _authService;
   late UserModel _user;
 
