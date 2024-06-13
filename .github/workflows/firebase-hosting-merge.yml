@@ -35,16 +35,8 @@ jobs:
           FIREBASE_UTILS_OPTIONS: ${{ secrets.FIREBASE_UTILS_OPTIONS }}
       - run: flutter clean
       - run: flutter pub get
-      # Use the setup-shorebird action to configure Shorebird
-      - name: 🐦 Setup Shorebird
-        uses: shorebirdtech/setup-shorebird@v1
-
-      - name: Publish Shorebird Patch
-        env:
-          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
-        run: shorebird patch android --release-version  0.7.9+31 -- --dart-define=SUPABASE_PROJECT_URL=${{secrets.SUPABASE_PROJECT_URL}} --dart-define=SUPABASE_API_KEY=${{secrets.SUPABASE_API_KEY}} --dart-define=SUPABASE_REDIRECT_URL=${{secrets.SUPABASE_REDIRECT_URL}} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }}--dart-define=ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} --dart-define=FCM_SERVER_KEY=${{ secrets.FCM_SERVER_KEY }}
-
-      # - run: flutter pub run build_runner build --delete-conflicting-outputs
+      # Deploy to Firebase
+      - name: Deploy to Firebase
       - run: flutter build web --release --dart-define=SUPABASE_PROJECT_URL=${{secrets.SUPABASE_PROJECT_URL}} --dart-define=SUPABASE_API_KEY=${{secrets.SUPABASE_API_KEY}} --dart-define=SUPABASE_REDIRECT_URL=${{secrets.SUPABASE_REDIRECT_URL}} --dart-define=SUPABASE_SERVICE_ROLE=${{secrets.SUPABASE_SERVICE_ROLE}} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }} --dart-define=ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} --dart-define=FCM_SERVER_KEY=${{ secrets.FCM_SERVER_KEY }}
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -54,7 +46,16 @@ jobs:
           projectId: vocabhub-34c7f
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
+      
+      # Use the setup-shorebird action to configure Shorebird
+      - name: 🐦 Setup Shorebird
+        uses: shorebirdtech/setup-shorebird@v1
+      - name: Publish Shorebird Patch
+        env:
+          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
+        run: shorebird patch android --release-version  0.7.9+31 -- --dart-define=SUPABASE_PROJECT_URL=${{secrets.SUPABASE_PROJECT_URL}} --dart-define=SUPABASE_API_KEY=${{secrets.SUPABASE_API_KEY}} --dart-define=SUPABASE_REDIRECT_URL=${{secrets.SUPABASE_REDIRECT_URL}} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }}--dart-define=ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} --dart-define=FCM_SERVER_KEY=${{ secrets.FCM_SERVER_KEY }}
 
+      # - run: flutter pub run build_runner build --delete-conflicting-outputs
         # test integration test
       # - name: 📦 Install dependencies
       #   run: flutter pub get
