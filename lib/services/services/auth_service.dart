@@ -30,6 +30,7 @@ class AuthService extends ServiceBase {
     final resp = Response(didSucced: false, message: "Failed");
     final json = user.toJson();
     json['created_at'] = DateTime.now().toIso8601String();
+    json['updated_at'] = DateTime.now().toIso8601String();
     json['isLoggedIn'] = true;
     // TODO: temp fix
     json.remove('bookmarks');

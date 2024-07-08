@@ -38,8 +38,7 @@ class CircularAvatar extends StatelessWidget {
             alignment: Alignment.center,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(radius),
-              child: url == null ? nameText : getImageProvider(url!),
-            ))
-        );
+              child: (url == null || url!.isEmpty) ? nameText : getImageProvider(url!),
+            )));
   }
 }
