@@ -1,7 +1,9 @@
 ### 0.7.9+32 July 08, 2024
+
 - Login issue fix
 
 ### 0.7.9+31 January 01, 2024
+
 - Minor Fixes and Improvements
 
 ### 0.7.8+30 January 01, 2024
