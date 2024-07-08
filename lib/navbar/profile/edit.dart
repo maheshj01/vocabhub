@@ -376,7 +376,7 @@ class _VHTextfieldState extends State<VHTextfield> {
                 child: Text(
                   widget.hint,
                   style: TextStyle(
-                      color: Theme.of(context).colorScheme.onBackground,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 16,
                       fontWeight: FontWeight.w500),
                 ),
