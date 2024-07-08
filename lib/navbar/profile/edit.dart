@@ -383,7 +383,7 @@ class _VHTextfieldState extends State<VHTextfield> {
               ),
         Card(
           color: widget.isReadOnly
-              ? Theme.of(context).colorScheme.background
+              ? Theme.of(context).colorScheme.surface
               : Theme.of(context).colorScheme.surface,
           margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: Padding(
