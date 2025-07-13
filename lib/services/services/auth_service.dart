@@ -16,12 +16,11 @@ class AuthService extends ServiceBase {
   static const userKey = 'userKey';
 
   late SharedPreferences _sharedPreferences;
-  GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: <String>[
-      'email',
-      // Constants.SIGN_IN_SCOPE_URL,
-    ],
-  );
+  GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  List<String> scopes = <String>[
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/userinfo.email',
+  ];
 
   static String _tableName = '${Constants.USER_TABLE_NAME}';
   static final _logger = Logger("AuthService");
@@ -57,20 +56,29 @@ class AuthService extends ServiceBase {
     UserModel? user;
     try {
       await _googleSignIn.signOut();
-      final result = await _googleSignIn.signIn();
-      final googleKey = await result!.authentication;
-      final String? accessToken = googleKey.accessToken;
+
+      final GoogleSignInAccount result = await _googleSignIn.authenticate();
+      final googleKey = result.authentication;
+      final GoogleSignInClientAuthorization? authorization =
+          await result.authorizationClient.authorizationForScopes(scopes);
+      final String? accessToken = authorization!.accessToken;
+      final name = result.displayName ?? '';
       final String? idToken = googleKey.idToken;
-      final String email = _googleSignIn.currentUser!.email;
+      final String email = result.email;
+      final String? photoUrl = result.photoUrl;
 
       /// default username
       final String username = email.split('@').first;
       user = UserModel(
-          name: _googleSignIn.currentUser!.displayName ?? '',
-          email: _googleSignIn.currentUser!.email,
-          avatarUrl: _googleSignIn.currentUser!.photoUrl,
+          name: name,
+          email: email,
+          avatarUrl: photoUrl ?? '',
+          isLoggedIn: true,
+          isAdmin: false,
           idToken: idToken,
           username: username,
+          created_at: DateTime.now(),
+          updated_at: DateTime.now(),
           accessToken: accessToken);
     } catch (error) {
       _logger.e(error.toString());
