@@ -9,7 +9,7 @@ class UserService {
   static String _tableName = '${Constants.USER_TABLE_NAME}';
   static final _logger = Logger("UserService");
 
-  Future<PostgrestResponse> findById(String id) async {
+  Future<DbResponse> findById(String id) async {
     final response = await DatabaseService.findSingleRowByColumnValue(id,
         columnName: Constants.ID_COLUMN, tableName: _tableName);
     return response;
@@ -101,7 +101,7 @@ class UserService {
     try {
       final response = await DatabaseService.findAll(tableName: _tableName);
       if (response.status == 200) {
-        users = (response.data as List).map((e) => User.fromJson(e)).toList();
+        users = (response.data as List).map((e) => User.fromJson(e)).whereType<User>().toList();
       }
     } catch (_) {
       _logger.e(_.toString());
@@ -112,7 +112,7 @@ class UserService {
 //: TODO: Add a new user to the database
 //: and verify
 
-  static Future<PostgrestResponse> deleteById(String email) async {
+  static Future<DbResponse> deleteById(String email) async {
     _logger.i(_tableName);
     final response = await DatabaseService.deleteRow(email,
         columnName: Constants.USER_EMAIL_COLUMN, tableName: _tableName);

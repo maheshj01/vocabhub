@@ -7,6 +7,7 @@ import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/notifications/edit_expansion_tile.dart';
 import 'package:vocabhub/services/services.dart';
+import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -82,7 +83,7 @@ class _NotificationDetailMobileState extends ConsumerState<NotificationDetailMob
         message: 'Failed',
         status: 400,
         data: Word('', '', ''));
-    PostgrestResponse<dynamic> resp;
+    DbResponse<dynamic> resp;
     List<EditHistory> list;
     // if edit is pending
     // type: add -> show previous approved and current pending

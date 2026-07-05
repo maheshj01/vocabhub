@@ -193,7 +193,7 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     if (!kIsWeb) {
       flutterLocalNotificationsPlugin.initialize(
-          InitializationSettings(
+          settings: InitializationSettings(
               android: AndroidInitializationSettings(Constants.LAUNCHER_ICON),
               iOS: DarwinInitializationSettings(
                 defaultPresentAlert: true,
@@ -234,10 +234,10 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
     AndroidNotification? android = message.notification?.android;
     if (notification != null && android != null) {
       flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          const NotificationDetails(
+          id: notification.hashCode,
+          title: notification.title,
+          body: notification.body,
+          notificationDetails: const NotificationDetails(
             android: AndroidNotificationDetails(
               'your channel id',
               'your channel name',

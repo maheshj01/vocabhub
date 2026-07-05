@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:rive/rive.dart';
+import 'package:rive/rive.dart' hide Animation;
 import 'package:vocabhub/constants/strings.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/word.dart';
@@ -30,18 +30,24 @@ class _OnboardingContentPageState extends State<OnboardingContentPage> {
     super.didUpdateWidget(oldWidget);
   }
 
-  late RiveAnimationController _controller;
+  late RiveWidgetController _controller;
 
   // Toggles between play and pause animation states
-  void _togglePlay() => setState(() => _controller.isActive = !_controller.isActive);
-
-  /// Tracks if the animation is playing by whether controller is running
-  bool get isPlaying => _controller.isActive;
+  void _togglePlay() {
+    setState(() {});
+  }
 
   @override
   void initState() {
-    _controller = OneShotAnimation('Animation 1');
+    init();
     super.initState();
+  }
+
+  Future<void> init() async {
+    final file = await File.asset('assets/off_road_car.riv', riveFactory: Factory.rive);
+    _controller = RiveWidgetController(file!);
+
+    setState(() {});
   }
 
   @override
@@ -49,6 +55,11 @@ class _OnboardingContentPageState extends State<OnboardingContentPage> {
     _controller.dispose();
     super.dispose();
   }
+
+  late final fileLoader = FileLoader.fromAsset(
+    widget.assetPath,
+    riveFactory: Factory.rive,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -79,10 +90,16 @@ class _OnboardingContentPageState extends State<OnboardingContentPage> {
                 : widget.index != 1
                     ? SizedBox(
                         height: size.height * 0.5,
-                        child: RiveAnimation.asset(
-                          '${widget.assetPath}',
-                          animations: widget.animations,
-                          controllers: [_controller],
+                        child: RiveWidgetBuilder(
+                          fileLoader: fileLoader,
+                          builder: (context, state) => switch (state) {
+                            RiveLoading() => const CircularProgressIndicator(),
+                            RiveFailed() => Text('Failed to load: ${state.error}'),
+                            RiveLoaded() => RiveWidget(
+                                controller: state.controller,
+                                fit: Fit.cover,
+                              ),
+                          },
                         ),
                       )
                     : SizedBox(

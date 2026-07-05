@@ -8,6 +8,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,7 +39,7 @@ final userNotifierProvider = Provider<UserModel>((ref) {
 });
 
 final dashBoardNotifier = Provider<DashboardController>((ref) => DashboardController());
-final appProvider = StateNotifierProvider<AppNotifier, AppController>(AppNotifier.new);
+final appProvider = NotifierProvider<AppNotifier, AppController>(AppNotifier.new);
 
 final appThemeProvider =
     StateNotifierProvider<VocabThemeNotifier, VocabThemeController>(VocabThemeNotifier.new);

@@ -16,7 +16,8 @@ class AuthService extends ServiceBase {
   static const userKey = 'userKey';
 
   late SharedPreferences _sharedPreferences;
-  GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  bool _googleSignInInitialized = false;
   List<String> scopes = <String>[
     'https://www.googleapis.com/auth/userinfo.profile',
     'https://www.googleapis.com/auth/userinfo.email',
@@ -55,15 +56,28 @@ class AuthService extends ServiceBase {
       {bool isLogin = true, bool socialSignUp = false}) async {
     UserModel? user;
     try {
+      if (!_googleSignInInitialized) {
+        await _googleSignIn.initialize();
+        _googleSignInInitialized = true;
+      }
       await _googleSignIn.signOut();
 
-      final GoogleSignInAccount result = await _googleSignIn.authenticate();
-      final googleKey = result.authentication;
-      final GoogleSignInClientAuthorization? authorization =
-          await result.authorizationClient.authorizationForScopes(scopes);
-      final String? accessToken = authorization!.accessToken;
+      final GoogleSignInAccount result =
+          await _googleSignIn.authenticate(scopeHint: scopes);
+      // idToken is available synchronously from the authentication tokens.
+      final GoogleSignInAuthentication authentication = result.authentication;
+      final String? idToken = authentication.idToken;
+
+      // accessToken now requires an explicit scope authorization.
+      String? accessToken;
+      try {
+        final authorization =
+            await result.authorizationClient.authorizeScopes(scopes);
+        accessToken = authorization.accessToken;
+      } catch (e) {
+        _logger.e('Failed to authorize scopes: $e');
+      }
       final name = result.displayName ?? '';
-      final String? idToken = googleKey.idToken;
       final String email = result.email;
       final String? photoUrl = result.photoUrl;
 
