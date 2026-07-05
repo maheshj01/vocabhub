@@ -93,11 +93,6 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
     final colorScheme = Theme.of(context).colorScheme;
     final user = ref.watch(userNotifierProvider);
     final appTheme = ref.watch(appThemeProvider);
-    ref.listen<UserModel>(userNotifierProvider, (UserModel? userOld, UserModel? userNew) {
-      if (userNew != null) {
-        user.setUser(userNew);
-      }
-    });
     final now = DateTime.now();
     final oldVersion = ref.read(appProvider).version!.oldVersion;
     return Material(
@@ -427,8 +422,8 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                 }),
                 hLine(),
                 settingTile('Logout', leadingIcon: Icons.logout, onTap: () async {
-                  user.loggedIn = false;
-                  authController.logout(context);
+                  await authController.signOut();
+                  if (!context.mounted) return;
                   Navigate.pushAndPopAll(context, AppSignIn());
                 }),
                 hLine(),

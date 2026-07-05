@@ -113,4 +113,3 @@ class EditHistory {
 
   Map<String, dynamic> toJson() => _$EditHistoryToJson(this);
 }
-

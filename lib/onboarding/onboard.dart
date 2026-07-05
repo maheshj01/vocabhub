@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:vocabhub/base_home.dart';
-import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/widgets/button.dart';
@@ -38,7 +38,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     final List<Widget> pages = [
       OnboardingContentPage(
         index: 0,
-        assetPath: 'assets/rive/dark.riv',
+        assetPath: Assets.dark,
         animations: [
           'orbitAnimation',
         ],
@@ -52,7 +52,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       ),
       OnboardingContentPage(
         index: 2,
-        assetPath: 'assets/rive/wod.riv',
+        assetPath: Assets.wod,
         color: Color.fromRGBO(10, 6, 17, 1.0),
         animations: [
           'Animation 1',
@@ -62,7 +62,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       OnboardingContentPage(
         index: 3,
         color: Color(0xffA8C9F8),
-        assetPath: 'assets/rive/balloon.riv',
+        assetPath: Assets.balloon,
         animations: [
           'Balloon Rotation',
           'Cloud Rotation',
@@ -74,7 +74,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       ),
       OnboardingContentPage(
         index: 4,
-        assetPath: 'assets/rive/dark.riv',
+        assetPath: Assets.dark,
         animations: [
           'orbitAnimation',
         ],

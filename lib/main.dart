@@ -34,9 +34,11 @@ import 'package:vocabhub/widgets/whats_new.dart';
 
 import 'constants/constants.dart';
 
-final userNotifierProvider = Provider<UserModel>((ref) {
-  return UserModel.init();
-});
+/// Exposes the [AuthController] session hub to the widget tree.
+final authControllerProvider = ChangeNotifierProvider<AuthController>((ref) => authController);
+
+/// The current signed-in user. Rebuilds whenever the session changes.
+final userNotifierProvider = Provider<UserModel>((ref) => ref.watch(authControllerProvider).user);
 
 final dashBoardNotifier = Provider<DashboardController>((ref) => DashboardController());
 final appProvider = NotifierProvider<AppNotifier, AppController>(AppNotifier.new);
@@ -129,36 +131,9 @@ class _VocabAppState extends ConsumerState<VocabApp> {
   Future<void> initializeApp() async {
     firebaseAnalytics.logAppOpen();
     await authController.initService();
-    final localUser = authController.user;
-    final user = ref.watch(userNotifierProvider);
-    if (localUser.email.isNotEmpty) {
-      user.setUser(localUser);
-      if (localUser.isLoggedIn) {
-        await autoLogin(localUser);
-      }
-    }
-    user.setUser(localUser);
 
-    /// user details not found locally
-    /// set default user to local state
-  }
-
-  Future<void> autoLogin(UserModel localUser) async {
-    final resp = await AuthService.updateLogin(
-      data: {
-        Constants.USER_LOGGEDIN_COLUMN: true,
-      },
-      email: localUser.email,
-    );
-    final userProvider = ref.watch(userNotifierProvider);
-
-    /// if login success, update local user details
-    if (resp.status == Status.success) {
-      final user = await UserService.findByEmail(email: localUser.email, cache: true);
-      userProvider.setUser(user);
-    } else {
-      userProvider.setUser(localUser);
-    }
+    /// Re-validate the cached session against Supabase (no-op if signed out).
+    await authController.restoreSession();
   }
 
   FirebaseAnalyticsObserver _observer = FirebaseAnalyticsObserver(analytics: firebaseAnalytics);

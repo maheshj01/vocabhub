@@ -186,10 +186,10 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
   Future<void> initService() async {
     _firebaseMessaging = FirebaseMessaging.instance;
     _sharedPreferences = await SharedPreferences.getInstance();
-    getNotificationsEnabled();
+    await getNotificationsEnabled();
+    await checkPermissions();
     await setupFlutterNotifications();
     getAdminToken();
-    checkPermissions();
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     if (!kIsWeb) {
       flutterLocalNotificationsPlugin.initialize(
@@ -205,8 +205,8 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
               )),
           onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
           onDidReceiveNotificationResponse: (response) {
-        appKey.currentState!.pushNamed(Notifications.route);
-      });
+            appKey.currentState!.pushNamed(Notifications.route);
+          });
       FirebaseMessaging.onMessage.listen(showFlutterNotification);
       await initSubscription();
     }

@@ -223,10 +223,7 @@ class DatabaseService {
     bool sort = false,
   }) async {
     return _run(() async {
-      return await _supabase
-          .from(tableName)
-          .select()
-          .timeout(Constants.timeoutDuration);
+      return await _supabase.from(tableName).select().timeout(Constants.timeoutDuration);
     });
   }
 
@@ -235,10 +232,7 @@ class DatabaseService {
     bool sort = false,
   }) async {
     return _run(() async {
-      return await _supabase
-          .from(tableName)
-          .select()
-          .order('created_at', ascending: false);
+      return await _supabase.from(tableName).select().order('created_at', ascending: false);
     });
   }
 
@@ -319,11 +313,8 @@ class DatabaseService {
     String table = '${Constants.VOCAB_TABLE_NAME}',
   }) async {
     return _run(() async {
-      return await _supabase
-          .from(table)
-          .insert(data)
-          .select()
-          .timeout(Constants.timeoutDuration, onTimeout: () {
+      return await _supabase.from(table).insert(data).select().timeout(Constants.timeoutDuration,
+          onTimeout: () {
         throw TimeoutException(NETWORK_ERROR);
       });
     }, successStatus: 201);

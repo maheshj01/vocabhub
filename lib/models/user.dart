@@ -1,33 +1,50 @@
-import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:vocabhub/main.dart';
-import 'package:vocabhub/models/models.dart';
+import 'package:vocabhub/constants/const.dart';
 
 part 'user.g.dart';
 
+/// Immutable profile model for a Vocabhub user.
+///
+/// Identity is anchored on [uid] (the Firebase Auth uid), which is stable across
+/// both Google and phone sign-in. [email] is empty for phone-only users and
+/// [phone] is null for Google-only users.
+///
+/// This is a pure data object — it holds no behaviour and notifies nothing.
+/// Session state is owned by the auth notifier (`authProvider`); UI reads the
+/// current user via `currentUserProvider`.
 @JsonSerializable()
-class UserModel extends ChangeNotifier {
-  String? idToken;
-  String? accessToken;
-  String email;
-  String name;
-  String? avatarUrl;
-  bool isLoggedIn;
-  bool isAdmin;
-  String username;
-  // push notification token
-  String token;
-  bool isDeleted;
-  DateTime? created_at;
-  DateTime? updated_at;
+class UserModel {
+  /// Firebase Auth uid — the canonical identity key.
+  final String uid;
 
-  UserModel({
-    this.name = '',
+  /// Email address. Empty string when unknown (e.g. phone-auth users).
+  final String email;
+
+  /// E.164 phone number. Null for users who signed in with Google only.
+  final String? phone;
+
+  final String name;
+  final String? avatarUrl;
+  final bool isLoggedIn;
+  final bool isAdmin;
+  final String username;
+
+  /// FCM push-notification token.
+  final String token;
+
+  @JsonKey(name: Constants.DELETED_COLUMN)
+  final bool isDeleted;
+
+  final DateTime? created_at;
+  final DateTime? updated_at;
+
+  const UserModel({
+    this.uid = '',
     this.email = '',
+    this.phone,
+    this.name = '',
     this.avatarUrl,
-    this.idToken,
     this.isAdmin = false,
-    this.accessToken,
     this.token = '',
     this.username = '',
     this.created_at,
@@ -38,30 +55,22 @@ class UserModel extends ChangeNotifier {
 
   factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
 
-  /// todo: add created at parameter
-  factory UserModel.copyWith(UserModel w) {
-    return UserModel(
-      name: w.name,
-      email: w.email,
-      avatarUrl: w.avatarUrl,
-      idToken: w.idToken,
-      accessToken: w.accessToken,
-      isAdmin: w.isAdmin,
-      username: w.username,
-      token: w.token,
-      isDeleted: w.isDeleted,
-      created_at: w.created_at,
-      updated_at: w.updated_at,
-      isLoggedIn: w.isLoggedIn,
-    );
-  }
+  Map<String, dynamic> toJson() => _$UserModelToJson(this);
+
+  /// An empty, signed-out user.
+  factory UserModel.init() => const UserModel();
+
+  /// True when this instance represents a real, resolved account.
+  bool get isEmpty => uid.isEmpty && email.isEmpty && (phone == null || phone!.isEmpty);
+
+  bool get isNotEmpty => !isEmpty;
 
   UserModel copyWith({
-    String? name,
+    String? uid,
     String? email,
+    String? phone,
+    String? name,
     String? avatarUrl,
-    String? idToken,
-    String? accessToken,
     bool? isAdmin,
     bool? isLoggedIn,
     String? username,
@@ -69,14 +78,13 @@ class UserModel extends ChangeNotifier {
     DateTime? created_at,
     DateTime? updated_at,
     bool? isDeleted,
-    List<Word>? bookmarks,
   }) {
     return UserModel(
-      name: name ?? this.name,
+      uid: uid ?? this.uid,
       email: email ?? this.email,
+      phone: phone ?? this.phone,
+      name: name ?? this.name,
       avatarUrl: avatarUrl ?? this.avatarUrl,
-      idToken: idToken ?? this.idToken,
-      accessToken: accessToken ?? this.accessToken,
       isAdmin: isAdmin ?? this.isAdmin,
       username: username ?? this.username,
       token: token ?? this.token,
@@ -85,86 +93,5 @@ class UserModel extends ChangeNotifier {
       updated_at: updated_at ?? this.updated_at,
       isLoggedIn: isLoggedIn ?? this.isLoggedIn,
     );
-  }
-
-  factory UserModel.init() {
-    return UserModel(
-        name: '',
-        email: '',
-        avatarUrl: '',
-        idToken: '',
-        accessToken: '',
-        created_at: DateTime.now(),
-        updated_at: DateTime.now(),
-        username: '',
-        token: '',
-        isAdmin: false,
-        isDeleted: false,
-        isLoggedIn: false);
-  }
-
-  /// TODO: add a method to convert a User to JSON object
-//  Map<String, dynamic> toJson() => {
-//         'id': id,
-//         'email': email,
-//         'created_at': createdAt,
-//         'last_sign_in_at': lastSignInAt,
-//         'updated_at': updatedAt,
-//       };
-
-  Map<String, dynamic> toJson() => _$UserModelToJson(this);
-
-  set setEmail(String m) {
-    email = m;
-    notifyListeners();
-  }
-
-  set setName(String m) {
-    name = m;
-    notifyListeners();
-  }
-
-  set setIdToken(String m) {
-    idToken = m;
-    notifyListeners();
-  }
-
-  set setAccessToken(String m) {
-    accessToken = m;
-    notifyListeners();
-  }
-
-  set setAvatarUrl(String m) {
-    avatarUrl = m;
-    notifyListeners();
-  }
-
-  set loggedIn(bool m) {
-    isLoggedIn = m;
-    notifyListeners();
-  }
-
-  set setIsDeleted(bool m) {
-    isDeleted = m;
-    notifyListeners();
-  }
-
-  UserModel get user => this;
-
-  // updates local state and also stores in local storage
-  setUser(UserModel user) {
-    this.name = user.name;
-    this.email = user.email;
-    this.avatarUrl = user.avatarUrl;
-    this.idToken = user.idToken;
-    this.accessToken = user.accessToken;
-    this.isAdmin = user.isAdmin;
-    this.username = user.username;
-    this.token = user.token;
-    this.created_at = user.created_at;
-    this.isLoggedIn = user.isLoggedIn;
-    this.isDeleted = user.isDeleted;
-    authController.setUser(this);
-    notifyListeners();
   }
 }

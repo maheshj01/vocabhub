@@ -57,8 +57,14 @@ class Constants {
 
   /// USER TABLE COLUMNS
   static const USERID_COLUMN = 'id';
+
+  /// Firebase Auth uid — the canonical identity key across Google & phone auth.
+  static const USER_UID_COLUMN = 'uid';
   static const USER_NAME_COLUMN = 'name';
   static const USER_EMAIL_COLUMN = 'email';
+
+  /// E.164 phone number for phone-auth users (nullable).
+  static const USER_PHONE_COLUMN = 'phone';
   static const USERNAME_COLUMN = 'username';
   static const DELETED_COLUMN = 'deleted';
   static const USER_BOOKMARKS_COLUMN = 'bookmarks';

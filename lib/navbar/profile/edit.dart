@@ -253,7 +253,7 @@ class _EditProfileMobileState extends ConsumerState<EditProfileMobile> {
                                   if (success) {
                                     _responseNotifier.value =
                                         Response(state: RequestState.done, didSucced: true);
-                                    user.setUser(editedUser);
+                                    await authController.setUser(editedUser);
                                     NavbarNotifier.showSnackBar(context, 'success updating user! ');
                                   } else {
                                     _responseNotifier.value =

@@ -14,6 +14,7 @@ dependencies:
       url: https://github.com/maheshmnj/feature_discovery.git
       ref: master
   firebase_analytics: ^12.4.1
+  firebase_auth: ^6.5.4
   firebase_core: ^4.9.0
   firebase_messaging: ^16.2.2
   firebase_messaging_web: ^4.1.7

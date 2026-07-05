@@ -128,11 +128,7 @@ class AutoScroll {
   final int durationInSeconds;
   final bool isPaused;
 
-  AutoScroll({
-    this.enabled = true,
-    this.durationInSeconds = 30,
-    this.isPaused = false
-  });
+  AutoScroll({this.enabled = true, this.durationInSeconds = 30, this.isPaused = false});
 
   AutoScroll copyWith({
     bool? enabled,
@@ -148,11 +144,11 @@ class AutoScroll {
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
-  
+
     result.addAll({'enabled': enabled});
     result.addAll({'durationInSeconds': durationInSeconds});
     result.addAll({'isPaused': isPaused});
-  
+
     return result;
   }
 
@@ -169,16 +165,17 @@ class AutoScroll {
   factory AutoScroll.fromJson(String source) => AutoScroll.fromMap(json.decode(source));
 
   @override
-  String toString() => 'AutoScroll(enabled: $enabled, durationInSeconds: $durationInSeconds, isPaused: $isPaused)';
+  String toString() =>
+      'AutoScroll(enabled: $enabled, durationInSeconds: $durationInSeconds, isPaused: $isPaused)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
     return other is AutoScroll &&
-      other.enabled == enabled &&
-      other.durationInSeconds == durationInSeconds &&
-      other.isPaused == isPaused;
+        other.enabled == enabled &&
+        other.durationInSeconds == durationInSeconds &&
+        other.isPaused == isPaused;
   }
 
   @override

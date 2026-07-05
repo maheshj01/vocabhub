@@ -44,7 +44,7 @@ class _OnboardingContentPageState extends State<OnboardingContentPage> {
   }
 
   Future<void> init() async {
-    final file = await File.asset('assets/off_road_car.riv', riveFactory: Factory.rive);
+    final file = await File.asset('assets/rive/wod.riv', riveFactory: Factory.rive);
     _controller = RiveWidgetController(file!);
 
     setState(() {});

@@ -85,7 +85,6 @@ class AppController {
 }
 
 class AppNotifier extends Notifier<AppController> {
-
   @override
   AppController build() {
     final version = ref.read(appUtilityProvider).getVersion();

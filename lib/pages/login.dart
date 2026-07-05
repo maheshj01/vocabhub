@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/constants/constants.dart';
-import 'package:vocabhub/models/user.dart';
+import 'package:vocabhub/pages/phone_auth.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/services.dart';
+import 'package:vocabhub/utils/auth_flow.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
@@ -19,79 +20,22 @@ class AppSignIn extends ConsumerStatefulWidget {
 }
 
 class _AppSignInState extends ConsumerState<AppSignIn> {
-  AuthService auth = AuthService();
-  Future<void> _handleSignIn(BuildContext context) async {
-    final _userNotifier = ref.read(userNotifierProvider);
-    try {
-      final token = pushNotificationService.fcmToken;
-      _requestNotifier.value = Response(state: RequestState.active);
-      user = await auth.googleSignIn(context);
-      if (user != null) {
-        final existingUser = await UserService.findByEmail(email: user!.email);
-        if (existingUser.email.isEmpty) {
-          user = user!.copyWith(
-            token: token,
-          );
-          final resp = await AuthService.registerUser(user!);
-          if (resp.didSucced) {
-            final UserModel registeredUser = UserModel.fromJson((resp.data as List<dynamic>)[0]);
-            // state.setUser(user.copyWith(isLoggedIn: true, token: fcmToken));
-            registeredUser.loggedIn = true;
-            _userNotifier.setUser(registeredUser);
-            _requestNotifier.value = Response(state: RequestState.done, data: registeredUser);
-            Navigate.pushAndPopAll(context, AdaptiveLayout(), transitionType: TransitionType.ttb);
-            firebaseAnalytics.logNewUser(registeredUser);
-          } else {
-            _userNotifier.loggedIn = false;
-            NavbarNotifier.showSnackBar(context, '$signInFailure');
-            _requestNotifier.value = Response(state: RequestState.done);
-            throw '$registration_Failed';
-          }
-        } else {
-          if (existingUser.isDeleted) {
-            _requestNotifier.value = Response(state: RequestState.done);
-            NavbarNotifier.showSnackBar(
-              context,
-              '$accountDeleted ${Constants.FEEDBACK_EMAIL_TO}',
-              actionLabel: 'Contact Support',
-              showCloseIcon: false,
-              duration: Duration(seconds: 10),
-              onActionPressed: () => launchURL(
-                accountActivationEmail,
-              ),
-            );
-            return;
-          }
-          existingUser.loggedIn = true;
-          _userNotifier.setUser(existingUser);
-          user = user!.copyWith(
-            token: token,
-          );
-          await AuthService.updateLogin(
-            data: {
-              Constants.USER_LOGGEDIN_COLUMN: true,
-              Constants.USER_TOKEN_COLUMN: token,
-              Constants.DELETED_COLUMN: false
-            },
-            email: existingUser.email,
-          );
-          _requestNotifier.value = Response(state: RequestState.done);
-          Navigate.pushAndPopAll(context, AdaptiveLayout());
-          firebaseAnalytics.logSignIn(user!);
-        }
-      } else {
-        NavbarNotifier.showSnackBar(context, '$signInFailure');
-        _requestNotifier.value = Response(state: RequestState.done);
-        throw '$registration_Failed';
-      }
-    } catch (error) {
-      NavbarNotifier.showSnackBar(context, bottom: 0, error.toString());
-      _requestNotifier.value = Response(state: RequestState.done);
-      _userNotifier.loggedIn = false;
-    }
+  /// Google sign-in: identity + profile resolution + persistence all happen in
+  /// [AuthController]; this widget only drives loading state and navigation.
+  Future<void> _handleGoogleSignIn(BuildContext context) async {
+    _requestNotifier.value = Response(state: RequestState.active);
+    final result = await authController.signInWithGoogle(
+      fcmToken: pushNotificationService.fcmToken,
+    );
+    _requestNotifier.value = Response(state: RequestState.done);
+    if (!context.mounted) return;
+    await handleAuthResult(context, result, firebaseAnalytics);
   }
 
-  UserModel? user;
+  void _handlePhoneSignIn(BuildContext context) {
+    Navigate.push(context, const PhoneAuthPage(), transitionType: TransitionType.rtl);
+  }
+
   late Analytics firebaseAnalytics;
   final ValueNotifier<Response> _requestNotifier =
       ValueNotifier<Response>(Response(state: RequestState.none));
@@ -142,8 +86,21 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
                   leading: Image.asset('$GOOGLE_ASSET_PATH', height: 32),
                   label: 'Sign In with Google',
                   isLoading: request.state == RequestState.active,
-                  onTap: () => _handleSignIn(context),
+                  onTap: () => _handleGoogleSignIn(context),
                   backgroundColor: Colors.white,
+                ));
+          }
+
+          Widget _phoneButton() {
+            return Align(
+                alignment: Alignment.center,
+                child: VHButton(
+                  width: 300,
+                  foregroundColor: Colors.white,
+                  leading: const Icon(Icons.phone_android, color: Colors.white, size: 24),
+                  label: 'Continue with Phone',
+                  onTap: () => _handlePhoneSignIn(context),
+                  backgroundColor: colorScheme.primary,
                 ));
           }
 
@@ -178,6 +135,10 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
                                 Spacer(),
                                 _signInButton(),
                                 SizedBox(
+                                  height: 16,
+                                ),
+                                _phoneButton(),
+                                SizedBox(
                                   height: 20,
                                 ),
                                 _skipButton(),
@@ -199,7 +160,8 @@ class _AppSignInState extends ConsumerState<AppSignIn> {
                           _heading('Welcome!'),
                           Expanded(child: Container()),
                           _signInButton(),
-
+                          16.0.vSpacer(),
+                          _phoneButton(),
                           20.0.vSpacer(),
                           _skipButton(),
                           Expanded(child: Container()),

@@ -13,32 +13,19 @@ EditHistory _$EditHistoryFromJson(Map<String, dynamic> json) => EditHistory(
       word: json['word'] as String,
       meaning: json['meaning'] as String,
       comments: json['comments'] as String? ?? '',
-      state: $enumDecodeNullable(_$EditStateEnumMap, json['state']) ??
-          EditState.pending,
-      edit_type: $enumDecodeNullable(_$EditTypeEnumMap, json['edit_type']) ??
-          EditType.edit,
-      created_at: json['created_at'] == null
-          ? null
-          : DateTime.parse(json['created_at'] as String),
-      synonyms: (json['synonyms'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
-      examples: (json['examples'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
+      state: $enumDecodeNullable(_$EditStateEnumMap, json['state']) ?? EditState.pending,
+      edit_type: $enumDecodeNullable(_$EditTypeEnumMap, json['edit_type']) ?? EditType.edit,
+      created_at: json['created_at'] == null ? null : DateTime.parse(json['created_at'] as String),
+      synonyms: (json['synonyms'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const [],
+      examples: (json['examples'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const [],
       users_mobile: json['users_mobile'] == null
           ? null
           : UserModel.fromJson(json['users_mobile'] as Map<String, dynamic>),
-      mnemonics: (json['mnemonics'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
+      mnemonics:
+          (json['mnemonics'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const [],
     );
 
-Map<String, dynamic> _$EditHistoryToJson(EditHistory instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$EditHistoryToJson(EditHistory instance) => <String, dynamic>{
       'edit_id': instance.edit_id,
       'email': instance.email,
       'word_id': instance.word_id,
