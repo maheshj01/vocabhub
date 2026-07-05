@@ -56,6 +56,28 @@ class UserService {
     return user;
   }
 
+  /// Merges an identity into an existing row keyed on [email] (used when a phone
+  /// user links a Google account whose email already has a legacy profile). We
+  /// update *by email* rather than upsert-by-uid so the existing row — with its
+  /// bookmarks/edit history — is preserved and simply gains the uid + phone.
+  static Future<UserModel> updateProfileByEmail(String email, UserModel profile) async {
+    final response = await DatabaseService.updateByColumn(
+      searchColumn: Constants.USER_EMAIL_COLUMN,
+      searchValue: email,
+      data: profile.toJson(),
+      tableName: _tableName,
+    );
+    if (response.status == 200 &&
+        response.data is List &&
+        (response.data as List).isNotEmpty) {
+      return UserModel.fromJson((response.data as List).first);
+    }
+    if (response.error != null) {
+      _logger.e('Failed to merge profile by email: ${response.error!.message}');
+    }
+    return profile;
+  }
+
   /// Flips login state (and optionally the FCM token) for a profile by uid.
   static Future<DbResponse> setLoginState({
     required String uid,

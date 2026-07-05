@@ -89,9 +89,14 @@ class _UserProfileState extends ConsumerState<UserProfile> {
         response.copyWith(state: RequestState.active, message: "Loading...");
     try {
       if (!widget.isReadOnly) {
-        final user = ref.watch(userNotifierProvider);
-        final updatedUser = await UserService.findByEmail(email: user.email, cache: true);
-        await authController.setUser(updatedUser);
+        final user = ref.read(userNotifierProvider);
+        // Emailless (phone) users have no Supabase row — refreshing by email
+        // would return an empty user and sign them out. Keep the session as-is.
+        UserModel updatedUser = user;
+        if (user.email.isNotEmpty) {
+          updatedUser = await UserService.findByEmail(email: user.email, cache: true);
+          await authController.setUser(updatedUser);
+        }
         userProfileNotifier.value = response.copyWith(
             state: RequestState.done, message: "Success", data: updatedUser, didSucced: true);
       } else {

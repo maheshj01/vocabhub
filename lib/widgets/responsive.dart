@@ -8,6 +8,17 @@ import 'package:vocabhub/utils/size_utils.dart';
 class ResponsiveBuilder extends ConsumerStatefulWidget {
   final WidgetBuilder desktopBuilder;
   final WidgetBuilder mobileBuilder;
+
+  /// Layout for the tablet tier (600–1024). Optional: when omitted, tablets
+  /// fall back to [desktopBuilder] — preserving the historical mobile/desktop
+  /// split so existing call sites behave identically until they opt in.
+  final WidgetBuilder? tabletBuilder;
+
+  /// When set, the chosen tablet/desktop child is centered and constrained to
+  /// this width so content (forms, text, lists) stays readable on large
+  /// screens instead of stretching edge-to-edge. Ignored on mobile.
+  final double? maxContentWidth;
+
   final bool animate;
   final double initialAnimationValue;
   final bool repeatAnimation;
@@ -18,6 +29,8 @@ class ResponsiveBuilder extends ConsumerStatefulWidget {
       {Key? key,
       required this.desktopBuilder,
       required this.mobileBuilder,
+      this.tabletBuilder,
+      this.maxContentWidth,
       this.animate = false,
       this.repeatAnimation = true,
       this.onAnimateComplete,
@@ -104,37 +117,61 @@ class _ResponsiveBuilderState extends ConsumerState<ResponsiveBuilder>
     super.didUpdateWidget(oldWidget);
   }
 
+  /// Centers and width-constrains large-screen content when [maxContentWidth]
+  /// is set; otherwise returns the child untouched.
+  Widget _constrain(Widget child) {
+    final maxWidth = widget.maxContentWidth;
+    if (maxWidth == null) return child;
+    return Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        child: child,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
+    // Keep the global screen flag aligned with the real app window. Local tier
+    // decisions below still use the LayoutBuilder constraints (the space this
+    // widget was actually given), per adaptive-layout guidance.
+    SizeUtils.size = MediaQuery.sizeOf(context);
+
     return Material(
       child: LayoutBuilder(builder: (context, constraints) {
-        SizeUtils.size = Size(constraints.maxWidth, constraints.maxHeight);
-        if (!SizeUtils.isMobile) {
-          return widget.desktopBuilder(context);
+        switch (SizeUtils.screenTypeOf(constraints.maxWidth)) {
+          case ScreenType.desktop:
+            return _constrain(widget.desktopBuilder(context));
+          case ScreenType.tablet:
+            // Fall back to the desktop layout when no tablet layout is given,
+            // matching the previous mobile/desktop-only behavior.
+            return _constrain((widget.tabletBuilder ?? widget.desktopBuilder)(context));
+          case ScreenType.mobile:
+            final appTheme = ref.watch(appThemeProvider);
+            return Stack(
+              children: [
+                if (!appTheme.isClassic)
+                  AnimatedBuilder(
+                      animation: _animation,
+                      builder: (context, child) {
+                        return CustomPaint(
+                          painter: BackgroundPainter(
+                            primaryColor: colorScheme.primary,
+                            secondaryColor: colorScheme.inversePrimary,
+                            animation: _animation,
+                          ),
+                          child: Container(),
+                        );
+                      }),
+                if (!appTheme.isClassic)
+                  BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60), child: Container()),
+                widget.mobileBuilder(context),
+              ],
+            );
         }
-        final appTheme = ref.watch(appThemeProvider);
-        return Stack(
-          children: [
-            if (!appTheme.isClassic)
-              AnimatedBuilder(
-                  animation: _animation,
-                  builder: (context, child) {
-                    return CustomPaint(
-                      painter: BackgroundPainter(
-                        primaryColor: colorScheme.primary,
-                        secondaryColor: colorScheme.inversePrimary,
-                        animation: _animation,
-                      ),
-                      child: Container(),
-                    );
-                  }),
-            if (!appTheme.isClassic)
-              BackdropFilter(filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60), child: Container()),
-            widget.mobileBuilder(context),
-          ],
-        );
       }),
     );
   }

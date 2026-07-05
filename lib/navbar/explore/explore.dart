@@ -12,6 +12,7 @@ import 'package:vocabhub/navbar/empty_page.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/word_state_service.dart';
+import 'package:vocabhub/utils/auth_flow.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
@@ -415,140 +416,146 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
         : AnimatedBuilder(
             animation: exploreController,
             builder: (BuildContext context, Widget? child) {
-              return Column(
-                children: [
-                  kToolbarHeight.vSpacer(),
-                  Stack(
-                    children: [
-                      Padding(
-                        padding: (kToolbarHeight * 0.4).topPadding + 12.0.bottomPadding,
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: WordTitleBuilder(
-                            word: widget.word!,
-                            hasFloatingActionButton: Scaffold.of(context).hasFloatingActionButton,
+              return SingleChildScrollView(
+                physics: NeverScrollableScrollPhysics(),
+                child: Column(
+                  children: [
+                    kToolbarHeight.vSpacer(),
+                    Stack(
+                      children: [
+                        Padding(
+                          padding: (kToolbarHeight * 0.4).topPadding + 12.0.bottomPadding,
+                          child: Align(
+                            alignment: Alignment.topCenter,
+                            child: WordTitleBuilder(
+                              word: widget.word!,
+                              hasFloatingActionButton: Scaffold.of(context).hasFloatingActionButton,
+                            ),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        top: 10,
-                        right: 40,
-                        child: userProvider.isLoggedIn && !isHidden
-                            ? IconButton(
-                                onPressed: () {
-                                  Navigate.push(
-                                      context,
-                                      AddWord(
-                                        isEdit: true,
-                                        word: widget.word,
-                                      ),
-                                      transitionType: TransitionType.scale);
-                                },
-                                icon: Icon(
-                                  Icons.edit,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ))
-                            : SizedBox.shrink(),
-                      )
-                    ],
-                  ),
-                  (userProvider.isLoggedIn && isHidden)
-                      ? IconButton(
-                          onPressed: () {
-                            setState(() {
-                              isHidden = !isHidden;
-                            });
-                            _animationController.forward();
-                          },
-                          icon: Icon(
-                            Icons.visibility_off,
-                          ),
+                        Positioned(
+                          top: 10,
+                          right: 40,
+                          child: userProvider.isLoggedIn && !isHidden
+                              ? IconButton(
+                                  onPressed: () {
+                                    Navigate.push(
+                                        context,
+                                        AddWord(
+                                          isEdit: true,
+                                          word: widget.word,
+                                        ),
+                                        transitionType: TransitionType.scale);
+                                  },
+                                  icon: Icon(
+                                    Icons.edit,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ))
+                              : SizedBox.shrink(),
                         )
-                      : SizedBox.shrink(),
-                  AnimatedOpacity(
-                    opacity: !isHidden ? 1 : 0,
-                    duration: Duration(milliseconds: 500),
-                    child: IgnorePointer(
-                      ignoring: isHidden,
-                      child: Column(
-                        children: [
-                          SynonymsList(
-                            synonyms: widget.word!.synonyms,
-                            emptyHeight: 0,
-                            onTap: (synonym) {},
-                          ),
-                          AnimatedBuilder(
-                              animation: _animation,
-                              builder: (BuildContext _, Widget? child) {
-                                meaning = widget.word!.meaning.substring(0, _animation.value);
-                                // if (!exploreController.isHidden) {
-                                // } else {
-                                //   meaning = widget.word!.meaning;
-                                // }
-                                return Container(
-                                  alignment: Alignment.center,
-                                  margin: 24.0.verticalPadding,
-                                  padding: 16.0.horizontalPadding,
-                                  child: SelectableText(meaning,
-                                      textAlign: TextAlign.center,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headlineMedium!
-                                          .copyWith(fontSize: 20, fontWeight: FontWeight.w400)),
-                                );
-                              }),
-                          ExampleListBuilder(
-                            title: 'Usage',
-                            examples:
-                                (widget.word!.examples == null || widget.word!.examples!.isEmpty)
-                                    ? []
-                                    : widget.word!.examples,
-                            word: widget.word!.word,
-                          ),
-                          ExampleListBuilder(
-                            title: 'Mnemonics',
-                            examples:
-                                (widget.word!.mnemonics == null || widget.word!.mnemonics!.isEmpty)
-                                    ? []
-                                    : widget.word!.mnemonics,
-                            word: widget.word!.word,
-                          ),
-                        ],
+                      ],
+                    ),
+                    (userProvider.isLoggedIn && isHidden)
+                        ? IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isHidden = !isHidden;
+                              });
+                              _animationController.forward();
+                            },
+                            icon: Icon(
+                              Icons.visibility_off,
+                            ),
+                          )
+                        : SizedBox.shrink(),
+                    AnimatedOpacity(
+                      opacity: !isHidden ? 1 : 0,
+                      duration: Duration(milliseconds: 500),
+                      child: IgnorePointer(
+                        ignoring: isHidden,
+                        child: Column(
+                          children: [
+                            SynonymsList(
+                              synonyms: widget.word!.synonyms,
+                              emptyHeight: 0,
+                              onTap: (synonym) {},
+                            ),
+                            AnimatedBuilder(
+                                animation: _animation,
+                                builder: (BuildContext _, Widget? child) {
+                                  meaning = widget.word!.meaning.substring(0, _animation.value);
+                                  // if (!exploreController.isHidden) {
+                                  // } else {
+                                  //   meaning = widget.word!.meaning;
+                                  // }
+                                  return Container(
+                                    alignment: Alignment.center,
+                                    margin: 24.0.verticalPadding,
+                                    padding: 16.0.horizontalPadding,
+                                    child: SelectableText(meaning,
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineMedium!
+                                            .copyWith(fontSize: 20, fontWeight: FontWeight.w400)),
+                                  );
+                                }),
+                            ExampleListBuilder(
+                              title: 'Usage',
+                              examples:
+                                  (widget.word!.examples == null || widget.word!.examples!.isEmpty)
+                                      ? []
+                                      : widget.word!.examples,
+                              word: widget.word!.word,
+                            ),
+                            ExampleListBuilder(
+                              title: 'Mnemonics',
+                              examples:
+                                  (widget.word!.mnemonics == null || widget.word!.mnemonics!.isEmpty)
+                                      ? []
+                                      : widget.word!.mnemonics,
+                              word: widget.word!.word,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  Flexible(child: SizedBox.expand()),
-                  AnimatedBuilder(
-                      animation: exploreController,
-                      builder: (context, snapshot) {
-                        if (userProvider.isLoggedIn && !exploreController.isAnimating) {
-                          return WordMasteredPreference(
-                            onChanged: (state) async {
-                              final wordId = widget.word!.id;
-                              final userEmail = userProvider.email;
-                              String message = '';
-                              if (state) {
-                                wordState = WordState.known;
-                                message = knownWord;
-                              } else {
-                                wordState = WordState.unknown;
-                                message = unKnownWord;
-                              }
-                              setState(() {});
-                              final resp = await WordStateService.storeWordPreference(
-                                  wordId, userEmail, wordState);
-                              if (resp.didSucced) {
-                                showToast(message);
-                              }
-                            },
-                            value: wordState,
-                          );
-                        } else {
-                          return SizedBox.shrink();
-                        }
-                      }),
-                  16.0.vSpacer()
-                ],
+                    // Flexible(child: SizedBox.expand()),
+                    AnimatedBuilder(
+                        animation: exploreController,
+                        builder: (context, snapshot) {
+                          if (userProvider.isLoggedIn && !exploreController.isAnimating) {
+                            return WordMasteredPreference(
+                              onChanged: (state) async {
+                                // Bookmarks are keyed on email; phone users link an
+                                // email before saving preferences.
+                                if (!await requireEmail(context)) return;
+                                final wordId = widget.word!.id;
+                                final userEmail = authController.user.email;
+                                String message = '';
+                                if (state) {
+                                  wordState = WordState.known;
+                                  message = knownWord;
+                                } else {
+                                  wordState = WordState.unknown;
+                                  message = unKnownWord;
+                                }
+                                setState(() {});
+                                final resp = await WordStateService.storeWordPreference(
+                                    wordId, userEmail, wordState);
+                                if (resp.didSucced) {
+                                  showToast(message);
+                                }
+                              },
+                              value: wordState,
+                            );
+                          } else {
+                            return SizedBox.shrink();
+                          }
+                        }),
+                    16.0.vSpacer()
+                  ],
+                ),
               );
             });
   }

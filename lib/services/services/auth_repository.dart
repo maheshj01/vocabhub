@@ -54,8 +54,11 @@ class AuthRepository {
   // Google
   // --------------------------------------------------------------------------
 
-  /// Interactive Google sign-in, exchanged into a Firebase credential.
-  Future<AuthUser> signInWithGoogle() async {
+  /// Runs the interactive Google flow and returns a Firebase credential plus the
+  /// chosen account (for name/photo/email fallbacks). Shared by sign-in and
+  /// account-linking so the two never diverge.
+  Future<({AuthCredential credential, GoogleSignInAccount account})>
+      _obtainGoogleCredential() async {
     if (!_googleInitialized) {
       // Reads client IDs from the native config (google-services.json /
       // GoogleService-Info.plist). Pass `serverClientId` here if a backend
@@ -82,16 +85,42 @@ class AuthRepository {
       idToken: idToken,
       accessToken: accessToken,
     );
-    final userCredential = await _auth.signInWithCredential(credential);
-    final user = userCredential.user!;
+    return (credential: credential, account: account);
+  }
 
-    return AuthUser(
-      uid: user.uid,
-      email: user.email ?? account.email,
-      displayName: user.displayName ?? account.displayName,
-      photoUrl: user.photoURL ?? account.photoUrl,
-      phoneNumber: user.phoneNumber,
-    );
+  AuthUser _toAuthUser(User user, {GoogleSignInAccount? googleAccount}) => AuthUser(
+        uid: user.uid,
+        email: user.email ?? googleAccount?.email,
+        displayName: user.displayName ?? googleAccount?.displayName,
+        photoUrl: user.photoURL ?? googleAccount?.photoUrl,
+        phoneNumber: user.phoneNumber,
+      );
+
+  /// Interactive Google sign-in, exchanged into a Firebase credential.
+  Future<AuthUser> signInWithGoogle() async {
+    final google = await _obtainGoogleCredential();
+    final userCredential = await _auth.signInWithCredential(google.credential);
+    return _toAuthUser(userCredential.user!, googleAccount: google.account);
+  }
+
+  /// Links a Google account to the CURRENT (e.g. phone) Firebase user, giving it
+  /// a verified email under the same uid. Used to attach/verify an email to a
+  /// phone-auth session so it can be merged with a legacy Google profile.
+  ///
+  /// Throws [FirebaseAuthException] with code `credential-already-in-use` if the
+  /// Google account already belongs to a different Firebase user — the caller
+  /// must decide how to reconcile.
+  Future<AuthUser> linkGoogleAccount() async {
+    final current = _auth.currentUser;
+    if (current == null) {
+      throw FirebaseAuthException(
+        code: 'no-current-user',
+        message: 'Sign in first before linking an email.',
+      );
+    }
+    final google = await _obtainGoogleCredential();
+    final userCredential = await current.linkWithCredential(google.credential);
+    return _toAuthUser(userCredential.user!, googleAccount: google.account);
   }
 
   // --------------------------------------------------------------------------
@@ -137,14 +166,7 @@ class AuthRepository {
   /// instant-verification and by [verifyOtp]).
   Future<AuthUser> signInWithPhoneCredential(PhoneAuthCredential credential) async {
     final userCredential = await _auth.signInWithCredential(credential);
-    final user = userCredential.user!;
-    return AuthUser(
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
-      photoUrl: user.photoURL,
-      phoneNumber: user.phoneNumber,
-    );
+    return _toAuthUser(userCredential.user!);
   }
 
   Future<void> signOut() => _auth.signOut();

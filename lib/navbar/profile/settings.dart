@@ -12,6 +12,7 @@ import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/theme_selector.dart';
+import 'package:vocabhub/utils/auth_flow.dart';
 import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/responsive.dart';
@@ -421,6 +422,16 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                   );
                 }),
                 hLine(),
+                if (user.email.isEmpty) ...[
+                  settingTile('Add email to sync your data',
+                      leadingIcon: Icons.mark_email_read_outlined, onTap: () async {
+                    final linked = await requireEmail(context);
+                    if (linked && context.mounted) {
+                      NavbarNotifier.showSnackBar(context, 'Email linked successfully');
+                    }
+                  }),
+                  hLine(),
+                ],
                 settingTile('Logout', leadingIcon: Icons.logout, onTap: () async {
                   await authController.signOut();
                   if (!context.mounted) return;

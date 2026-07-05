@@ -58,8 +58,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
 
   Future<void> handleNavigation() async {
     final user = ref.watch(userNotifierProvider);
-    final String _email = user.email;
-    if (_email.isNotEmpty && user.isLoggedIn) {
+    // A signed-in user is identified by isLoggedIn + any identity (uid/email/
+    // phone) — not email alone, so phone-auth users are recognized too.
+    if (user.isLoggedIn && user.isNotEmpty) {
       Navigate.pushReplace(context, AdaptiveLayout());
     } else {
       final int count = settingsController.skipCount + 1;

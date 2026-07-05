@@ -12,7 +12,12 @@ extension StringExtension on String {
 
   String initals() {
     /// Returns the first letter of each word in the string.
-    return this.split(' ').map((e) => e.capitalize()!.substring(0, 1)).join();
+    /// Empty/blank input (e.g. a phone user with no name yet) yields ''.
+    return trim()
+        .split(' ')
+        .where((e) => e.isNotEmpty)
+        .map((e) => e.substring(0, 1).toUpperCase())
+        .join();
   }
 }
 
