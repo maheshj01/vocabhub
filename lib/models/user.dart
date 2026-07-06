@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:vocabhub/constants/const.dart';
 
-part 'user.g.dart';
+part '../generated/models/user.g.dart';
 
 /// Immutable profile model for a Vocabhub user.
 ///

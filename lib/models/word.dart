@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'word.g.dart';
+part '../generated/models/word.g.dart';
 
 ///
 ///

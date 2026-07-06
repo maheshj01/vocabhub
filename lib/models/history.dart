@@ -3,7 +3,7 @@ import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 
-part 'history.g.dart';
+part '../generated/models/history.g.dart';
 
 ///
 ///

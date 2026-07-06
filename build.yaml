@@ -1,0 +1,9 @@
+targets:
+  $default:
+    builders:
+      source_gen:combining_builder:
+        options:
+          build_extensions:
+            "^lib/models/{{}}.dart": "lib/generated/models/{{}}.g.dart"
+            # "^lib/env/{{}}.dart": "lib/generated/env/{{}}.g.dart"
+            # "^lib/feature_flags/{{}}.dart": "lib/generated/feature_flags/{{}}.g.dart"
