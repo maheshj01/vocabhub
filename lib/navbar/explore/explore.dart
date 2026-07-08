@@ -510,10 +510,10 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
                             ),
                             ExampleListBuilder(
                               title: 'Mnemonics',
-                              examples:
-                                  (widget.word!.mnemonics == null || widget.word!.mnemonics!.isEmpty)
-                                      ? []
-                                      : widget.word!.mnemonics,
+                              examples: (widget.word!.mnemonics == null ||
+                                      widget.word!.mnemonics!.isEmpty)
+                                  ? []
+                                  : widget.word!.mnemonics,
                               word: widget.word!.word,
                             ),
                           ],

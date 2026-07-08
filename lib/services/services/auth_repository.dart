@@ -119,8 +119,21 @@ class AuthRepository {
       );
     }
     final google = await _obtainGoogleCredential();
-    final userCredential = await current.linkWithCredential(google.credential);
-    return _toAuthUser(userCredential.user!, googleAccount: google.account);
+    try {
+      final userCredential = await current.linkWithCredential(google.credential);
+      return _toAuthUser(userCredential.user!, googleAccount: google.account);
+    } on FirebaseAuthException catch (e) {
+      // The Google account is already its own Firebase user, so it can't be
+      // linked onto the phone user. Since email is the account key, sign into
+      // that existing Google account instead (same credential — no re-prompt).
+      // The phone-only Firebase user is left orphaned; see todo.
+      if (e.code == 'credential-already-in-use' || e.code == 'email-already-in-use') {
+        _logger.d('Google account already exists; signing into it instead.');
+        final userCredential = await _auth.signInWithCredential(google.credential);
+        return _toAuthUser(userCredential.user!, googleAccount: google.account);
+      }
+      rethrow;
+    }
   }
 
   // --------------------------------------------------------------------------

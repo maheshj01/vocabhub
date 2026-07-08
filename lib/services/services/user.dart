@@ -67,15 +67,45 @@ class UserService {
       data: profile.toJson(),
       tableName: _tableName,
     );
-    if (response.status == 200 &&
-        response.data is List &&
-        (response.data as List).isNotEmpty) {
+    if (response.status == 200 && response.data is List && (response.data as List).isNotEmpty) {
       return UserModel.fromJson((response.data as List).first);
     }
     if (response.error != null) {
       _logger.e('Failed to merge profile by email: ${response.error!.message}');
     }
     return profile;
+  }
+
+  /// Look up a profile by its phone number. Returns [UserModel.init] when no
+  /// row matches. Lets a returning phone user sign in with a single factor.
+  static Future<UserModel> findByPhone(String phone) async {
+    if (phone.isEmpty) return UserModel.init();
+    try {
+      final response = await DatabaseService.findSingleRowByColumnValue(phone,
+          columnName: Constants.USER_PHONE_COLUMN, tableName: _tableName);
+      if (response.status == 200) return UserModel.fromJson(response.data);
+      return UserModel.init();
+    } catch (e) {
+      _logger.e(e.toString());
+      return UserModel.init();
+    }
+  }
+
+  /// Detaches [phone] from any row currently holding it, so it can be assigned
+  /// to the account being signed in without violating the phone unique index.
+  /// (Guards against leftover/orphaned rows from abandoned sign-ups.)
+  static Future<void> clearPhone(String phone) async {
+    if (phone.isEmpty) return;
+    try {
+      await DatabaseService.updateByColumn(
+        searchColumn: Constants.USER_PHONE_COLUMN,
+        searchValue: phone,
+        data: {Constants.USER_PHONE_COLUMN: null},
+        tableName: _tableName,
+      );
+    } catch (e) {
+      _logger.d('clearPhone skipped: $e');
+    }
   }
 
   /// Flips login state (and optionally the FCM token) for a profile by uid.

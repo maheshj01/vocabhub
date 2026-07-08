@@ -45,8 +45,7 @@ class SizeUtils {
 
   static bool get isExtendedDesktop => _size.width >= kExtendedDesktopBreakPoint;
 
-  static bool get isTablet =>
-      _size.width >= kTabletBreakPoint && _size.width < kDesktopBreakPoint;
+  static bool get isTablet => _size.width >= kTabletBreakPoint && _size.width < kDesktopBreakPoint;
 
   static bool get isMobile => _size.width < kTabletBreakPoint;
 }

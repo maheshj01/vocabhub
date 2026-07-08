@@ -11,7 +11,12 @@ import 'package:vocabhub/utils/logger.dart';
 
 /// Outcome of an authentication attempt, so the UI can react without knowing
 /// anything about Firebase or Supabase.
-enum AuthOutcome { success, accountDeleted, failed }
+///
+/// [needsEmail] means the identity is proven (phone) but has no email yet —
+/// email is the account key, so the caller must complete linking (via
+/// [AuthController.linkEmailWithGoogle]) before the session is considered
+/// signed in.
+enum AuthOutcome { success, accountDeleted, failed, needsEmail }
 
 class AuthResult {
   final AuthOutcome outcome;
@@ -154,28 +159,43 @@ class AuthController extends ChangeNotifier implements ServiceBase {
 
   /// Turns a proven identity into a session.
   ///
-  /// Phone users without an email get a **local, browse-only session** (no
-  /// Supabase row) — the app's data is email-keyed (bookmarks, edits), so we
-  /// persist a profile only once we have a verified email (via
-  /// [linkEmailWithGoogle]). Identities that carry an email resolve/create the
-  /// Supabase profile.
+  /// Email is the account key. An identity with an email resolves/creates the
+  /// Supabase profile. A phone identity with no email is proven but not yet a
+  /// full account — we hold it as a *pending* session (Firebase stays signed in
+  /// so we can link to it) and return [AuthOutcome.needsEmail] so the caller
+  /// completes sign-up via [linkEmailWithGoogle].
   Future<AuthResult> _resolveProfile(AuthUser identity, {String? fcmToken}) async {
     final email = identity.email;
 
     if (email == null || email.isEmpty) {
-      final session = UserModel(
+      final phone = identity.phoneNumber;
+
+      // Returning phone user: if this number already maps to an account, sign
+      // straight in with it — no Google step. This is what keeps a linked
+      // account single-factor (phone alone or Google alone).
+      if (phone != null && phone.isNotEmpty) {
+        final existing = await UserService.findByPhone(phone);
+        if (existing.isNotEmpty) {
+          if (existing.isDeleted) {
+            return AuthResult(outcome: AuthOutcome.accountDeleted, user: existing);
+          }
+          await UserService.setLoginState(
+              uid: existing.uid, isLoggedIn: true, token: fcmToken);
+          await setUser(existing.copyWith(
+              isLoggedIn: true, token: fcmToken ?? existing.token, updated_at: DateTime.now()));
+          return AuthResult(outcome: AuthOutcome.success, user: _user, isNewUser: false);
+        }
+      }
+
+      // First-time phone number: stash the identity (not persisted, not logged
+      // in) and require the one-time email step to finish sign-up.
+      _user = UserModel(
         uid: identity.uid,
-        phone: identity.phoneNumber,
-        name: identity.displayName ?? '',
-        avatarUrl: identity.photoUrl,
-        username: _deriveUsername(identity),
+        phone: phone,
         token: fcmToken ?? _user.token,
-        isLoggedIn: true,
-        created_at: DateTime.now(),
-        updated_at: DateTime.now(),
+        isLoggedIn: false,
       );
-      await setUser(session);
-      return AuthResult(outcome: AuthOutcome.success, user: session, isNewUser: false);
+      return AuthResult(outcome: AuthOutcome.needsEmail, user: _user);
     }
 
     return _resolveEmailProfile(identity, email, fcmToken: fcmToken);
@@ -223,6 +243,13 @@ class AuthController extends ChangeNotifier implements ServiceBase {
       updated_at: DateTime.now(),
     );
 
+    // Ensure this phone isn't still attached to any other (orphaned) row before
+    // we persist it onto this account — the phone column is uniquely indexed.
+    final phone = profile.phone;
+    if (phone != null && phone.isNotEmpty) {
+      await UserService.clearPhone(phone);
+    }
+
     final saved = mergeByEmail
         ? await UserService.updateProfileByEmail(email, profile)
         : await UserService.upsertProfile(profile);
@@ -244,7 +271,13 @@ class AuthController extends ChangeNotifier implements ServiceBase {
             user: _user,
             errorMessage: 'Could not read an email from that Google account.');
       }
-      // Preserve the phone number from the current session on the merged profile.
+      // Record the OTP-verified phone on the resolved account, whether Google
+      // linked onto the phone user or we fell back to an existing Google account.
+      // `clearPhone` in _resolveEmailProfile first detaches the number from any
+      // orphaned row so the phone unique index isn't violated. (Note: in the
+      // fallback case the phone is stored at the Supabase level but is not a
+      // Firebase credential on that account — see the multi-credential item in
+      // todo.md.)
       final identity = AuthUser(
         uid: linked.uid,
         email: email,
@@ -258,12 +291,10 @@ class AuthController extends ChangeNotifier implements ServiceBase {
           ? 'This Google account is already registered. Sign in with Google instead.'
           : (e.message ?? 'Failed to link email.');
       _logger.e('linkEmailWithGoogle: ${e.code} $message');
-      return AuthResult(
-          outcome: AuthOutcome.failed, user: _user, errorMessage: message);
+      return AuthResult(outcome: AuthOutcome.failed, user: _user, errorMessage: message);
     } catch (e) {
       _logger.e('linkEmailWithGoogle failed: $e');
-      return AuthResult(
-          outcome: AuthOutcome.failed, user: _user, errorMessage: e.toString());
+      return AuthResult(outcome: AuthOutcome.failed, user: _user, errorMessage: e.toString());
     }
   }
 

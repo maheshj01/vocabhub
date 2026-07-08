@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:supabase/supabase.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/history.dart';
@@ -121,25 +120,30 @@ class EditHistoryService {
 
   static Future<Response> getUserContributions(UserModel user) async {
     final resp = Response(didSucced: false, message: "Failed");
-
-    DbResponse response;
-    // TODO: Toggle isAdmin
-    response = await DatabaseService.findRowByColumnValue(
-      '${user.email}',
-      // 'approved',
-      columnName: '${Constants.USER_EMAIL_COLUMN}',
-      // column2Name: '$STATE_COLUMN',
-      tableName: _tableName,
-    );
-    if (response.status == 200) {
-      final data = (response.data as List).map((e) => NotificationModel.fromJson(e)).toList();
-      resp.didSucced = true;
-      resp.message = 'Success';
-      resp.data = data;
-    } else {
-      resp.message = response.error!.message;
+    try {
+      DbResponse response;
+      // TODO: Toggle isAdmin
+      response = await DatabaseService.findRowByColumnValue(
+        '${user.email}',
+        // 'approved',
+        columnName: '${Constants.USER_EMAIL_COLUMN}',
+        // column2Name: '$STATE_COLUMN',
+        tableName: _tableName,
+      );
+      if (response.status == 200) {
+        final data = (response.data as List).map((e) => NotificationModel.fromJson(e)).toList();
+        resp.didSucced = true;
+        resp.message = 'Success';
+        resp.data = data;
+      } else {
+        resp.message = response.error!.message;
+      }
+      return resp;
+    } catch (e) {
+      _logger.e("Error in getUserContributions: $e");
+      resp.message = "Error in getUserContributions: $e";
+      return resp;
     }
-    return resp;
   }
 
   /// cancel the request from user

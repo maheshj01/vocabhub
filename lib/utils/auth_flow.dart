@@ -38,6 +38,9 @@ Future<void> handleAuthResult(
     case AuthOutcome.failed:
       NavbarNotifier.showSnackBar(context, bottom: 0, result.errorMessage ?? signInFailure);
       break;
+    case AuthOutcome.needsEmail:
+      // The phone flow drives the "add email" step; nothing to navigate here.
+      break;
   }
 }
 
@@ -59,8 +62,7 @@ Future<bool> requireEmail(BuildContext context) async {
         'to your account. We\'ll use your Google account to verify it.',
       ),
       actions: [
-        TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Not now')),
+        TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Not now')),
         FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             child: const Text('Continue with Google')),
