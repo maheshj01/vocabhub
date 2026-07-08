@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/utils/logger.dart';
 
 /// A provider-agnostic snapshot of an authenticated identity.
@@ -60,10 +61,10 @@ class AuthRepository {
   Future<({AuthCredential credential, GoogleSignInAccount account})>
       _obtainGoogleCredential() async {
     if (!_googleInitialized) {
-      // Reads client IDs from the native config (google-services.json /
-      // GoogleService-Info.plist). Pass `serverClientId` here if a backend
-      // ID token is required on Android.
-      await _googleSignIn.initialize();
+      // Android requires the OAuth Web client ID as `serverClientId` to mint a
+      // Firebase-compatible idToken. iOS reads its own client ID from
+      // GoogleService-Info.plist; serverClientId sets the idToken audience.
+      await _googleSignIn.initialize(serverClientId: Constants.GOOGLE_SERVER_CLIENT_ID);
       _googleInitialized = true;
     }
 
