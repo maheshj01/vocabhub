@@ -12,6 +12,7 @@ import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/themes/theme_selector.dart';
+import 'package:vocabhub/utils/auth_flow.dart';
 import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/drawer.dart';
 import 'package:vocabhub/widgets/responsive.dart';
@@ -93,11 +94,6 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
     final colorScheme = Theme.of(context).colorScheme;
     final user = ref.watch(userNotifierProvider);
     final appTheme = ref.watch(appThemeProvider);
-    ref.listen<UserModel>(userNotifierProvider, (UserModel? userOld, UserModel? userNew) {
-      if (userNew != null) {
-        user.setUser(userNew);
-      }
-    });
     final now = DateTime.now();
     final oldVersion = ref.read(appProvider).version!.oldVersion;
     return Material(
@@ -194,6 +190,26 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                                 onChanged: (x) {
                                   ref.read(appThemeProvider.notifier).setClassic(x);
                                   widget.onThemeChanged(x);
+                                })
+                          ],
+                        ),
+                      ),
+                ((SizeUtils.isDesktop && kIsWeb) || appTheme.isClassic)
+                    ? SizedBox.shrink()
+                    : Padding(
+                        padding: 16.0.horizontalPadding + 10.0.verticalPadding,
+                        child: Row(
+                          children: [
+                            Text('Animate background',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w400,
+                                )),
+                            Spacer(),
+                            VocabSwitch(
+                                value: appTheme.dynamicBackground,
+                                onChanged: (x) {
+                                  ref.read(appThemeProvider.notifier).setDynamicBackground(x);
                                 })
                           ],
                         ),
@@ -426,9 +442,19 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                   );
                 }),
                 hLine(),
+                if (user.email.isEmpty) ...[
+                  settingTile('Add email to sync your data',
+                      leadingIcon: Icons.mark_email_read_outlined, onTap: () async {
+                    final linked = await requireEmail(context);
+                    if (linked && context.mounted) {
+                      NavbarNotifier.showSnackBar(context, 'Email linked successfully');
+                    }
+                  }),
+                  hLine(),
+                ],
                 settingTile('Logout', leadingIcon: Icons.logout, onTap: () async {
-                  user.loggedIn = false;
-                  authController.logout(context);
+                  await authController.signOut();
+                  if (!context.mounted) return;
                   Navigate.pushAndPopAll(context, AppSignIn());
                 }),
                 hLine(),

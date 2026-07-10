@@ -7,10 +7,7 @@ class ExampleListBuilder extends StatefulWidget {
   final String word;
   final String title;
   const ExampleListBuilder(
-      {Key? key,
-      required this.title,
-      required this.examples,
-      required this.word})
+      {Key? key, required this.title, required this.examples, required this.word})
       : super(key: key);
 
   @override
@@ -25,9 +22,7 @@ class _ExampleListBuilderState extends State<ExampleListBuilder> {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Text(
           '$title',
-          style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: SizeUtils.isMobile ? 18 : 24),
+          style: TextStyle(fontWeight: FontWeight.w700, fontSize: SizeUtils.isMobile ? 18 : 24),
         ),
       ),
     );

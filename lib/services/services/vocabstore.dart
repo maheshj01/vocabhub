@@ -16,7 +16,7 @@ class VocabStoreService {
   static final _logger = Logger("VocabStoreService");
   static final SupabaseClient _supabase =
       SupabaseClient("${Constants.SUPABASE_URL}", "${Constants.SUPABASE_API_KEY}}");
-  static Future<PostgrestResponse> findById(String id) async {
+  static Future<DbResponse> findById(String id) async {
     final response = await DatabaseService.findSingleRowByColumnValue(id,
         columnName: Constants.ID_COLUMN, tableName: tableName);
     return response;
@@ -178,19 +178,16 @@ class VocabStoreService {
 
   Future<bool> downloadFile() async {
     try {
-      final response = await _supabase.from(tableName).select("*").execute();
-      if (response.status == 200) {
-        platformOnly.fileSaver(json.encode(response.data), 'file.json');
-        return true;
-      }
-      return false;
+      final response = await _supabase.from(tableName).select("*");
+      platformOnly.fileSaver(json.encode(response), 'file.json');
+      return true;
     } catch (x) {
       _logger.d(x.toString());
       throw 'x';
     }
   }
 
-  static Future<PostgrestResponse> updateWord({
+  static Future<DbResponse> updateWord({
     required String id,
     required Word word,
   }) async {
@@ -200,7 +197,7 @@ class VocabStoreService {
     return response;
   }
 
-  Future<PostgrestResponse> updateMeaning({
+  Future<DbResponse> updateMeaning({
     required String id,
     required Word word,
   }) async {
@@ -214,7 +211,7 @@ class VocabStoreService {
     return response;
   }
 
-  static Future<PostgrestResponse> deleteById(String id) async {
+  static Future<DbResponse> deleteById(String id) async {
     _logger.i(tableName);
     final response =
         await DatabaseService.deleteRow(id, tableName: tableName, columnName: Constants.ID_COLUMN);

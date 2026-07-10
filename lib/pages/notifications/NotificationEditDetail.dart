@@ -6,6 +6,7 @@ import 'package:vocabhub/pages/notifications/notification_detail.dart';
 import 'package:vocabhub/services/services/edit_history.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/utility.dart';
+import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
@@ -61,7 +62,7 @@ class _NotificationEditDetailState extends State<NotificationEditDetail> {
         message: 'Failed',
         status: 400,
         data: Word('', '', ''));
-    PostgrestResponse<dynamic> resp;
+    DbResponse<dynamic> resp;
     List<EditHistory> list;
     // if edit is pending
     // type: add -> show previous approved and current pending

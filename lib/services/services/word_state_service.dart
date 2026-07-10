@@ -16,7 +16,7 @@ class WordStateService {
   /// This edits need to be shown under notifications for the user
   /// for admin the notifications will be of state (pending,add,delete)
   /// for user the notifications will be of state (pending)
-  static Future<PostgrestResponse> findMasteredWords(String id,
+  static Future<DbResponse> findMasteredWords(String id,
       {String columnName = Constants.USER_EMAIL_COLUMN}) async {
     final response = await DatabaseService.findRowByColumnValue(id,
         columnName: columnName, tableName: _tableName);
@@ -25,7 +25,7 @@ class WordStateService {
 
   /// approve/reject an edit by updating the state to [EditState]
   ///
-  static Future<PostgrestResponse> updateWordPreference(String id, WordState state) async {
+  static Future<DbResponse> updateWordPreference(String id, WordState state) async {
     final response = await DatabaseService.updateRow(
         colValue: id,
         data: {'state': '${state.name}'},

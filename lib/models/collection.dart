@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:vocabhub/models/word.dart';
 
-part 'collection.g.dart';
+part '../generated/models/collection.g.dart';
 
 @JsonSerializable()
 class VHCollection {
   bool isPinned;
   List<Word> words;
   String title;
+  @JsonKey(fromJson: colorFromJson, toJson: colorToJson)
   Color color;
 
   VHCollection({
@@ -42,3 +43,7 @@ class VHCollection {
         other.hashCode == hashCode;
   }
 }
+
+Color colorFromJson(int value) => Color(value);
+
+int colorToJson(Color color) => color.value;

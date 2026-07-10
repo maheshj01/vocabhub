@@ -212,34 +212,33 @@ class WordListPageMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final body = ListView.builder(
-            itemCount: words.length,
-            padding: EdgeInsets.only(top: 16, bottom: kNotchedNavbarHeight * 1.5),
-            itemBuilder: (context, index) {
-              return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => WordDetail(word: words[index])));
-                    },
-                    minVerticalPadding: 24,
-                    title: Text(words[index].word),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: BorderSide(
+      itemCount: words.length,
+      padding: EdgeInsets.only(top: 16, bottom: kNotchedNavbarHeight * 1.5),
+      itemBuilder: (context, index) {
+        return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
+            child: ListTile(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => WordDetail(word: words[index])));
+              },
+              minVerticalPadding: 24,
+              title: Text(words[index].word),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(
                       color: Theme.of(context).colorScheme.surfaceContainerHighest, width: 1)),
-                    trailing: hasTrailing!
-                        ? IconButton(
-                            icon: Icon(
-                              Icons.bookmark,
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                            onPressed:
-                                onTrailingTap != null ? () => onTrailingTap!(words[index]) : null,
-                          )
-                        : null,
-                  ));
-            },
+              trailing: hasTrailing!
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.bookmark,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                      onPressed: onTrailingTap != null ? () => onTrailingTap!(words[index]) : null,
+                    )
+                  : null,
+            ));
+      },
     );
 
     return Scaffold(
@@ -248,7 +247,7 @@ class WordListPageMobile extends StatelessWidget {
           backgroundColor: Colors.transparent,
           elevation: 15,
           title: Text('$title'),
-          ),
+        ),
         body: body);
   }
 }

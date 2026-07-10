@@ -3,19 +3,26 @@ import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/history.dart';
 import 'package:vocabhub/models/user.dart';
 
-part 'notification.g.dart';
+part '../generated/models/notification.g.dart';
 
-@JsonSerializable()
-
-/// warning: do not regenerate model for this file
+/// [createFactory] is off on purpose: the JSON here is a flat `edit_history`
+/// row (not a `{user, edit}` shape), so the default generated factory is wrong.
+/// The factory below is hand-written and safe to regenerate around.
+@JsonSerializable(createFactory: false)
 class NotificationModel {
   final UserModel user;
   final EditHistory edit;
 
   NotificationModel(this.user, this.edit);
 
-  factory NotificationModel.fromJson(Map<String, dynamic> json) =>
-      _$NotificationModelFromJson(json);
+  /// Each row is a flat `edit_history` record. When the query joins the author
+  /// profile it arrives nested under the `users_mobile` key; otherwise we fall
+  /// back to the row itself ([UserModel.fromJson] is null-tolerant). The edit
+  /// is always the whole row.
+  factory NotificationModel.fromJson(Map<String, dynamic> json) => NotificationModel(
+        UserModel.fromJson((json[Constants.USER_TABLE_NAME] as Map<String, dynamic>?) ?? json),
+        EditHistory.fromJson(json),
+      );
 
   @override
   bool operator ==(Object other) =>

@@ -30,8 +30,7 @@ class VHIcon extends StatelessWidget {
         borderRadius: (size * 2.0).allRadius,
         child: InkWell(
           borderRadius: BorderRadius.circular(32),
-          splashColor:
-              splashColor == null ? Theme.of(context).splashColor : splashColor,
+          splashColor: splashColor == null ? Theme.of(context).splashColor : splashColor,
           onTap: () {
             if (onTap != null) {
               onTap!.call();

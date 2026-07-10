@@ -26,6 +26,11 @@ doc/api/
 .svn/
 .env
 
+# Secrets for --dart-define-from-file (the example template IS committed).
+env.json
+env.*.json
+!env.example.json
+
 # IntelliJ related
 *.iml
 *.ipr
@@ -114,3 +119,5 @@ lib/utils/firebase_options.dart
 ios/Flutter/flutter_export_environment.sh
 ios/build/Pods.build
 release.md
+.agents/*
+skills-lock.json

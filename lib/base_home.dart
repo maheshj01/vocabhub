@@ -18,6 +18,7 @@ import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
+import 'package:vocabhub/utils/auth_flow.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/whats_new.dart';
@@ -138,7 +139,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       NavbarNotifier.showSnackBar(context, message,
           actionLabel: action,
-          bottom: kNavbarHeight * 1.2,
+          bottom: kNavbarHeight,
           onActionPressed: onActionPressed,
           duration: persist ? Duration(days: 1) : Duration(seconds: 3), onClosed: () {
         if (mounted) {
@@ -225,7 +226,11 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                 elevation: 3.5,
                 isExtended: appController.extended,
                 icon: icon,
-                onPressed: () {
+                onPressed: () async {
+                  // Adding a word writes email-keyed data; ensure the user has a
+                  // verified email (phone users link one here) before proceeding.
+                  if (!await requireEmail(context)) return;
+                  if (!context.mounted) return;
                   Navigate.push(
                       context,
                       AddWord(

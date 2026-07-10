@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:vocabhub/models/version.dart';
 import 'package:vocabhub/services/services.dart';
 
@@ -83,18 +84,19 @@ class AppController {
   }
 }
 
-class AppNotifier extends StateNotifier<AppController> {
-  AppNotifier(this.ref)
-      : super(AppController(
-          extended: true,
-          index: 0,
-          showFAB: true,
-          hasUpdate: false,
-        )) {
+class AppNotifier extends Notifier<AppController> {
+  @override
+  AppController build() {
     final version = ref.read(appUtilityProvider).getVersion();
-    state = state.copyWith(version: version);
+    return AppController(
+      extended: true,
+      index: 0,
+      showFAB: true,
+      hasUpdate: false,
+      version: version,
+    );
   }
-  Ref ref;
+
   void setIndex(int index) {
     state = state.copyWith(index: index);
   }

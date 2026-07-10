@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:supabase/supabase.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/models/history.dart';
@@ -20,7 +19,7 @@ class EditHistoryService {
   /// This edits need to be shown under notifications for the user
   /// for admin the notifications will be of state (pending,add,delete)
   /// for user the notifications will be of state (pending)
-  static Future<PostgrestResponse> findEditById(String id,
+  static Future<DbResponse> findEditById(String id,
       {String columnName = Constants.ID_COLUMN}) async {
     final response = await DatabaseService.findRowByColumnValue(id,
         columnName: columnName, tableName: _tableName);
@@ -28,7 +27,7 @@ class EditHistoryService {
   }
 
   /// Fetch all edits of a word
-  static Future<PostgrestResponse> findPreviousEditsByWord(String word,
+  static Future<DbResponse> findPreviousEditsByWord(String word,
       {bool isNotification = false}) async {
     if (!isNotification) {
       final response = await DatabaseService.findApprovedEdits(word,
@@ -51,7 +50,7 @@ class EditHistoryService {
 
   /// approve/reject an edit by updating the state to [EditState]
   ///
-  static Future<PostgrestResponse> updateRowState(String id, EditState state) async {
+  static Future<DbResponse> updateRowState(String id, EditState state) async {
     final response = await DatabaseService.updateRow(
         colValue: id,
         data: {'state': '${state.name}'},
@@ -87,7 +86,7 @@ class EditHistoryService {
   static Future<Response> getUserEdits(UserModel user) async {
     final resp = Response(didSucced: false, message: "Failed");
 
-    PostgrestResponse response;
+    DbResponse response;
     // TODO: Toggle isAdmin
     if (user.isAdmin) {
       response = await DatabaseService.findRowsByInnerJoinOnColumnValue(
@@ -121,25 +120,30 @@ class EditHistoryService {
 
   static Future<Response> getUserContributions(UserModel user) async {
     final resp = Response(didSucced: false, message: "Failed");
-
-    PostgrestResponse response;
-    // TODO: Toggle isAdmin
-    response = await DatabaseService.findRowByColumnValue(
-      '${user.email}',
-      // 'approved',
-      columnName: '${Constants.USER_EMAIL_COLUMN}',
-      // column2Name: '$STATE_COLUMN',
-      tableName: _tableName,
-    );
-    if (response.status == 200) {
-      final data = (response.data as List).map((e) => NotificationModel.fromJson(e)).toList();
-      resp.didSucced = true;
-      resp.message = 'Success';
-      resp.data = data;
-    } else {
-      resp.message = response.error!.message;
+    try {
+      DbResponse response;
+      // TODO: Toggle isAdmin
+      response = await DatabaseService.findRowByColumnValue(
+        '${user.email}',
+        // 'approved',
+        columnName: '${Constants.USER_EMAIL_COLUMN}',
+        // column2Name: '$STATE_COLUMN',
+        tableName: _tableName,
+      );
+      if (response.status == 200) {
+        final data = (response.data as List).map((e) => NotificationModel.fromJson(e)).toList();
+        resp.didSucced = true;
+        resp.message = 'Success';
+        resp.data = data;
+      } else {
+        resp.message = response.error!.message;
+      }
+      return resp;
+    } catch (e) {
+      _logger.e("Error in getUserContributions: $e");
+      resp.message = "Error in getUserContributions: $e";
+      return resp;
     }
-    return resp;
   }
 
   /// cancel the request from user

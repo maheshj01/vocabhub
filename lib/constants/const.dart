@@ -26,6 +26,15 @@ class Constants {
   static const REDIRECT_URL = String.fromEnvironment('SUPABASE_REDIRECT_URL');
   static const FIREBASE_VAPID_KEY = String.fromEnvironment('FIREBASE_VAPID_KEY');
   static const FCM_SERVER_KEY = String.fromEnvironment('FCM_SERVER_KEY');
+
+  /// OAuth 2.0 **Web** client ID (client_type 3 in google-services.json).
+  /// Required by google_sign_in 7.x as `serverClientId` on Android to mint a
+  /// Firebase-compatible idToken. Not a secret — it ships inside the app — so a
+  /// default is provided; override with --dart-define=GOOGLE_SERVER_CLIENT_ID.
+  static const GOOGLE_SERVER_CLIENT_ID = String.fromEnvironment(
+    'GOOGLE_SERVER_CLIENT_ID',
+    defaultValue: '726058956773-68grf5333os7rd34bqobf2eeao3n6f1h.apps.googleusercontent.com',
+  );
   static const PRIVACY_POLICY_TITLE = 'Privacy Policy';
 
   static const PRIVACY_POLICY = 'https://maheshjamdade.com/vocabhub/privacy';
@@ -57,8 +66,14 @@ class Constants {
 
   /// USER TABLE COLUMNS
   static const USERID_COLUMN = 'id';
+
+  /// Firebase Auth uid — the canonical identity key across Google & phone auth.
+  static const USER_UID_COLUMN = 'uid';
   static const USER_NAME_COLUMN = 'name';
   static const USER_EMAIL_COLUMN = 'email';
+
+  /// E.164 phone number for phone-auth users (nullable).
+  static const USER_PHONE_COLUMN = 'phone';
   static const USERNAME_COLUMN = 'username';
   static const DELETED_COLUMN = 'deleted';
   static const USER_BOOKMARKS_COLUMN = 'bookmarks';

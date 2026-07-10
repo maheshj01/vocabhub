@@ -186,14 +186,14 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
   Future<void> initService() async {
     _firebaseMessaging = FirebaseMessaging.instance;
     _sharedPreferences = await SharedPreferences.getInstance();
-    getNotificationsEnabled();
+    await getNotificationsEnabled();
+    await checkPermissions();
     await setupFlutterNotifications();
     getAdminToken();
-    checkPermissions();
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     if (!kIsWeb) {
       flutterLocalNotificationsPlugin.initialize(
-          InitializationSettings(
+          settings: InitializationSettings(
               android: AndroidInitializationSettings(Constants.LAUNCHER_ICON),
               iOS: DarwinInitializationSettings(
                 defaultPresentAlert: true,
@@ -205,8 +205,8 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
               )),
           onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
           onDidReceiveNotificationResponse: (response) {
-        appKey.currentState!.pushNamed(Notifications.route);
-      });
+            appKey.currentState!.pushNamed(Notifications.route);
+          });
       FirebaseMessaging.onMessage.listen(showFlutterNotification);
       await initSubscription();
     }
@@ -234,10 +234,10 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
     AndroidNotification? android = message.notification?.android;
     if (notification != null && android != null) {
       flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          const NotificationDetails(
+          id: notification.hashCode,
+          title: notification.title,
+          body: notification.body,
+          notificationDetails: const NotificationDetails(
             android: AndroidNotificationDetails(
               'your channel id',
               'your channel name',

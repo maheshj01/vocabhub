@@ -35,7 +35,7 @@ class ReportService {
     }
   }
 
-  static Future<PostgrestResponse> addReport(ReportModel report) async {
+  static Future<DbResponse> addReport(ReportModel report) async {
     try {
       final resp = await DatabaseService.insertIntoTable(
         report.toJson(),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rive/rive.dart';
+import 'package:rive/rive.dart' hide Animation;
 import 'package:vocabhub/utils/utils.dart';
 
 class ErrorPage extends StatefulWidget {
@@ -12,18 +12,11 @@ class ErrorPage extends StatefulWidget {
 }
 
 class _ErrorPageState extends State<ErrorPage> {
-  @override
-  void initState() {
-    super.initState();
-  }
+  late final fileLoader = FileLoader.fromAsset(
+    'assets/rive/error.riv',
+    riveFactory: Factory.rive,
+  );
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  RiveAnimationController _controller = OneShotAnimation('Animation 1');
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -35,10 +28,16 @@ class _ErrorPageState extends State<ErrorPage> {
         children: [
           SizedBox(
             height: SizeUtils.size.width * 0.8,
-            child: RiveAnimation.asset(
-              'assets/rive/error.riv',
-              fit: BoxFit.cover,
-              controllers: [_controller],
+            child: RiveWidgetBuilder(
+              fileLoader: fileLoader,
+              builder: (context, state) => switch (state) {
+                RiveLoading() => const Center(child: CircularProgressIndicator()),
+                RiveFailed() => const SizedBox.shrink(),
+                RiveLoaded() => RiveWidget(
+                    controller: state.controller,
+                    fit: Fit.cover,
+                  ),
+              },
             ),
           ),
           16.0.vSpacer(),
