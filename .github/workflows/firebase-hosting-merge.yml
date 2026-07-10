@@ -43,7 +43,7 @@ jobs:
 
       # Build and Deploy to Firebase
       - name: Build Flutter Web
-        run: flutter build web --release --dart-define=SUPABASE_PROJECT_URL=${{ secrets.SUPABASE_PROJECT_URL }} --dart-define=SUPABASE_API_KEY=${{ secrets.SUPABASE_API_KEY }} --dart-define=SUPABASE_REDIRECT_URL=${{ secrets.SUPABASE_REDIRECT_URL }} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }} --dart-define=ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} --dart-define=FCM_SERVER_KEY=${{ secrets.FCM_SERVER_KEY }}
+        run: flutter build web --release --wasm --dart-define=SUPABASE_PROJECT_URL=${{ secrets.SUPABASE_PROJECT_URL }} --dart-define=SUPABASE_API_KEY=${{ secrets.SUPABASE_API_KEY }} --dart-define=SUPABASE_REDIRECT_URL=${{ secrets.SUPABASE_REDIRECT_URL }} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }} --dart-define=ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} --dart-define=FCM_SERVER_KEY=${{ secrets.FCM_SERVER_KEY }}
 
       - uses: FirebaseExtended/action-hosting-deploy@e2eda2e106cfa35cdbcf4ac9ddaf6c4756df2c8c # v0
         with:
