@@ -1,3 +1,9 @@
+### 0.8.0+33 Unreleased
+- Revamp UI for App Surface
+- Improve splashscreen and onboarding experience
+- Add Phone Authentication
+- Make App responsive for all form factors
+
 ### 0.7.9+32 July 08, 2024
 - Login issue fix
 
@@ -13,8 +19,8 @@
 - Minor UI fixes and improvements
 
 ### 0.7.7+29 Sep 19, 2023
-
 - Minor Fixes and Improvements
+
 
 ### 0.7.6+28 August 18, 2023
 
