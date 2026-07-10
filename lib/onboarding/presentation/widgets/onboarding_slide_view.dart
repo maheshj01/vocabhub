@@ -17,6 +17,8 @@ class OnboardingSlideView extends StatelessWidget {
     switch (slide.media) {
       case SlideMedia.wordCarousel:
         return const _WordCarousel();
+      case SlideMedia.assetImage:
+        return Center(child: Image.asset(slide.assetPath, fit: BoxFit.contain));
       case SlideMedia.networkImage:
         return Center(
           child: CachedNetworkImage(imageUrl: slide.assetPath, fit: BoxFit.contain),

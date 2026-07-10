@@ -1,5 +1,4 @@
 import 'package:vocabhub/constants/assets.dart';
-import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/onboarding/domain/onboarding_slide.dart';
 
 /// The canonical onboarding tour content.
@@ -23,8 +22,10 @@ const List<OnboardingSlide> kOnboardingSlides = [
     description:
         'Join our language community, contribute words, suggest edits, and share '
         'examples to build a platform for continuous learning and improvement.',
-    assetPath: Constants.teamworkAsset,
-    media: SlideMedia.networkImage,
+    // Bundled locally: the previous GitHub-hosted GIF failed on web (no CORS
+    // header on the S3 redirect) and used an expiring signed URL.
+    assetPath: 'assets/teamwork.gif',
+    media: SlideMedia.assetImage,
     backgroundColorValue: 0xFFFFFFFF,
     darkText: true,
   ),

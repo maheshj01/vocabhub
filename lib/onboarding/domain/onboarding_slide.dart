@@ -1,6 +1,6 @@
 /// Which kind of media a slide renders. Replaces the old index-based branching
 /// (`index == 0`, `index != 1`, …) with an explicit, reorder-safe field.
-enum SlideMedia { rive, networkImage, wordCarousel }
+enum SlideMedia { rive, assetImage, networkImage, wordCarousel }
 
 /// Pure-Dart description of a single onboarding slide.
 ///
