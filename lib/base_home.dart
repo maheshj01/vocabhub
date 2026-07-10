@@ -139,7 +139,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       NavbarNotifier.showSnackBar(context, message,
           actionLabel: action,
-          bottom: kNavbarHeight * 1.2,
+          bottom: kNavbarHeight,
           onActionPressed: onActionPressed,
           duration: persist ? Duration(days: 1) : Duration(seconds: 3), onClosed: () {
         if (mounted) {

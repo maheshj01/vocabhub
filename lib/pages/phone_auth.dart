@@ -7,6 +7,7 @@ import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/utils/auth_flow.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/widgets/button.dart';
+import 'package:vocabhub/widgets/responsive.dart';
 
 /// Phone authentication: number entry → OTP → (add email). Identity is Firebase;
 /// the profile lands in Supabase keyed on email. Because email is the account
@@ -124,33 +125,38 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_title),
-        leading: BackButton(
-          onPressed: () {
-            switch (_step) {
-              case _Step.enterOtp:
-                setState(() => _step = _Step.enterPhone);
-                break;
-              case _Step.linkEmail:
-                _cancelLinkEmail();
-                break;
-              case _Step.enterPhone:
-                Navigator.of(context).maybePop();
-                break;
-            }
-          },
+    return ResponsiveBuilder(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: Text(_title),
+          leading: BackButton(
+            onPressed: () {
+              switch (_step) {
+                case _Step.enterOtp:
+                  setState(() => _step = _Step.enterPhone);
+                  break;
+                case _Step.linkEmail:
+                  _cancelLinkEmail();
+                  break;
+                case _Step.enterPhone:
+                  Navigator.of(context).maybePop();
+                  break;
+              }
+            },
+          ),
         ),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: switch (_step) {
-            _Step.enterPhone => _phoneStep(),
-            _Step.enterOtp => _otpStep(),
-            _Step.linkEmail => _linkEmailStep(),
-          },
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: switch (_step) {
+              _Step.enterPhone => _phoneStep(),
+              _Step.enterOtp => _otpStep(),
+              _Step.linkEmail => _linkEmailStep(),
+            },
+          ),
         ),
       ),
     );

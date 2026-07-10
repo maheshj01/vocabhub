@@ -194,6 +194,26 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                           ],
                         ),
                       ),
+                ((SizeUtils.isDesktop && kIsWeb) || appTheme.isClassic)
+                    ? SizedBox.shrink()
+                    : Padding(
+                        padding: 16.0.horizontalPadding + 10.0.verticalPadding,
+                        child: Row(
+                          children: [
+                            Text('Animate background',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w400,
+                                )),
+                            Spacer(),
+                            VocabSwitch(
+                                value: appTheme.dynamicBackground,
+                                onChanged: (x) {
+                                  ref.read(appThemeProvider.notifier).setDynamicBackground(x);
+                                })
+                          ],
+                        ),
+                      ),
                 Padding(
                   padding: 16.0.horizontalPadding,
                   child: Row(

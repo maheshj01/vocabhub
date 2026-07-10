@@ -11,21 +11,29 @@ class VocabThemeController {
   final Color themeSeed;
   final bool isClassic;
 
+  /// Whether the animated mesh background drifts. When false the background is
+  /// still drawn (unless [isClassic]) but painted once and held static, letting
+  /// the engine idle — a battery/motion "Dynamic UI" toggle.
+  final bool dynamicBackground;
+
   VocabThemeController({
     required this.isDark,
     required this.themeSeed,
     required this.isClassic,
+    this.dynamicBackground = true,
   });
 
   VocabThemeController copyWith({
     bool? isDark,
     Color? themeSeed,
     bool? isClassic,
+    bool? dynamicBackground,
   }) {
     return VocabThemeController(
       isDark: isDark ?? this.isDark,
       themeSeed: themeSeed ?? this.themeSeed,
       isClassic: isClassic ?? this.isClassic,
+      dynamicBackground: dynamicBackground ?? this.dynamicBackground,
     );
   }
 
@@ -35,6 +43,7 @@ class VocabThemeController {
     result.addAll({'isDark': isDark});
     result.addAll({'themeSeed': themeSeed.value});
     result.addAll({'isClassic': isClassic});
+    result.addAll({'dynamicBackground': dynamicBackground});
 
     return result;
   }
@@ -44,6 +53,7 @@ class VocabThemeController {
       isDark: map['isDark'] ?? false,
       themeSeed: Color(map['themeSeed']),
       isClassic: map['isClassic'] ?? false,
+      dynamicBackground: map['dynamicBackground'] ?? true,
     );
   }
 
@@ -54,7 +64,7 @@ class VocabThemeController {
 
   @override
   String toString() =>
-      'VocabThemeController(isDark: $isDark, themeSeed: $themeSeed, isClassic: $isClassic)';
+      'VocabThemeController(isDark: $isDark, themeSeed: $themeSeed, isClassic: $isClassic, dynamicBackground: $dynamicBackground)';
 
   @override
   bool operator ==(Object other) {
@@ -63,11 +73,13 @@ class VocabThemeController {
     return other is VocabThemeController &&
         other.isDark == isDark &&
         other.themeSeed == themeSeed &&
-        other.isClassic == isClassic;
+        other.isClassic == isClassic &&
+        other.dynamicBackground == dynamicBackground;
   }
 
   @override
-  int get hashCode => isDark.hashCode ^ themeSeed.hashCode ^ isClassic.hashCode;
+  int get hashCode =>
+      isDark.hashCode ^ themeSeed.hashCode ^ isClassic.hashCode ^ dynamicBackground.hashCode;
 }
 
 class VocabThemeNotifier extends StateNotifier<VocabThemeController> {
@@ -98,6 +110,12 @@ class VocabThemeNotifier extends StateNotifier<VocabThemeController> {
 
   void setClassic(bool isClassic) {
     state = state.copyWith(isClassic: isClassic);
+    final ThemeUtility settings = ref.watch(themeUtilityProvider);
+    settings.setThemeController(state);
+  }
+
+  void setDynamicBackground(bool value) {
+    state = state.copyWith(dynamicBackground: value);
     final ThemeUtility settings = ref.watch(themeUtilityProvider);
     settings.setThemeController(state);
   }

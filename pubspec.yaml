@@ -31,7 +31,10 @@ dependencies:
   http: ^1.0.0
   intl: ^0.20.2
   json_annotation: ^4.12.0
-  navbar_router: ^0.7.7
+  # navbar_router: ^0.7.7
+  navbar_router: 
+    git:
+      url: https://github.com/maheshmnj/navbar_router.git
   package_info_plus: ^10.1.0
   pull_to_refresh: ^2.0.0
   realtime_client: ^2.7.3
@@ -65,6 +68,9 @@ flutter_launcher_icons:
     background_color: "#F9F9F9"
 flutter:
   uses-material-design: true
+
+  shaders:
+    - shaders/background.frag
 
   assets:
     - assets/

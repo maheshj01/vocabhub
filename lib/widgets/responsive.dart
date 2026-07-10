@@ -1,120 +1,122 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/utils/size_utils.dart';
+import 'package:vocabhub/widgets/mesh_background.dart';
 
 class ResponsiveBuilder extends ConsumerStatefulWidget {
-  final WidgetBuilder desktopBuilder;
-  final WidgetBuilder mobileBuilder;
+  /// Used for all screen sizes.
+  final Widget? child;
 
-  /// Layout for the tablet tier (600–1024). Optional: when omitted, tablets
-  /// fall back to [desktopBuilder] — preserving the historical mobile/desktop
-  /// split so existing call sites behave identically until they opt in.
+  /// Used when different layouts are needed.
+  final WidgetBuilder? mobileBuilder;
+  final WidgetBuilder? desktopBuilder;
   final WidgetBuilder? tabletBuilder;
 
-  /// When set, the chosen tablet/desktop child is centered and constrained to
-  /// this width so content (forms, text, lists) stays readable on large
-  /// screens instead of stretching edge-to-edge. Ignored on mobile.
+  /// Maximum width for tablet/desktop layouts.
   final double? maxContentWidth;
 
   final bool animate;
   final double initialAnimationValue;
   final bool repeatAnimation;
-  final Function? onAnimateComplete;
+  final VoidCallback? onAnimateComplete;
   final Duration animationDuration;
 
-  const ResponsiveBuilder(
-      {Key? key,
-      required this.desktopBuilder,
-      required this.mobileBuilder,
-      this.tabletBuilder,
-      this.maxContentWidth,
-      this.animate = false,
-      this.repeatAnimation = true,
-      this.onAnimateComplete,
-      this.animationDuration = const Duration(seconds: 6),
-      this.initialAnimationValue = 0.0})
-      : super(key: key);
+  const ResponsiveBuilder({
+    super.key,
+    this.child,
+    this.mobileBuilder,
+    this.desktopBuilder,
+    this.tabletBuilder,
+    this.maxContentWidth,
+    this.animate = false,
+    this.repeatAnimation = true,
+    this.onAnimateComplete,
+    this.animationDuration = const Duration(seconds: 6),
+    this.initialAnimationValue = 0.0,
+  })  : assert(
+          child != null || (mobileBuilder != null && desktopBuilder != null),
+          'Provide either child or both mobileBuilder and desktopBuilder.',
+        ),
+        assert(
+          !(child != null &&
+              (mobileBuilder != null || desktopBuilder != null || tabletBuilder != null)),
+          'Cannot provide both child and builders.',
+        );
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _ResponsiveBuilderState();
+  ConsumerState<ResponsiveBuilder> createState() => _ResponsiveBuilderState();
 }
 
 class _ResponsiveBuilderState extends ConsumerState<ResponsiveBuilder>
     with TickerProviderStateMixin {
+  late AnimationController _controller;
+
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: widget.animationDuration);
-    if (widget.animate) {
-      _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
-    } else {
-      _animation = AlwaysStoppedAnimation(widget.initialAnimationValue);
-    }
-    final apptheme = ref.read(appThemeProvider);
-    if (!apptheme.isClassic) {
-      if (widget.repeatAnimation) {
-        _controller.repeat(reverse: true);
-      } else {
-        _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
-        _controller.forward();
-        _controller.addStatusListener((status) {
-          if (status == AnimationStatus.completed) {
-            widget.onAnimateComplete?.call();
-            _controller.stop();
-            // _controller.reset();
-          }
-        });
-      }
+    _maybeRunIntro();
+  }
+
+  /// The animated page background now self-animates on the GPU inside
+  /// [MeshBackground]. This controller only drives one-shot intros that report
+  /// back via [ResponsiveBuilder.onAnimateComplete]; repeating themes no longer
+  /// need a perpetually-running ticker here.
+  void _maybeRunIntro() {
+    final isClassic = ref.read(appThemeProvider).isClassic;
+    if (!isClassic && widget.animate && !widget.repeatAnimation) {
+      _controller
+        ..reset()
+        ..addStatusListener(_handleStatus)
+        ..forward();
     }
   }
 
-  late AnimationController _controller;
-  late Animation<double> _animation;
+  void _handleStatus(AnimationStatus status) {
+    if (status == AnimationStatus.completed) {
+      widget.onAnimateComplete?.call();
+      _controller.stop();
+    }
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    BoxConstraints constraints,
+  ) {
+    if (widget.child != null) {
+      return widget.child!;
+    }
+
+    switch (SizeUtils.screenTypeOf(constraints.maxWidth)) {
+      case ScreenType.desktop:
+        return _constrain(widget.desktopBuilder!(context));
+
+      case ScreenType.tablet:
+        return _constrain(
+          (widget.tabletBuilder ?? widget.desktopBuilder!)(context),
+        );
+
+      case ScreenType.mobile:
+        return widget.mobileBuilder!(context);
+    }
+  }
 
   @override
   void dispose() {
-    _controller.removeStatusListener((status) {});
+    _controller.removeStatusListener(_handleStatus);
     _controller.dispose();
-
     super.dispose();
   }
 
   @override
   void didUpdateWidget(covariant ResponsiveBuilder oldWidget) {
-    if (oldWidget.animate != widget.animate) {
-      _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
-      if (widget.animate) {
-        if (widget.repeatAnimation) {
-          _controller.repeat(reverse: true);
-        } else {
-          _controller.reset();
-          _controller.forward();
-        }
-      } else {
-        _controller.stop();
-      }
-    }
-    if (oldWidget.initialAnimationValue != widget.initialAnimationValue) {
-      _animation = AlwaysStoppedAnimation(widget.initialAnimationValue);
-    }
-    if (oldWidget.repeatAnimation != widget.repeatAnimation) {
-      if (widget.repeatAnimation) {
-        _controller.repeat(reverse: true);
-      } else {
-        _controller.forward();
-        _controller.addStatusListener((status) {
-          if (status == AnimationStatus.completed) {
-            widget.onAnimateComplete?.call();
-            _controller.stop();
-            // _controller.reset();
-          }
-        });
-      }
-    }
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.animate != widget.animate ||
+        oldWidget.repeatAnimation != widget.repeatAnimation) {
+      _controller.removeStatusListener(_handleStatus);
+      _maybeRunIntro();
+    }
   }
 
   /// Centers and width-constrains large-screen content when [maxContentWidth]
@@ -134,175 +136,45 @@ class _ResponsiveBuilderState extends ConsumerState<ResponsiveBuilder>
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    // Keep the global screen flag aligned with the real app window. Local tier
-    // decisions below still use the LayoutBuilder constraints (the space this
-    // widget was actually given), per adaptive-layout guidance.
     SizeUtils.size = MediaQuery.sizeOf(context);
 
     return Material(
-      child: LayoutBuilder(builder: (context, constraints) {
-        switch (SizeUtils.screenTypeOf(constraints.maxWidth)) {
-          case ScreenType.desktop:
-            return _constrain(widget.desktopBuilder(context));
-          case ScreenType.tablet:
-            // Fall back to the desktop layout when no tablet layout is given,
-            // matching the previous mobile/desktop-only behavior.
-            return _constrain((widget.tabletBuilder ?? widget.desktopBuilder)(context));
-          case ScreenType.mobile:
-            final appTheme = ref.watch(appThemeProvider);
-            return Stack(
-              children: [
-                if (!appTheme.isClassic)
-                  AnimatedBuilder(
-                      animation: _animation,
-                      builder: (context, child) {
-                        return CustomPaint(
-                          painter: BackgroundPainter(
-                            primaryColor: colorScheme.primary,
-                            secondaryColor: colorScheme.inversePrimary,
-                            animation: _animation,
-                          ),
-                          child: Container(),
-                        );
-                      }),
-                if (!appTheme.isClassic)
-                  BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60), child: Container()),
-                widget.mobileBuilder(context),
-              ],
-            );
-        }
-      }),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final content = _buildContent(context, constraints);
+
+          final isMobile = SizeUtils.screenTypeOf(constraints.maxWidth) == ScreenType.mobile;
+
+          if (!isMobile) {
+            return content;
+          }
+
+          final appTheme = ref.watch(appThemeProvider);
+          final isLoggedIn = ref.watch(userNotifierProvider).isLoggedIn;
+
+          // Logged-out screens (login, phone auth) always show the animated mesh
+          // as the default first impression — a signed-out user hasn't chosen a
+          // classic/static preference yet, so persisted settings don't apply.
+          // Once signed in, the user's theme choice is respected.
+          final showMesh = !isLoggedIn || !appTheme.isClassic;
+          final animate = !isLoggedIn || appTheme.dynamicBackground;
+
+          return Stack(
+            children: [
+              if (showMesh)
+                Positioned.fill(
+                  child: MeshBackground(
+                    primaryColor: colorScheme.primary,
+                    secondaryColor: colorScheme.inversePrimary,
+                    baseColor: colorScheme.surface,
+                    animate: animate,
+                  ),
+                ),
+              content,
+            ],
+          );
+        },
+      ),
     );
-  }
-}
-
-class BackgroundPainter extends CustomPainter {
-  final Color primaryColor;
-  final Color secondaryColor;
-  final Animation<double> animation;
-
-  BackgroundPainter(
-      {this.primaryColor = Colors.green,
-      this.secondaryColor = Colors.white,
-      this.animation = const AlwaysStoppedAnimation(0.0)});
-
-  void circleAnimate(Canvas canvas, Size size, {bool blur = true}) {
-    final paint2 = Paint();
-    Path path2 = Path();
-    if (blur) {
-      paint2.maskFilter = MaskFilter.blur(BlurStyle.normal, 30);
-    }
-    final color1 = Colors.blueAccent;
-    paint2.style = PaintingStyle.stroke;
-    paint2.strokeWidth = 20;
-    paint2.color = color1;
-    path2.moveTo(size.width * 1.1, size.height / 4);
-    path2.quadraticBezierTo(size.width / 2, size.height * 1.0, -100, size.height / 4);
-    canvas.drawPath((path2), paint2);
-    final offset = getOffset(path2);
-    paint2.style = PaintingStyle.fill;
-    canvas.drawCircle(offset, 100, paint2);
-    paint2.blendMode = BlendMode.overlay;
-  }
-
-  Offset getOffset(Path path) {
-    final pms = path.computeMetrics(forceClosed: false).elementAt(0);
-    final length = pms.length;
-    final offset = pms.getTangentForOffset(length * animation.value)!.position;
-    return offset;
-  }
-
-  void squareAnimate(Canvas canvas, Size size, {bool blur = true}) {
-    final paint1 = Paint();
-    final Path path1 = Path();
-    paint1.color = Colors.redAccent;
-    if (blur) {
-      paint1.maskFilter = MaskFilter.blur(BlurStyle.normal, 30);
-    }
-    // square with rounded corners
-    paint1.strokeWidth = 20;
-    paint1.style = PaintingStyle.stroke;
-    path1.moveTo(00, 100);
-    path1.quadraticBezierTo(250, 50, 200, 300);
-    path1.quadraticBezierTo(150, 500, 300, 400);
-    canvas.drawPath((path1), paint1);
-    // get offset from path
-    final offset = getOffset(path1);
-    paint1.style = PaintingStyle.fill;
-    canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromCenter(
-            center: offset,
-            width: 200,
-            height: 200,
-          ),
-          Radius.circular(20),
-        ),
-        paint1);
-    paint1.blendMode = BlendMode.overlay;
-  }
-
-  void animateEllipse(Canvas canvas, Size size, {bool blur = true}) {
-    final paint3 = Paint();
-    final path3 = Path();
-    paint3.style = PaintingStyle.stroke;
-    paint3.strokeWidth = 20;
-    path3.moveTo(size.width * 0.6, -100);
-    path3.quadraticBezierTo(
-        size.width * 0.8, size.height * 0.6, size.width * 1.2, size.height * 0.4);
-    paint3.color = primaryColor;
-    if (blur) {
-      paint3.maskFilter = MaskFilter.blur(BlurStyle.normal, 30);
-    }
-    canvas.drawPath(path3, paint3);
-    final offset = getOffset(path3);
-    paint3.style = PaintingStyle.fill;
-    canvas.drawOval(
-        Rect.fromCenter(
-          center: offset,
-          width: 300,
-          height: 200,
-        ),
-        paint3);
-    paint3.blendMode = BlendMode.overlay;
-  }
-
-  void drawTriangle(Canvas canvas, Size size, {bool blur = true}) {
-    final paint4 = Paint();
-    paint4.color = secondaryColor;
-    final path4 = Path();
-    paint4.style = PaintingStyle.stroke;
-    paint4.strokeWidth = 20;
-    path4.moveTo(-100.0, size.height * 0.8);
-    path4.quadraticBezierTo(300, size.height * 0.7, size.width, size.height * 1.2);
-    if (blur) {
-      paint4.maskFilter = MaskFilter.blur(BlurStyle.normal, 30);
-    }
-    canvas.drawPath(path4, paint4);
-    final offset = getOffset(path4);
-    paint4.style = PaintingStyle.fill;
-    // draw triangle
-    canvas.drawPath(
-        Path()
-          ..moveTo(offset.dx, offset.dy)
-          ..lineTo(offset.dx + 200, offset.dy + 200)
-          ..lineTo(offset.dx - 200, offset.dy + 200)
-          ..close(),
-        paint4);
-    paint4.blendMode = BlendMode.overlay;
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    circleAnimate(canvas, size, blur: true);
-    squareAnimate(canvas, size, blur: true);
-    animateEllipse(canvas, size, blur: true);
-    drawTriangle(canvas, size, blur: true);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return oldDelegate != this;
   }
 }

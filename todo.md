@@ -6,6 +6,10 @@
 
 ### TODO
 
+
+UI 
+- [x] Shaders for the background of the App
+
 PRE(=E;Rel)
 - [X] SignedIn User's state should update.
 - [X] Remove '\n' from synonyms using Edit Page.
@@ -31,6 +35,46 @@ In Progress
 - [ ] Improve explore page UI
 - [ ] Improve User profile UI page to show user contributions and reputation
 - [ ] Edit Profile upload user avatar
+
+### Auth & Security (DEFERRED — harden before public launch)
+
+Phone + Google auth via Firebase (identity) with the profile in Supabase keyed on
+Firebase `uid`. Built for functionality first; the items below are the security
+hardening to do before opening it to real users.
+
+Abuse / cost protection (phone auth):
+- [ ] Enable Firebase App Check (Play Integrity on Android, DeviceCheck/App Attest on iOS, reCAPTCHA on web) and enforce it for Auth — biggest defense against SMS-pumping toll fraud.
+- [ ] Restrict allowed SMS regions in Firebase console to the countries you actually serve (blocks premium-number fraud that can cost up to $0.34/SMS).
+- [ ] Add client-side rate limiting / cooldown on "Send code" and "Resend" (every send is billed).
+- [ ] Set up a billing budget + alert on the Identity Platform SMS SKU.
+
+Supabase data security (currently NONE — the anon key can read/write every table):
+- [ ] Enable Row Level Security (RLS) on users_mobile and all tables.
+- [ ] Pass the Firebase ID token to Supabase (custom JWT / verify Firebase token in a Postgres function or edge function) so RLS can scope rows to `uid`.
+- [ ] Policy: a user may read/update only their own profile row; words/edits scoped appropriately (admins vs users).
+- [X] Secrets moved to gitignored `env.json` via `--dart-define-from-file` (Makefile is now secret-free/committable; `env.example.json` is the template).
+- [X] Stopped baking `SUPABASE_SERVICE_ROLE` (full-admin key) into the client — it was an unused dart-define; removed entirely.
+- [ ] `FCM_SERVER_KEY` is still read by the client (pushnotification_service) — a server secret in the app binary. Move FCM sends server-side (Cloud Function / edge function) and remove from the client.
+- [ ] Remove the empty, unused asset `.env` (tracked in commit 72b9543, listed in pubspec assets) — it ships in the bundle and is a footgun. `git rm --cached .env` + drop from pubspec assets.
+- [ ] Rotate the anon key / any exposed secret before public launch, since prior values are in git history.
+
+Account model: EMAIL is the account key (implemented — verify on device):
+- [X] New phone number → one-time "add email" step (link Google) to create the account.
+- [X] Returning phone number → `findByPhone` matches the account → signs in with phone alone (single factor, no Google step).
+- [X] Google sign-in → resolves by uid/email (single factor).
+- [X] Legacy Google row merged by email (updateProfileByEmail sets uid), not upsert-by-uid — no duplicate.
+- [X] `clearPhone` detaches a phone from orphaned rows before assigning it, so the phone unique index can't be violated.
+- [X] google_sign_in 7.x `serverClientId` wired for Android (Constants.GOOGLE_SERVER_CLIENT_ID).
+- [T] Verify on device: new phone → add email → account; sign out; phone again → straight in; Google again → straight in.
+- [ ] FALLBACK GAP: when the linked Google account already exists as its own Firebase user, we sign into it and store the phone at the Supabase level only — the phone is NOT a Firebase credential on that account. True multi-credential linking (re-verify phone → linkWithCredential onto the Google user, with reconciliation) is still TODO.
+- [ ] Orphaned phone-only Firebase users (from the fallback path) are never deleted — clean up.
+
+Auth flow robustness:
+- [ ] Web phone auth uses a different API (RecaptchaVerifier / signInWithPhoneNumber) than the mobile `verifyPhoneNumber` in AuthRepository — add a web path or disable the phone button on web.
+- [ ] edit_history.email is a NOT NULL FK → users_mobile(email); word_state is email-keyed. Long-term, re-key these on uid so identity is fully uid-based (currently worked around by requiring email for contributors).
+- [ ] Handle FirebaseAuth session revocation / token expiry (listen to authStateChanges and sign out the app session).
+- [ ] Delete-account flow should also delete the Firebase Auth user, not just flag the Supabase row.
+- [ ] Remove the deprecated legacy FCM `key=` server key usage in pushnotification_service (HTTP v1 API).
 
 ### Repo maintainence
 
@@ -136,3 +180,7 @@ Ans:
 Ans: SELECT * FROM vocabsheet_copy
 WHERE word LIKE '%a clo%' OR
  meaning LIKE '%a clos%'
+
+
+
+<!-- Bug Account links but two step login always -->

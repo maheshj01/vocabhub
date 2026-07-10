@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +8,7 @@ import 'package:vocabhub/pages/notifications/edit_expansion_tile.dart';
 import 'package:vocabhub/services/services.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/utils/utility.dart';
+import 'package:vocabhub/widgets/mesh_background.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 import 'package:vocabhub/widgets/widgets.dart';
 
@@ -171,17 +171,14 @@ class _NotificationDetailMobileState extends ConsumerState<NotificationDetailMob
       borderRadius: BorderRadius.vertical(top: Radius.circular(widget.isNotification ? 0.0 : 28.0)),
       child: Stack(
         children: [
-          CustomPaint(
-            painter: BackgroundPainter(
+          Positioned.fill(
+            child: MeshBackground(
               primaryColor: colorScheme.primary,
               secondaryColor: colorScheme.inversePrimary,
-              animation: Animation.fromValueListenable(
-                AlwaysStoppedAnimation(0.1),
-              ),
+              baseColor: colorScheme.surface,
+              animate: false,
             ),
-            child: Container(),
           ),
-          BackdropFilter(filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60), child: Container()),
           Scaffold(
               appBar: AppBar(
                 elevation: 0,
