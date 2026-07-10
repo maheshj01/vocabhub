@@ -44,6 +44,9 @@ update_submodules:
 run:
 	$(FLUTTER) run $(if $(RELEASE),--release,) --dart-define-from-file=$(ENV_FILE)
 
+run-web:
+	$(FLUTTER) run -d chrome --wasm --dart-define-from-file=$(ENV_FILE)
+
 # make update_version VERSION=4.0.5+360666
 update_version:
 	@if [ -z "$(VERSION)" ]; then \
