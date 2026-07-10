@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/utils/logger.dart';
@@ -97,8 +98,21 @@ class AuthRepository {
         phoneNumber: user.phoneNumber,
       );
 
+  /// Builds a Firebase Google provider with the profile/email scopes for the
+  /// web popup flows.
+  GoogleAuthProvider _webGoogleProvider() =>
+      GoogleAuthProvider()..addScope('email')..addScope('profile');
+
   /// Interactive Google sign-in, exchanged into a Firebase credential.
+  ///
+  /// On web, `google_sign_in` can't be triggered programmatically (it requires a
+  /// rendered GIS button), so Firebase Auth opens the OAuth popup directly. On
+  /// mobile we use the native `google_sign_in` flow.
   Future<AuthUser> signInWithGoogle() async {
+    if (kIsWeb) {
+      final userCredential = await _auth.signInWithPopup(_webGoogleProvider());
+      return _toAuthUser(userCredential.user!);
+    }
     final google = await _obtainGoogleCredential();
     final userCredential = await _auth.signInWithCredential(google.credential);
     return _toAuthUser(userCredential.user!, googleAccount: google.account);
@@ -119,6 +133,22 @@ class AuthRepository {
         message: 'Sign in first before linking an email.',
       );
     }
+    // On web, use Firebase's popup to link (google_sign_in has no programmatic
+    // flow there); on mobile, exchange a native google_sign_in credential.
+    if (kIsWeb) {
+      try {
+        final userCredential = await current.linkWithPopup(_webGoogleProvider());
+        return _toAuthUser(userCredential.user!);
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'credential-already-in-use' || e.code == 'email-already-in-use') {
+          _logger.d('Google account already exists; signing into it instead.');
+          final userCredential = await _auth.signInWithPopup(_webGoogleProvider());
+          return _toAuthUser(userCredential.user!);
+        }
+        rethrow;
+      }
+    }
+
     final google = await _obtainGoogleCredential();
     try {
       final userCredential = await current.linkWithCredential(google.credential);
