@@ -8,7 +8,7 @@ import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/pages/notifications/notifications.dart';
 import 'package:vocabhub/services/services/service_base.dart';
-import 'package:vocabhub/services/services/user.dart';
+import 'package:vocabhub/services/services/user_service.dart';
 import 'package:vocabhub/utils/logger.dart';
 import 'package:vocabhub/utils/utility.dart';
 

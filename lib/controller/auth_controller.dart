@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/services/services/auth_repository.dart';
 import 'package:vocabhub/services/services/service_base.dart';
-import 'package:vocabhub/services/services/user.dart';
+import 'package:vocabhub/services/services/user_service.dart';
 import 'package:vocabhub/utils/logger.dart';
 
 /// Outcome of an authentication attempt, so the UI can react without knowing
