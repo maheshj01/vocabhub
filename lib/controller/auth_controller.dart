@@ -179,8 +179,7 @@ class AuthController extends ChangeNotifier implements ServiceBase {
           if (existing.isDeleted) {
             return AuthResult(outcome: AuthOutcome.accountDeleted, user: existing);
           }
-          await UserService.setLoginState(
-              uid: existing.uid, isLoggedIn: true, token: fcmToken);
+          await UserService.setLoginState(uid: existing.uid, isLoggedIn: true, token: fcmToken);
           await setUser(existing.copyWith(
               isLoggedIn: true, token: fcmToken ?? existing.token, updated_at: DateTime.now()));
           return AuthResult(outcome: AuthOutcome.success, user: _user, isNewUser: false);

@@ -9,8 +9,7 @@ import 'package:vocabhub/onboarding/domain/onboarding_slide.dart';
 const List<OnboardingSlide> kOnboardingSlides = [
   OnboardingSlide(
     title: 'Word Power Unleashed',
-    description:
-        'Supercharge your vocabulary with 800+ curated GRE words, synonyms, '
+    description: 'Supercharge your vocabulary with 800+ curated GRE words, synonyms, '
         'mnemonics, and examples for comprehensive language learning.',
     assetPath: Assets.dark,
     media: SlideMedia.wordCarousel,
@@ -19,8 +18,7 @@ const List<OnboardingSlide> kOnboardingSlides = [
   ),
   OnboardingSlide(
     title: 'Collaborative Learning Community',
-    description:
-        'Join our language community, contribute words, suggest edits, and share '
+    description: 'Join our language community, contribute words, suggest edits, and share '
         'examples to build a platform for continuous learning and improvement.',
     // Bundled locally: the previous GitHub-hosted GIF failed on web (no CORS
     // header on the S3 redirect) and used an expiring signed URL.
@@ -31,8 +29,7 @@ const List<OnboardingSlide> kOnboardingSlides = [
   ),
   OnboardingSlide(
     title: 'Word of the Day',
-    description:
-        'Stay inspired with our captivating "Word of the Day" feature, '
+    description: 'Stay inspired with our captivating "Word of the Day" feature, '
         'discovering intriguing new words with definitions, examples, and '
         'insights every day, all year long.',
     assetPath: Assets.wod,
@@ -42,8 +39,7 @@ const List<OnboardingSlide> kOnboardingSlides = [
   ),
   OnboardingSlide(
     title: 'Explore curated words',
-    description:
-        "Explore a diverse range of captivating words in the 'Explore' section. "
+    description: "Explore a diverse range of captivating words in the 'Explore' section. "
         'We curate personalized learning experiences, empowering you to '
         'effectively expand your vocabulary and master new words.',
     assetPath: Assets.balloon,
@@ -60,8 +56,7 @@ const List<OnboardingSlide> kOnboardingSlides = [
   ),
   OnboardingSlide(
     title: 'Dark Mode and color themes',
-    description:
-        'Personalize your app experience with Dark Mode and personalized color '
+    description: 'Personalize your app experience with Dark Mode and personalized color '
         "schemes. Enjoy a learning journey that's uniquely yours, with an app "
         'that matches your style and feels tailor-made for you.',
     assetPath: Assets.dark,

@@ -100,8 +100,9 @@ class AuthRepository {
 
   /// Builds a Firebase Google provider with the profile/email scopes for the
   /// web popup flows.
-  GoogleAuthProvider _webGoogleProvider() =>
-      GoogleAuthProvider()..addScope('email')..addScope('profile');
+  GoogleAuthProvider _webGoogleProvider() => GoogleAuthProvider()
+    ..addScope('email')
+    ..addScope('profile');
 
   /// Interactive Google sign-in, exchanged into a Firebase credential.
   ///

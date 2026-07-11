@@ -47,8 +47,7 @@ class MeshBackground extends StatefulWidget {
   State<MeshBackground> createState() => _MeshBackgroundState();
 }
 
-class _MeshBackgroundState extends State<MeshBackground>
-    with SingleTickerProviderStateMixin {
+class _MeshBackgroundState extends State<MeshBackground> with SingleTickerProviderStateMixin {
   // Seconds since the widget mounted; the only thing that changes per frame.
   final ValueNotifier<double> _time = ValueNotifier<double>(0);
   Ticker? _ticker;

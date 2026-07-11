@@ -21,8 +21,7 @@ class OnboardingState {
 
   bool get isLastSlide => slides.isNotEmpty && index == slides.length - 1;
 
-  OnboardingSlide? get currentSlide =>
-      (index >= 0 && index < slides.length) ? slides[index] : null;
+  OnboardingSlide? get currentSlide => (index >= 0 && index < slides.length) ? slides[index] : null;
 
   OnboardingState copyWith({
     List<OnboardingSlide>? slides,
