@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:navbar_router/navbar_router.dart';
+import 'package:phone_form_field/phone_form_field.dart';
 import 'package:vocabhub/controller/auth_controller.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/services.dart';
@@ -24,13 +24,23 @@ class PhoneAuthPage extends StatefulWidget {
 enum _Step { enterPhone, enterOtp, linkEmail }
 
 class _PhoneAuthPageState extends State<PhoneAuthPage> {
-  final _phoneController = TextEditingController();
+  late final PhoneController _phoneController;
   final _otpController = TextEditingController();
   final _analytics = Analytics.instance;
 
   _Step _step = _Step.enterPhone;
   bool _busy = false;
+  bool _phoneValid = false;
   String? _verificationId;
+  String _sentToDisplay = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _phoneController = PhoneController(
+      initialValue: PhoneNumber(isoCode: _detectDefaultCountry(), nsn: ''),
+    );
+  }
 
   @override
   void dispose() {
@@ -39,19 +49,44 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
     super.dispose();
   }
 
+  /// Defaults the country selector to the device's region setting
+  /// (Settings > Language & Region on iOS/Android), falling back to US.
+  /// This is a better signal than SIM/locale-language and needs no
+  /// permissions or network call, unlike IP-based geolocation.
+  IsoCode _detectDefaultCountry() {
+    try {
+      final regionCode = WidgetsBinding.instance.platformDispatcher.locale.countryCode;
+      if (regionCode != null && regionCode.isNotEmpty) {
+        return IsoCode.values.byName(regionCode.toUpperCase());
+      }
+    } catch (_) {
+      // Unrecognized region code (e.g. locale has no country) — fall through.
+    }
+    return IsoCode.US;
+  }
+
   void _setBusy(bool value) {
     if (mounted) setState(() => _busy = value);
   }
 
+  void showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
   Future<void> _sendCode() async {
-    final phone = _phoneController.text.trim();
-    if (!_isValidE164(phone)) {
-      NavbarNotifier.showSnackBar(context, 'Enter a valid phone number in the format +14155550123');
+    final phoneNumber = _phoneController.value;
+    if (phoneNumber == null || !phoneNumber.isValid()) {
+      showError('Enter a valid phone number');
       return;
     }
+    // E.164 format, e.g. +14155550123
+    final e164 = '+${phoneNumber.countryCode}${phoneNumber.nsn}';
+    _sentToDisplay = phoneNumber.international;
+
     _setBusy(true);
     await authController.startPhoneVerification(
-      phoneNumber: phone,
+      phoneNumber: e164,
       onCodeSent: (verificationId) {
         _verificationId = verificationId;
         if (mounted) {
@@ -63,7 +98,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
       },
       onError: (error) {
         _setBusy(false);
-        if (mounted) NavbarNotifier.showSnackBar(context, error);
+        showError(error);
       },
     );
   }
@@ -71,7 +106,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
   Future<void> _verifyCode() async {
     final code = _otpController.text.trim();
     if (code.length < 6 || _verificationId == null) {
-      NavbarNotifier.showSnackBar(context, 'Enter the 6-digit code');
+      showError('Enter the 6-digit code');
       return;
     }
     _setBusy(true);
@@ -103,8 +138,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
     if (result.outcome == AuthOutcome.success) {
       await handleAuthResult(context, result, _analytics);
     } else {
-      NavbarNotifier.showSnackBar(
-          context, result.errorMessage ?? 'Could not add your email. Please try again.');
+      showError(result.errorMessage ?? 'Could not add your email. Please try again.');
     }
   }
 
@@ -113,9 +147,6 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
     await authController.signOut();
     if (mounted) Navigator.of(context).maybePop();
   }
-
-  /// Minimal E.164 sanity check (`+` followed by 8–15 digits).
-  bool _isValidE164(String value) => RegExp(r'^\+[1-9]\d{7,14}$').hasMatch(value);
 
   String get _title => switch (_step) {
         _Step.enterPhone => 'Sign in with phone',
@@ -170,19 +201,30 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
         Text('We\'ll send you a one-time code by SMS.',
             style: Theme.of(context).textTheme.titleMedium),
         32.0.vSpacer(),
-        TextField(
+        PhoneFormField(
           controller: _phoneController,
-          keyboardType: TextInputType.phone,
           autofocus: true,
           enabled: !_busy,
+          countrySelectorNavigator: const CountrySelectorNavigator.bottomSheet(),
           decoration: const InputDecoration(
             labelText: 'Phone number',
-            hintText: '+14155550123',
             border: OutlineInputBorder(),
           ),
+          validator: PhoneValidator.compose([
+            PhoneValidator.required(context),
+            PhoneValidator.validMobile(context),
+          ]),
+          onChanged: (phoneNumber) {
+            setState(() => _phoneValid = phoneNumber.isValid());
+          },
         ),
         24.0.vSpacer(),
-        VHButton(width: double.infinity, label: 'Send code', isLoading: _busy, onTap: _sendCode),
+        VHButton(
+          width: double.infinity,
+          label: 'Send code',
+          isLoading: _busy,
+          onTap: _phoneValid ? _sendCode : null,
+        ),
       ],
     );
   }
@@ -192,7 +234,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         40.0.vSpacer(),
-        Text('Enter the code we sent to ${_phoneController.text.trim()}',
+        Text('Enter the code we sent to $_sentToDisplay',
             style: Theme.of(context).textTheme.titleMedium),
         32.0.vSpacer(),
         TextField(
