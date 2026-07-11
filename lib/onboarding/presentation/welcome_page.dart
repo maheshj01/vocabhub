@@ -6,7 +6,6 @@ import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/main.dart';
 import 'package:vocabhub/onboarding/presentation/onboarding_page.dart';
 import 'package:vocabhub/pages/login.dart';
-import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/responsive.dart';
 
@@ -40,13 +39,13 @@ class _WelcomeBody extends ConsumerWidget {
 
   const _WelcomeBody({required this.title, required this.description});
 
+  // Brand accent used across the splash + welcome, readable on the dark gradient.
+  static const Color _accent = Color(0xFF57A96E);
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(userNotifierProvider);
-    final words = title.split(' ');
 
-    // Own a branded dark gradient so the vibrant title + buttons stay readable
-    // on every form factor and theme, instead of sitting on a bare white surface.
     return Container(
       constraints: const BoxConstraints.expand(),
       decoration: const BoxDecoration(
@@ -58,79 +57,105 @@ class _WelcomeBody extends ConsumerWidget {
       ),
       child: Material(
         color: Colors.transparent,
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 520),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      text: words.isNotEmpty ? words[0] : title,
+        child: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 440),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 32.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Spacer(flex: 3),
+                    _logo(),
+                    const SizedBox(height: 32),
+                    _headline(),
+                    const SizedBox(height: 16),
+                    Text(
+                      description,
+                      textAlign: TextAlign.center,
                       style: GoogleFonts.quicksand(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 87, 169, 110),
+                        fontSize: 16,
+                        height: 1.4,
+                        color: Colors.white.withValues(alpha: 0.72),
                       ),
-                      children: [
-                        if (words.length > 1)
-                          TextSpan(
-                            text: '\n${words[1]}',
-                            style: GoogleFonts.quicksand(
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        if (words.length > 2)
-                          TextSpan(
-                            text: '\n${words.sublist(2).join(' ')}',
-                            style: GoogleFonts.quicksand(
-                              fontSize: 38,
-                              fontWeight: FontWeight.bold,
-                              color: const Color.fromARGB(255, 243, 255, 106),
-                            ),
-                          ),
-                      ],
                     ),
-                  ),
-                  Column(
-                    children: [
-                      VHButton(
-                        width: 200,
-                        onTap: () {
-                          Navigate.push(
-                            context,
-                            const OnboardingPage(),
-                            transitionDuration: const Duration(milliseconds: 500),
-                            transitionType: TransitionType.reveal,
-                          );
-                        },
-                        label: 'Take a tour',
+                    const Spacer(flex: 4),
+                    VHButton(
+                      width: double.infinity,
+                      height: 54,
+                      backgroundColor: _accent,
+                      foregroundColor: Colors.white,
+                      label: 'Take a tour',
+                      onTap: () => Navigate.push(
+                        context,
+                        const OnboardingPage(),
+                        transitionDuration: const Duration(milliseconds: 500),
+                        transitionType: TransitionType.reveal,
                       ),
-                      16.0.vSpacer(),
-                      VHButton(
-                        width: 200,
-                        onTap: () {
-                          if (user.isLoggedIn) {
-                            Navigate.pushAndPopAll(context, AdaptiveLayout());
-                          } else {
-                            Navigate.push(context, AppSignIn(),
-                                transitionType: TransitionType.scale);
-                          }
-                        },
-                        label: 'Skip for now',
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 14),
+                    VHButton(
+                      width: double.infinity,
+                      height: 54,
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: Colors.white.withValues(alpha: 0.85),
+                      label: 'Skip for now',
+                      onTap: () {
+                        if (user.isLoggedIn) {
+                          Navigate.pushAndPopAll(context, AdaptiveLayout());
+                        } else {
+                          Navigate.push(context, AppSignIn(), transitionType: TransitionType.scale);
+                        }
+                      },
+                    ),
+                    const Spacer(flex: 1),
+                  ],
+                ),
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _logo() {
+    return Center(
+      child: Container(
+        width: 92,
+        height: 92,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(color: _accent.withValues(alpha: 0.35), blurRadius: 32, spreadRadius: 2),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Image.asset('assets/icon.png', fit: BoxFit.cover),
+        ),
+      ),
+    );
+  }
+
+  /// One cohesive headline: the leading words in white, the app name (the last
+  /// word of [title]) accented. No more three-colour, three-size word salad.
+  Widget _headline() {
+    final parts = title.trim().split(' ');
+    final lead = parts.length > 1 ? '${parts.sublist(0, parts.length - 1).join(' ')} ' : '';
+    final brand = parts.isNotEmpty ? parts.last : title;
+
+    final base = GoogleFonts.quicksand(fontSize: 30, fontWeight: FontWeight.w700, height: 1.15);
+
+    return RichText(
+      textAlign: TextAlign.center,
+      text: TextSpan(
+        style: base.copyWith(color: Colors.white),
+        children: [
+          if (lead.isNotEmpty) TextSpan(text: lead),
+          TextSpan(text: brand, style: base.copyWith(color: _accent)),
+        ],
       ),
     );
   }
