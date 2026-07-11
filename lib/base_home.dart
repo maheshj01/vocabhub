@@ -12,6 +12,7 @@ import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/version.dart';
 import 'package:vocabhub/navbar/navbar.dart';
 import 'package:vocabhub/navbar/profile/edit.dart';
+import 'package:vocabhub/controller/tab_refresh_controller.dart';
 import 'package:vocabhub/navbar/search/search_view.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/login.dart';
@@ -137,15 +138,19 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     ref.read(appProvider.notifier).setShowFAB(false);
     final appController = ref.watch(appProvider);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      NavbarNotifier.showSnackBar(context, message,
-          actionLabel: action,
-          bottom: kNavbarHeight,
-          onActionPressed: onActionPressed,
-          duration: persist ? Duration(days: 1) : Duration(seconds: 3), onClosed: () {
-        if (mounted) {
-          ref.read(appProvider.notifier).copyWith(appController.copyWith(hasUpdate: false));
-        }
-      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(message),
+        action: action != null
+            ? SnackBarAction(
+                label: action,
+                onPressed: () {
+                  onActionPressed?.call();
+                },
+              )
+            : null,
+        // bottom: kNavbarHeight,
+        duration: persist ? Duration(days: 1) : Duration(seconds: 3),
+      ));
     });
   }
 
@@ -283,6 +288,10 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                   onChanged: (x) async {
                     ref.read(appProvider.notifier).copyWith(appController.copyWith(
                         index: x, showFAB: x < 2 && user!.isLoggedIn, extended: true));
+
+                    // General per-tab refresh signal: ask the selected tab's view
+                    // to silently re-fetch. Only the profile tab reacts today.
+                    ref.read(tabRefreshProvider.notifier).requestRefresh(x);
 
                     /// Simulate DragGesture on pageView
                     final pageController = exploreController.pageController;

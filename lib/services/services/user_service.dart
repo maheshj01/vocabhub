@@ -5,15 +5,14 @@ import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/services/services/database.dart';
 import 'package:vocabhub/utils/logger.dart';
 
+/// Shared, Supabase-backed remote data source for user profiles, over
+/// [DatabaseService]. Used across the app — the auth layer (identity resolution
+/// + login state), the profile feature island (`lib/profile/`), edit, and push
+/// notifications. Identity is keyed on the Firebase [Constants.USER_UID_COLUMN];
+/// [Constants.USER_EMAIL_COLUMN] is the secondary business key used for merges.
 class UserService {
   static String _tableName = '${Constants.USER_TABLE_NAME}';
   static final _logger = Logger("UserService");
-
-  Future<DbResponse> findById(String id) async {
-    final response = await DatabaseService.findSingleRowByColumnValue(id,
-        columnName: Constants.ID_COLUMN, tableName: _tableName);
-    return response;
-  }
 
   /// Look up a profile by its Firebase Auth uid (the canonical identity key).
   /// Returns [UserModel.init] when no matching row exists.
