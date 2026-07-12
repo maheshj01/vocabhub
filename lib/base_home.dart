@@ -138,7 +138,9 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       NavbarNotifier.showSnackBar(context, message,
           actionLabel: action,
-          bottom: kNavbarHeight * 1.2,
+          // Clear the floating bottom navbar on mobile; sit near the bottom on
+          // the desktop side-rail layout.
+          bottom: SizeUtils.isMobile ? kNavbarHeight * 1.2 : 24,
           onActionPressed: onActionPressed,
           duration: persist ? Duration(days: 1) : Duration(seconds: 3), onClosed: () {
         if (mounted) {
@@ -218,7 +220,9 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
       final icon = Icon(Icons.add, color: colorScheme.onPrimaryContainer, size: 28);
       if (appController.showFAB || (appController.index < 2 && user!.isLoggedIn)) {
         return Padding(
-            padding: (kNavbarHeight * 1.2).bottomPadding,
+            // The floating bottom navbar only exists on mobile; on the desktop
+            // side-rail the FAB should sit at the normal bottom-right.
+            padding: SizeUtils.isMobile ? (kNavbarHeight * 1.2).bottomPadding : EdgeInsets.zero,
             child: FloatingActionButton.extended(
                 backgroundColor: colorScheme.primaryContainer,
                 heroTag: "addword${DateTime.now().millisecondsSinceEpoch}",
@@ -299,7 +303,9 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                         ? colorScheme.surfaceContainerHighest
                         : colorScheme.secondaryContainer,
                     margin: EdgeInsets.zero,
-                    showSelectedLabels: false,
+                    // Show labels on the desktop/tablet side-rail (it has room);
+                    // keep the mobile floating bar icon-only.
+                    showSelectedLabels: !SizeUtils.isMobile,
                     borderRadius: BorderRadius.zero,
                     // backgroundColor: (colorScheme.surfaceContainerHighest.withOpacity(0.4)),
                   ),
@@ -322,62 +328,5 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
             ),
           );
         });
-  }
-}
-
-class VocabBanner extends StatelessWidget {
-  final String description;
-  final List<Widget> actions;
-
-  const VocabBanner({Key? key, required this.description, required this.actions}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 60,
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      color: Colors.grey.shade800,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(
-            '$description',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-            ),
-          ),
-          Spacer(),
-          for (int i = 0; i < actions.length; i++) actions[i]
-        ],
-      ),
-    );
-  }
-}
-
-class DesktopHome extends StatefulWidget {
-  const DesktopHome({Key? key}) : super(key: key);
-
-  @override
-  State<DesktopHome> createState() => _DesktopHomeState();
-}
-
-class _DesktopHomeState extends State<DesktopHome> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        children: [
-          Expanded(
-            child: Container(
-              color: Colors.red,
-              child: Center(
-                child: Text('Desktop Home'),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/models.dart';
@@ -192,91 +193,29 @@ class DashboardMobile extends ConsumerWidget {
                     padding: 16.0.verticalPadding,
                     child: heading('Word of the day'),
                   ),
-                  word.word.isEmpty
-                      ? GestureDetector(
-                          onTap: () {
-                            onRefresh!();
-                          },
-                          child: WoDCard(
-                              title: 'Tap to Retry',
-                              description: 'Something went wrong!',
-                              color: Colors.red.shade300,
-                              word: word,
-                              height: 180,
-                              fontSize: 42),
-                        )
-                      : GestureDetector(
-                          onTap: () {
-                            Navigate.push(
-                                context,
-                                WordDetail(
-                                  word: word,
-                                  isWod: true,
-                                  title: 'Word of the Day',
-                                ));
-                          },
-                          child: WoDCard(
-                            word: word,
-                            height: 180,
-                            color: Colors.green.shade300,
-                            title: '${word.word}'.toUpperCase(),
-                          ),
-                        ),
-                  Padding(
-                    padding: 6.0.verticalPadding,
+                  WordOfTheDayCard(
+                    word: word,
+                    isError: word.word.isEmpty,
+                    onTap: () {
+                      if (word.word.isEmpty) {
+                        onRefresh?.call();
+                      } else {
+                        Navigate.push(
+                          context,
+                          WordDetail(word: word, isWod: true, title: 'Word of the Day'),
+                        );
+                      }
+                    },
                   ),
-                  !user.isLoggedIn
-                      ? SizedBox.shrink()
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: 12.0.verticalPadding,
-                              child: heading('Progress'),
-                            ),
-                            DashboardCollections(),
-                            16.0.vSpacer(),
-                            word.word.isEmpty
-                                ? SizedBox.shrink()
-                                : GestureDetector(
-                                    onTap: () {
-                                      Navigate.push(
-                                          context,
-                                          BookmarksPage(
-                                            isBookMark: true,
-                                            user: user,
-                                          ));
-                                    },
-                                    child: WoDCard(
-                                      word: word,
-                                      height: 180,
-                                      fontSize: 42,
-                                      color: Colors.amber.shade600,
-                                      title: 'Bookmarks',
-                                    ),
-                                  ),
-                            Padding(
-                              padding: 6.0.verticalPadding,
-                            ),
-                            GestureDetector(
-                                onTap: () {
-                                  Navigate.push(
-                                      context,
-                                      BookmarksPage(
-                                        isBookMark: false,
-                                        user: user,
-                                      ));
-                                },
-                                child: WoDCard(
-                                  word: word,
-                                  height: 180,
-                                  fontSize: 42,
-                                  color: Colors.black,
-                                  image: 'assets/dart.jpg',
-                                  title: 'Mastered\nWords',
-                                ))
-                          ],
-                        ),
+                  if (user.isLoggedIn) ...[
+                    Padding(
+                      padding: 12.0.verticalPadding,
+                      child: heading('Progress'),
+                    ),
+                    DashboardCollections(),
+                    16.0.vSpacer(),
+                    _StatTilesRow(user: user),
+                  ],
                   100.0.vSpacer()
                 ],
               ),
@@ -457,65 +396,238 @@ class _DashboardCollectionsState extends ConsumerState<DashboardCollections> {
   }
 }
 
-class WoDCard extends StatelessWidget {
-  final Word? word;
-  final String title;
+/// Shared rounded, tappable card surface — consistent radius, ink ripple,
+/// and padding across the dashboard cards.
+class _CardShell extends StatelessWidget {
+  final Widget child;
+  final VoidCallback onTap;
+  final Gradient? gradient;
   final Color? color;
-  final double? height;
-  final double? width;
-  final String? image;
-  final String? description;
-  final double fontSize;
+  final BoxBorder? border;
 
-  const WoDCard(
-      {super.key,
-      this.word,
-      this.height,
-      this.width,
-      required this.title,
-      this.color,
-      this.description,
-      this.fontSize = 40,
-      this.image});
+  const _CardShell({
+    required this.child,
+    required this.onTap,
+    this.gradient,
+    this.color,
+    this.border,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    return Container(
-      height: height ?? size.height / 3,
-      width: width ?? size.width,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.0),
-          color: this.color,
-          image: image != null
-              ? DecorationImage(
-                  fit: BoxFit.fill, opacity: 0.9, image: AssetImage('assets/dart.jpg'))
-              : null),
-      child: Align(
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: gradient,
+            color: color,
+            border: border,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(padding: const EdgeInsets.all(18), child: child),
+        ),
+      ),
+    );
+  }
+}
+
+/// Hero card: the current word of the day with a preview of its meaning.
+class WordOfTheDayCard extends StatelessWidget {
+  final Word word;
+  final VoidCallback onTap;
+  final bool isError;
+
+  const WordOfTheDayCard({
+    super.key,
+    required this.word,
+    required this.onTap,
+    this.isError = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasWord = word.word.isNotEmpty && !isError;
+    return _CardShell(
+      onTap: onTap,
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: isError
+            ? const [Color(0xFF7A2E2E), Color(0xFF4A1414)]
+            : const [Color(0xFF2E7D5B), Color(0xFF14382A)],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
             children: [
               Text(
-                '$title',
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .displaySmall!
-                    .copyWith(color: Theme.of(context).colorScheme.onPrimary, fontSize: fontSize),
+                'WORD OF THE DAY',
+                style: GoogleFonts.quicksand(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.6,
+                  color: Colors.white.withValues(alpha: 0.75),
+                ),
               ),
-              description != null
-                  ? Text(
-                      '$description',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: Theme.of(context).colorScheme.onPrimary),
-                    )
-                  : SizedBox.shrink()
+              const Spacer(),
+              Icon(Icons.north_east_rounded, size: 18, color: Colors.white.withValues(alpha: 0.75)),
             ],
-          )),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            hasWord ? word.word.toUpperCase() : 'Tap to retry',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.quicksand(
+                fontSize: 30, fontWeight: FontWeight.w700, color: Colors.white),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            hasWord ? word.meaning : 'Something went wrong. Pull down to refresh or tap to retry.',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.quicksand(
+              fontSize: 14,
+              height: 1.35,
+              color: Colors.white.withValues(alpha: 0.85),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Compact icon + title + hint tile used for Bookmarks and Mastered words.
+class DashboardTile extends StatelessWidget {
+  final IconData icon;
+  final Color accent;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const DashboardTile({
+    super.key,
+    required this.icon,
+    required this.accent,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return _CardShell(
+      onTap: onTap,
+      color: colorScheme.surfaceContainerHighest,
+      border: Border.all(color: colorScheme.outlineVariant),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, color: accent, size: 22),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            title,
+            style: GoogleFonts.quicksand(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            subtitle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.quicksand(fontSize: 12.5, color: colorScheme.onSurfaceVariant),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The Bookmarks + Mastered tiles, side by side and equal height.
+class _StatTilesRow extends StatelessWidget {
+  final UserModel user;
+  final bool useOpenContainer;
+  const _StatTilesRow({required this.user, this.useOpenContainer = false});
+
+  Widget _tile({
+    required BuildContext context,
+    required IconData icon,
+    required Color accent,
+    required String title,
+    required String subtitle,
+    required Widget destination,
+  }) {
+    if (useOpenContainer) {
+      return OpenContainer<bool>(
+        tappable: false,
+        closedElevation: 0,
+        middleColor: Colors.transparent,
+        openColor: Colors.transparent,
+        closedColor: Colors.transparent,
+        closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        transitionType: ContainerTransitionType.fadeThrough,
+        openBuilder: (context, _) => destination,
+        closedBuilder: (context, open) => DashboardTile(
+            icon: icon, accent: accent, title: title, subtitle: subtitle, onTap: open),
+      );
+    }
+    return DashboardTile(
+      icon: icon,
+      accent: accent,
+      title: title,
+      subtitle: subtitle,
+      onTap: () => Navigate.push(context, destination),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 150,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: _tile(
+              context: context,
+              icon: Icons.bookmark_rounded,
+              accent: const Color(0xFFF0A202),
+              title: 'Bookmarks',
+              subtitle: 'Words you saved',
+              destination: BookmarksPage(isBookMark: true, user: user),
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: _tile(
+              context: context,
+              icon: Icons.workspace_premium_rounded,
+              accent: const Color(0xFF6C63FF),
+              title: 'Mastered',
+              subtitle: "Words you've learned",
+              destination: BookmarksPage(isBookMark: false, user: user),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -547,26 +659,21 @@ class DashboardDesktop extends ConsumerWidget {
                       child: heading('Word of the day'),
                     ),
                     OpenContainer<bool>(
-                        openBuilder: (BuildContext context, VoidCallback openContainer) {
-                          return WordDetail(
-                            word: word,
-                            isWod: true,
-                            title: 'Word of the Day',
-                          );
-                        },
-                        tappable: true,
-                        middleColor: Colors.transparent,
-                        openColor: Colors.transparent,
-                        closedColor: Colors.transparent,
-                        closedShape: 16.0.rounded,
-                        transitionType: ContainerTransitionType.fadeThrough,
-                        closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                          return WoDCard(
-                            word: word,
-                            color: Colors.green.shade300,
-                            title: '${word.word}'.toUpperCase(),
-                          );
-                        }),
+                      tappable: false,
+                      closedElevation: 0,
+                      middleColor: Colors.transparent,
+                      openColor: Colors.transparent,
+                      closedColor: Colors.transparent,
+                      closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      transitionType: ContainerTransitionType.fadeThrough,
+                      openBuilder: (context, _) =>
+                          WordDetail(word: word, isWod: true, title: 'Word of the Day'),
+                      closedBuilder: (context, open) => WordOfTheDayCard(
+                        word: word,
+                        isError: word.word.isEmpty,
+                        onTap: open,
+                      ),
+                    ),
                     Padding(
                       padding: 12.0.verticalPadding,
                       child: heading('Progress'),
@@ -575,59 +682,7 @@ class DashboardDesktop extends ConsumerWidget {
                       padding: 6.0.verticalPadding + 8.0.bottomPadding,
                       child: DashboardCollections(),
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OpenContainer<bool>(
-                              openBuilder: (BuildContext context, VoidCallback openContainer) {
-                                return BookmarksPage(
-                                  isBookMark: false,
-                                  user: user,
-                                );
-                              },
-                              tappable: true,
-                              closedColor: Colors.transparent,
-                              openColor: Colors.transparent,
-                              middleColor: Colors.transparent,
-                              closedShape: 16.0.rounded,
-                              transitionType: ContainerTransitionType.fadeThrough,
-                              closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                                return WoDCard(
-                                  word: word,
-                                  height: 180,
-                                  fontSize: 42,
-                                  image: 'assets/dart.jpg',
-                                  title: 'Mastered\nWords',
-                                );
-                              }),
-                        ),
-                        16.0.hSpacer(),
-                        Expanded(
-                          child: OpenContainer<bool>(
-                              closedColor: Colors.transparent,
-                              openColor: Colors.transparent,
-                              middleColor: Colors.transparent,
-                              openBuilder: (BuildContext context, VoidCallback openContainer) {
-                                return BookmarksPage(
-                                  isBookMark: true,
-                                  user: user,
-                                );
-                              },
-                              closedShape: 16.0.rounded,
-                              tappable: true,
-                              transitionType: ContainerTransitionType.fadeThrough,
-                              closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                                return WoDCard(
-                                  word: word,
-                                  height: 180,
-                                  fontSize: 42,
-                                  color: Colors.amberAccent.shade400,
-                                  title: 'Bookmarks',
-                                );
-                              }),
-                        ),
-                      ],
-                    ),
+                    _StatTilesRow(user: user, useOpenContainer: true),
                     16.0.vSpacer()
                   ]),
                 )
