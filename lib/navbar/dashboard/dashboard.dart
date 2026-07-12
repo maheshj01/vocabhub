@@ -207,14 +207,18 @@ class DashboardMobile extends ConsumerWidget {
                       }
                     },
                   ),
+                  Padding(
+                    padding: 12.0.verticalPadding,
+                    child: heading('Progress'),
+                  ),
                   if (user.isLoggedIn) ...[
-                    Padding(
-                      padding: 12.0.verticalPadding,
-                      child: heading('Progress'),
-                    ),
                     DashboardCollections(),
                     16.0.vSpacer(),
-                    _StatTilesRow(user: user),
+                  ],
+                  _StatTilesRow(user: user),
+                  if (!user.isLoggedIn) ...[
+                    16.0.vSpacer(),
+                    const _SyncBanner(),
                   ],
                   100.0.vSpacer()
                 ],
@@ -503,12 +507,13 @@ class WordOfTheDayCard extends StatelessWidget {
   }
 }
 
-/// Compact icon + title + hint tile used for Bookmarks and Mastered words.
+/// Compact stat tile: an accent icon, a live count, and a label. Used for
+/// Bookmarks and Mastered words.
 class DashboardTile extends StatelessWidget {
   final IconData icon;
   final Color accent;
   final String title;
-  final String subtitle;
+  final int count;
   final VoidCallback onTap;
 
   const DashboardTile({
@@ -516,7 +521,7 @@ class DashboardTile extends StatelessWidget {
     required this.icon,
     required this.accent,
     required this.title,
-    required this.subtitle,
+    required this.count,
     required this.onTap,
   });
 
@@ -541,19 +546,24 @@ class DashboardTile extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            title,
+            '$count',
             style: GoogleFonts.quicksand(
-              fontSize: 16,
+              fontSize: 30,
+              height: 1.0,
               fontWeight: FontWeight.w700,
               color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 2),
           Text(
-            subtitle,
+            title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.quicksand(fontSize: 12.5, color: colorScheme.onSurfaceVariant),
+            style: GoogleFonts.quicksand(
+              fontSize: 13.5,
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -561,8 +571,10 @@ class DashboardTile extends StatelessWidget {
   }
 }
 
-/// The Bookmarks + Mastered tiles, side by side and equal height.
-class _StatTilesRow extends StatelessWidget {
+/// The Bookmarks + Mastered stat tiles, side by side and equal height. Counts
+/// come from [wordTrackingProvider] so they're live for guests (local) and
+/// members (Supabase) alike.
+class _StatTilesRow extends ConsumerWidget {
   final UserModel user;
   final bool useOpenContainer;
   const _StatTilesRow({required this.user, this.useOpenContainer = false});
@@ -572,7 +584,7 @@ class _StatTilesRow extends StatelessWidget {
     required IconData icon,
     required Color accent,
     required String title,
-    required String subtitle,
+    required int count,
     required Widget destination,
   }) {
     if (useOpenContainer) {
@@ -585,21 +597,22 @@ class _StatTilesRow extends StatelessWidget {
         closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         transitionType: ContainerTransitionType.fadeThrough,
         openBuilder: (context, _) => destination,
-        closedBuilder: (context, open) => DashboardTile(
-            icon: icon, accent: accent, title: title, subtitle: subtitle, onTap: open),
+        closedBuilder: (context, open) =>
+            DashboardTile(icon: icon, accent: accent, title: title, count: count, onTap: open),
       );
     }
     return DashboardTile(
       icon: icon,
       accent: accent,
       title: title,
-      subtitle: subtitle,
+      count: count,
       onTap: () => Navigate.push(context, destination),
     );
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tracking = ref.watch(wordTrackingProvider);
     return SizedBox(
       height: 150,
       child: Row(
@@ -611,7 +624,7 @@ class _StatTilesRow extends StatelessWidget {
               icon: Icons.bookmark_rounded,
               accent: const Color(0xFFF0A202),
               title: 'Bookmarks',
-              subtitle: 'Words you saved',
+              count: tracking.bookmarkedCount,
               destination: BookmarksPage(isBookMark: true, user: user),
             ),
           ),
@@ -622,8 +635,54 @@ class _StatTilesRow extends StatelessWidget {
               icon: Icons.workspace_premium_rounded,
               accent: const Color(0xFF6C63FF),
               title: 'Mastered',
-              subtitle: "Words you've learned",
+              count: tracking.masteredCount,
               destination: BookmarksPage(isBookMark: false, user: user),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Guest-only nudge: surfaces how many words are tracked on-device and invites
+/// sign-in to sync. Shown once the user has something worth saving (or a gentle
+/// prompt otherwise).
+class _SyncBanner extends ConsumerWidget {
+  const _SyncBanner();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tracking = ref.watch(wordTrackingProvider);
+    final colorScheme = Theme.of(context).colorScheme;
+    final total = tracking.bookmarkedCount + tracking.masteredCount;
+    final message = total > 0
+        ? "You're tracking $total ${total == 1 ? 'word' : 'words'} on this device — sign in to sync everywhere."
+        : 'Sign in to save your progress across devices.';
+    return _CardShell(
+      onTap: () => Navigate.push(context, AppSignIn()),
+      color: colorScheme.primaryContainer,
+      child: Row(
+        children: [
+          Icon(Icons.cloud_sync_rounded, color: colorScheme.onPrimaryContainer),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              message,
+              style: GoogleFonts.quicksand(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w600,
+                height: 1.3,
+                color: colorScheme.onPrimaryContainer,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            'Sign in',
+            style: GoogleFonts.quicksand(
+              fontWeight: FontWeight.w700,
+              color: colorScheme.onPrimaryContainer,
             ),
           ),
         ],
@@ -687,6 +746,10 @@ class DashboardDesktop extends ConsumerWidget {
                           child: DashboardCollections(),
                         ),
                         _StatTilesRow(user: user, useOpenContainer: true),
+                        if (!user.isLoggedIn) ...[
+                          16.0.vSpacer(),
+                          const _SyncBanner(),
+                        ],
                         16.0.vSpacer()
                       ]),
                     ),

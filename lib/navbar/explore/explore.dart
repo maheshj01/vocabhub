@@ -524,28 +524,15 @@ class _ExploreWordState extends ConsumerState<ExploreWord>
                     AnimatedBuilder(
                         animation: exploreController,
                         builder: (context, snapshot) {
-                          if (userProvider.isLoggedIn && !exploreController.isAnimating) {
+                          if (!exploreController.isAnimating) {
                             return WordMasteredPreference(
                               onChanged: (state) async {
-                                // Bookmarks are keyed on email; phone users link an
-                                // email before saving preferences.
-                                if (!await requireEmail(context)) return;
-                                final wordId = widget.word!.id;
-                                final userEmail = authController.user.email;
-                                String message = '';
-                                if (state) {
-                                  wordState = WordState.known;
-                                  message = knownWord;
-                                } else {
-                                  wordState = WordState.unknown;
-                                  message = unKnownWord;
-                                }
+                                // Local-first: guests are tracked on-device, members
+                                // sync to Supabase — the controller picks the backend.
+                                wordState = state ? WordState.known : WordState.unknown;
                                 setState(() {});
-                                final resp = await WordStateService.storeWordPreference(
-                                    wordId, userEmail, wordState);
-                                if (resp.didSucced) {
-                                  showToast(message);
-                                }
+                                await wordTrackingController.setWordState(widget.word!, wordState);
+                                showToast(state ? knownWord : unKnownWord);
                               },
                               value: wordState,
                             );

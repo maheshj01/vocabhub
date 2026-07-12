@@ -16,6 +16,7 @@ import 'package:vocabhub/controller/app_controller.dart';
 import 'package:vocabhub/controller/auth_controller.dart';
 import 'package:vocabhub/controller/collections_controller.dart';
 import 'package:vocabhub/controller/controllers.dart';
+import 'package:vocabhub/controller/word_tracking_controller.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/navbar/profile/about.dart';
 import 'package:vocabhub/navbar/profile/report.dart';
@@ -47,6 +48,11 @@ final appThemeProvider =
     StateNotifierProvider<VocabThemeNotifier, VocabThemeController>(VocabThemeNotifier.new);
 
 final collectionNotifier = ChangeNotifierProvider((ref) => CollectionsNotifier());
+
+/// Local-first word tracking (bookmarks + mastered). Guests are tracked
+/// on-device; members are backed by Supabase.
+final wordTrackingProvider =
+    ChangeNotifierProvider<WordTrackingController>((ref) => wordTrackingController);
 
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError();
@@ -82,6 +88,8 @@ Future<void> main() async {
   pushNotificationService.initService();
   // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   addWordController.initService();
+  wordTrackingController = WordTrackingController();
+  await wordTrackingController.initService();
   runApp(ProviderScope(
     overrides: [
       sharedPreferencesProvider.overrideWithValue(sharedPreferences),
@@ -112,6 +120,7 @@ late PushNotificationService pushNotificationService;
 late DashboardController dashboardController;
 late AuthController authController;
 late AddWordController addWordController;
+late WordTrackingController wordTrackingController;
 Logger logger = Logger('main.dart');
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 late FirebaseAnalytics firebaseAnalytics;
@@ -134,6 +143,9 @@ class _VocabAppState extends ConsumerState<VocabApp> {
 
     /// Re-validate the cached session against Supabase (no-op if signed out).
     await authController.restoreSession();
+
+    /// Load word tracking for the resolved session (local for guests).
+    await wordTrackingController.load(authController.user);
   }
 
   FirebaseAnalyticsObserver _observer = FirebaseAnalyticsObserver(analytics: firebaseAnalytics);

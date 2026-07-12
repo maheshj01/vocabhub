@@ -22,6 +22,8 @@ Future<void> handleAuthResult(
       } else {
         analytics.logSignIn(result.user);
       }
+      // Carry any words the guest tracked on-device into their account.
+      await wordTrackingController.mergeOnSignIn(result.user);
       if (!context.mounted) return;
       Navigate.pushAndPopAll(context, AdaptiveLayout(), transitionType: TransitionType.ttb);
       break;

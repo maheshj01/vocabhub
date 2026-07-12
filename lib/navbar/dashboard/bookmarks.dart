@@ -2,6 +2,8 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
+import 'package:vocabhub/constants/const.dart';
+import 'package:vocabhub/main.dart';
 import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/word.dart';
 import 'package:vocabhub/services/services.dart';
@@ -49,6 +51,17 @@ class _BookmarksMobile extends StatefulWidget {
 
 class _BookmarksMobileState extends State<_BookmarksMobile> {
   Future<void> getBookmarks() async {
+    // Guests are tracked on-device: resolve their words from the loaded list.
+    if (widget.user.email.isEmpty) {
+      final want = widget.isBookMark ? WordState.unknown : WordState.known;
+      final ids = wordTrackingController.states.entries
+          .where((e) => e.value == want)
+          .map((e) => e.key)
+          .toSet();
+      _bookmarksNotifier.value =
+          dashboardController.words.where((w) => ids.contains(w.id)).toList();
+      return;
+    }
     final words =
         await VocabStoreService.getBookmarks(widget.user.email, isBookmark: widget.isBookMark);
     _bookmarksNotifier.value = words;
@@ -264,6 +277,17 @@ class _BookmarksDesktop extends StatefulWidget {
 
 class _BookmarksDesktopState extends State<_BookmarksDesktop> {
   Future<void> getBookmarks() async {
+    // Guests are tracked on-device: resolve their words from the loaded list.
+    if (widget.user.email.isEmpty) {
+      final want = widget.isBookMark ? WordState.unknown : WordState.known;
+      final ids = wordTrackingController.states.entries
+          .where((e) => e.value == want)
+          .map((e) => e.key)
+          .toSet();
+      _bookmarksNotifier.value =
+          dashboardController.words.where((w) => ids.contains(w.id)).toList();
+      return;
+    }
     final words =
         await VocabStoreService.getBookmarks(widget.user.email, isBookmark: widget.isBookMark);
     _bookmarksNotifier.value = words;
