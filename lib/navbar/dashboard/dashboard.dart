@@ -653,38 +653,44 @@ class DashboardDesktop extends ConsumerWidget {
                 flex: 3,
                 child: ScrollConfiguration(
                   behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-                  child: ListView(children: [
-                    Padding(
-                      padding: 16.0.verticalPadding,
-                      child: heading('Word of the day'),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 680),
+                      child: ListView(children: [
+                        Padding(
+                          padding: 16.0.verticalPadding,
+                          child: heading('Word of the day'),
+                        ),
+                        OpenContainer<bool>(
+                          tappable: false,
+                          closedElevation: 0,
+                          middleColor: Colors.transparent,
+                          openColor: Colors.transparent,
+                          closedColor: Colors.transparent,
+                          closedShape:
+                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          transitionType: ContainerTransitionType.fadeThrough,
+                          openBuilder: (context, _) =>
+                              WordDetail(word: word, isWod: true, title: 'Word of the Day'),
+                          closedBuilder: (context, open) => WordOfTheDayCard(
+                            word: word,
+                            isError: word.word.isEmpty,
+                            onTap: open,
+                          ),
+                        ),
+                        Padding(
+                          padding: 12.0.verticalPadding,
+                          child: heading('Progress'),
+                        ),
+                        Padding(
+                          padding: 6.0.verticalPadding + 8.0.bottomPadding,
+                          child: DashboardCollections(),
+                        ),
+                        _StatTilesRow(user: user, useOpenContainer: true),
+                        16.0.vSpacer()
+                      ]),
                     ),
-                    OpenContainer<bool>(
-                      tappable: false,
-                      closedElevation: 0,
-                      middleColor: Colors.transparent,
-                      openColor: Colors.transparent,
-                      closedColor: Colors.transparent,
-                      closedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      transitionType: ContainerTransitionType.fadeThrough,
-                      openBuilder: (context, _) =>
-                          WordDetail(word: word, isWod: true, title: 'Word of the Day'),
-                      closedBuilder: (context, open) => WordOfTheDayCard(
-                        word: word,
-                        isError: word.word.isEmpty,
-                        onTap: open,
-                      ),
-                    ),
-                    Padding(
-                      padding: 12.0.verticalPadding,
-                      child: heading('Progress'),
-                    ),
-                    Padding(
-                      padding: 6.0.verticalPadding + 8.0.bottomPadding,
-                      child: DashboardCollections(),
-                    ),
-                    _StatTilesRow(user: user, useOpenContainer: true),
-                    16.0.vSpacer()
-                  ]),
+                  ),
                 )
                 //  Container(
                 //   alignment: Alignment.center,
