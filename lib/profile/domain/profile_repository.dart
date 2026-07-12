@@ -14,4 +14,13 @@ abstract class ProfileRepository {
 
   /// Aggregates the user's edit history into contribution tallies.
   Future<ContributionStats> contributionStats(UserModel user);
+
+  /// Whether [username] is free to claim (server-side check).
+  Future<bool> isUsernameAvailable(String username);
+
+  /// Persists profile edits. Returns true on success.
+  Future<bool> updateProfile(UserModel user);
+
+  /// Soft-deletes the account. Returns true on success.
+  Future<bool> deleteAccount(UserModel user);
 }

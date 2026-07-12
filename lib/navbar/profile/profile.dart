@@ -239,8 +239,11 @@ class UserProfileMobile extends StatelessWidget {
                                   Icons.edit,
                                   size: 30,
                                   onTap: () {
-                                    Navigator.of(context, rootNavigator: true).push(
-                                        PageRoutes.sharedAxis(EditProfile(onClose: () async {}),
+                                    Navigator.of(context, rootNavigator: true)
+                                        .push(PageRoutes.sharedAxis(
+                                            // Re-fetch the profile when edit closes
+                                            // so saved changes (e.g. username) show.
+                                            EditProfile(onClose: () => onRefresh?.call()),
                                             SharedAxisTransitionType.scaled));
                                   },
                                 )),

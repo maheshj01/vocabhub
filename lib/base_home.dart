@@ -12,14 +12,12 @@ import 'package:vocabhub/models/user.dart';
 import 'package:vocabhub/models/version.dart';
 import 'package:vocabhub/navbar/navbar.dart';
 import 'package:vocabhub/navbar/profile/edit.dart';
-import 'package:vocabhub/controller/tab_refresh_controller.dart';
 import 'package:vocabhub/navbar/search/search_view.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/pages/login.dart';
 import 'package:vocabhub/services/analytics.dart';
 import 'package:vocabhub/services/appstate.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/utils/auth_flow.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/utils/utils.dart';
 import 'package:vocabhub/widgets/whats_new.dart';
@@ -138,19 +136,15 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     ref.read(appProvider.notifier).setShowFAB(false);
     final appController = ref.watch(appProvider);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(message),
-        action: action != null
-            ? SnackBarAction(
-                label: action,
-                onPressed: () {
-                  onActionPressed?.call();
-                },
-              )
-            : null,
-        // bottom: kNavbarHeight,
-        duration: persist ? Duration(days: 1) : Duration(seconds: 3),
-      ));
+      NavbarNotifier.showSnackBar(context, message,
+          actionLabel: action,
+          bottom: kNavbarHeight * 1.2,
+          onActionPressed: onActionPressed,
+          duration: persist ? Duration(days: 1) : Duration(seconds: 3), onClosed: () {
+        if (mounted) {
+          ref.read(appProvider.notifier).copyWith(appController.copyWith(hasUpdate: false));
+        }
+      });
     });
   }
 
@@ -231,11 +225,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                 elevation: 3.5,
                 isExtended: appController.extended,
                 icon: icon,
-                onPressed: () async {
-                  // Adding a word writes email-keyed data; ensure the user has a
-                  // verified email (phone users link one here) before proceeding.
-                  if (!await requireEmail(context)) return;
-                  if (!context.mounted) return;
+                onPressed: () {
                   Navigate.push(
                       context,
                       AddWord(
@@ -289,10 +279,6 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                     ref.read(appProvider.notifier).copyWith(appController.copyWith(
                         index: x, showFAB: x < 2 && user!.isLoggedIn, extended: true));
 
-                    // General per-tab refresh signal: ask the selected tab's view
-                    // to silently re-fetch. Only the profile tab reacts today.
-                    ref.read(tabRefreshProvider.notifier).requestRefresh(x);
-
                     /// Simulate DragGesture on pageView
                     final pageController = exploreController.pageController;
                     if (EXPLORE_INDEX == x && SizeUtils.isMobile) {
@@ -308,7 +294,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                     }
                   },
                   decoration: FloatingNavbarDecoration(
-                    height: kNavbarHeight * 1.2,
+                    height: kNavbarHeight * 2.0,
                     backgroundColor: SizeUtils.isDesktop
                         ? colorScheme.surfaceContainerHighest
                         : colorScheme.secondaryContainer,

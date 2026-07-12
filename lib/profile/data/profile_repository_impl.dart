@@ -44,4 +44,13 @@ class ProfileRepositoryImpl implements ProfileRepository {
     }
     return ContributionStats(wordsAdded: added, wordsEdited: edited, underReview: review);
   }
+
+  @override
+  Future<bool> isUsernameAvailable(String username) => UserService.isUsernameValid(username);
+
+  @override
+  Future<bool> updateProfile(UserModel user) => UserService.updateUser(user);
+
+  @override
+  Future<bool> deleteAccount(UserModel user) => UserService.deleteUser(user);
 }

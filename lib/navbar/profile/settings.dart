@@ -89,6 +89,23 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
     ));
   }
 
+  // --- Account actions (kept out of the widget tree for clarity) ----------
+
+  /// Links a verified email to a phone-only account (via Google).
+  Future<void> _linkEmail() async {
+    final linked = await requireEmail(context);
+    if (linked && context.mounted) {
+      NavbarNotifier.showSnackBar(context, 'Email linked successfully');
+    }
+  }
+
+  /// Signs out and returns to the sign-in screen.
+  Future<void> _logout() async {
+    await authController.signOut();
+    if (!context.mounted) return;
+    Navigate.pushAndPopAll(context, AppSignIn());
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -444,19 +461,10 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                 hLine(),
                 if (user.email.isEmpty) ...[
                   settingTile('Add email to sync your data',
-                      leadingIcon: Icons.mark_email_read_outlined, onTap: () async {
-                    final linked = await requireEmail(context);
-                    if (linked && context.mounted) {
-                      NavbarNotifier.showSnackBar(context, 'Email linked successfully');
-                    }
-                  }),
+                      leadingIcon: Icons.mark_email_read_outlined, onTap: _linkEmail),
                   hLine(),
                 ],
-                settingTile('Logout', leadingIcon: Icons.logout, onTap: () async {
-                  await authController.signOut();
-                  if (!context.mounted) return;
-                  Navigate.pushAndPopAll(context, AppSignIn());
-                }),
+                settingTile('Logout', leadingIcon: Icons.logout, onTap: _logout),
                 hLine(),
                 30.0.vSpacer(),
                 VersionBuilder(),
