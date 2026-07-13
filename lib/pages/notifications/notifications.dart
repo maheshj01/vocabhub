@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/models.dart';
@@ -370,14 +371,15 @@ class UserNotificationTile extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          VHIcon(
-            stateToNotificationIconData(edit.state!),
-            size: 46,
-            iconColor: iconColor,
-            border: Border.all(color: iconColor, width: 2),
-            backgroundColor: Colors.transparent,
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(stateToNotificationIconData(edit.state!), color: iconColor, size: 22),
           ),
-          12.0.hSpacer(),
+          14.0.hSpacer(),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -385,16 +387,21 @@ class UserNotificationTile extends StatelessWidget {
                 buildNotification(
                   editTypeToUserNotification(edit, user),
                   edit.word,
-                  style: TextStyle(
-                      color: colorScheme.onSurface, fontSize: 15, fontWeight: FontWeight.w500),
+                  style: GoogleFonts.quicksand(
+                      color: colorScheme.onSurface,
+                      fontSize: 15,
+                      height: 1.3,
+                      fontWeight: FontWeight.w500),
                 ),
                 10.0.vSpacer(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(edit.created_at!.formatDate(),
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600)),
+                        style: GoogleFonts.quicksand(
+                            fontSize: 12.5,
+                            color: colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w600)),
                     if (edit.state == EditState.pending)
                       VHButton(
                         onTap: () => onCancel!(),
@@ -452,8 +459,11 @@ class AdminNotificationTile extends StatelessWidget {
                 child: buildNotification(
                   editTypeToAdminNotification(edit, user),
                   edit.word,
-                  style: TextStyle(
-                      color: colorScheme.onSurface, fontSize: 15, fontWeight: FontWeight.w500),
+                  style: GoogleFonts.quicksand(
+                      color: colorScheme.onSurface,
+                      fontSize: 15,
+                      height: 1.3,
+                      fontWeight: FontWeight.w500),
                 ),
               ),
             ],
@@ -471,8 +481,10 @@ class AdminNotificationTile extends StatelessWidget {
                       child: Text(
                         edit.created_at!.formatDate(),
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600),
+                        style: GoogleFonts.quicksand(
+                            fontSize: 12.5,
+                            color: colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w600),
                       ),
                     ),
                   ],
@@ -525,14 +537,14 @@ class _NotificationCard extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               onTap: onTap,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(20),
               child: Ink(
                 decoration: BoxDecoration(
                   color: colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: colorScheme.outlineVariant),
                 ),
-                child: Padding(padding: const EdgeInsets.all(14), child: child),
+                child: Padding(padding: const EdgeInsets.all(16), child: child),
               ),
             ),
           ),
@@ -563,7 +575,7 @@ class _StatusChip extends StatelessWidget {
           6.0.hSpacer(),
           Text(
             state.toName().capitalize()!,
-            style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 12.5),
+            style: GoogleFonts.quicksand(color: color, fontWeight: FontWeight.w700, fontSize: 12),
           ),
         ],
       ),

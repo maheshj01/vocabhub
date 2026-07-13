@@ -1,6 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:vocabhub/constants/const.dart';
 import 'package:vocabhub/main.dart';
@@ -130,49 +131,75 @@ class WordListBuilder extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ListView.builder(
-      itemCount: words.length,
-      padding: EdgeInsets.only(top: 16, bottom: kNotchedNavbarHeight * 1.5),
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
-          child: OpenContainer(
-              closedColor: Colors.transparent,
-              closedElevation: 0,
-              openColor: Colors.transparent,
-              openElevation: 0,
-              openShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest, width: 1)),
-              closedShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest, width: 1)),
-              openBuilder: (BuildContext context, VoidCallback openContainer) {
-                return WordDetail(word: words[index]);
-              },
-              middleColor: Colors.transparent,
-              tappable: true,
-              transitionType: ContainerTransitionType.fadeThrough,
-              closedBuilder: (BuildContext context, VoidCallback openContainer) {
-                return ListTile(
-                  minVerticalPadding: 24,
-                  title: Text(words[index].word),
-                  trailing: hasTrailing!
-                      ? IconButton(
-                          icon: Icon(
-                            iconData,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                          onPressed:
-                              onTrailingTap != null ? () => onTrailingTap!(words[index]) : null,
-                        )
-                      : null,
-                );
-              }),
-        );
-      },
+    final colorScheme = Theme.of(context).colorScheme;
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 720),
+        child: ListView.builder(
+          itemCount: words.length,
+          padding: EdgeInsets.only(top: 12, bottom: kNotchedNavbarHeight * 1.5),
+          itemBuilder: (context, index) {
+            final word = words[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: OpenContainer(
+                closedColor: colorScheme.surfaceContainerHighest,
+                closedElevation: 0,
+                openColor: colorScheme.surface,
+                openElevation: 0,
+                closedShape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(color: colorScheme.outlineVariant),
+                ),
+                openBuilder: (context, _) => WordDetail(word: word),
+                middleColor: Colors.transparent,
+                tappable: true,
+                transitionType: ContainerTransitionType.fadeThrough,
+                closedBuilder: (context, openContainer) => Padding(
+                  padding: EdgeInsets.fromLTRB(16, 14, hasTrailing! ? 8 : 16, 14),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              word.word,
+                              style: GoogleFonts.quicksand(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w700,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                            if (word.meaning.trim().isNotEmpty) ...[
+                              const SizedBox(height: 3),
+                              Text(
+                                word.meaning,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.quicksand(
+                                  fontSize: 13,
+                                  height: 1.3,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      if (hasTrailing!)
+                        IconButton(
+                          icon: Icon(iconData, color: colorScheme.primary),
+                          onPressed: onTrailingTap != null ? () => onTrailingTap!(word) : null,
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }
@@ -202,10 +229,16 @@ class _WordListPageState extends State<WordListPage> {
         child: ResponsiveBuilder(
             desktopBuilder: (context) {
               return WordListPageMobile(
-                  title: widget.title, hasTrailing: widget.hasTrailing, words: widget.words);
+                  title: widget.title,
+                  hasTrailing: widget.hasTrailing,
+                  words: widget.words,
+                  onTrailingTap: widget.onTrailingTap);
             },
             mobileBuilder: (context) => WordListPageMobile(
-                title: widget.title, hasTrailing: widget.hasTrailing, words: widget.words)));
+                title: widget.title,
+                hasTrailing: widget.hasTrailing,
+                words: widget.words,
+                onTrailingTap: widget.onTrailingTap)));
   }
 }
 
@@ -224,42 +257,84 @@ class WordListPageMobile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final body = ListView.builder(
-      itemCount: words.length,
-      padding: EdgeInsets.only(top: 16, bottom: kNotchedNavbarHeight * 1.5),
-      itemBuilder: (context, index) {
-        return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
-            child: ListTile(
-              onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => WordDetail(word: words[index])));
-              },
-              minVerticalPadding: 24,
-              title: Text(words[index].word),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest, width: 1)),
-              trailing: hasTrailing!
-                  ? IconButton(
-                      icon: Icon(
-                        Icons.bookmark,
-                        color: Theme.of(context).colorScheme.secondary,
+    final colorScheme = Theme.of(context).colorScheme;
+    final body = Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 720),
+        child: ListView.builder(
+          itemCount: words.length,
+          padding: EdgeInsets.only(top: 12, bottom: kNotchedNavbarHeight * 1.5),
+          itemBuilder: (context, index) {
+            final word = words[index];
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => WordDetail(word: word))),
+                  borderRadius: BorderRadius.circular(20),
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: colorScheme.outlineVariant),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(16, 14, hasTrailing! ? 8 : 16, 14),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  word.word,
+                                  style: GoogleFonts.quicksand(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w700,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ),
+                                if (word.meaning.trim().isNotEmpty) ...[
+                                  const SizedBox(height: 3),
+                                  Text(
+                                    word.meaning,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.quicksand(
+                                      fontSize: 13,
+                                      height: 1.3,
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          if (hasTrailing!)
+                            IconButton(
+                              icon: Icon(Icons.bookmark_rounded, color: colorScheme.primary),
+                              onPressed: onTrailingTap != null ? () => onTrailingTap!(word) : null,
+                            ),
+                        ],
                       ),
-                      onPressed: onTrailingTap != null ? () => onTrailingTap!(words[index]) : null,
-                    )
-                  : null,
-            ));
-      },
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
 
     return Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          elevation: 15,
-          title: Text('$title'),
+          elevation: 0,
+          title: Text('$title', style: GoogleFonts.quicksand(fontWeight: FontWeight.w700)),
         ),
         body: body);
   }

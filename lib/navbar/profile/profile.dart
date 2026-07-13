@@ -147,203 +147,233 @@ class UserProfileMobile extends StatelessWidget {
   final ContributionStats stats;
   final bool isReadOnly;
 
+  static const Color _accentAdded = Color(0xFF57A96E);
+  static const Color _accentEdited = Color(0xFF6C63FF);
+  static const Color _accentReview = Color(0xFFF0A202);
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
-    Widget headLine(String title, {double padding = 16.0}) {
+    BoxDecoration cardDecoration() => BoxDecoration(
+          color: colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: colorScheme.outlineVariant),
+        );
+
+    Widget sectionTitle(String title) => Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 10),
+          child: Text(title, style: textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w700)),
+        );
+
+    Widget roleChip() {
+      final color = user.isAdmin ? _accentReview : colorScheme.primary;
       return Container(
-        padding: padding.horizontalPadding,
-        alignment: Alignment.centerLeft,
-        child: heading(title),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(user.isAdmin ? 'Admin' : 'User',
+            style: textTheme.labelMedium!.copyWith(color: color, fontWeight: FontWeight.w700)),
       );
     }
 
-    final contributions = <({String label, int value})>[
-      (label: 'Words Added', value: stats.wordsAdded),
-      (label: 'Words Edited', value: stats.wordsEdited),
-      (label: 'Under Review', value: stats.underReview),
-    ];
-
-    return RefreshIndicator(
-      onRefresh: () async => onRefresh?.call(),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-        child: ListView(
+    Widget header() {
+      return Container(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 22),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: colorScheme.outlineVariant),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              colorScheme.primaryContainer.withValues(alpha: 0.55),
+              colorScheme.surfaceContainerHighest,
+            ],
+          ),
+        ),
+        child: Column(
           children: [
-            Align(
+            SizedBox(
+              height: 36,
+              child: (!isReadOnly && size.width <= 600)
+                  ? Align(
+                      alignment: Alignment.centerRight,
+                      child: VHIcon(
+                        Icons.settings,
+                        size: 38,
+                        onTap: () {
+                          Navigator.of(context, rootNavigator: true).push(PageRoutes.sharedAxis(
+                              const SettingsPage(), SharedAxisTransitionType.horizontal));
+                        },
+                      ),
+                    )
+                  : null,
+            ),
+            Stack(
               alignment: Alignment.center,
-              child: Padding(
-                padding: 18.0.verticalPadding,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: 8.0.horizontalPadding,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const SizedBox(width: 20),
-                          RichText(
-                            text: TextSpan(children: [
-                              TextSpan(
-                                text: 'Joined ',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall!
-                                    .copyWith(fontWeight: FontWeight.w600, fontSize: 12),
-                              ),
-                              TextSpan(
-                                text: user.created_at?.formatDate() ?? '—',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall!
-                                    .copyWith(fontWeight: FontWeight.w600),
-                              ),
-                            ]),
-                          ),
-                          size.width > 600 || isReadOnly
-                              ? const SizedBox.shrink()
-                              : VHIcon(
-                                  Icons.settings,
-                                  size: 38,
-                                  onTap: () {
-                                    Navigator.of(context, rootNavigator: true).push(
-                                        PageRoutes.sharedAxis(const SettingsPage(),
-                                            SharedAxisTransitionType.horizontal));
-                                  },
-                                ),
-                        ],
-                      ),
-                    ),
-                    Stack(
-                      children: [
-                        Padding(
-                          padding: 16.0.allPadding,
-                          child: CircleAvatar(
-                            radius: 46,
-                            backgroundColor: colorScheme.primary.withOpacity(0.2),
-                            child: CircularAvatar(
-                              url: '${user.avatarUrl}',
-                              name: user.name.initals(),
-                              radius: 40,
-                            ),
-                          ),
-                        ),
-                        isReadOnly
-                            ? const SizedBox.shrink()
-                            : Positioned(
-                                right: 8,
-                                bottom: 16,
-                                child: VHIcon(
-                                  Icons.edit,
-                                  size: 30,
-                                  onTap: () {
-                                    Navigator.of(context, rootNavigator: true)
-                                        .push(PageRoutes.sharedAxis(
-                                            // Re-fetch the profile when edit closes
-                                            // so saved changes (e.g. username) show.
-                                            EditProfile(onClose: () => onRefresh?.call()),
-                                            SharedAxisTransitionType.scaled));
-                                  },
-                                )),
-                      ],
-                    ),
-                    Padding(
-                      padding: 8.0.horizontalPadding,
-                      child: Text(
-                        '@${user.username} ${!user.isAdmin ? ' (User)' : '(Admin)'}',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleSmall!
-                            .copyWith(fontWeight: FontWeight.w600, fontSize: 14),
-                      ),
-                    ),
-                    Text(
-                      '${user.name.capitalize()}',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                          fontSize: user.name.length > 20 ? 20 : 26, fontWeight: FontWeight.w500),
-                    ),
-                    10.0.vSpacer(),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              padding: 8.0.verticalPadding,
-              decoration: BoxDecoration(
-                  borderRadius: 16.0.allRadius, border: Border.all(color: colorScheme.secondary)),
-              child: Column(
-                children: [
-                  headLine('Contributions'),
-                  SizedBox(
-                    height: 80,
-                    child: Row(
-                      children: [
-                        for (final item in contributions)
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  '${item.value}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineMedium!
-                                      .copyWith(fontSize: 28, fontWeight: FontWeight.w600),
-                                ),
-                                4.0.vSpacer(),
-                                Text(
-                                  item.label,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall!
-                                      .copyWith(fontSize: 12, fontWeight: FontWeight.w800),
-                                ),
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
+              children: [
+                CircleAvatar(
+                  radius: 48,
+                  backgroundColor: colorScheme.primary.withValues(alpha: 0.18),
+                  child: CircularAvatar(
+                    url: '${user.avatarUrl}',
+                    name: user.name.initals(),
+                    radius: 42,
                   ),
-                ],
-              ),
-            ),
-            16.0.vSpacer(),
-            isReadOnly
-                ? const SizedBox.shrink()
-                : Container(
-                    decoration: BoxDecoration(
-                        borderRadius: 16.0.allRadius,
-                        border: Border.all(color: colorScheme.secondary)),
-                    child: ListTile(
-                      title: headLine('My Collections', padding: 0),
-                      contentPadding: 8.0.allPadding + 8.0.horizontalPadding,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-                      trailing: VHIcon(Icons.bookmarks),
-                      onTap: () async {
-                        if (size.width < 600) {
-                          NavbarNotifier.hideBottomNavBar = true;
-                        }
-                        await showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            builder: (context) {
-                              return DraggableScrollableSheet(
-                                  maxChildSize: 0.9,
-                                  initialChildSize: 0.9,
-                                  expand: false,
-                                  builder: (context, controller) {
-                                    return CollectionsNavigator(
-                                        controller: controller, word: Word.init());
-                                  });
-                            });
-                        NavbarNotifier.hideBottomNavBar = false;
+                ),
+                if (!isReadOnly)
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: VHIcon(
+                      Icons.edit,
+                      size: 32,
+                      onTap: () {
+                        Navigator.of(context, rootNavigator: true).push(PageRoutes.sharedAxis(
+                            // Re-fetch the profile when edit closes so saved
+                            // changes (e.g. username) show.
+                            EditProfile(onClose: () => onRefresh?.call()),
+                            SharedAxisTransitionType.scaled));
                       },
                     ),
                   ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Text(
+              user.name.isEmpty ? 'Guest' : (user.name.capitalize() ?? user.name),
+              textAlign: TextAlign.center,
+              style: textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (user.username.isNotEmpty) ...[
+                  Flexible(
+                    child: Text('@${user.username}',
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.bodyMedium!.copyWith(color: colorScheme.onSurfaceVariant)),
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                roleChip(),
+              ],
+            ),
+            if (user.created_at != null) ...[
+              const SizedBox(height: 8),
+              Text('Joined ${user.created_at!.formatDate()}',
+                  style: textTheme.bodySmall!.copyWith(color: colorScheme.onSurfaceVariant)),
+            ],
           ],
+        ),
+      );
+    }
+
+    Widget contributionStat(IconData icon, Color color, int value, String label) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 22),
+          const SizedBox(height: 8),
+          Text('$value', style: textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: textTheme.bodySmall!.copyWith(color: colorScheme.onSurfaceVariant),
+          ),
+        ],
+      );
+    }
+
+    Widget contributionsCard() {
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+        decoration: cardDecoration(),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+                child: contributionStat(Icons.add_circle_outline_rounded, _accentAdded,
+                    stats.wordsAdded, 'Words Added')),
+            Expanded(
+                child: contributionStat(
+                    Icons.edit_outlined, _accentEdited, stats.wordsEdited, 'Words Edited')),
+            Expanded(
+                child: contributionStat(Icons.hourglass_bottom_rounded, _accentReview,
+                    stats.underReview, 'Under Review')),
+          ],
+        ),
+      );
+    }
+
+    Widget collectionsTile() {
+      return Container(
+        decoration: cardDecoration(),
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          leading: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: colorScheme.primary.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(Icons.bookmarks_rounded, color: colorScheme.primary, size: 22),
+          ),
+          title: Text('My Collections',
+              style: textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w600)),
+          subtitle: Text('Your saved word lists',
+              style: textTheme.bodySmall!.copyWith(color: colorScheme.onSurfaceVariant)),
+          trailing: Icon(Icons.chevron_right_rounded, color: colorScheme.onSurfaceVariant),
+          onTap: () async {
+            if (size.width < 600) {
+              NavbarNotifier.hideBottomNavBar = true;
+            }
+            await showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                builder: (context) {
+                  return DraggableScrollableSheet(
+                      maxChildSize: 0.9,
+                      initialChildSize: 0.9,
+                      expand: false,
+                      builder: (context, controller) {
+                        return CollectionsNavigator(controller: controller, word: Word.init());
+                      });
+                });
+            NavbarNotifier.hideBottomNavBar = false;
+          },
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () async => onRefresh?.call(),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 560),
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+            children: [
+              header(),
+              const SizedBox(height: 24),
+              sectionTitle('Contributions'),
+              contributionsCard(),
+              if (!isReadOnly) ...[
+                const SizedBox(height: 20),
+                sectionTitle('Library'),
+                collectionsTile(),
+              ],
+            ],
+          ),
         ),
       ),
     );
@@ -366,7 +396,8 @@ class UserProfileDesktop extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(title: const Text('Profile')),
+      // Profile is a root tab, not a pushed route — no back button.
+      appBar: AppBar(title: const Text('Profile'), automaticallyImplyLeading: false),
       body: Row(
         children: [
           Expanded(
