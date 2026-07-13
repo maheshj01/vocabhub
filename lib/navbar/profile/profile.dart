@@ -87,7 +87,6 @@ class _UserProfileState extends ConsumerState<UserProfile> {
 
   @override
   Widget build(BuildContext context) {
-    print('UserProfile build called with isReadOnly=${widget.isReadOnly}, email=${widget.email}');
     // Silently re-fetch when this tab is (re)selected. General per-tab signal;
     // only refresh once we already have data, so first open isn't double-loaded.
     ref.listen<int>(
@@ -360,24 +359,27 @@ class UserProfileMobile extends StatelessWidget {
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: () async => onRefresh?.call(),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 560),
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
-            children: [
-              header(),
-              const SizedBox(height: 24),
-              sectionTitle('Contributions'),
-              contributionsCard(),
-              if (!isReadOnly) ...[
-                const SizedBox(height: 20),
-                sectionTitle('Library'),
-                collectionsTile(),
+    return SafeArea(
+      bottom: false,
+      child: RefreshIndicator(
+        onRefresh: () async => onRefresh?.call(),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560),
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+              children: [
+                header(),
+                const SizedBox(height: 24),
+                sectionTitle('Contributions'),
+                contributionsCard(),
+                if (!isReadOnly) ...[
+                  const SizedBox(height: 20),
+                  sectionTitle('Library'),
+                  collectionsTile(),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
