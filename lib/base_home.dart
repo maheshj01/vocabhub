@@ -3,9 +3,12 @@ import 'dart:async';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:restart_app/restart_app.dart';
+import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/user.dart';
@@ -40,17 +43,11 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 5), askForRating);
-    Future.wait([
-      isUpdateAvailable(),
-    ]);
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (!user!.isLoggedIn) {
-        showSnackBar("Sign in for better experience", action: 'Sign In', persist: true,
-            onActionPressed: () async {
-          NavbarNotifier.clear();
-          await Navigate.pushAndPopAll(context, AppSignIn());
-        });
-      }
+    // Future.wait([
+    //   isUpdateAvailable(),
+    // ]);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForShorebirdPatch();
     });
   }
 
@@ -120,6 +117,138 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
     } catch (_) {
       setState(() {});
     }
+  }
+
+  // --- Shorebird over-the-air (Dart-only) patches -------------------------
+  final ShorebirdUpdater _shorebirdUpdater = ShorebirdUpdater();
+  static const Duration _patchDownloadDuration = Duration(seconds: 15);
+  bool _restartPromptShown = false;
+  bool _patchFailed = false;
+
+  static const MethodChannel _restartChannel = MethodChannel('com.vocabhub.app/restart');
+  static const String _restartMethod = 'restart';
+
+  /// Relaunches the app so a downloaded Shorebird patch takes effect. Android
+  /// uses a native channel for a true process restart; other platforms fall
+  /// back to the restart_app plugin.
+  Future<void> restartApp() async {
+    try {
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+        await _restartChannel.invokeMethod(_restartMethod);
+      } else {
+        await Restart.restartApp(
+          notificationTitle: 'Restarting Vocabhub',
+          notificationBody: 'Tap to reopen the app.',
+        );
+      }
+    } catch (e) {
+      debugPrint('Failed to restart app: $e');
+    }
+  }
+
+  /// Checks for a Shorebird patch and surfaces it. No-op on web / non-Shorebird
+  /// builds ([checkForUpdate] returns [UpdateStatus.unavailable] there), and any
+  /// failure is swallowed so a bad check never disrupts the app.
+  Future<void> _checkForShorebirdPatch() async {
+    if (kIsWeb) return;
+    try {
+      final status = await _shorebirdUpdater.checkForUpdate();
+      if (!mounted) return;
+      if (status == UpdateStatus.outdated) {
+        _showPatchAvailableSnackBar();
+      } else if (status == UpdateStatus.restartRequired) {
+        _showRestartSnackBar();
+      }
+    } catch (_) {
+      // ignore: a failed patch check is non-fatal.
+    }
+  }
+
+  /// Floating snack that clears the bottom navbar on mobile.
+  SnackBar _patchSnack({
+    required Widget content,
+    SnackBarAction? action,
+    Duration duration = const Duration(seconds: 500),
+  }) {
+    return SnackBar(
+      content: content,
+      behavior: SnackBarBehavior.floating,
+      margin: EdgeInsets.only(
+          left: 10, right: 10, bottom: SizeUtils.isMobile ? kNavbarHeight * 1.2 : 16),
+      duration: duration,
+      action: action,
+    );
+  }
+
+  Widget _downloadProgress() {
+    return TweenAnimationBuilder<double>(
+      duration: _patchDownloadDuration,
+      tween: Tween(begin: 0.0, end: 1.0),
+      onEnd: () {
+        if (_patchFailed || !mounted) return;
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        _showRestartSnackBar();
+      },
+      builder: (context, value, child) {
+        return Row(
+          children: [
+            SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(value: value, strokeWidth: 2)),
+            const SizedBox(width: 12),
+            const Flexible(child: Text('Downloading update…')),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showPatchAvailableSnackBar() {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(_patchSnack(
+      content: const Text('A new update is available.'),
+      action: SnackBarAction(
+        label: 'Update',
+        onPressed: () async {
+          messenger.hideCurrentSnackBar();
+          // Show download progress while the patch downloads.
+          messenger.showSnackBar(_patchSnack(
+            content: _downloadProgress(),
+            duration: _patchDownloadDuration,
+            action: SnackBarAction(label: 'Hide', onPressed: messenger.hideCurrentSnackBar),
+          ));
+          try {
+            await _shorebirdUpdater.update();
+            // Prompt a restart even if the progress snack was dismissed early.
+            Future.delayed(_patchDownloadDuration, () {
+              if (mounted) _showRestartSnackBar();
+            });
+          } on UpdateException catch (error) {
+            _patchFailed = true;
+            if (!mounted) return;
+            messenger.hideCurrentSnackBar();
+            messenger.showSnackBar(_patchSnack(
+              content: Text(error.message),
+              action: SnackBarAction(label: 'Close', onPressed: messenger.hideCurrentSnackBar),
+            ));
+          }
+        },
+      ),
+    ));
+  }
+
+  void _showRestartSnackBar() {
+    if (_restartPromptShown || !mounted) return;
+    _restartPromptShown = true;
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(_patchSnack(
+      content: const Text('Update ready — restart to apply.'),
+      action: SnackBarAction(
+        label: 'Restart',
+        onPressed: restartApp,
+      ),
+    ));
   }
 
   late AppState state;
