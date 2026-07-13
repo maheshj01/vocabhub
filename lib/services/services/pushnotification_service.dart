@@ -170,14 +170,18 @@ class PushNotificationService extends ServiceBase with ChangeNotifier {
   }
 
   Future<void> checkPermissions() async {
-    final NotificationSettings settings = await _firebaseMessaging.getNotificationSettings();
-    print('User granted permissions: ${settings.authorizationStatus}');
-    if (settings.authorizationStatus != AuthorizationStatus.authorized) {
-      final newSettings = await _firebaseMessaging.requestPermission();
-      if (newSettings.authorizationStatus != AuthorizationStatus.authorized) {
-        print('User declined permissions');
-        return;
+    try {
+      final NotificationSettings settings = await _firebaseMessaging.getNotificationSettings();
+      _logger.d('User granted permissions: ${settings.authorizationStatus}');
+      if (settings.authorizationStatus != AuthorizationStatus.authorized) {
+        final newSettings = await _firebaseMessaging.requestPermission();
+        if (newSettings.authorizationStatus != AuthorizationStatus.authorized) {
+          _logger.d('User declined permissions');
+        }
       }
+    } catch (e) {
+      // Never let a messaging/plugin error block app startup.
+      _logger.d('checkPermissions skipped: $e');
     }
   }
 

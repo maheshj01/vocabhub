@@ -85,7 +85,7 @@ Future<void> main() async {
   pushNotificationService = PushNotificationService(_firebaseMessaging);
   searchController.initService();
   exploreController.initService();
-  pushNotificationService.initService();
+  if (!isIntegrationTest) pushNotificationService.initService();
   // await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
   addWordController.initService();
   wordTrackingController = WordTrackingController();
@@ -127,6 +127,10 @@ Logger logger = Logger('main.dart');
 /// are suppressed. Integration tests set this to false so `pumpAndSettle()` can
 /// settle instead of spinning forever on an endless animation.
 bool ambientAnimationsEnabled = true;
+
+/// Set by integration tests to skip plugin-heavy startup that isn't backed in
+/// the test environment (e.g. push-notification permission requests).
+bool isIntegrationTest = false;
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 late FirebaseAnalytics firebaseAnalytics;
 final InitializationSettings initializationSettings = InitializationSettings(
