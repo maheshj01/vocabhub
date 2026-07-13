@@ -37,10 +37,6 @@ lint:
 
 format-lint: format lint
 
-update_submodules:
-	cd grpc-schemas && git checkout $(GRPC_VERSION) && git pull origin $(GRPC_VERSION)
-	cd unity && git checkout $(UNITY_VERSION) && git pull origin $(UNITY_VERSION)
-
 run:
 	$(FLUTTER) run $(if $(RELEASE),--release,) --dart-define-from-file=$(ENV_FILE)
 
@@ -84,29 +80,29 @@ upload:
 release:
 	$(DART) tooling/iv3_cli.dart release $(if $(VERSION),--version=$(VERSION))
 
-release_ios: update_submodules
+release_ios:
 	$(FLUTTER) build ipa --dart-define-from-file=$(ENV_FILE)
 
-release_android: update_submodules generate
+release_android: generate
 	$(FLUTTER) build appbundle --dart-define-from-file=$(ENV_FILE)
 
-release_apk: update_submodules
+release_apk:
 	$(FLUTTER) build apk --dart-define-from-file=$(ENV_FILE) $(if $(split),--split-per-abi,)
 
 # Create a release for shorebird
-shorebird_release_android: update_submodules
+shorebird_release_android:
 	shorebird release android --dart-define-from-file=$(ENV_FILE) --flutter-version=$(FLUTTER_VERSION)
 
-shorebird_release_ios: update_submodules
+shorebird_release_ios:
 	shorebird release ios --dart-define-from-file=$(ENV_FILE) --flutter-version=$(FLUTTER_VERSION)
 
 shorebird_release: shorebird_release_ios shorebird_release_android
 
 # Caution when using the patch command, it will patch the current release with the new changes. Ensure you have the flags set correctly.
-shorebird_patch_android: update_submodules
+shorebird_patch_android:
 	shorebird patch android --dart-define-from-file=$(ENV_FILE)
 
-shorebird_patch_ios: update_submodules
+shorebird_patch_ios:
 	shorebird patch ios --dart-define-from-file=$(ENV_FILE)
 
 generate:
