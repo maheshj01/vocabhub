@@ -45,6 +45,9 @@ void main() {
   // Endless/looping animations (e.g. the splash aurora) make pumpAndSettle()
   // spin forever. Suppress them so the tests can settle and proceed.
   app.ambientAnimationsEnabled = false;
+  // Skip plugin-heavy startup (push-notification permission requests) that
+  // isn't backed in the test environment.
+  app.isIntegrationTest = true;
 
   bool skip = false;
 
