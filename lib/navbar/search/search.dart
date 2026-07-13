@@ -291,44 +291,63 @@ class WordList extends StatefulWidget {
 }
 
 class _WordListState extends State<WordList> {
+  static const int _pageSize = 20;
+  final List<Word> _results = [];
+  final ValueNotifier<List<Word>> wordsNotifier = ValueNotifier<List<Word>>([]);
+  String _query = '';
+  int _offset = 0;
+  bool _hasMore = true;
+  bool _isLoading = false;
+  Timer? _debounce;
+
   @override
   void initState() {
-    wordsNotifier = ValueNotifier<List<Word>>([]);
-    widget.controller ??= ScrollController();
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _words = dashboardController.words;
-      wordsNotifier.value = _words;
-    });
+    widget.controller ??= ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _load(reset: true));
   }
-
-  bool isInSynonym(String query, List<String>? synonyms) {
-    bool result = false;
-    if (synonyms == null || synonyms.isEmpty) {
-      return result;
-    }
-    for (var element in synonyms) {
-      if (element.toLowerCase() == query.toLowerCase()) {
-        result = true;
-      }
-    }
-    return result;
-  }
-
-  List<Word> _words = [];
-  late final ValueNotifier<List<Word>> wordsNotifier;
 
   @override
-  void activate() {
-    wordsNotifier = ValueNotifier<List<Word>>([]);
-    super.activate();
+  void dispose() {
+    _debounce?.cancel();
+    wordsNotifier.dispose();
+    super.dispose();
   }
 
-  Future<void> search(String query) async {
-    final results = await VocabStoreService.searchWord(query);
-    if (mounted) {
-      wordsNotifier.value = results;
+  /// Loads a page for the current mode: browse (empty query) or search — both
+  /// fetched and paged from the database.
+  Future<void> _load({bool reset = false}) async {
+    if (_isLoading) return;
+    if (reset) {
+      _offset = 0;
+      _hasMore = true;
+      _results.clear();
     }
+    if (!_hasMore) return;
+    _isLoading = true;
+    final page = _query.isEmpty
+        ? await VocabStoreService.getWordsPage(limit: _pageSize, offset: _offset)
+        : await VocabStoreService.searchWord(_query, limit: _pageSize, offset: _offset);
+    _isLoading = false;
+    if (!mounted) return;
+    _results.addAll(page);
+    _offset += page.length;
+    _hasMore = page.length == _pageSize;
+    wordsNotifier.value = List<Word>.of(_results);
+  }
+
+  void _onQueryChanged(String value) {
+    _query = value.trim();
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 350), () => _load(reset: true));
+  }
+
+  bool _onScrollNotification(ScrollNotification notification) {
+    final metrics = notification.metrics;
+    if (_hasMore && !_isLoading && metrics.pixels >= metrics.maxScrollExtent - 320) {
+      _load();
+    }
+    return false;
   }
 
   @override
@@ -346,30 +365,15 @@ class _WordListState extends State<WordList> {
                       padding: 16.0.horizontalPadding,
                       child: SearchBuilder(
                         controller: searchController.controller,
-                        ontap: () {
-                          if (widget.onFocus != null) {
-                            widget.onFocus!();
-                          }
-                        },
-                        onChanged: (x) {
-                          _words = dashboardController.words;
-                          if (x.isEmpty) {
-                            wordsNotifier.value = _words;
-                            return;
-                          }
-                          search(x);
-                        },
+                        ontap: () => widget.onFocus?.call(),
+                        onChanged: _onQueryChanged,
                       ),
                     ),
                   ),
                   widget.isExpanded == null
                       ? SizedBox.shrink()
                       : IconButton(
-                          onPressed: () {
-                            if (widget.onExpanded != null) {
-                              widget.onExpanded!();
-                            }
-                          },
+                          onPressed: () => widget.onExpanded?.call(),
                           icon: Icon(
                             widget.isExpanded == true
                                 ? Icons.keyboard_arrow_down
@@ -379,18 +383,29 @@ class _WordListState extends State<WordList> {
                 ],
               ),
               Expanded(
-                  child: value.isEmpty
-                      ? EmptyWord()
-                      : ListView.builder(
-                          itemCount: value.length,
+                child: value.isEmpty
+                    ? (_isLoading ? const Center(child: CircularProgressIndicator()) : EmptyWord())
+                    : NotificationListener<ScrollNotification>(
+                        onNotification: _onScrollNotification,
+                        child: ListView.builder(
+                          itemCount: value.length + (_hasMore ? 1 : 0),
                           padding: EdgeInsets.symmetric(horizontal: 8),
                           controller: widget.controller,
                           itemBuilder: (context, index) {
+                            if (index >= value.length) {
+                              return const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 20),
+                                child: Center(child: CircularProgressIndicator()),
+                              );
+                            }
                             return WordListTile(
                               word: value[index],
                               onSelect: (x) => widget.onSelected(value[index]),
                             );
-                          })),
+                          },
+                        ),
+                      ),
+              ),
             ],
           );
         });

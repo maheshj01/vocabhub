@@ -169,13 +169,19 @@ class DatabaseService {
     String columnValue, {
     String columnName = '${Constants.ID_COLUMN}',
     String tableName = '${Constants.VOCAB_TABLE_NAME}',
+    int? limit,
+    int offset = 0,
   }) async {
     return _run(() async {
-      return await _supabase
+      final query = _supabase
           .from(tableName)
           .select()
-          // .ilike(columnName, "%$columnValue%")
-          .or('word.ilike.%$columnValue%,meaning.ilike.%$columnValue%');
+          .or('word.ilike.%$columnValue%,meaning.ilike.%$columnValue%')
+          .order(Constants.WORD_COLUMN, ascending: true);
+      if (limit != null) {
+        return await query.range(offset, offset + limit - 1);
+      }
+      return await query;
     });
   }
 
@@ -232,9 +238,16 @@ class DatabaseService {
   static Future<DbResponse> findAll({
     String tableName = '${Constants.VOCAB_TABLE_NAME}',
     bool sort = false,
+    int? limit,
+    int offset = 0,
   }) async {
     return _run(() async {
-      return await _supabase.from(tableName).select().timeout(Constants.timeoutDuration);
+      final query =
+          _supabase.from(tableName).select().order(Constants.WORD_COLUMN, ascending: true);
+      if (limit != null) {
+        return await query.range(offset, offset + limit - 1).timeout(Constants.timeoutDuration);
+      }
+      return await query.timeout(Constants.timeoutDuration);
     });
   }
 

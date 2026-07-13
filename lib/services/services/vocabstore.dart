@@ -163,9 +163,10 @@ class VocabStoreService {
     }
   }
 
-  static Future<List<Word>> searchWord(String query, {bool sort = false}) async {
+  static Future<List<Word>> searchWord(String query,
+      {bool sort = false, int? limit, int offset = 0}) async {
     final response = await DatabaseService.findRowsContaining(query,
-        columnName: Constants.WORD_COLUMN, tableName: tableName);
+        columnName: Constants.WORD_COLUMN, tableName: tableName, limit: limit, offset: offset);
     List<Word> words = [];
     if (response.status == 200) {
       words = (response.data as List).map((e) => Word.fromJson(e)).toList();
@@ -174,6 +175,18 @@ class VocabStoreService {
       }
     }
     return words;
+  }
+
+  /// A single page of the full vocabulary, ordered alphabetically. Used by the
+  /// search screen's browse mode so the list is fetched from the database in
+  /// pages rather than held entirely in memory.
+  static Future<List<Word>> getWordsPage({int limit = 20, int offset = 0}) async {
+    final response =
+        await DatabaseService.findAll(tableName: tableName, limit: limit, offset: offset);
+    if (response.status == 200 && response.data is List) {
+      return (response.data as List).map((e) => Word.fromJson(e)).toList();
+    }
+    return [];
   }
 
   Future<bool> downloadFile() async {
