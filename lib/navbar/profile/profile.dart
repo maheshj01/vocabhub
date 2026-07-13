@@ -318,39 +318,44 @@ class UserProfileMobile extends StatelessWidget {
       return Container(
         decoration: cardDecoration(),
         clipBehavior: Clip.antiAlias,
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          leading: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: colorScheme.primary.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(14),
+        // ListTile paints its background + ink on the nearest Material; give it
+        // one so the card's DecoratedBox doesn't swallow the ripple.
+        child: Material(
+          type: MaterialType.transparency,
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            leading: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: colorScheme.primary.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(Icons.bookmarks_rounded, color: colorScheme.primary, size: 22),
             ),
-            child: Icon(Icons.bookmarks_rounded, color: colorScheme.primary, size: 22),
+            title: Text('My Collections',
+                style: textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w600)),
+            subtitle: Text('Your saved word lists',
+                style: textTheme.bodySmall!.copyWith(color: colorScheme.onSurfaceVariant)),
+            trailing: Icon(Icons.chevron_right_rounded, color: colorScheme.onSurfaceVariant),
+            onTap: () async {
+              if (size.width < 600) {
+                NavbarNotifier.hideBottomNavBar = true;
+              }
+              await showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (context) {
+                    return DraggableScrollableSheet(
+                        maxChildSize: 0.9,
+                        initialChildSize: 0.9,
+                        expand: false,
+                        builder: (context, controller) {
+                          return CollectionsNavigator(controller: controller, word: Word.init());
+                        });
+                  });
+              NavbarNotifier.hideBottomNavBar = false;
+            },
           ),
-          title: Text('My Collections',
-              style: textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w600)),
-          subtitle: Text('Your saved word lists',
-              style: textTheme.bodySmall!.copyWith(color: colorScheme.onSurfaceVariant)),
-          trailing: Icon(Icons.chevron_right_rounded, color: colorScheme.onSurfaceVariant),
-          onTap: () async {
-            if (size.width < 600) {
-              NavbarNotifier.hideBottomNavBar = true;
-            }
-            await showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (context) {
-                  return DraggableScrollableSheet(
-                      maxChildSize: 0.9,
-                      initialChildSize: 0.9,
-                      expand: false,
-                      builder: (context, controller) {
-                        return CollectionsNavigator(controller: controller, word: Word.init());
-                      });
-                });
-            NavbarNotifier.hideBottomNavBar = false;
-          },
         ),
       );
     }
