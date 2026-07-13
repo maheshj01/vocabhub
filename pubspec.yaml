@@ -39,9 +39,11 @@ dependencies:
   phone_form_field: ^10.0.18
   pull_to_refresh: ^2.0.0
   realtime_client: ^2.7.3
+  restart_app: ^1.8.3
   rive: ^0.14.7
   share_plus: ^13.1.0
   shared_preferences: ^2.5.5
+  shorebird_code_push: ^2.0.7
   smooth_page_indicator: ^2.0.1
   supabase: ^2.10.6
   url_launcher: ^6.3.2
