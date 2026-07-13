@@ -24,37 +24,82 @@ class OnboardingSlideView extends StatelessWidget {
           child: CachedNetworkImage(imageUrl: slide.assetPath, fit: BoxFit.contain),
         );
       case SlideMedia.rive:
-        return _RiveMedia(assetPath: slide.assetPath);
+        return _RiveMedia(
+          assetPath: slide.assetPath,
+          animationName: slide.riveAnimations.isNotEmpty ? slide.riveAnimations.first : null,
+        );
     }
   }
 }
 
-/// Loads and plays a Rive asset. Holds the [FileLoader] for the widget's
-/// lifetime so it isn't recreated on rebuild.
+/// Loads and plays a Rive asset that has a plain timeline animation (no state
+/// machine). [RiveWidgetController] requires a state machine, so instead we
+/// drive the artboard with a [SingleAnimationPainter]. Renders through
+/// [Factory.flutter] so it works on web and mobile alike.
 class _RiveMedia extends StatefulWidget {
   final String assetPath;
-  const _RiveMedia({required this.assetPath});
+  final String? animationName;
+  const _RiveMedia({required this.assetPath, this.animationName});
 
   @override
   State<_RiveMedia> createState() => _RiveMediaState();
 }
 
 class _RiveMediaState extends State<_RiveMedia> {
-  late final fileLoader = FileLoader.fromAsset(
-    widget.assetPath,
-    riveFactory: Factory.rive,
-  );
+  File? _file;
+  Artboard? _artboard;
+  SingleAnimationPainter? _painter;
+  Object? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final file = await File.asset(widget.assetPath, riveFactory: Factory.flutter);
+      if (file == null) throw 'could not open ${widget.assetPath}';
+      final artboard = file.defaultArtboard();
+      if (artboard == null) throw 'no artboard';
+      // Use the named animation if given, else the artboard's first.
+      final name = widget.animationName ??
+          (artboard.animationCount() > 0 ? artboard.animationAt(0).name : null);
+      if (name == null) throw 'no animation';
+      final painter = SingleAnimationPainter(name, fit: Fit.cover);
+      if (!mounted) {
+        file.dispose();
+        return;
+      }
+      setState(() {
+        _file = file;
+        _artboard = artboard;
+        _painter = painter;
+      });
+    } catch (e) {
+      if (mounted) setState(() => _error = e);
+    }
+  }
+
+  @override
+  void dispose() {
+    _painter?.dispose();
+    _file?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return RiveWidgetBuilder(
-      fileLoader: fileLoader,
-      builder: (context, state) => switch (state) {
-        RiveLoading() => const Center(child: CircularProgressIndicator()),
-        RiveFailed() => Center(child: Text('Failed to load: ${state.error}')),
-        RiveLoaded() => RiveWidget(controller: state.controller, fit: Fit.cover),
-      },
-    );
+    if (_error != null) {
+      return Center(child: Text('Failed to load animation: $_error'));
+    }
+    final artboard = _artboard;
+    final painter = _painter;
+    if (artboard == null || painter == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return RiveArtboardWidget(artboard: artboard, painter: painter);
   }
 }
 

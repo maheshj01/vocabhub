@@ -14,7 +14,7 @@ class ErrorPage extends StatefulWidget {
 class _ErrorPageState extends State<ErrorPage> {
   late final fileLoader = FileLoader.fromAsset(
     'assets/rive/error.riv',
-    riveFactory: Factory.rive,
+    riveFactory: Factory.flutter,
   );
 
   @override

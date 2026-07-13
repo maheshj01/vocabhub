@@ -7,6 +7,9 @@ class Assets {
   /// 'assets/rive/wod.riv'
   static const String wod = 'assets/rive/wod.riv';
 
+  /// 'assets/rive/new_wod.riv'
+  static const String newWod = 'assets/rive/new_wod.riv';
+
   /// 'assets/rive/balloon.riv'
   static const String balloon = 'assets/rive/balloon.riv';
 

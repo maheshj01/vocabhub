@@ -31,7 +31,7 @@ const List<OnboardingSlide> kOnboardingSlides = [
     title: 'Word of the Day',
     description: 'Stay inspired with our captivating "Word of the Day" feature, '
         'discovering intriguing new words with definitions, examples, and '
-        'insights every day, all year long.',
+        'Notification insights every day, all year long.',
     assetPath: Assets.wod,
     media: SlideMedia.rive,
     riveAnimations: ['Animation 1'],
