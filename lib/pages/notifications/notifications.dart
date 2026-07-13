@@ -85,20 +85,55 @@ class _NotificationsMobileState extends ConsumerState<NotificationsMobile> {
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       user = ref.read(userNotifierProvider);
       getNotifications();
     });
   }
 
-  Future<void> getNotifications() async {
-    final resp = await EditHistoryService.getUserEdits(user!);
+  static const int _pageSize = 20;
+  final ScrollController _scrollController = ScrollController();
+  final List<NotificationModel> _items = [];
+  int _offset = 0;
+  bool _hasMore = true;
+  bool _isLoadingMore = false;
+
+  /// Refresh: reload from the first page.
+  Future<void> getNotifications() => _loadPage(reset: true);
+
+  Future<void> _loadPage({bool reset = false}) async {
+    if (user == null) return;
+    if (reset) {
+      _offset = 0;
+      _hasMore = true;
+    }
+    final resp = await EditHistoryService.getUserEdits(user!, limit: _pageSize, offset: _offset);
+    if (!mounted) return;
     if (resp.didSucced && resp.data != null) {
       final data = resp.data as List<NotificationModel>;
-      // data.sort((a, b) => b.edit.created_at!.compareTo(a.edit.created_at!));
-      historyNotifier.value = data;
-    } else {
+      if (reset) _items.clear();
+      _items.addAll(data);
+      _offset += data.length;
+      _hasMore = data.length == _pageSize;
+      historyNotifier.value = List<NotificationModel>.of(_items);
+    } else if (reset) {
       NavbarNotifier.showSnackBar(context, 'failed to get notifications');
+    }
+  }
+
+  Future<void> _loadMore() async {
+    if (_isLoadingMore || !_hasMore) return;
+    setState(() => _isLoadingMore = true);
+    await _loadPage();
+    if (mounted) setState(() => _isLoadingMore = false);
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final position = _scrollController.position;
+    if (_hasMore && !_isLoadingMore && position.pixels >= position.maxScrollExtent - 320) {
+      _loadMore();
     }
   }
 
@@ -181,6 +216,7 @@ class _NotificationsMobileState extends ConsumerState<NotificationsMobile> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     historyNotifier.dispose();
     super.dispose();
   }
@@ -237,83 +273,74 @@ class _NotificationsMobileState extends ConsumerState<NotificationsMobile> {
                   if (value.isEmpty || !userRef.isLoggedIn) {
                     return _emptyState(context);
                   }
-                  if (user!.isAdmin) {
-                    return RefreshIndicator(
-                      onRefresh: () async {
-                        await getNotifications();
-                      },
-                      child: ListView.builder(
-                          padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight),
-                          itemBuilder: (context, index) {
-                            final edit = value[index].edit;
-                            final editor = value[index].user;
-                            return AdminNotificationTile(
-                              edit: edit,
-                              user: editor,
-                              onAvatarTap: () {
-                                Navigate.push(
-                                    context,
-                                    Scaffold(
-                                        appBar: AppBar(
-                                          elevation: 0,
-                                          centerTitle: false,
-                                          title: Text(
-                                            'Profile',
-                                          ),
-                                        ),
-                                        body: UserProfile(
-                                          email: editor.email,
-                                          isReadOnly: true,
-                                        )));
-                              },
-                              onAction: (approved) async {
-                                if (approved) {
-                                  updateGlobalDatabase(edit, EditState.approved, editor);
-                                } else {
-                                  updateEditRequest(edit, EditState.rejected, editor);
-                                }
-                              },
-                              onTap: () {
-                                Navigate.push(
-                                    context,
-                                    NotificationDetail(
-                                      word: edit.word,
-                                      title: 'Edit History',
-                                      isNotification: true,
-                                    ));
-                              },
-                            );
-                          },
-                          itemCount: value.length),
-                    );
-                  }
                   return RefreshIndicator(
-                    onRefresh: () async {
-                      await getNotifications();
-                    },
+                    onRefresh: getNotifications,
                     child: ListView.builder(
-                        padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight),
-                        itemBuilder: (context, index) {
-                          final edit = value[index].edit;
-                          final editUser = value[index].user;
-                          return UserNotificationTile(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.only(top: 8, bottom: kBottomNavigationBarHeight),
+                      itemCount: value.length + (_hasMore ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        // Load-more footer while further pages remain.
+                        if (index >= value.length) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 20),
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+                        final edit = value[index].edit;
+                        final editor = value[index].user;
+                        if (user!.isAdmin) {
+                          return AdminNotificationTile(
                             edit: edit,
-                            user: editUser,
+                            user: editor,
+                            onAvatarTap: () {
+                              Navigate.push(
+                                  context,
+                                  Scaffold(
+                                      appBar: AppBar(
+                                        elevation: 0,
+                                        centerTitle: false,
+                                        title: Text('Profile'),
+                                      ),
+                                      body: UserProfile(email: editor.email, isReadOnly: true)));
+                            },
+                            onAction: (approved) async {
+                              if (approved) {
+                                updateGlobalDatabase(edit, EditState.approved, editor);
+                              } else {
+                                updateEditRequest(edit, EditState.rejected, editor);
+                              }
+                            },
                             onTap: () {
                               Navigate.push(
                                   context,
-                                  NotificationEditDetailResponsive(
+                                  NotificationDetail(
                                     word: edit.word,
-                                    title: 'Edit Detail',
+                                    title: 'Edit History',
                                     isNotification: true,
                                   ));
                             },
-                            onCancel: () async {
-                              updateEditRequest(edit, EditState.cancelled, editUser);
-                            },
                           );
-                        },
-                        itemCount: value.length),
+                        }
+                        return UserNotificationTile(
+                          edit: edit,
+                          user: editor,
+                          onTap: () {
+                            Navigate.push(
+                                context,
+                                NotificationEditDetailResponsive(
+                                  word: edit.word,
+                                  title: 'Edit Detail',
+                                  isNotification: true,
+                                ),
+                                isRootNavigator: false);
+                          },
+                          onCancel: () async {
+                            updateEditRequest(edit, EditState.cancelled, editor);
+                          },
+                        );
+                      },
+                    ),
                   );
                 }),
           ),

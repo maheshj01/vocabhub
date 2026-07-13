@@ -45,7 +45,7 @@ run:
 	$(FLUTTER) run $(if $(RELEASE),--release,) --dart-define-from-file=$(ENV_FILE)
 
 run-web:
-	$(FLUTTER) run -d chrome --wasm --dart-define-from-file=$(ENV_FILE) --web-port=63133
+	$(FLUTTER) run -d web-server --dart-define-from-file=$(ENV_FILE) --web-port=63133
 
 # make update_version VERSION=4.0.5+360666
 update_version:

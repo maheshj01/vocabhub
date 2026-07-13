@@ -83,7 +83,7 @@ class EditHistoryService {
 
   /// get edits made by user to show under notifications
   ///
-  static Future<Response> getUserEdits(UserModel user) async {
+  static Future<Response> getUserEdits(UserModel user, {int? limit, int offset = 0}) async {
     final resp = Response(didSucced: false, message: "Failed");
 
     DbResponse response;
@@ -91,7 +91,7 @@ class EditHistoryService {
     if (user.isAdmin) {
       response = await DatabaseService.findRowsByInnerJoinOnColumnValue(
           '${Constants.USER_EMAIL_COLUMN}', '${user.email}',
-          table1: _tableName, table2: Constants.USER_TABLE_NAME);
+          table1: _tableName, table2: Constants.USER_TABLE_NAME, limit: limit, offset: offset);
       if (response.status == 200) {
         final data = (response.data as List).map((e) => NotificationModel.fromJson(e)).toList();
         resp.didSucced = true;
@@ -105,6 +105,8 @@ class EditHistoryService {
         user.email,
         columnName: '${Constants.USER_EMAIL_COLUMN}',
         tableName: _tableName,
+        limit: limit,
+        offset: offset,
       );
       if (response.status == 200) {
         final data = (response.data as List).map((e) => NotificationModel.fromJson(e)).toList();

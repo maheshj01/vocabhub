@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:supabase/supabase.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/notifications/notification_detail.dart';
@@ -147,44 +146,53 @@ class _NotificationEditDetailState extends State<NotificationEditDetail> {
               ),
               body: currentEdit == null || lastApprovedEdit == null
                   ? LoadingWidget()
-                  : Column(
-                      children: [
-                        DifferenceVisualizer(
-                            title: 'Word',
-                            newVersion: currentEdit!.word,
-                            oldVersion: lastApprovedEdit!.word),
-                        DifferenceVisualizer(
-                            title: 'Meaning',
-                            newVersion: currentEdit!.meaning,
-                            oldVersion: lastApprovedEdit!.meaning),
-                        DifferenceVisualizer(
-                            title: 'Synonyms',
-                            newVersion: currentEdit!.synonyms!.join(','),
-                            oldVersion: lastApprovedEdit!.synonyms!.join(',')),
-                        DifferenceVisualizer(
-                            title: 'Examples',
-                            newVersion: currentEdit!.examples!.join(','),
-                            oldVersion: lastApprovedEdit!.examples!.join(',')),
-                        DifferenceVisualizer(
-                            title: 'Mnemonics',
-                            newVersion: currentEdit!.mnemonics!.join(','),
-                            oldVersion: lastApprovedEdit!.mnemonics!.join(',')),
-                        ListTile(
-                          title: Text('Comments'),
-                          subtitle: Text(
-                            currentEdit!.comments,
-                            style: TextStyle(fontStyle: FontStyle.italic),
+                  : Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 720),
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                          child: Column(
+                            children: [
+                              DifferenceVisualizer(
+                                  title: 'Word',
+                                  newVersion: currentEdit!.word,
+                                  oldVersion: lastApprovedEdit!.word),
+                              DifferenceVisualizer(
+                                  title: 'Meaning',
+                                  newVersion: currentEdit!.meaning,
+                                  oldVersion: lastApprovedEdit!.meaning),
+                              DifferenceVisualizer(
+                                  title: 'Synonyms',
+                                  newVersion: currentEdit!.synonyms!.join(','),
+                                  oldVersion: lastApprovedEdit!.synonyms!.join(',')),
+                              DifferenceVisualizer(
+                                  title: 'Examples',
+                                  newVersion: currentEdit!.examples!.join(','),
+                                  oldVersion: lastApprovedEdit!.examples!.join(',')),
+                              DifferenceVisualizer(
+                                  title: 'Mnemonics',
+                                  newVersion: currentEdit!.mnemonics!.join(','),
+                                  oldVersion: lastApprovedEdit!.mnemonics!.join(',')),
+                              ListTile(
+                                title: Text('Comments'),
+                                subtitle: Text(
+                                  currentEdit!.comments,
+                                  style: TextStyle(fontStyle: FontStyle.italic),
+                                ),
+                              ),
+                              ListTile(
+                                leading: CircularAvatar(
+                                  name: currentEdit!.users_mobile!.name,
+                                  url: currentEdit!.users_mobile!.avatarUrl,
+                                ),
+                                subtitle:
+                                    Text(currentEdit!.created_at!.toLocal().standardDateTime()),
+                                title: Text(currentEdit!.users_mobile!.name),
+                              ),
+                            ],
                           ),
                         ),
-                        ListTile(
-                          leading: CircularAvatar(
-                            name: currentEdit!.users_mobile!.name,
-                            url: currentEdit!.users_mobile!.avatarUrl,
-                          ),
-                          subtitle: Text(currentEdit!.created_at!.toLocal().standardDateTime()),
-                          title: Text(currentEdit!.users_mobile!.name),
-                        ),
-                      ],
+                      ),
                     ));
         });
   }

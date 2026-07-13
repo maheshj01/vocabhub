@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase/supabase.dart';
 import 'package:vocabhub/exports.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/pages/notifications/edit_expansion_tile.dart';
@@ -199,18 +198,23 @@ class _NotificationDetailMobileState extends ConsumerState<NotificationDetailMob
                             return LoadingWidget();
                           }
                           final List<EditHistory> list = (value.data as List<EditHistory>);
-                          return ListView.builder(
-                              itemCount: list.length,
-                              itemBuilder: (context, index) {
-                                final EditHistory lastApprovedEdit;
-                                final EditHistory currentEdit = list[index];
-                                if (index == list.length - 1 || list.length == 1) {
-                                  lastApprovedEdit = currentEdit;
-                                } else {
-                                  lastApprovedEdit = list[index + 1];
-                                }
-                                return EditExpansionDetail(currentEdit, lastApprovedEdit);
-                              });
+                          return Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 720),
+                              child: ListView.builder(
+                                  itemCount: list.length,
+                                  itemBuilder: (context, index) {
+                                    final EditHistory lastApprovedEdit;
+                                    final EditHistory currentEdit = list[index];
+                                    if (index == list.length - 1 || list.length == 1) {
+                                      lastApprovedEdit = currentEdit;
+                                    } else {
+                                      lastApprovedEdit = list[index + 1];
+                                    }
+                                    return EditExpansionDetail(currentEdit, lastApprovedEdit);
+                                  }),
+                            ),
+                          );
                         }),
                   ),
                 ],

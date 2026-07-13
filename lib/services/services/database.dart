@@ -131,13 +131,19 @@ class DatabaseService {
     String columnName = '${Constants.ID_COLUMN}',
     String tableName = '${Constants.VOCAB_TABLE_NAME}',
     bool sort = false,
+    int? limit,
+    int offset = 0,
   }) async {
     return _run(() async {
-      return await _supabase
+      final query = _supabase
           .from(tableName)
           .select()
           .eq(columnName, columnValue)
           .order(Constants.CREATED_AT_COLUMN, ascending: sort);
+      if (limit != null) {
+        return await query.range(offset, offset + limit - 1);
+      }
+      return await query;
     });
   }
 
@@ -180,13 +186,18 @@ class DatabaseService {
     String table1 = '${Constants.EDIT_HISTORY_TABLE}',
     bool ascending = false,
     String table2 = '${Constants.USER_TABLE_NAME}',
+    int? limit,
+    int offset = 0,
   }) async {
     return _run(() async {
-      return await _supabase
+      final query = _supabase
           .from(table1)
           .select('*, $table2!inner(*)')
           .order('created_at', ascending: ascending);
-      // .eq('$table2.$innerJoinColumn', value)
+      if (limit != null) {
+        return await query.range(offset, offset + limit - 1);
+      }
+      return await query;
     });
   }
 

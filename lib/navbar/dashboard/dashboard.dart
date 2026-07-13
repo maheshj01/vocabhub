@@ -754,14 +754,7 @@ class DashboardDesktop extends ConsumerWidget {
                       ]),
                     ),
                   ),
-                )
-                //  Container(
-                //   alignment: Alignment.center,
-                //   child: SizedBox(
-                //     width: 600,
-                //     child: DashboardMobile(),
-                //   ),
-                ),
+                )),
             Expanded(flex: 2, child: NotificationsMobile()),
           ],
         ),
