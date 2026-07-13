@@ -12,6 +12,7 @@
         <!--#docregion
     android-queries-->
     </queries>
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:label="vocabhub"
         android:name="${applicationName}"
