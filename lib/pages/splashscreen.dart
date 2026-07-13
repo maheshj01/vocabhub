@@ -30,11 +30,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with TickerProvider
     vsync: this,
   );
 
-  /// Loops forever. Drives the drifting background glows and the title shimmer.
+  /// Loops (when ambient animations are enabled) to drive the drifting glows
+  /// and the title shimmer. Started in [initState] so it can be suppressed in
+  /// tests — an endless animation makes `pumpAndSettle()` never settle.
   late final AnimationController _ambient = AnimationController(
     duration: const Duration(seconds: 8),
     vsync: this,
-  )..repeat();
+  );
 
   late final Animation<double> _fadeIn = CurvedAnimation(
     parent: _entrance,
@@ -52,6 +54,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with TickerProvider
   void initState() {
     super.initState();
     _entrance.forward();
+    if (ambientAnimationsEnabled) _ambient.repeat();
     _entrance.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         // Onboarding is now responsive, so it runs on every form factor: show it

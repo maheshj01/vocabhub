@@ -42,6 +42,10 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  // Endless/looping animations (e.g. the splash aurora) make pumpAndSettle()
+  // spin forever. Suppress them so the tests can settle and proceed.
+  app.ambientAnimationsEnabled = false;
+
   bool skip = false;
 
   group('User should be onboarded', () {

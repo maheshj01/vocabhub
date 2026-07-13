@@ -122,6 +122,11 @@ late AuthController authController;
 late AddWordController addWordController;
 late WordTrackingController wordTrackingController;
 Logger logger = Logger('main.dart');
+
+/// When false, looping "ambient" animations (e.g. the splash aurora/shimmer)
+/// are suppressed. Integration tests set this to false so `pumpAndSettle()` can
+/// settle instead of spinning forever on an endless animation.
+bool ambientAnimationsEnabled = true;
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 late FirebaseAnalytics firebaseAnalytics;
 final InitializationSettings initializationSettings = InitializationSettings(
