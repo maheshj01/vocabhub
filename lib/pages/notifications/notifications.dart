@@ -9,7 +9,6 @@ import 'package:vocabhub/navbar/profile/profile.dart';
 import 'package:vocabhub/pages/notifications/NotificationEditDetail.dart';
 import 'package:vocabhub/pages/notifications/notification_detail.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/themes/vocab_theme.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/button.dart';
 import 'package:vocabhub/widgets/circle_avatar.dart';
@@ -87,7 +86,7 @@ class _NotificationsMobileState extends ConsumerState<NotificationsMobile> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      user = ref.watch(userNotifierProvider);
+      user = ref.read(userNotifierProvider);
       getNotifications();
     });
   }
@@ -186,6 +185,31 @@ class _NotificationsMobileState extends ConsumerState<NotificationsMobile> {
     super.dispose();
   }
 
+  Widget _emptyState(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.notifications_none_rounded, size: 64, color: colorScheme.outline),
+          12.0.vSpacer(),
+          Text('No notifications yet',
+              style:
+                  Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w600)),
+          6.0.vSpacer(),
+          Padding(
+            padding: 32.0.horizontalPadding,
+            child: Text(
+              'Your edit requests and their updates will show up here.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: colorScheme.onSurfaceVariant),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   final GlobalKey<ScaffoldState> notificationsKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -211,9 +235,7 @@ class _NotificationsMobileState extends ConsumerState<NotificationsMobile> {
                     return LoadingWidget();
                   }
                   if (value.isEmpty || !userRef.isLoggedIn) {
-                    return Center(
-                      child: Text('No notifications'),
-                    );
+                    return _emptyState(context);
                   }
                   if (user!.isAdmin) {
                     return RefreshIndicator(
@@ -315,79 +337,54 @@ class UserNotificationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final iconColor = stateToIconColor(edit.state!);
     final colorScheme = Theme.of(context).colorScheme;
-    return InkWell(
-      onTap: () {
-        onTap?.call();
-      },
-      child: Container(
-        height: 100,
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          border: Border.all(color: colorScheme.surfaceContainerHighest, width: 1),
-          borderRadius: BorderRadius.circular(4),
-          boxShadow: [VocabTheme.notificationCardShadow],
-        ),
-        margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        padding: EdgeInsets.symmetric(vertical: 4),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              VHIcon(
-                stateToNotificationIconData(edit.state!),
-                size: 58,
-                iconColor: iconColor,
-                border: Border.all(color: iconColor, width: 2),
-                backgroundColor: Colors.transparent,
-              ),
-              8.0.hSpacer(),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+    return _NotificationCard(
+      onTap: () => onTap?.call(),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          VHIcon(
+            stateToNotificationIconData(edit.state!),
+            size: 46,
+            iconColor: iconColor,
+            border: Border.all(color: iconColor, width: 2),
+            backgroundColor: Colors.transparent,
+          ),
+          12.0.hSpacer(),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildNotification(
+                  editTypeToUserNotification(edit, user),
+                  edit.word,
+                  style: TextStyle(
+                      color: colorScheme.onSurface, fontSize: 15, fontWeight: FontWeight.w500),
+                ),
+                10.0.vSpacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: buildNotification(editTypeToUserNotification(edit, user), edit.word,
-                            style: TextStyle(
-                                color: colorScheme.onSurfaceVariant,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500)),
-                      ),
-                    ),
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(edit.created_at!.formatDate(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall!
-                                  .copyWith(fontSize: 12, fontWeight: FontWeight.w600)),
-                          edit.state == EditState.pending
-                              ? VHButton(
-                                  onTap: () {
-                                    onCancel!();
-                                  },
-                                  label: 'Cancel',
-                                  width: 100,
-                                  height: 30,
-                                  fontSize: 16,
-                                  foregroundColor: Colors.white,
-                                  backgroundColor: Colors.red,
-                                )
-                              : SizedBox.shrink()
-                        ],
-                      ),
-                    ),
+                    Text(edit.created_at!.formatDate(),
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600)),
+                    if (edit.state == EditState.pending)
+                      VHButton(
+                        onTap: () => onCancel!(),
+                        label: 'Cancel',
+                        width: 92,
+                        height: 34,
+                        fontSize: 14,
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.red,
+                      )
+                    else
+                      _StatusChip(state: edit.state!),
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -413,103 +410,134 @@ class AdminNotificationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     /// Approve or reject card
     final colorScheme = Theme.of(context).colorScheme;
-    return Container(
-      height: 120,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: colorScheme.surfaceContainerHighest, width: 1),
-        boxShadow: [VocabTheme.notificationCardShadow],
-      ),
-      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      padding: EdgeInsets.symmetric(vertical: 4),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            CircularAvatar(
-              url: user.avatarUrl,
-              name: user.name,
-              onTap: onAvatarTap,
-            ),
-            8.0.hSpacer(),
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  onTap?.call();
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+    return _NotificationCard(
+      onTap: () => onTap?.call(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircularAvatar(url: user.avatarUrl, name: user.name, onTap: onAvatarTap),
+              12.0.hSpacer(),
+              Expanded(
+                child: buildNotification(
+                  editTypeToAdminNotification(edit, user),
+                  edit.word,
+                  style: TextStyle(
+                      color: colorScheme.onSurface, fontSize: 15, fontWeight: FontWeight.w500),
+                ),
+              ),
+            ],
+          ),
+          12.0.vSpacer(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Row(
                   children: [
-                    Expanded(
-                      child: Align(
-                        child: buildNotification(editTypeToAdminNotification(edit, user), edit.word,
-                            style: TextStyle(
-                                color: colorScheme.onSurfaceVariant,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500)),
-                      ),
-                    ),
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 100,
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    circle(color: stateToIconColor(edit.state!), size: 12),
-                                    6.0.hSpacer(),
-                                    Text(
-                                      edit.state!.toName().capitalize()!,
-                                    )
-                                  ],
-                                ),
-                              ),
-                              4.0.vSpacer(),
-                              Text(edit.created_at!.formatDate(),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall!
-                                      .copyWith(fontSize: 12, fontWeight: FontWeight.w600)),
-                            ],
-                          ),
-                          if (edit.state == EditState.pending)
-                            Row(
-                              children: [
-                                VHIcon(Icons.close,
-                                    size: 36,
-                                    backgroundColor: Colors.white,
-                                    border: Border.all(color: Colors.red, width: 2),
-                                    iconColor: Colors.red, onTap: () {
-                                  onAction(false);
-                                }),
-                                16.0.hSpacer(),
-                                VHIcon(Icons.check,
-                                    size: 36,
-                                    backgroundColor: Colors.white,
-                                    border: Border.all(color: Colors.green, width: 2),
-                                    iconColor: Colors.green, onTap: () {
-                                  onAction(true);
-                                }),
-                              ],
-                            )
-                        ],
+                    _StatusChip(state: edit.state!),
+                    10.0.hSpacer(),
+                    Flexible(
+                      child: Text(
+                        edit.created_at!.formatDate(),
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ],
                 ),
               ),
+              if (edit.state == EditState.pending)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    VHIcon(Icons.close,
+                        size: 36,
+                        backgroundColor: Colors.transparent,
+                        border: Border.all(color: Colors.red, width: 2),
+                        iconColor: Colors.red,
+                        onTap: () => onAction(false)),
+                    12.0.hSpacer(),
+                    VHIcon(Icons.check,
+                        size: 36,
+                        backgroundColor: Colors.transparent,
+                        border: Border.all(color: Colors.green, width: 2),
+                        iconColor: Colors.green,
+                        onTap: () => onAction(true)),
+                  ],
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Rounded, tappable card shell shared by the notification tiles. Also caps the
+/// width and centers on large screens, so the list reads well full-screen and
+/// inside the desktop dashboard panel alike.
+class _NotificationCard extends StatelessWidget {
+  final Widget child;
+  final VoidCallback? onTap;
+  const _NotificationCard({required this.child, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 720),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(16),
+              child: Ink(
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: colorScheme.outlineVariant),
+                ),
+                child: Padding(padding: const EdgeInsets.all(14), child: child),
+              ),
             ),
-          ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+/// Pill showing an edit's state with a coloured dot.
+class _StatusChip extends StatelessWidget {
+  final EditState state;
+  const _StatusChip({required this.state});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = stateToIconColor(state);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          circle(color: color, size: 8),
+          6.0.hSpacer(),
+          Text(
+            state.toName().capitalize()!,
+            style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 12.5),
+          ),
+        ],
       ),
     );
   }
