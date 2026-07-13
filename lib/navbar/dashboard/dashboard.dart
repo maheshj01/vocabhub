@@ -171,17 +171,6 @@ class DashboardMobile extends ConsumerWidget {
                           color: Theme.of(context).colorScheme.surfaceTint,
                         ))
                     : SizedBox.shrink(),
-                !user.isLoggedIn
-                    ? TextButton(
-                        onPressed: () async {
-                          await Navigate.pushAndPopAll(context, AppSignIn());
-                        },
-                        child: Text('Sign In',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge!
-                                .copyWith(color: Theme.of(context).colorScheme.primary)))
-                    : SizedBox.shrink()
               ]),
           SliverToBoxAdapter(
             child: Padding(
