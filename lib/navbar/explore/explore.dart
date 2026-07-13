@@ -5,14 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:navbar_router/navbar_router.dart';
+import 'package:vocabhub/base_home.dart';
 import 'package:vocabhub/constants/constants.dart';
 import 'package:vocabhub/controller/explore_controller.dart';
 import 'package:vocabhub/models/models.dart';
 import 'package:vocabhub/navbar/empty_page.dart';
 import 'package:vocabhub/pages/addword.dart';
 import 'package:vocabhub/services/services.dart';
-import 'package:vocabhub/services/services/word_state_service.dart';
-import 'package:vocabhub/utils/auth_flow.dart';
 import 'package:vocabhub/utils/extensions.dart';
 import 'package:vocabhub/utils/utility.dart';
 import 'package:vocabhub/widgets/examplebuilder.dart';
@@ -172,6 +171,7 @@ class _ExploreWordsMobileState extends ConsumerState<ExploreWordsMobile>
             );
           }
           final words = request.data as List<Word>;
+          final appTheme = ref.watch(appThemeProvider);
           return Material(
             color: Colors.transparent,
             child: RefreshIndicator(
@@ -217,9 +217,10 @@ class _ExploreWordsMobileState extends ConsumerState<ExploreWordsMobile>
                           animation: _progressAnimationController,
                           builder: (context, child) {
                             return Padding(
-                              padding: (kNavbarHeight * 1.2).bottomPadding,
+                              padding: (kNavbarHeight * navbarBottomPaddingFactor).bottomPadding,
                               child: settingsController.autoScroll.enabled
                                   ? LinearProgressIndicator(
+                                      color: appTheme.themeSeed,
                                       value: _progressAnimationController.value,
                                     )
                                   : SizedBox.shrink(),

@@ -26,6 +26,7 @@ import 'package:vocabhub/widgets/widgets.dart';
 import 'pages/notifications/notifications.dart';
 
 const appBarDesktopHeight = 128.0;
+const navbarBottomPaddingFactor = 1.5;
 
 class AdaptiveLayout extends ConsumerStatefulWidget {
   const AdaptiveLayout({Key? key}) : super(key: key);
@@ -298,7 +299,7 @@ class _AdaptiveLayoutState extends ConsumerState<AdaptiveLayout> {
                     }
                   },
                   decoration: FloatingNavbarDecoration(
-                    height: kNavbarHeight * 2.0,
+                    height: kNavbarHeight * navbarBottomPaddingFactor,
                     backgroundColor: SizeUtils.isDesktop
                         ? colorScheme.surfaceContainerHighest
                         : colorScheme.secondaryContainer,
