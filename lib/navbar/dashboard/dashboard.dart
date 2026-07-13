@@ -755,7 +755,15 @@ class DashboardDesktop extends ConsumerWidget {
                     ),
                   ),
                 )),
-            Expanded(flex: 2, child: NotificationsMobile()),
+            // Nested navigator so tapping a notification opens its detail
+            // *inside* this panel (same width) instead of over the whole app.
+            Expanded(
+              flex: 2,
+              child: Navigator(
+                onGenerateRoute: (_) =>
+                    MaterialPageRoute(builder: (_) => const NotificationsMobile()),
+              ),
+            ),
           ],
         ),
       ),

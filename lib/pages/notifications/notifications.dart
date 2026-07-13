@@ -318,7 +318,8 @@ class _NotificationsMobileState extends ConsumerState<NotificationsMobile> {
                                     word: edit.word,
                                     title: 'Edit History',
                                     isNotification: true,
-                                  ));
+                                  ),
+                                  isRootNavigator: false);
                             },
                           );
                         }

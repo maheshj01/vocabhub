@@ -544,7 +544,7 @@ void main() {
       expect(dashBoard, findsOneWidget);
       await 1.delay();
       await widgetTester.pumpAndSettle();
-      final wodCards = (WoDCard).typeX();
+      final wodCards = (WordOfTheDayCard).typeX();
       expect(wodCards, findsWidgets);
       await widgetTester.pumpAndSettle();
       await widgetTester.tap(wodCards.at(0));
