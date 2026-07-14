@@ -39,7 +39,7 @@ jobs:
           FIREBASE_UTILS_OPTIONS: ${{ secrets.FIREBASE_UTILS_OPTIONS }}
 
       - run: flutter clean
-      - run: flutter pub get
+      - run: flutter pub get --enforce-lockfile
 
       # Build and Deploy to Firebase
       - name: Build Flutter Web
