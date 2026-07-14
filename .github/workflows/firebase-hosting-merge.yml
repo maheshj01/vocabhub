@@ -55,27 +55,29 @@ jobs:
           FIREBASE_CLI_PREVIEWS: hostingchannels
 
       # Use the setup-shorebird action to configure Shorebird
-      # - name: 🐦 Setup Shorebird
-      #   uses: shorebirdtech/setup-shorebird@4dd9d7dc2d7930bfeadb053b6e94b5110779d1e5 # v1
+      - name: 🐦 Setup Shorebird
+        uses: shorebirdtech/setup-shorebird@v1
+        with:
+          cache: true
+      - run: shorebird --version
+      - name: Publish Shorebird Patch
+        env:
+          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
+        run: shorebird patch android --release-version 0.8.0+33 -- --dart-define=SUPABASE_PROJECT_URL=${{ secrets.SUPABASE_PROJECT_URL }} --dart-define=SUPABASE_API_KEY=${{ secrets.SUPABASE_API_KEY }} --dart-define=SUPABASE_REDIRECT_URL=${{ secrets.SUPABASE_REDIRECT_URL }} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }} --dart-define=ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} --dart-define=FCM_SERVER_KEY=${{ secrets.FCM_SERVER_KEY }}
 
-      # - name: Publish Shorebird Patch
-      #   env:
-      #     SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
-      #   run: shorebird patch android --release-version 0.7.9+32 -- --dart-define=SUPABASE_PROJECT_URL=${{ secrets.SUPABASE_PROJECT_URL }} --dart-define=SUPABASE_API_KEY=${{ secrets.SUPABASE_API_KEY }} --dart-define=SUPABASE_REDIRECT_URL=${{ secrets.SUPABASE_REDIRECT_URL }} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }} --dart-define=ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }} --dart-define=FCM_SERVER_KEY=${{ secrets.FCM_SERVER_KEY }}
 
+      - run: flutter pub run build_runner build --delete-conflicting-outputs
+      test integration test
+      - name: 📦 Install dependencies
+        run: flutter pub get
+      - name: 📱 Run integration test
+        run: flutter drive --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart --no-build --dart-define=SUPABASE_PROJECT_URL=${{secrets.SUPABASE_PROJECT_URL}} --dart-define=SUPABASE_API_KEY=${{secrets.SUPABASE_API_KEY}} --dart-define=SUPABASE_REDIRECT_URL=${{secrets.SUPABASE_REDIRECT_URL}} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }}
 
-      # - run: flutter pub run build_runner build --delete-conflicting-outputs
-      # test integration test
-      # - name: 📦 Install dependencies
-      #   run: flutter pub get
-      # - name: 📱 Run integration test
-      #   run: flutter drive --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart --no-build --dart-define=SUPABASE_PROJECT_URL=${{secrets.SUPABASE_PROJECT_URL}} --dart-define=SUPABASE_API_KEY=${{secrets.SUPABASE_API_KEY}} --dart-define=SUPABASE_REDIRECT_URL=${{secrets.SUPABASE_REDIRECT_URL}} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }}
-
-      # - name: Create Shorebird release
-      #   env:
-      #     SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
-      #   run: shorebird release android -- --dart-define=SUPABASE_PROJECT_URL=${{secrets.SUPABASE_PROJECT_URL}} --dart-define=SUPABASE_API_KEY=${{secrets.SUPABASE_API_KEY}} --dart-define=SUPABASE_REDIRECT_URL=${{secrets.SUPABASE_REDIRECT_URL}} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }}
-      # - uses: actions/upload-artifact@v1
-      #   with:
-      #     name: Android app bundle
-      #     path: build/app/outputs/bundle/release/app-release.aab
+      - name: Create Shorebird release
+        env:
+          SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
+        run: shorebird release android -- --dart-define=SUPABASE_PROJECT_URL=${{secrets.SUPABASE_PROJECT_URL}} --dart-define=SUPABASE_API_KEY=${{secrets.SUPABASE_API_KEY}} --dart-define=SUPABASE_REDIRECT_URL=${{secrets.SUPABASE_REDIRECT_URL}} --dart-define=FIREBASE_VAPID_KEY=${{ secrets.FIREBASE_VAPID_KEY }}
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Android app bundle
+          path: build/app/outputs/bundle/release/app-release.aab
