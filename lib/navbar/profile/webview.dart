@@ -17,7 +17,7 @@ class _NewPageState extends State<WebViewPage> {
   void initState() {
     super.initState();
     controller = WebViewController()
-      // ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
       // ..setBackgroundColor(const Color(0x00000000))
       // ..setNavigationDelegate(
       //   NavigationDelegate(
