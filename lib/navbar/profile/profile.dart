@@ -28,24 +28,36 @@ class UserProfileNavigator extends StatefulWidget {
 }
 
 class _UserProfileNavigatorState extends State<UserProfileNavigator> {
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
   @override
   Widget build(BuildContext context) {
-    return Navigator(
-      initialRoute: UserProfile.route,
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case UserProfile.route:
-            return MaterialPageRoute(builder: (context) => UserProfile());
-          case EditProfile.route:
-            return MaterialPageRoute(builder: (context) => EditProfile(onClose: () {}));
-          case SettingsPage.route:
-            return MaterialPageRoute(builder: (context) => SettingsPage());
-          default:
-            return MaterialPageRoute(
-                builder: (context) => ErrorPage(
-                    onRetry: () {}, errorMessage: 'Oh no! You have landed on an unknown planet '));
-        }
-      },
+    // A bare nested Navigator doesn't cooperate with the system back button, so
+    // a back press at the profile root fell through to the root navigator and
+    // popped the whole app. NavigatorPopHandler makes this nested stack report
+    // its pop-ability: back pops within it when it can, and otherwise bubbles up
+    // to navbar_router (which switches to the Dashboard tab / double-press-exits).
+    return NavigatorPopHandler(
+      onPopWithResult: (_) => _navigatorKey.currentState?.maybePop(),
+      child: Navigator(
+        key: _navigatorKey,
+        initialRoute: UserProfile.route,
+        onGenerateRoute: (settings) {
+          switch (settings.name) {
+            case UserProfile.route:
+              return MaterialPageRoute(builder: (context) => UserProfile());
+            case EditProfile.route:
+              return MaterialPageRoute(builder: (context) => EditProfile(onClose: () {}));
+            case SettingsPage.route:
+              return MaterialPageRoute(builder: (context) => SettingsPage());
+            default:
+              return MaterialPageRoute(
+                  builder: (context) => ErrorPage(
+                      onRetry: () {},
+                      errorMessage: 'Oh no! You have landed on an unknown planet '));
+          }
+        },
+      ),
     );
   }
 }
