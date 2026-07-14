@@ -37,7 +37,7 @@ class Constants {
   );
   static const PRIVACY_POLICY_TITLE = 'Privacy Policy';
 
-  static const PRIVACY_POLICY = 'https://maheshjamdade.com/vocabhub/privacy';
+  static const PRIVACY_POLICY = 'https://www.widgetmedialabs.com/privacy-policy';
   static const String PROFILE_AVATAR_ASSET = 'assets/profile.png';
   static const Duration wordCountAnimationDuration = Duration(seconds: 3);
   static const FEEDBACK_EMAIL_TO = String.fromEnvironment('ADMIN_EMAIL');
