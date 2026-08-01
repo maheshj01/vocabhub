@@ -217,7 +217,7 @@ class _SettingsPageMobileState extends ConsumerState<SettingsPageMobile> {
                         padding: 16.0.horizontalPadding + 10.0.verticalPadding,
                         child: Row(
                           children: [
-                            Text('Animate background',
+                            Text('Dynamic Theme',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w400,
